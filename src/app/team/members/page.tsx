@@ -9,7 +9,7 @@ import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
 
 interface MemberWithProfile extends TeamMember {
-  profile: Profile
+  profile: Profile | null
 }
 
 function TeamMembersContent() {
@@ -107,36 +107,63 @@ function TeamMembersContent() {
 
     setTeam(teamData)
 
-    // Get current user's role
-    const { data: userMembership } = await supabase
-      .from('team_members')
-      .select('role')
-      .eq('team_id', teamId)
-      .eq('user_id', user.id)
-      .single()
+    // Check if user is team owner
+    const isOwner = teamData.user_id === user.id
 
-    // If owner of team but not in team_members, treat as coach
-    if (!userMembership && teamData.user_id === user.id) {
+    // If owner, set as coach immediately
+    if (isOwner) {
       setCurrentUserRole('coach')
     } else {
+      // Try to get user's membership role
+      const { data: userMembership } = await supabase
+        .from('team_members')
+        .select('role, status')
+        .eq('team_id', teamId)
+        .eq('user_id', user.id)
+        .single()
+
       setCurrentUserRole(userMembership?.role || null)
     }
 
-    // Get all members with profiles
-    const { data: membersData } = await supabase
+    // Get all members (without profile join - we'll fetch profiles separately)
+    const { data: membersData, error: membersError } = await supabase
       .from('team_members')
-      .select(`
-        *,
-        profile:profiles(*)
-      `)
+      .select('*')
       .eq('team_id', teamId)
       .order('joined_at')
 
-    if (membersData) {
-      const allMembers = membersData as MemberWithProfile[]
-      // Separate pending and approved members
-      setPendingMembers(allMembers.filter(m => m.status === 'pending'))
-      setMembers(allMembers.filter(m => m.status === 'approved' || !m.status))
+    console.log('Members query error:', membersError)
+    console.log('Members data:', membersData)
+
+    if (membersData && membersData.length > 0) {
+      // Get unique user IDs
+      const userIds = membersData.map(m => m.user_id)
+
+      // Fetch profiles separately
+      const { data: profilesData } = await supabase
+        .from('profiles')
+        .select('*')
+        .in('id', userIds)
+
+      console.log('Profiles data:', profilesData)
+
+      // Map profiles to members
+      const profileMap = new Map(profilesData?.map(p => [p.id, p]) || [])
+
+      const allMembers: MemberWithProfile[] = membersData.map(m => ({
+        ...m,
+        profile: profileMap.get(m.user_id) || null
+      }))
+
+      const pending = allMembers.filter(m => m.status === 'pending')
+      const approved = allMembers.filter(m => m.status === 'approved' || !m.status)
+
+      console.log('All members:', allMembers.map(m => ({ id: m.id, status: m.status, email: m.profile?.email })))
+      console.log('Pending members:', pending.length)
+      console.log('Approved members:', approved.length)
+
+      setPendingMembers(pending)
+      setMembers(approved)
     }
 
     setLoading(false)
