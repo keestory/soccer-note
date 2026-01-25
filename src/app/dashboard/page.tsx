@@ -29,15 +29,43 @@ export default function DashboardPage() {
     checkAuthAndLoadData()
   }, [])
 
-  const checkAuthAndLoadData = async (retryCount = 0) => {
+  const checkAuthAndLoadData = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       router.push('/login')
       return
     }
 
-    // Load teams where user is a member (via team_members table)
-    const { data: memberships, error: membershipError } = await supabase
+    const teamsWithRole: TeamWithRole[] = []
+
+    // 1. First, load teams where user is the OWNER (always works, no RLS issues)
+    const { data: ownedTeams } = await supabase
+      .from('teams')
+      .select('*')
+      .eq('user_id', user.id)
+
+    if (ownedTeams && ownedTeams.length > 0) {
+      for (const team of ownedTeams) {
+        teamsWithRole.push({
+          ...team,
+          role: 'coach',
+          membership: {
+            id: 'owner',
+            team_id: team.id,
+            user_id: user.id,
+            role: 'coach',
+            can_edit_players: true,
+            can_edit_matches: true,
+            can_edit_quarters: true,
+            joined_at: team.created_at,
+            updated_at: team.updated_at
+          } as TeamMember
+        })
+      }
+    }
+
+    // 2. Then try to load teams via team_members (for teams user joined but doesn't own)
+    const { data: memberships } = await supabase
       .from('team_members')
       .select(`
         *,
@@ -45,16 +73,20 @@ export default function DashboardPage() {
       `)
       .eq('user_id', user.id)
 
-    if (membershipError) {
-      console.error('Membership query error:', membershipError)
+    if (memberships && memberships.length > 0) {
+      for (const m of memberships) {
+        // Skip if we already have this team (from owned teams)
+        if (!teamsWithRole.find(t => t.id === m.team_id)) {
+          teamsWithRole.push({
+            ...m.team,
+            role: m.role as 'coach' | 'member',
+            membership: m
+          })
+        }
+      }
     }
 
-    if (memberships && memberships.length > 0) {
-      const teamsWithRole: TeamWithRole[] = memberships.map(m => ({
-        ...m.team,
-        role: m.role as 'coach' | 'member',
-        membership: m
-      }))
+    if (teamsWithRole.length > 0) {
       setTeams(teamsWithRole)
 
       // Check localStorage for previously selected team
@@ -69,40 +101,6 @@ export default function DashboardPage() {
         await loadMatches(teamsWithRole[0].id)
       }
     } else {
-      // Check if user owns any teams (legacy support)
-      const { data: ownedTeams } = await supabase
-        .from('teams')
-        .select('*')
-        .eq('user_id', user.id)
-        .limit(1)
-
-      if (ownedTeams && ownedTeams.length > 0 && retryCount < 1) {
-        // Migrate to team_members system
-        const team = ownedTeams[0]
-        const { error: upsertError } = await supabase
-          .from('team_members')
-          .upsert({
-            team_id: team.id,
-            user_id: user.id,
-            role: 'coach',
-            can_edit_players: true,
-            can_edit_matches: true,
-            can_edit_quarters: true
-          })
-
-        if (upsertError) {
-          console.error('Migration error:', upsertError)
-          // If migration fails, show create team screen
-          setShowCreateTeam(true)
-          setLoading(false)
-          return
-        }
-
-        // Reload once
-        await checkAuthAndLoadData(retryCount + 1)
-        return
-      }
-
       setShowCreateTeam(true)
     }
 

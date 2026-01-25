@@ -34,7 +34,20 @@ export default function NewMatchPage() {
     const savedTeamId = localStorage.getItem('selectedTeamId')
 
     if (savedTeamId) {
-      // Verify user has permission to create matches for this team
+      // First check if user OWNS this team (no RLS issues)
+      const { data: ownedTeam } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('id', savedTeamId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (ownedTeam) {
+        setTeamId(savedTeamId)
+        return
+      }
+
+      // Then check team_members for permission
       const { data: membership } = await supabase
         .from('team_members')
         .select('*')
@@ -48,7 +61,20 @@ export default function NewMatchPage() {
       }
     }
 
-    // Fallback: find any team where user can create matches
+    // Fallback: find any team user OWNS
+    const { data: ownedTeams } = await supabase
+      .from('teams')
+      .select('id')
+      .eq('user_id', user.id)
+      .limit(1)
+
+    if (ownedTeams && ownedTeams.length > 0) {
+      setTeamId(ownedTeams[0].id)
+      localStorage.setItem('selectedTeamId', ownedTeams[0].id)
+      return
+    }
+
+    // Last resort: check team_members
     const { data: memberships } = await supabase
       .from('team_members')
       .select('team_id, role, can_edit_matches')
