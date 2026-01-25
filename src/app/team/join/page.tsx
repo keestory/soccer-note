@@ -63,17 +63,23 @@ function JoinTeamContent() {
 
     setTeam(data)
 
-    // Check existing membership status
+    // Check existing membership status (ignore errors - RLS may block non-members)
     if (user) {
-      const { data: existing } = await supabase
-        .from('team_members')
-        .select('status')
-        .eq('team_id', data.id)
-        .eq('user_id', user.id)
-        .single()
+      try {
+        const { data: existing, error: memberError } = await supabase
+          .from('team_members')
+          .select('status')
+          .eq('team_id', data.id)
+          .eq('user_id', user.id)
+          .single()
 
-      if (existing) {
-        setExistingStatus(existing.status as MemberStatus)
+        // Only set status if we got valid data (no error)
+        if (!memberError && existing) {
+          setExistingStatus(existing.status as MemberStatus)
+        }
+      } catch (e) {
+        // Ignore errors - user is likely not a member yet
+        console.log('Membership check skipped - user may not be a member yet')
       }
     }
 
@@ -114,16 +120,25 @@ function JoinTeamContent() {
     if (error) {
       console.error('Team join error:', error)
       if (error.code === '23505') {
-        // Duplicate - check current status
-        const { data: existing } = await supabase
-          .from('team_members')
-          .select('status')
-          .eq('team_id', team.id)
-          .eq('user_id', user.id)
-          .single()
+        // Duplicate - check current status (with error handling)
+        try {
+          const { data: existing, error: checkError } = await supabase
+            .from('team_members')
+            .select('status')
+            .eq('team_id', team.id)
+            .eq('user_id', user.id)
+            .single()
 
-        if (existing) {
-          setExistingStatus(existing.status as MemberStatus)
+          if (!checkError && existing) {
+            setExistingStatus(existing.status as MemberStatus)
+          } else {
+            // If we can't check status, assume pending
+            toast.success('이미 가입 요청이 있습니다. 관리자 승인을 기다려주세요.')
+            setExistingStatus('pending')
+          }
+        } catch (e) {
+          toast.success('이미 가입 요청이 있습니다. 관리자 승인을 기다려주세요.')
+          setExistingStatus('pending')
         }
       } else {
         toast.error(`가입 요청 실패: ${error.message}`)
