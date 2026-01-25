@@ -29,7 +29,7 @@ export default function DashboardPage() {
     checkAuthAndLoadData()
   }, [])
 
-  const checkAuthAndLoadData = async () => {
+  const checkAuthAndLoadData = async (retryCount = 0) => {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       router.push('/login')
@@ -37,13 +37,17 @@ export default function DashboardPage() {
     }
 
     // Load teams where user is a member (via team_members table)
-    const { data: memberships } = await supabase
+    const { data: memberships, error: membershipError } = await supabase
       .from('team_members')
       .select(`
         *,
         team:teams (*)
       `)
       .eq('user_id', user.id)
+
+    if (membershipError) {
+      console.error('Membership query error:', membershipError)
+    }
 
     if (memberships && memberships.length > 0) {
       const teamsWithRole: TeamWithRole[] = memberships.map(m => ({
@@ -72,10 +76,10 @@ export default function DashboardPage() {
         .eq('user_id', user.id)
         .limit(1)
 
-      if (ownedTeams && ownedTeams.length > 0) {
+      if (ownedTeams && ownedTeams.length > 0 && retryCount < 1) {
         // Migrate to team_members system
         const team = ownedTeams[0]
-        await supabase
+        const { error: upsertError } = await supabase
           .from('team_members')
           .upsert({
             team_id: team.id,
@@ -86,8 +90,16 @@ export default function DashboardPage() {
             can_edit_quarters: true
           })
 
-        // Reload
-        await checkAuthAndLoadData()
+        if (upsertError) {
+          console.error('Migration error:', upsertError)
+          // If migration fails, show create team screen
+          setShowCreateTeam(true)
+          setLoading(false)
+          return
+        }
+
+        // Reload once
+        await checkAuthAndLoadData(retryCount + 1)
         return
       }
 
