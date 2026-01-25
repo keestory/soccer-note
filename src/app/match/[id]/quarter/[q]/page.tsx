@@ -36,6 +36,7 @@ export default function QuarterEditPage() {
   const [fieldPlayers, setFieldPlayers] = useState<FieldPlayer[]>([])
   const [selectedPlayer, setSelectedPlayer] = useState<FieldPlayer | null>(null)
   const [showPlayerPicker, setShowPlayerPicker] = useState(false)
+  const [selectedPickerPlayers, setSelectedPickerPlayers] = useState<Set<string>>(new Set())
 
   const fieldRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
@@ -118,6 +119,62 @@ export default function QuarterEditPage() {
     const y = ((e.clientY - rect.top) / rect.height) * 100
 
     // Show player picker at this position
+    setShowPlayerPicker(false)
+  }
+
+  const togglePickerPlayer = (playerId: string) => {
+    setSelectedPickerPlayers(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(playerId)) {
+        newSet.delete(playerId)
+      } else {
+        newSet.add(playerId)
+      }
+      return newSet
+    })
+  }
+
+  const addSelectedPlayersToField = () => {
+    const playersToAdd = availablePlayers.filter(p => selectedPickerPlayers.has(p.id))
+
+    // Calculate positions in a grid pattern
+    const newFieldPlayers: FieldPlayer[] = playersToAdd.map((player, index) => {
+      // Spread players across the field based on their position
+      let baseX = 50
+      let baseY = 50
+
+      if (player.default_position === 'GK') {
+        baseX = 8
+        baseY = 50
+      } else if (player.default_position === 'DF') {
+        baseX = 25
+        baseY = 20 + (index % 4) * 20
+      } else if (player.default_position === 'MF') {
+        baseX = 45
+        baseY = 20 + (index % 4) * 20
+      } else if (player.default_position === 'FW') {
+        baseX = 70
+        baseY = 30 + (index % 3) * 20
+      }
+
+      return {
+        id: `new-${Date.now()}-${index}`,
+        playerId: player.id,
+        player,
+        positionType: player.default_position,
+        positionX: baseX,
+        positionY: baseY,
+        rating: null,
+        goals: 0,
+        assists: 0,
+        cleanSheet: false,
+        contribution: 0,
+      }
+    })
+
+    setFieldPlayers([...fieldPlayers, ...newFieldPlayers])
+    setAvailablePlayers(availablePlayers.filter(p => !selectedPickerPlayers.has(p.id)))
+    setSelectedPickerPlayers(new Set())
     setShowPlayerPicker(false)
   }
 
@@ -288,31 +345,60 @@ export default function QuarterEditPage() {
           {showPlayerPicker && (
             <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
               <div className="flex justify-between items-center mb-3">
-                <p className="text-sm text-gray-600">추가할 선수를 선택하세요</p>
-                <button onClick={() => setShowPlayerPicker(false)} className="p-1">
+                <p className="text-sm text-gray-600">
+                  추가할 선수를 선택하세요
+                  {selectedPickerPlayers.size > 0 && (
+                    <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
+                      {selectedPickerPlayers.size}명 선택
+                    </span>
+                  )}
+                </p>
+                <button onClick={() => { setShowPlayerPicker(false); setSelectedPickerPlayers(new Set()); }} className="p-1">
                   <X className="w-5 h-5 text-gray-400" />
                 </button>
               </div>
-              <div className="grid grid-cols-3 gap-2">
-                {availablePlayers.map(player => (
-                  <button
-                    key={player.id}
-                    onClick={() => addPlayerToField(player)}
-                    className="flex items-center gap-2 p-2 rounded-lg border hover:bg-gray-50 text-left"
-                  >
-                    <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                      style={{ backgroundColor: POSITION_COLORS[player.default_position] }}
+              <div className="grid grid-cols-3 gap-2 mb-3">
+                {availablePlayers.map(player => {
+                  const isSelected = selectedPickerPlayers.has(player.id)
+                  return (
+                    <button
+                      key={player.id}
+                      onClick={() => togglePickerPlayer(player.id)}
+                      className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-all ${
+                        isSelected
+                          ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-200'
+                          : 'hover:bg-gray-50'
+                      }`}
                     >
-                      {player.number || '-'}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{player.name}</p>
-                      <p className="text-xs text-gray-500">{POSITION_LABELS[player.default_position]}</p>
-                    </div>
-                  </button>
-                ))}
+                      <div className="relative">
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                          style={{ backgroundColor: POSITION_COLORS[player.default_position] }}
+                        >
+                          {player.number || '-'}
+                        </div>
+                        {isSelected && (
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
+                            <Check className="w-3 h-3 text-white" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium truncate">{player.name}</p>
+                        <p className="text-xs text-gray-500">{POSITION_LABELS[player.default_position]}</p>
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
+              {selectedPickerPlayers.size > 0 && (
+                <button
+                  onClick={addSelectedPlayersToField}
+                  className="w-full py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
+                >
+                  {selectedPickerPlayers.size}명 추가하기
+                </button>
+              )}
             </div>
           )}
 
