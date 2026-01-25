@@ -319,41 +319,78 @@ export default function QuarterEditPage() {
           {/* Field */}
           <div
             ref={fieldRef}
-            className="relative w-full aspect-[3/2] bg-field rounded-xl overflow-hidden touch-none select-none"
+            className="relative w-full aspect-[3/2] bg-gradient-to-b from-green-700 via-green-600 to-green-700 rounded-xl overflow-hidden touch-none select-none shadow-lg"
           >
-            {/* Field markings */}
-            <div className="absolute inset-2 border-2 border-white/40 rounded-lg" />
-            <div className="absolute left-1/2 top-2 bottom-2 w-0.5 bg-white/40" />
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 border-white/40" />
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/40" />
+            {/* Grass pattern */}
+            <div className="absolute inset-0" style={{
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px)',
+            }} />
 
-            {/* Goal areas */}
-            <div className="absolute left-2 top-1/2 -translate-y-1/2 w-12 h-28 border-2 border-white/40 border-l-0 rounded-r-lg" />
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 w-12 h-28 border-2 border-white/40 border-r-0 rounded-l-lg" />
+            {/* Field outline */}
+            <div className="absolute inset-3 border-2 border-white/70 rounded" />
+
+            {/* Center line */}
+            <div className="absolute left-1/2 top-3 bottom-3 w-0.5 bg-white/70" />
+
+            {/* Center circle */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border-2 border-white/70" />
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white/70" />
+
+            {/* Left penalty area */}
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border-2 border-white/70 border-l-0" />
+            {/* Left goal area */}
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border-2 border-white/70 border-l-0" />
+            {/* Left penalty spot */}
+            <div className="absolute left-[14%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/70" />
+            {/* Left goal */}
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-[18%] bg-white/30 border-2 border-white/70 border-l-0 rounded-r" />
+
+            {/* Right penalty area */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border-2 border-white/70 border-r-0" />
+            {/* Right goal area */}
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border-2 border-white/70 border-r-0" />
+            {/* Right penalty spot */}
+            <div className="absolute right-[14%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/70" />
+            {/* Right goal */}
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-[18%] bg-white/30 border-2 border-white/70 border-r-0 rounded-l" />
+
+            {/* Corner arcs */}
+            <div className="absolute left-3 top-3 w-6 h-6 border-b-2 border-r-2 border-white/70 rounded-br-full" />
+            <div className="absolute right-3 top-3 w-6 h-6 border-b-2 border-l-2 border-white/70 rounded-bl-full" />
+            <div className="absolute left-3 bottom-3 w-6 h-6 border-t-2 border-r-2 border-white/70 rounded-tr-full" />
+            <div className="absolute right-3 bottom-3 w-6 h-6 border-t-2 border-l-2 border-white/70 rounded-tl-full" />
 
             {/* Players */}
             {fieldPlayers.map(fp => (
               <div
                 key={fp.id}
-                className={`absolute w-10 h-10 -ml-5 -mt-5 rounded-full flex items-center justify-center text-white font-bold shadow-lg cursor-grab active:cursor-grabbing transition-transform ${
-                  selectedPlayer?.id === fp.id ? 'ring-4 ring-white scale-110' : 'hover:scale-105'
-                }`}
+                className="absolute flex flex-col items-center cursor-grab active:cursor-grabbing"
                 style={{
                   left: `${fp.positionX}%`,
                   top: `${fp.positionY}%`,
-                  backgroundColor: POSITION_COLORS[fp.positionType],
+                  transform: 'translate(-50%, -50%)',
                 }}
                 onMouseDown={(e) => handlePlayerDrag(fp.id, e)}
                 onTouchStart={(e) => handlePlayerDrag(fp.id, e)}
                 onClick={() => setSelectedPlayer(fp)}
               >
-                {fp.player.number || '?'}
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-lg transition-transform ${
+                    selectedPlayer?.id === fp.id ? 'ring-4 ring-yellow-400 scale-110' : 'hover:scale-105'
+                  }`}
+                  style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}
+                >
+                  {fp.player.number || '?'}
+                </div>
+                <span className="mt-1 px-1.5 py-0.5 bg-black/60 text-white text-xs rounded font-medium whitespace-nowrap">
+                  {fp.player.name}
+                </span>
               </div>
             ))}
 
             {fieldPlayers.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center text-white/50">
-                <p>선수를 추가하고 드래그하여 배치하세요</p>
+              <div className="absolute inset-0 flex items-center justify-center text-white/60">
+                <p className="bg-black/30 px-4 py-2 rounded-lg">선수를 추가하고 드래그하여 배치하세요</p>
               </div>
             )}
           </div>

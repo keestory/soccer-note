@@ -236,30 +236,58 @@ export default function MatchDetailPage() {
 
               {/* Soccer Field Preview */}
               <div className="p-4">
-                <div className="relative w-full aspect-[3/2] bg-field rounded-lg overflow-hidden">
-                  {/* Field markings */}
-                  <div className="absolute inset-0 border-2 border-white/30" />
-                  <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-white/30" />
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full border-2 border-white/30" />
+                <div className="relative w-full aspect-[3/2] bg-gradient-to-b from-green-700 via-green-600 to-green-700 rounded-lg overflow-hidden shadow-inner">
+                  {/* Grass pattern */}
+                  <div className="absolute inset-0" style={{
+                    backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px)',
+                  }} />
+
+                  {/* Field outline */}
+                  <div className="absolute inset-3 border-2 border-white/60 rounded" />
+
+                  {/* Center line */}
+                  <div className="absolute left-1/2 top-3 bottom-3 w-0.5 bg-white/60" />
+
+                  {/* Center circle */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 border-white/60" />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/60" />
+
+                  {/* Left penalty area */}
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border-2 border-white/60 border-l-0" />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border-2 border-white/60 border-l-0" />
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-[18%] bg-white/40 rounded-r" />
+
+                  {/* Right penalty area */}
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border-2 border-white/60 border-r-0" />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border-2 border-white/60 border-r-0" />
+                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-[18%] bg-white/40 rounded-l" />
 
                   {/* Players */}
                   {currentQuarter.quarter_records?.map((record) => (
                     <div
                       key={record.id}
-                      className="absolute w-8 h-8 -ml-4 -mt-4 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg"
+                      className="absolute flex flex-col items-center"
                       style={{
                         left: `${record.position_x}%`,
                         top: `${record.position_y}%`,
-                        backgroundColor: POSITION_COLORS[record.position_type],
+                        transform: 'translate(-50%, -50%)',
                       }}
                     >
-                      {record.player?.number || '?'}
+                      <div
+                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg"
+                        style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
+                      >
+                        {record.player?.number || '?'}
+                      </div>
+                      <span className="mt-0.5 px-1 py-0.5 bg-black/50 text-white text-[10px] rounded font-medium whitespace-nowrap">
+                        {record.player?.name}
+                      </span>
                     </div>
                   ))}
 
                   {currentQuarter.quarter_records?.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center text-white/70">
-                      선수를 배치해주세요
+                      <span className="bg-black/30 px-3 py-1.5 rounded">선수를 배치해주세요</span>
                     </div>
                   )}
                 </div>
