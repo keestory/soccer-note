@@ -8,6 +8,11 @@ DROP POLICY IF EXISTS "Team members can view their teams" ON teams;
 DROP POLICY IF EXISTS "Coaches can update teams" ON teams;
 DROP POLICY IF EXISTS "Users can create teams" ON teams;
 DROP POLICY IF EXISTS "Owners can delete teams" ON teams;
+-- Also drop new policies in case of re-run
+DROP POLICY IF EXISTS "Anyone can view teams with invite code" ON teams;
+DROP POLICY IF EXISTS "Authenticated users can create teams" ON teams;
+DROP POLICY IF EXISTS "Team owner can update" ON teams;
+DROP POLICY IF EXISTS "Team owner can delete" ON teams;
 
 -- Simple and clear policies
 CREATE POLICY "Anyone can view teams with invite code"
@@ -35,6 +40,12 @@ DROP POLICY IF EXISTS "Users can join teams via invite" ON team_members;
 DROP POLICY IF EXISTS "Coaches can select team members" ON team_members;
 DROP POLICY IF EXISTS "Coaches can update team members" ON team_members;
 DROP POLICY IF EXISTS "Coaches can delete team members" ON team_members;
+-- Also drop new policies in case of re-run
+DROP POLICY IF EXISTS "Users can view own memberships" ON team_members;
+DROP POLICY IF EXISTS "Members can view team members" ON team_members;
+DROP POLICY IF EXISTS "Users can join teams" ON team_members;
+DROP POLICY IF EXISTS "Owner or coach can update members" ON team_members;
+DROP POLICY IF EXISTS "Owner or coach can delete members" ON team_members;
 
 -- Users can see their own membership records
 CREATE POLICY "Users can view own memberships"
@@ -82,6 +93,10 @@ DROP POLICY IF EXISTS "Team members can view players" ON players;
 DROP POLICY IF EXISTS "Authorized users can manage players" ON players;
 DROP POLICY IF EXISTS "Authorized users can update players" ON players;
 DROP POLICY IF EXISTS "Authorized users can delete players" ON players;
+-- Also drop new policies in case of re-run
+DROP POLICY IF EXISTS "Authorized can insert players" ON players;
+DROP POLICY IF EXISTS "Authorized can update players" ON players;
+DROP POLICY IF EXISTS "Authorized can delete players" ON players;
 
 CREATE POLICY "Team members can view players"
   ON players FOR SELECT
@@ -123,6 +138,10 @@ DROP POLICY IF EXISTS "Team members can view matches" ON matches;
 DROP POLICY IF EXISTS "Authorized users can manage matches" ON matches;
 DROP POLICY IF EXISTS "Authorized users can update matches" ON matches;
 DROP POLICY IF EXISTS "Authorized users can delete matches" ON matches;
+-- Also drop new policies in case of re-run
+DROP POLICY IF EXISTS "Authorized can insert matches" ON matches;
+DROP POLICY IF EXISTS "Authorized can update matches" ON matches;
+DROP POLICY IF EXISTS "Authorized can delete matches" ON matches;
 
 CREATE POLICY "Team members can view matches"
   ON matches FOR SELECT
@@ -160,6 +179,7 @@ CREATE POLICY "Authorized can delete matches"
 -- QUARTERS TABLE
 -- ============================================
 DROP POLICY IF EXISTS "Users can CRUD quarters of own matches" ON quarters;
+DROP POLICY IF EXISTS "Team members can access quarters" ON quarters;
 
 CREATE POLICY "Team members can access quarters"
   ON quarters FOR ALL
@@ -179,6 +199,7 @@ CREATE POLICY "Team members can access quarters"
 -- QUARTER_RECORDS TABLE
 -- ============================================
 DROP POLICY IF EXISTS "Users can CRUD quarter_records of own matches" ON quarter_records;
+DROP POLICY IF EXISTS "Team members can access quarter_records" ON quarter_records;
 
 CREATE POLICY "Team members can access quarter_records"
   ON quarter_records FOR ALL
