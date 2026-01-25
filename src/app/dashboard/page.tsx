@@ -351,17 +351,13 @@ export default function DashboardPage() {
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold text-emerald-600">SoccerNote</h1>
-            {teams.length > 1 ? (
-              <button
-                onClick={() => setShowTeamPicker(true)}
-                className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
-              >
-                {selectedTeam?.name}
-                <ChevronDown className="w-4 h-4" />
-              </button>
-            ) : (
-              <p className="text-sm text-gray-600">{selectedTeam?.name}</p>
-            )}
+            <button
+              onClick={() => setShowTeamPicker(true)}
+              className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+            >
+              {selectedTeam?.name || '팀 선택'}
+              <ChevronDown className="w-4 h-4" />
+            </button>
           </div>
           <div className="flex items-center gap-2">
             {isCoach && (
