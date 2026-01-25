@@ -144,7 +144,7 @@ export default function DashboardPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return
 
-    const { data, error } = await supabase
+    const { data: team, error } = await supabase
       .from('teams')
       .insert({ name: teamName, user_id: user.id })
       .select()
@@ -156,9 +156,28 @@ export default function DashboardPage() {
       return
     }
 
-    toast.success('팀이 생성되었습니다!')
+    // Explicitly create team_member record (don't rely on trigger)
+    const { error: memberError } = await supabase
+      .from('team_members')
+      .upsert({
+        team_id: team.id,
+        user_id: user.id,
+        role: 'coach',
+        can_edit_players: true,
+        can_edit_matches: true,
+        can_edit_quarters: true
+      })
 
-    // Trigger automatically creates team_member record, so just reload
+    if (memberError) {
+      console.error('Team member creation error:', memberError)
+      // Team was created, but member record failed - still try to proceed
+    }
+
+    toast.success('팀이 생성되었습니다!')
+    setTeamName('')
+    setShowCreateTeam(false)
+
+    // Reload data
     await checkAuthAndLoadData()
   }
 
