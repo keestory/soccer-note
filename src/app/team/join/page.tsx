@@ -105,7 +105,8 @@ function JoinTeamContent() {
       })
 
     if (error) {
-      toast.error('팀 가입에 실패했습니다')
+      console.error('Team join error:', error)
+      toast.error(`팀 가입 실패: ${error.message}`)
       setJoining(false)
       return
     }
