@@ -206,30 +206,58 @@ export default function DashboardPage() {
 
   if (showCreateTeam) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="w-full max-w-md">
+      <div className="min-h-screen bg-gray-50 px-4 py-8">
+        <div className="max-w-lg mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">시작하기</h1>
-            <p className="text-gray-600 mt-2">팀을 만들거나 초대 코드로 가입하세요</p>
+            <h1 className="text-3xl font-bold text-emerald-600">SoccerNote</h1>
+            <p className="text-gray-600 mt-2">축구 경기 기록 앱</p>
           </div>
 
-          <form onSubmit={handleCreateTeam} className="bg-white rounded-xl shadow-lg p-8 mb-4">
-            <h2 className="font-semibold text-lg mb-4">새 팀 만들기</h2>
-            <div className="mb-6">
-              <label htmlFor="teamName" className="block text-sm font-medium text-gray-700 mb-1">
-                팀 이름
-              </label>
+          {/* 가입된 팀 목록 */}
+          {teams.length > 0 && (
+            <div className="bg-white rounded-xl shadow-lg p-6 mb-4">
+              <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                <Users className="w-5 h-5 text-emerald-600" />
+                내 팀 목록
+              </h2>
+              <div className="space-y-2">
+                {teams.map((team) => (
+                  <button
+                    key={team.id}
+                    onClick={() => selectTeam(team)}
+                    className="w-full p-4 rounded-lg bg-gray-50 hover:bg-emerald-50 text-left transition flex items-center justify-between"
+                  >
+                    <div>
+                      <p className="font-medium text-gray-900">{team.name}</p>
+                      <p className="text-sm text-gray-500">
+                        {team.role === 'coach' ? '👑 감독' : '👤 팀원'}
+                        {team.membership?.can_edit_matches && ' · 경기 편집'}
+                        {team.membership?.can_edit_players && ' · 선수 편집'}
+                      </p>
+                    </div>
+                    <ChevronDown className="w-5 h-5 text-gray-400 -rotate-90" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 새 팀 만들기 */}
+          <form onSubmit={handleCreateTeam} className="bg-white rounded-xl shadow-lg p-6 mb-4">
+            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <Plus className="w-5 h-5 text-emerald-600" />
+              새 팀 만들기
+            </h2>
+            <div className="mb-4">
               <input
-                id="teamName"
                 type="text"
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
-                placeholder="예: 우리동네 FC"
+                placeholder="팀 이름 입력"
               />
             </div>
-
             <button
               type="submit"
               className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition"
@@ -238,19 +266,31 @@ export default function DashboardPage() {
             </button>
           </form>
 
-          <div className="bg-white rounded-xl shadow-lg p-8">
-            <h2 className="font-semibold text-lg mb-4">팀에 가입하기</h2>
-            <p className="text-gray-600 text-sm mb-4">
-              초대 코드가 있다면 아래 버튼을 눌러 팀에 가입하세요
+          {/* 팀 가입하기 */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-emerald-600" />
+              팀에 가입하기
+            </h2>
+            <p className="text-gray-500 text-sm mb-4">
+              초대 코드가 있다면 아래 버튼을 눌러 다른 팀에 가입하세요
             </p>
             <Link
               href="/team/join"
               className="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition"
             >
-              <UserPlus className="w-5 h-5" />
               초대 코드로 가입
             </Link>
           </div>
+
+          {/* 로그아웃 */}
+          <button
+            onClick={handleLogout}
+            className="mt-6 w-full py-3 text-gray-500 hover:text-gray-700 flex items-center justify-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            로그아웃
+          </button>
         </div>
       </div>
     )
