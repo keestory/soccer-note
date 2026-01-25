@@ -59,7 +59,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="bg-emerald-950 text-emerald-200 py-8 text-center">
-        <p>&copy; 2024 SoccerNote. All rights reserved.</p>
+        <p>&copy; 2026 SoccerNote. All rights reserved.</p>
       </footer>
     </div>
   )
