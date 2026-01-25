@@ -216,9 +216,9 @@ export default function DashboardPage() {
             <div className="bg-white rounded-xl shadow-lg p-6 mb-4">
               <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
                 <Users className="w-5 h-5 text-emerald-600" />
-                내 팀 목록
+                내 팀 목록 ({teams.length}개)
               </h2>
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-[40vh] overflow-y-auto">
                 {teams.map((team) => (
                   <button
                     key={team.id}
@@ -303,9 +303,9 @@ export default function DashboardPage() {
       {/* Team Picker Modal */}
       {showTeamPicker && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-          <div className="bg-white rounded-xl w-full max-w-md p-4">
+          <div className="bg-white rounded-xl w-full max-w-md p-4 max-h-[80vh] flex flex-col">
             <h3 className="font-semibold text-lg mb-4">팀 선택</h3>
-            <div className="space-y-2 mb-4">
+            <div className="space-y-2 mb-4 overflow-y-auto flex-1 max-h-[50vh]">
               {teams.map((team) => (
                 <button
                   key={team.id}
