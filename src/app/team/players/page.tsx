@@ -52,7 +52,23 @@ export default function PlayersPage() {
     const savedTeamId = localStorage.getItem('selectedTeamId')
 
     if (savedTeamId) {
-      // Verify user is a member of this team
+      // First check if user OWNS this team (no RLS issues)
+      const { data: ownedTeam } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('id', savedTeamId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (ownedTeam) {
+        setTeamId(savedTeamId)
+        setCanEdit(true) // Owner has all permissions
+        await loadPlayers(savedTeamId)
+        setLoading(false)
+        return
+      }
+
+      // Then check team_members for permission
       const { data: membership } = await supabase
         .from('team_members')
         .select('*')
@@ -69,7 +85,23 @@ export default function PlayersPage() {
       }
     }
 
-    // Fallback: find first team where user is a member
+    // Fallback: find any team user OWNS
+    const { data: ownedTeams } = await supabase
+      .from('teams')
+      .select('id')
+      .eq('user_id', user.id)
+      .limit(1)
+
+    if (ownedTeams && ownedTeams.length > 0) {
+      setTeamId(ownedTeams[0].id)
+      setCanEdit(true)
+      localStorage.setItem('selectedTeamId', ownedTeams[0].id)
+      await loadPlayers(ownedTeams[0].id)
+      setLoading(false)
+      return
+    }
+
+    // Last resort: check team_members
     const { data: memberships } = await supabase
       .from('team_members')
       .select('team_id, role, can_edit_players')

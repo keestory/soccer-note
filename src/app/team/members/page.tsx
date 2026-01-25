@@ -41,7 +41,38 @@ function TeamMembersContent() {
     let teamId = teamIdParam
 
     if (!teamId) {
-      // Get first team where user is a member
+      // First check localStorage
+      const savedTeamId = localStorage.getItem('selectedTeamId')
+      if (savedTeamId) {
+        // Verify user owns or is member of this team
+        const { data: ownedTeam } = await supabase
+          .from('teams')
+          .select('id')
+          .eq('id', savedTeamId)
+          .eq('user_id', user.id)
+          .single()
+
+        if (ownedTeam) {
+          teamId = savedTeamId
+        }
+      }
+    }
+
+    if (!teamId) {
+      // Find any team user OWNS
+      const { data: ownedTeams } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1)
+
+      if (ownedTeams && ownedTeams.length > 0) {
+        teamId = ownedTeams[0].id
+      }
+    }
+
+    if (!teamId) {
+      // Last resort: check team_members
       const { data: membership } = await supabase
         .from('team_members')
         .select('team_id')
