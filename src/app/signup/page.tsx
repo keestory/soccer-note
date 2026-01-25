@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 
 export default function SignupPage() {
   const router = useRouter()
+  const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -15,6 +16,11 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!displayName.trim()) {
+      toast.error('이름/닉네임을 입력해주세요')
+      return
+    }
 
     if (password !== confirmPassword) {
       toast.error('비밀번호가 일치하지 않습니다')
@@ -30,14 +36,27 @@ export default function SignupPage() {
 
     try {
       const supabase = createClient()
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            display_name: displayName.trim()
+          }
+        }
       })
 
       if (error) {
         toast.error(error.message)
         return
+      }
+
+      // Update profile with display name
+      if (data.user) {
+        await supabase
+          .from('profiles')
+          .update({ display_name: displayName.trim() })
+          .eq('id', data.user.id)
       }
 
       toast.success('회원가입 성공! 이메일을 확인해주세요.')
@@ -60,6 +79,21 @@ export default function SignupPage() {
         </div>
 
         <form onSubmit={handleSignup} className="bg-white rounded-xl shadow-lg p-8">
+          <div className="mb-4">
+            <label htmlFor="displayName" className="block text-sm font-medium text-gray-700 mb-1">
+              이름/닉네임
+            </label>
+            <input
+              id="displayName"
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
+              placeholder="팀원들에게 보여질 이름"
+            />
+          </div>
+
           <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               이메일
