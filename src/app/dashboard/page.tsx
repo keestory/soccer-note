@@ -157,28 +157,38 @@ export default function DashboardPage() {
     }
 
     // Explicitly create team_member record (don't rely on trigger)
-    const { error: memberError } = await supabase
-      .from('team_members')
-      .upsert({
-        team_id: team.id,
-        user_id: user.id,
-        role: 'coach',
-        can_edit_players: true,
-        can_edit_matches: true,
-        can_edit_quarters: true
-      })
-
-    if (memberError) {
-      console.error('Team member creation error:', memberError)
-      // Team was created, but member record failed - still try to proceed
+    const memberData = {
+      id: crypto.randomUUID(),
+      team_id: team.id,
+      user_id: user.id,
+      role: 'coach' as const,
+      can_edit_players: true,
+      can_edit_matches: true,
+      can_edit_quarters: true,
+      joined_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     }
 
+    await supabase
+      .from('team_members')
+      .upsert(memberData)
+
     toast.success('팀이 생성되었습니다!')
+
+    // Directly set state without querying (to avoid RLS issues)
+    const newTeam: TeamWithRole = {
+      ...team,
+      role: 'coach',
+      membership: memberData as TeamMember
+    }
+
+    setTeams([newTeam])
+    setSelectedTeam(newTeam)
+    localStorage.setItem('selectedTeamId', team.id)
+    setMatches([])
     setTeamName('')
     setShowCreateTeam(false)
-
-    // Reload data
-    await checkAuthAndLoadData()
+    setLoading(false)
   }
 
   const handleLogout = async () => {
