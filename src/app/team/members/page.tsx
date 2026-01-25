@@ -4,8 +4,8 @@ import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2 } from 'lucide-react'
-import type { Team, TeamMember, Profile } from '@/types/database'
+import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle } from 'lucide-react'
+import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
 
 interface MemberWithProfile extends TeamMember {
@@ -20,6 +20,7 @@ function TeamMembersContent() {
   const [loading, setLoading] = useState(true)
   const [team, setTeam] = useState<Team | null>(null)
   const [members, setMembers] = useState<MemberWithProfile[]>([])
+  const [pendingMembers, setPendingMembers] = useState<MemberWithProfile[]>([])
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [editingMember, setEditingMember] = useState<string | null>(null)
@@ -77,6 +78,7 @@ function TeamMembersContent() {
         .from('team_members')
         .select('team_id')
         .eq('user_id', user.id)
+        .eq('status', 'approved')
         .limit(1)
         .single()
 
@@ -131,7 +133,10 @@ function TeamMembersContent() {
       .order('joined_at')
 
     if (membersData) {
-      setMembers(membersData as MemberWithProfile[])
+      const allMembers = membersData as MemberWithProfile[]
+      // Separate pending and approved members
+      setPendingMembers(allMembers.filter(m => m.status === 'pending'))
+      setMembers(allMembers.filter(m => m.status === 'approved' || !m.status))
     }
 
     setLoading(false)
@@ -145,6 +150,40 @@ function TeamMembersContent() {
     setCopied(true)
     toast.success('초대 링크가 복사되었습니다')
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const approveMember = async (member: MemberWithProfile) => {
+    const { error } = await supabase
+      .from('team_members')
+      .update({ status: 'approved' })
+      .eq('id', member.id)
+
+    if (error) {
+      toast.error('승인에 실패했습니다')
+      return
+    }
+
+    // Move from pending to approved
+    setPendingMembers(prev => prev.filter(m => m.id !== member.id))
+    setMembers(prev => [...prev, { ...member, status: 'approved' }])
+    toast.success(`${member.profile?.display_name || member.profile?.email}님의 가입을 승인했습니다`)
+  }
+
+  const rejectMember = async (member: MemberWithProfile) => {
+    if (!confirm(`${member.profile?.display_name || member.profile?.email}님의 가입 요청을 거절하시겠습니까?`)) return
+
+    const { error } = await supabase
+      .from('team_members')
+      .update({ status: 'rejected' })
+      .eq('id', member.id)
+
+    if (error) {
+      toast.error('거절에 실패했습니다')
+      return
+    }
+
+    setPendingMembers(prev => prev.filter(m => m.id !== member.id))
+    toast.success('가입 요청을 거절했습니다')
   }
 
   const updateMemberPermissions = async (memberId: string, updates: Partial<TeamMember>) => {
@@ -166,7 +205,7 @@ function TeamMembersContent() {
   }
 
   const removeMember = async (member: MemberWithProfile) => {
-    if (!confirm(`${member.profile.display_name || member.profile.email}님을 팀에서 제외하시겠습니까?`)) return
+    if (!confirm(`${member.profile?.display_name || member.profile?.email}님을 팀에서 제외하시겠습니까?`)) return
 
     const { error } = await supabase
       .from('team_members')
@@ -235,98 +274,151 @@ function TeamMembersContent() {
           </section>
         )}
 
+        {/* Pending Requests Section */}
+        {isCoach && pendingMembers.length > 0 && (
+          <section>
+            <h2 className="font-semibold mb-3 flex items-center gap-2 text-amber-600">
+              <Clock className="w-5 h-5" />
+              가입 요청 ({pendingMembers.length}명)
+            </h2>
+            <div className="bg-amber-50 border-2 border-amber-200 rounded-xl divide-y divide-amber-200">
+              {pendingMembers.map((member) => (
+                <div key={member.id} className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                        <Clock className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium">
+                          {member.profile?.display_name || member.profile?.email}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {member.profile?.email}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => approveMember(member)}
+                        className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 flex items-center gap-1 text-sm font-medium"
+                      >
+                        <CheckCircle className="w-4 h-4" />
+                        승인
+                      </button>
+                      <button
+                        onClick={() => rejectMember(member)}
+                        className="px-3 py-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 flex items-center gap-1 text-sm font-medium"
+                      >
+                        <XCircle className="w-4 h-4" />
+                        거절
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
         {/* Members List */}
         <section>
           <h2 className="font-semibold mb-3">멤버 목록 ({members.length}명)</h2>
           <div className="bg-white rounded-xl divide-y shadow-sm">
-            {members.map((member) => (
-              <div key={member.id} className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      member.role === 'coach' ? 'bg-amber-100' : 'bg-gray-100'
-                    }`}>
-                      {member.role === 'coach' ? (
-                        <Crown className="w-5 h-5 text-amber-600" />
-                      ) : (
-                        <Users className="w-5 h-5 text-gray-500" />
-                      )}
+            {members.length === 0 ? (
+              <div className="p-8 text-center text-gray-500">
+                아직 승인된 멤버가 없습니다
+              </div>
+            ) : (
+              members.map((member) => (
+                <div key={member.id} className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        member.role === 'coach' ? 'bg-amber-100' : 'bg-gray-100'
+                      }`}>
+                        {member.role === 'coach' ? (
+                          <Crown className="w-5 h-5 text-amber-600" />
+                        ) : (
+                          <Users className="w-5 h-5 text-gray-500" />
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-medium">
+                          {member.profile?.display_name || member.profile?.email}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          {member.role === 'coach' ? '감독' : '팀원'}
+                          {member.profile?.email && ` · ${member.profile.email}`}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">
-                        {member.profile?.display_name || member.profile?.email}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {member.role === 'coach' ? '감독' : '팀원'}
-                        {member.profile?.email && ` · ${member.profile.email}`}
-                      </p>
-                    </div>
+
+                    {isCoach && member.role !== 'coach' && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setEditingMember(editingMember === member.id ? null : member.id)}
+                          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
+                        >
+                          <UserCog className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => removeMember(member)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
+                      </div>
+                    )}
                   </div>
 
-                  {isCoach && member.role !== 'coach' && (
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setEditingMember(editingMember === member.id ? null : member.id)}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
-                      >
-                        <UserCog className="w-5 h-5" />
-                      </button>
-                      <button
-                        onClick={() => removeMember(member)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
+                  {/* Permission Editor */}
+                  {editingMember === member.id && (
+                    <div className="mt-4 pt-4 border-t space-y-3">
+                      <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                        <Shield className="w-4 h-4" />
+                        권한 설정
+                      </p>
+                      <div className="space-y-2">
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={member.can_edit_players}
+                            onChange={(e) =>
+                              updateMemberPermissions(member.id, { can_edit_players: e.target.checked })
+                            }
+                            className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                          />
+                          <span className="text-sm">선수 관리 (추가/수정/삭제)</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={member.can_edit_matches}
+                            onChange={(e) =>
+                              updateMemberPermissions(member.id, { can_edit_matches: e.target.checked })
+                            }
+                            className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                          />
+                          <span className="text-sm">경기 관리 (추가/수정/삭제)</span>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={member.can_edit_quarters}
+                            onChange={(e) =>
+                              updateMemberPermissions(member.id, { can_edit_quarters: e.target.checked })
+                            }
+                            className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+                          />
+                          <span className="text-sm">쿼터 기록 편집</span>
+                        </label>
+                      </div>
                     </div>
                   )}
                 </div>
-
-                {/* Permission Editor */}
-                {editingMember === member.id && (
-                  <div className="mt-4 pt-4 border-t space-y-3">
-                    <p className="text-sm font-medium text-gray-700 flex items-center gap-1">
-                      <Shield className="w-4 h-4" />
-                      권한 설정
-                    </p>
-                    <div className="space-y-2">
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={member.can_edit_players}
-                          onChange={(e) =>
-                            updateMemberPermissions(member.id, { can_edit_players: e.target.checked })
-                          }
-                          className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                        />
-                        <span className="text-sm">선수 관리 (추가/수정/삭제)</span>
-                      </label>
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={member.can_edit_matches}
-                          onChange={(e) =>
-                            updateMemberPermissions(member.id, { can_edit_matches: e.target.checked })
-                          }
-                          className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                        />
-                        <span className="text-sm">경기 관리 (추가/수정/삭제)</span>
-                      </label>
-                      <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={member.can_edit_quarters}
-                          onChange={(e) =>
-                            updateMemberPermissions(member.id, { can_edit_quarters: e.target.checked })
-                          }
-                          className="w-5 h-5 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
-                        />
-                        <span className="text-sm">쿼터 기록 편집</span>
-                      </label>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
       </main>

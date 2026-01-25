@@ -65,6 +65,7 @@ export default function DashboardPage() {
     }
 
     // 2. Then try to load teams via team_members (for teams user joined but doesn't own)
+    // Only show approved memberships
     const { data: memberships } = await supabase
       .from('team_members')
       .select(`
@@ -72,6 +73,7 @@ export default function DashboardPage() {
         team:teams (*)
       `)
       .eq('user_id', user.id)
+      .eq('status', 'approved')
 
     if (memberships && memberships.length > 0) {
       for (const m of memberships) {

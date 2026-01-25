@@ -19,12 +19,14 @@ export interface Team {
 }
 
 export type TeamRole = 'coach' | 'member';
+export type MemberStatus = 'pending' | 'approved' | 'rejected';
 
 export interface TeamMember {
   id: string;
   team_id: string;
   user_id: string;
   role: TeamRole;
+  status: MemberStatus;
   can_edit_players: boolean;
   can_edit_matches: boolean;
   can_edit_quarters: boolean;
