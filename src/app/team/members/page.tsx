@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown } from 'lucide-react'
+import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2 } from 'lucide-react'
 import type { Team, TeamMember, Profile } from '@/types/database'
 import toast from 'react-hot-toast'
 
@@ -12,7 +12,7 @@ interface MemberWithProfile extends TeamMember {
   profile: Profile
 }
 
-export default function TeamMembersPage() {
+function TeamMembersContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const teamIdParam = searchParams.get('team')
@@ -300,5 +300,17 @@ export default function TeamMembersPage() {
         </section>
       </main>
     </div>
+  )
+}
+
+export default function TeamMembersPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+      </div>
+    }>
+      <TeamMembersContent />
+    </Suspense>
   )
 }

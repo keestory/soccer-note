@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
@@ -8,7 +8,7 @@ import { Users, ArrowLeft, Loader2 } from 'lucide-react'
 import type { Team } from '@/types/database'
 import toast from 'react-hot-toast'
 
-export default function JoinTeamPage() {
+function JoinTeamContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const inviteCode = searchParams.get('code')
@@ -191,5 +191,17 @@ export default function JoinTeamPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function JoinTeamPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
+      </div>
+    }>
+      <JoinTeamContent />
+    </Suspense>
   )
 }
