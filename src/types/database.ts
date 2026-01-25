@@ -13,8 +13,25 @@ export interface Team {
   user_id: string;
   name: string;
   description: string | null;
+  invite_code: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export type TeamRole = 'coach' | 'member';
+
+export interface TeamMember {
+  id: string;
+  team_id: string;
+  user_id: string;
+  role: TeamRole;
+  can_edit_players: boolean;
+  can_edit_matches: boolean;
+  can_edit_quarters: boolean;
+  joined_at: string;
+  updated_at: string;
+  team?: Team;
+  profile?: Profile;
 }
 
 export interface Player {

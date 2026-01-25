@@ -30,15 +30,37 @@ export default function NewMatchPage() {
       return
     }
 
-    const { data: teams } = await supabase
-      .from('teams')
-      .select('id')
-      .eq('user_id', user.id)
-      .limit(1)
+    // Get selected team from localStorage
+    const savedTeamId = localStorage.getItem('selectedTeamId')
 
-    if (teams && teams.length > 0) {
-      setTeamId(teams[0].id)
+    if (savedTeamId) {
+      // Verify user has permission to create matches for this team
+      const { data: membership } = await supabase
+        .from('team_members')
+        .select('*')
+        .eq('team_id', savedTeamId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (membership && (membership.role === 'coach' || membership.can_edit_matches)) {
+        setTeamId(savedTeamId)
+        return
+      }
+    }
+
+    // Fallback: find any team where user can create matches
+    const { data: memberships } = await supabase
+      .from('team_members')
+      .select('team_id, role, can_edit_matches')
+      .eq('user_id', user.id)
+
+    const canCreateMatch = memberships?.find(m => m.role === 'coach' || m.can_edit_matches)
+
+    if (canCreateMatch) {
+      setTeamId(canCreateMatch.team_id)
+      localStorage.setItem('selectedTeamId', canCreateMatch.team_id)
     } else {
+      toast.error('경기를 생성할 권한이 없습니다')
       router.push('/dashboard')
     }
   }

@@ -28,6 +28,7 @@ export default function PlayersPage() {
   const [teamId, setTeamId] = useState<string | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
+  const [canEdit, setCanEdit] = useState(false)
 
   // Form state
   const [name, setName] = useState('')
@@ -47,20 +48,45 @@ export default function PlayersPage() {
       return
     }
 
-    // Get team
-    const { data: teams } = await supabase
-      .from('teams')
-      .select('id')
+    // Get selected team from localStorage
+    const savedTeamId = localStorage.getItem('selectedTeamId')
+
+    if (savedTeamId) {
+      // Verify user is a member of this team
+      const { data: membership } = await supabase
+        .from('team_members')
+        .select('*')
+        .eq('team_id', savedTeamId)
+        .eq('user_id', user.id)
+        .single()
+
+      if (membership) {
+        setTeamId(savedTeamId)
+        setCanEdit(membership.role === 'coach' || membership.can_edit_players)
+        await loadPlayers(savedTeamId)
+        setLoading(false)
+        return
+      }
+    }
+
+    // Fallback: find first team where user is a member
+    const { data: memberships } = await supabase
+      .from('team_members')
+      .select('team_id, role, can_edit_players')
       .eq('user_id', user.id)
       .limit(1)
 
-    if (!teams || teams.length === 0) {
+    if (memberships && memberships.length > 0) {
+      const m = memberships[0]
+      setTeamId(m.team_id)
+      setCanEdit(m.role === 'coach' || m.can_edit_players)
+      localStorage.setItem('selectedTeamId', m.team_id)
+      await loadPlayers(m.team_id)
+    } else {
       router.push('/dashboard')
       return
     }
 
-    setTeamId(teams[0].id)
-    await loadPlayers(teams[0].id)
     setLoading(false)
   }
 
@@ -210,21 +236,23 @@ export default function PlayersPage() {
             </Link>
             <h1 className="text-xl font-bold">선수 관리</h1>
           </div>
-          <button
-            onClick={() => {
-              resetForm()
-              setShowAddForm(true)
-            }}
-            className="flex items-center gap-1 px-3 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700"
-          >
-            <Plus className="w-4 h-4" />
-            선수 추가
-          </button>
+          {canEdit && (
+            <button
+              onClick={() => {
+                resetForm()
+                setShowAddForm(true)
+              }}
+              className="flex items-center gap-1 px-3 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700"
+            >
+              <Plus className="w-4 h-4" />
+              선수 추가
+            </button>
+          )}
         </div>
       </header>
 
       {/* Add/Edit Form */}
-      {(showAddForm || editingPlayer) && (
+      {canEdit && (showAddForm || editingPlayer) && (
         <div className="max-w-4xl mx-auto px-4 py-4">
           <form
             onSubmit={editingPlayer ? handleUpdatePlayer : handleAddPlayer}
@@ -325,20 +353,22 @@ export default function PlayersPage() {
                       <p className="text-sm text-gray-500">{POSITION_LABELS[player.default_position]}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => startEditing(player)}
-                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeletePlayer(player.id)}
-                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
+                  {canEdit && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => startEditing(player)}
+                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
+                      >
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeletePlayer(player.id)}
+                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Player Stats */}
