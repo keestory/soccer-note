@@ -9,7 +9,7 @@ import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
 
 interface MemberWithProfile extends TeamMember {
-  profile: Profile | null
+  profile: Profile | undefined
 }
 
 function TeamMembersContent() {
@@ -152,7 +152,7 @@ function TeamMembersContent() {
 
       const allMembers: MemberWithProfile[] = membersData.map(m => ({
         ...m,
-        profile: profileMap.get(m.user_id) || null
+        profile: profileMap.get(m.user_id)
       }))
 
       const pending = allMembers.filter(m => m.status === 'pending')
