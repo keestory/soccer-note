@@ -4,7 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle } from 'lucide-react'
+import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle } from 'lucide-react'
 import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
 
@@ -22,8 +22,13 @@ function TeamMembersContent() {
   const [members, setMembers] = useState<MemberWithProfile[]>([])
   const [pendingMembers, setPendingMembers] = useState<MemberWithProfile[]>([])
   const [currentUserRole, setCurrentUserRole] = useState<string | null>(null)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [isOwner, setIsOwner] = useState(false)
   const [copied, setCopied] = useState(false)
   const [editingMember, setEditingMember] = useState<string | null>(null)
+  const [showDisbandModal, setShowDisbandModal] = useState(false)
+  const [disbandStep, setDisbandStep] = useState<'initial' | 'select-coach' | 'confirm-delete'>('initial')
+  const [selectedNewCoach, setSelectedNewCoach] = useState<string | null>(null)
 
   const supabase = createClient()
 
@@ -106,12 +111,14 @@ function TeamMembersContent() {
     }
 
     setTeam(teamData)
+    setCurrentUserId(user.id)
 
     // Check if user is team owner
-    const isOwner = teamData.user_id === user.id
+    const ownerCheck = teamData.user_id === user.id
+    setIsOwner(ownerCheck)
 
     // If owner, set as coach immediately
-    if (isOwner) {
+    if (ownerCheck) {
       setCurrentUserRole('coach')
     } else {
       // Try to get user's membership role
@@ -193,11 +200,11 @@ function TeamMembersContent() {
     // Move from pending to approved
     setPendingMembers(prev => prev.filter(m => m.id !== member.id))
     setMembers(prev => [...prev, { ...member, status: 'approved' }])
-    toast.success(`${member.profile?.display_name || member.profile?.email}님의 가입을 승인했습니다`)
+    toast.success(`${member.profile?.display_name || member.profile?.email || '새 멤버'}님의 가입을 승인했습니다`)
   }
 
   const rejectMember = async (member: MemberWithProfile) => {
-    if (!confirm(`${member.profile?.display_name || member.profile?.email}님의 가입 요청을 거절하시겠습니까?`)) return
+    if (!confirm(`${member.profile?.display_name || member.profile?.email || '이 사용자'}님의 가입 요청을 거절하시겠습니까?`)) return
 
     const { error } = await supabase
       .from('team_members')
@@ -232,7 +239,7 @@ function TeamMembersContent() {
   }
 
   const removeMember = async (member: MemberWithProfile) => {
-    if (!confirm(`${member.profile?.display_name || member.profile?.email}님을 팀에서 제외하시겠습니까?`)) return
+    if (!confirm(`${member.profile?.display_name || member.profile?.email || '이 멤버'}님을 팀에서 제외하시겠습니까?`)) return
 
     const { error } = await supabase
       .from('team_members')
@@ -246,6 +253,109 @@ function TeamMembersContent() {
 
     setMembers(prev => prev.filter(m => m.id !== member.id))
     toast.success('멤버가 제거되었습니다')
+  }
+
+  const leaveTeam = async () => {
+    if (!team || !currentUserId) return
+
+    if (isOwner) {
+      toast.error('감독은 탈퇴할 수 없습니다. 팀 해체를 이용해주세요.')
+      return
+    }
+
+    if (!confirm(`정말 "${team.name}" 팀에서 탈퇴하시겠습니까?`)) return
+
+    // Soft delete - mark as removed instead of actual delete
+    const { error } = await supabase
+      .from('team_members')
+      .update({ is_removed: true })
+      .eq('team_id', team.id)
+      .eq('user_id', currentUserId)
+
+    if (error) {
+      toast.error('팀 탈퇴에 실패했습니다')
+      return
+    }
+
+    // Clear localStorage
+    localStorage.removeItem('selectedTeamId')
+    toast.success('팀에서 탈퇴했습니다')
+    router.push('/dashboard')
+  }
+
+  const openDisbandModal = () => {
+    setShowDisbandModal(true)
+    setDisbandStep('initial')
+    setSelectedNewCoach(null)
+  }
+
+  const closeDisbandModal = () => {
+    setShowDisbandModal(false)
+    setDisbandStep('initial')
+    setSelectedNewCoach(null)
+  }
+
+  const transferOwnership = async () => {
+    if (!team || !selectedNewCoach) return
+
+    // 1. Update team owner
+    const { error: teamError } = await supabase
+      .from('teams')
+      .update({ user_id: selectedNewCoach })
+      .eq('id', team.id)
+
+    if (teamError) {
+      toast.error('감독 위임에 실패했습니다')
+      return
+    }
+
+    // 2. Update new coach's role to coach
+    await supabase
+      .from('team_members')
+      .update({ role: 'coach' })
+      .eq('team_id', team.id)
+      .eq('user_id', selectedNewCoach)
+
+    // 3. Soft delete current user's membership (leaving team)
+    if (currentUserId) {
+      await supabase
+        .from('team_members')
+        .update({ is_removed: true })
+        .eq('team_id', team.id)
+        .eq('user_id', currentUserId)
+    }
+
+    // Clear localStorage
+    localStorage.removeItem('selectedTeamId')
+    toast.success('새 감독에게 팀을 인계했습니다')
+    router.push('/dashboard')
+  }
+
+  const disbandTeam = async () => {
+    if (!team || !isOwner) return
+
+    // Soft delete - mark team and all related data as removed
+    // 1. Mark all team_members as removed
+    await supabase
+      .from('team_members')
+      .update({ is_removed: true })
+      .eq('team_id', team.id)
+
+    // 2. Mark team as removed
+    const { error } = await supabase
+      .from('teams')
+      .update({ is_removed: true })
+      .eq('id', team.id)
+
+    if (error) {
+      toast.error('팀 해체에 실패했습니다')
+      return
+    }
+
+    // Clear localStorage
+    localStorage.removeItem('selectedTeamId')
+    toast.success('팀이 해체되었습니다')
+    router.push('/dashboard')
   }
 
   const isCoach = currentUserRole === 'coach'
@@ -318,10 +428,10 @@ function TeamMembersContent() {
                       </div>
                       <div>
                         <p className="font-medium">
-                          {member.profile?.display_name || member.profile?.email}
+                          {member.profile?.display_name || member.profile?.email || '이름 없음'}
                         </p>
                         <p className="text-sm text-gray-500">
-                          {member.profile?.email}
+                          {member.profile?.email || member.user_id.slice(0, 8) + '...'}
                         </p>
                       </div>
                     </div>
@@ -372,11 +482,11 @@ function TeamMembersContent() {
                       </div>
                       <div>
                         <p className="font-medium">
-                          {member.profile?.display_name || member.profile?.email}
+                          {member.profile?.display_name || member.profile?.email || '이름 없음'}
                         </p>
                         <p className="text-sm text-gray-500">
                           {member.role === 'coach' ? '감독' : '팀원'}
-                          {member.profile?.email && ` · ${member.profile.email}`}
+                          {member.profile?.email ? ` · ${member.profile.email}` : ''}
                         </p>
                       </div>
                     </div>
@@ -448,7 +558,180 @@ function TeamMembersContent() {
             )}
           </div>
         </section>
+
+        {/* Team Management Section */}
+        <section className="mt-8">
+          <h2 className="font-semibold mb-3 flex items-center gap-2 text-gray-600">
+            <AlertTriangle className="w-5 h-5" />
+            팀 관리
+          </h2>
+          <div className="bg-white rounded-xl shadow-sm divide-y">
+            {/* Leave Team - for non-owners */}
+            {!isOwner && (
+              <div className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-gray-900">팀 탈퇴</p>
+                    <p className="text-sm text-gray-500">이 팀에서 나갑니다</p>
+                  </div>
+                  <button
+                    onClick={leaveTeam}
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm font-medium"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    팀 탈퇴
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Disband Team - only for owner */}
+            {isOwner && (
+              <div className="p-4 bg-red-50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-red-700">팀 해체</p>
+                    <p className="text-sm text-red-600">
+                      다른 멤버에게 감독을 위임하거나 팀을 해체합니다
+                    </p>
+                  </div>
+                  <button
+                    onClick={openDisbandModal}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 text-sm font-medium"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    팀 해체
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
       </main>
+
+      {/* Disband Modal */}
+      {showDisbandModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+          <div className="bg-white rounded-xl w-full max-w-md p-6">
+            {disbandStep === 'initial' && (
+              <>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">팀 해체</h3>
+                <p className="text-gray-600 mb-6">
+                  팀원 중 새로운 감독을 선택하시겠습니까?
+                </p>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => setDisbandStep('select-coach')}
+                    disabled={members.filter(m => m.user_id !== currentUserId).length === 0}
+                    className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    예, 새 감독 선택하기
+                  </button>
+                  <button
+                    onClick={() => setDisbandStep('confirm-delete')}
+                    className="w-full py-3 bg-red-100 text-red-700 rounded-lg font-medium hover:bg-red-200"
+                  >
+                    아니오, 팀 해체하기
+                  </button>
+                  <button
+                    onClick={closeDisbandModal}
+                    className="w-full py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200"
+                  >
+                    취소
+                  </button>
+                </div>
+                {members.filter(m => m.user_id !== currentUserId).length === 0 && (
+                  <p className="text-sm text-amber-600 mt-3">
+                    ⚠️ 팀에 다른 멤버가 없어 감독 위임이 불가능합니다
+                  </p>
+                )}
+              </>
+            )}
+
+            {disbandStep === 'select-coach' && (
+              <>
+                <h3 className="text-lg font-bold text-gray-900 mb-4">새 감독 선택</h3>
+                <p className="text-gray-600 mb-4">
+                  감독 권한을 넘겨받을 팀원을 선택해주세요
+                </p>
+                <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
+                  {members
+                    .filter(m => m.user_id !== currentUserId)
+                    .map((member) => (
+                      <button
+                        key={member.id}
+                        onClick={() => setSelectedNewCoach(member.user_id)}
+                        className={`w-full p-3 rounded-lg text-left flex items-center gap-3 transition ${
+                          selectedNewCoach === member.user_id
+                            ? 'bg-emerald-100 border-2 border-emerald-500'
+                            : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
+                        }`}
+                      >
+                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                          <Users className="w-5 h-5 text-gray-500" />
+                        </div>
+                        <div>
+                          <p className="font-medium">
+                            {member.profile?.display_name || member.profile?.email || '이름 없음'}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {member.profile?.email || ''}
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                </div>
+                <div className="space-y-3">
+                  <button
+                    onClick={transferOwnership}
+                    disabled={!selectedNewCoach}
+                    className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    감독 위임하기
+                  </button>
+                  <button
+                    onClick={() => setDisbandStep('initial')}
+                    className="w-full py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200"
+                  >
+                    뒤로
+                  </button>
+                </div>
+              </>
+            )}
+
+            {disbandStep === 'confirm-delete' && (
+              <>
+                <div className="text-center mb-6">
+                  <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <AlertTriangle className="w-8 h-8 text-red-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">팀 해체 확인</h3>
+                  <p className="text-gray-600">
+                    정말로 &ldquo;{team?.name}&rdquo; 팀을 해체하시겠습니까?
+                  </p>
+                  <p className="text-red-600 text-sm mt-2">
+                    ⚠️ 모든 경기 기록과 데이터가 삭제됩니다
+                  </p>
+                </div>
+                <div className="space-y-3">
+                  <button
+                    onClick={disbandTeam}
+                    className="w-full py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700"
+                  >
+                    네, 팀 해체하기
+                  </button>
+                  <button
+                    onClick={() => setDisbandStep('initial')}
+                    className="w-full py-3 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200"
+                  >
+                    아니오, 돌아가기
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

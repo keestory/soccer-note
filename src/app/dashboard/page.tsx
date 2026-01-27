@@ -39,10 +39,12 @@ export default function DashboardPage() {
     const teamsWithRole: TeamWithRole[] = []
 
     // 1. First, load teams where user is the OWNER (always works, no RLS issues)
+    // Filter out removed teams
     const { data: ownedTeams } = await supabase
       .from('teams')
       .select('*')
       .eq('user_id', user.id)
+      .or('is_removed.is.null,is_removed.eq.false')
 
     if (ownedTeams && ownedTeams.length > 0) {
       for (const team of ownedTeams) {
@@ -65,7 +67,7 @@ export default function DashboardPage() {
     }
 
     // 2. Then try to load teams via team_members (for teams user joined but doesn't own)
-    // Only show approved memberships
+    // Only show approved memberships that are not removed
     const { data: memberships } = await supabase
       .from('team_members')
       .select(`
@@ -74,11 +76,13 @@ export default function DashboardPage() {
       `)
       .eq('user_id', user.id)
       .eq('status', 'approved')
+      .or('is_removed.is.null,is_removed.eq.false')
 
     if (memberships && memberships.length > 0) {
       for (const m of memberships) {
         // Skip if we already have this team (from owned teams)
-        if (!teamsWithRole.find(t => t.id === m.team_id)) {
+        // Also skip if team is removed
+        if (!teamsWithRole.find(t => t.id === m.team_id) && m.team && !m.team.is_removed) {
           teamsWithRole.push({
             ...m.team,
             role: m.role as 'coach' | 'member',

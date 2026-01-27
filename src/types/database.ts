@@ -14,6 +14,7 @@ export interface Team {
   name: string;
   description: string | null;
   invite_code: string | null;
+  is_removed?: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -30,6 +31,7 @@ export interface TeamMember {
   can_edit_players: boolean;
   can_edit_matches: boolean;
   can_edit_quarters: boolean;
+  is_removed?: boolean;
   joined_at: string;
   updated_at: string;
   team?: Team;
