@@ -9,6 +9,83 @@ import type { Player, Quarter, QuarterRecord, PositionType } from '@/types/datab
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
 
+// Formation presets: positions as [x%, y%] for each role
+// Field is horizontal: left = our goal, right = opponent goal
+const FORMATIONS: Record<string, { label: string; positions: Record<string, [number, number][]> }> = {
+  '4-4-2': {
+    label: '4-4-2',
+    positions: {
+      GK: [[8, 50]],
+      DF: [[22, 15], [22, 38], [22, 62], [22, 85]],
+      MF: [[45, 15], [45, 38], [45, 62], [45, 85]],
+      FW: [[72, 35], [72, 65]],
+    },
+  },
+  '4-3-3': {
+    label: '4-3-3',
+    positions: {
+      GK: [[8, 50]],
+      DF: [[22, 15], [22, 38], [22, 62], [22, 85]],
+      MF: [[45, 25], [45, 50], [45, 75]],
+      FW: [[72, 20], [72, 50], [72, 80]],
+    },
+  },
+  '4-2-3-1': {
+    label: '4-2-3-1',
+    positions: {
+      GK: [[8, 50]],
+      DF: [[22, 15], [22, 38], [22, 62], [22, 85]],
+      MF: [[38, 35], [38, 65], [55, 20], [55, 50], [55, 80]],
+      FW: [[75, 50]],
+    },
+  },
+  '3-5-2': {
+    label: '3-5-2',
+    positions: {
+      GK: [[8, 50]],
+      DF: [[22, 25], [22, 50], [22, 75]],
+      MF: [[42, 10], [42, 30], [42, 50], [42, 70], [42, 90]],
+      FW: [[72, 35], [72, 65]],
+    },
+  },
+  '3-4-3': {
+    label: '3-4-3',
+    positions: {
+      GK: [[8, 50]],
+      DF: [[22, 25], [22, 50], [22, 75]],
+      MF: [[45, 15], [45, 38], [45, 62], [45, 85]],
+      FW: [[72, 20], [72, 50], [72, 80]],
+    },
+  },
+  '4-4-1-1': {
+    label: '4-4-1-1',
+    positions: {
+      GK: [[8, 50]],
+      DF: [[22, 15], [22, 38], [22, 62], [22, 85]],
+      MF: [[42, 15], [42, 38], [42, 62], [42, 85]],
+      FW: [[58, 50], [75, 50]],
+    },
+  },
+  '4-5-1': {
+    label: '4-5-1',
+    positions: {
+      GK: [[8, 50]],
+      DF: [[22, 15], [22, 38], [22, 62], [22, 85]],
+      MF: [[42, 10], [42, 30], [42, 50], [42, 70], [42, 90]],
+      FW: [[72, 50]],
+    },
+  },
+  '5-3-2': {
+    label: '5-3-2',
+    positions: {
+      GK: [[8, 50]],
+      DF: [[22, 10], [22, 30], [22, 50], [22, 70], [22, 90]],
+      MF: [[45, 25], [45, 50], [45, 75]],
+      FW: [[72, 35], [72, 65]],
+    },
+  },
+}
+
 interface FieldPlayer {
   id: string
   playerId: string
@@ -226,6 +303,57 @@ export default function QuarterEditPage() {
     setFieldPlayers([...fieldPlayers, newFieldPlayer])
     setAvailablePlayers(availablePlayers.filter(p => p.id !== player.id))
     setShowPlayerPicker(false)
+  }
+
+  const applyFormation = (formationKey: string) => {
+    if (fieldPlayers.length === 0) {
+      toast.error('먼저 선수를 추가해주세요')
+      return
+    }
+
+    const formation = FORMATIONS[formationKey]
+    if (!formation) return
+
+    // Group field players by position type
+    const grouped: Record<string, FieldPlayer[]> = { GK: [], DF: [], MF: [], FW: [] }
+    fieldPlayers.forEach(fp => {
+      grouped[fp.positionType].push(fp)
+    })
+
+    const updated = fieldPlayers.map(fp => {
+      const posGroup = grouped[fp.positionType]
+      const indexInGroup = posGroup.indexOf(fp)
+      const formationSlots = formation.positions[fp.positionType] || []
+
+      if (indexInGroup < formationSlots.length) {
+        return {
+          ...fp,
+          positionX: formationSlots[indexInGroup][0],
+          positionY: formationSlots[indexInGroup][1],
+        }
+      }
+
+      // If more players than slots, spread them evenly
+      const totalSlots = formationSlots.length
+      if (totalSlots > 0) {
+        const lastSlot = formationSlots[totalSlots - 1]
+        const offset = (indexInGroup - totalSlots + 1) * 8
+        return {
+          ...fp,
+          positionX: Math.min(90, lastSlot[0] + offset),
+          positionY: Math.min(90, lastSlot[1] + offset),
+        }
+      }
+
+      return fp
+    })
+
+    setFieldPlayers(updated)
+    if (selectedPlayer) {
+      const updatedSelected = updated.find(fp => fp.id === selectedPlayer.id)
+      if (updatedSelected) setSelectedPlayer(updatedSelected)
+    }
+    toast.success(`${formation.label} 포메이션 적용`)
   }
 
   const removePlayerFromField = (fieldPlayer: FieldPlayer) => {
@@ -467,15 +595,32 @@ export default function QuarterEditPage() {
         <section>
           <div className="flex justify-between items-center mb-3">
             <h2 className="font-semibold">포메이션 배치</h2>
-            {availablePlayers.length > 0 && (
-              <button
-                onClick={() => setShowPlayerPicker(!showPlayerPicker)}
-                className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium"
+            <div className="flex items-center gap-2">
+              <select
+                onChange={(e) => {
+                  if (e.target.value) {
+                    applyFormation(e.target.value)
+                    e.target.value = ''
+                  }
+                }}
+                defaultValue=""
+                className="px-2 py-1.5 border rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-emerald-500 outline-none"
               >
-                <Plus className="w-4 h-4" />
-                선수 추가
-              </button>
-            )}
+                <option value="" disabled>포메이션</option>
+                {Object.entries(FORMATIONS).map(([key, f]) => (
+                  <option key={key} value={key}>{f.label}</option>
+                ))}
+              </select>
+              {availablePlayers.length > 0 && (
+                <button
+                  onClick={() => setShowPlayerPicker(!showPlayerPicker)}
+                  className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium"
+                >
+                  <Plus className="w-4 h-4" />
+                  선수 추가
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Player Picker */}
