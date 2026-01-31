@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Star, Edit2, Trash2 } from 'lucide-react'
-import type { Match, Player, Quarter } from '@/types/database'
+import { ArrowLeft, Star, Edit2, Trash2, Plus, X, Users } from 'lucide-react'
+import type { Match, Player, Quarter, MatchAttendee } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import { formatDate, calculateMVP, getPlayerStatsFromMatch, formatRating } from '@/lib/utils'
 import toast from 'react-hot-toast'
@@ -21,6 +21,10 @@ export default function MatchDetailPage() {
   const [editingQuarterScore, setEditingQuarterScore] = useState<number | null>(null)
   const [qHome, setQHome] = useState(0)
   const [qAway, setQAway] = useState(0)
+  const [attendees, setAttendees] = useState<MatchAttendee[]>([])
+  const [allPlayers, setAllPlayers] = useState<Player[]>([])
+  const [showAttendeePicker, setShowAttendeePicker] = useState(false)
+  const [selectedAttendees, setSelectedAttendees] = useState<Set<string>>(new Set())
 
   const supabase = createClient()
 
@@ -54,6 +58,28 @@ export default function MatchDetailPage() {
     data.quarters = data.quarters?.sort((a: Quarter, b: Quarter) => a.quarter_number - b.quarter_number)
 
     setMatch(data)
+
+    // Load attendees
+    const { data: attendeesData } = await supabase
+      .from('match_attendees')
+      .select('*, player:players(*)')
+      .eq('match_id', matchId)
+
+    if (attendeesData) {
+      setAttendees(attendeesData)
+    }
+
+    // Load all team players for picker
+    const { data: playersData } = await supabase
+      .from('players')
+      .select('*')
+      .eq('team_id', data.team_id)
+      .order('name')
+
+    if (playersData) {
+      setAllPlayers(playersData)
+    }
+
     setLoading(false)
   }
 
@@ -118,6 +144,63 @@ export default function MatchDetailPage() {
     setMatch(prev => prev ? { ...prev, home_score: newTotal.home, away_score: newTotal.away } : null)
     setEditingQuarterScore(null)
     toast.success('점수가 저장되었습니다')
+  }
+
+  const openAttendeePicker = () => {
+    // Pre-select already attending players
+    setSelectedAttendees(new Set(attendees.map(a => a.player_id)))
+    setShowAttendeePicker(true)
+  }
+
+  const toggleAttendee = (playerId: string) => {
+    setSelectedAttendees(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(playerId)) {
+        newSet.delete(playerId)
+      } else {
+        newSet.add(playerId)
+      }
+      return newSet
+    })
+  }
+
+  const saveAttendees = async () => {
+    const currentIds = new Set(attendees.map(a => a.player_id))
+    const toAdd = Array.from(selectedAttendees).filter(id => !currentIds.has(id))
+    const toRemove = attendees.filter(a => !selectedAttendees.has(a.player_id))
+
+    // Add new attendees
+    if (toAdd.length > 0) {
+      const { error } = await supabase
+        .from('match_attendees')
+        .insert(toAdd.map(player_id => ({ match_id: matchId, player_id })))
+      if (error) {
+        toast.error('참석 선수 저장에 실패했습니다')
+        return
+      }
+    }
+
+    // Remove deselected attendees
+    if (toRemove.length > 0) {
+      const { error } = await supabase
+        .from('match_attendees')
+        .delete()
+        .in('id', toRemove.map(a => a.id))
+      if (error) {
+        toast.error('참석 선수 삭제에 실패했습니다')
+        return
+      }
+    }
+
+    // Reload attendees
+    const { data } = await supabase
+      .from('match_attendees')
+      .select('*, player:players(*)')
+      .eq('match_id', matchId)
+
+    if (data) setAttendees(data)
+    setShowAttendeePicker(false)
+    toast.success('참석 선수가 저장되었습니다')
   }
 
   const handleDeleteMatch = async () => {
@@ -215,6 +298,96 @@ export default function MatchDetailPage() {
               </p>
             </div>
           </section>
+        )}
+
+        {/* Attendees Section */}
+        <section className="bg-white rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Users className="w-4 h-4 text-gray-500" />
+              참석 선수 ({attendees.length}명)
+            </h3>
+            <button
+              onClick={openAttendeePicker}
+              className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium hover:bg-emerald-200"
+            >
+              <Plus className="w-4 h-4" />
+              편집
+            </button>
+          </div>
+          {attendees.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {attendees.map(a => (
+                <span
+                  key={a.id}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-white"
+                  style={{ backgroundColor: POSITION_COLORS[a.player?.default_position || 'MF'] }}
+                >
+                  {a.player?.number != null && <span className="text-white/80 text-xs">#{a.player.number}</span>}
+                  {a.player?.name}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400">참석한 선수를 추가해주세요</p>
+          )}
+        </section>
+
+        {/* Attendee Picker Modal */}
+        {showAttendeePicker && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+            <div className="bg-white rounded-xl w-full max-w-md p-4 max-h-[80vh] flex flex-col">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-lg">참석 선수 선택</h3>
+                <button onClick={() => setShowAttendeePicker(false)} className="p-1 hover:bg-gray-100 rounded">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="overflow-y-auto flex-1 space-y-4 mb-4">
+                {(['GK', 'DF', 'MF', 'FW'] as const).map(pos => {
+                  const posPlayers = allPlayers.filter(p => p.default_position === pos)
+                  if (posPlayers.length === 0) return null
+                  return (
+                    <div key={pos}>
+                      <p className="text-xs font-semibold text-gray-500 mb-2">{POSITION_LABELS[pos]}</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {posPlayers.map(p => {
+                          const isSelected = selectedAttendees.has(p.id)
+                          return (
+                            <button
+                              key={p.id}
+                              onClick={() => toggleAttendee(p.id)}
+                              className={`flex flex-col items-center p-2 rounded-lg border-2 transition ${
+                                isSelected
+                                  ? 'border-emerald-500 bg-emerald-50'
+                                  : 'border-gray-200 hover:border-gray-300'
+                              }`}
+                            >
+                              <div
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                                style={{ backgroundColor: POSITION_COLORS[pos] }}
+                              >
+                                {p.number || '?'}
+                              </div>
+                              <span className="text-xs mt-1 text-gray-700 truncate w-full text-center">{p.name}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <button
+                onClick={saveAttendees}
+                className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700"
+              >
+                {selectedAttendees.size}명 저장
+              </button>
+            </div>
+          </div>
         )}
 
         {/* Quarter Tabs */}

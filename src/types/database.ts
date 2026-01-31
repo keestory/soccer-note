@@ -48,6 +48,14 @@ export interface Player {
   updated_at: string;
 }
 
+export interface MatchAttendee {
+  id: string;
+  match_id: string;
+  player_id: string;
+  created_at: string;
+  player?: Player;
+}
+
 export interface Match {
   id: string;
   team_id: string;
@@ -60,6 +68,7 @@ export interface Match {
   created_at: string;
   updated_at: string;
   quarters?: Quarter[];
+  match_attendees?: MatchAttendee[];
 }
 
 export interface Quarter {
