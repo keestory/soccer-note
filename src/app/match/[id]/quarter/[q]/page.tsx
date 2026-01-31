@@ -761,19 +761,20 @@ export default function QuarterEditPage() {
               </div>
               <div>
                 <label className="block text-xs text-gray-500 mb-1">기여도</label>
-                <input
-                  type="number"
-                  min={0}
-                  max={10}
-                  step={0.1}
-                  value={selectedPlayer.contribution}
-                  onChange={(e) =>
+                <button
+                  onClick={() =>
                     updateFieldPlayer(selectedPlayer.id, {
-                      contribution: parseFloat(e.target.value) || 0,
+                      contribution: selectedPlayer.contribution > 0 ? 0 : 1,
                     })
                   }
-                  className="w-full px-3 py-2 border rounded-lg text-center"
-                />
+                  className={`w-full py-2 border rounded-lg flex items-center justify-center ${
+                    selectedPlayer.contribution > 0
+                      ? 'bg-emerald-100 border-emerald-500 text-emerald-700'
+                      : 'bg-gray-50 text-gray-400'
+                  }`}
+                >
+                  <Check className="w-5 h-5" />
+                </button>
               </div>
             </div>
 
