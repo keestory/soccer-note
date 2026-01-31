@@ -363,6 +363,12 @@ export default function DashboardPage() {
               >
                 닫기
               </button>
+              <button
+                onClick={() => { setShowTeamPicker(false); setShowCreateTeam(true) }}
+                className="flex-1 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-center"
+              >
+                + 팀 만들기
+              </button>
               <Link
                 href="/team/join"
                 className="flex-1 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 text-center"
