@@ -445,6 +445,37 @@ export default function DashboardPage() {
           </Link>
         )}
 
+        {/* Team Stats */}
+        {matches.length > 0 && (() => {
+          const totalGames = matches.length
+          const wins = matches.filter(m => m.home_score > m.away_score).length
+          const losses = matches.filter(m => m.home_score < m.away_score).length
+          const draws = matches.filter(m => m.home_score === m.away_score).length
+          return (
+            <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
+              <h2 className="text-sm font-semibold text-gray-500 mb-3">팀 전적</h2>
+              <div className="grid grid-cols-4 gap-2 text-center">
+                <div>
+                  <p className="text-2xl font-bold text-gray-900">{totalGames}</p>
+                  <p className="text-xs text-gray-500">총 경기</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-emerald-600">{wins}</p>
+                  <p className="text-xs text-gray-500">승</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-red-500">{losses}</p>
+                  <p className="text-xs text-gray-500">패</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-gray-400">{draws}</p>
+                  <p className="text-xs text-gray-500">무</p>
+                </div>
+              </div>
+            </div>
+          )
+        })()}
+
         {/* Recent Matches */}
         <section>
           <h2 className="text-lg font-semibold text-gray-900 mb-4">최근 경기</h2>
