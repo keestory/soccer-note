@@ -34,7 +34,7 @@ const FEATURES = [
     icon: <ArrowLeftRight className="w-6 h-6" />,
     title: '선수 교체 기록',
     description: '쿼터 내 교체 시점과 IN/OUT 선수를 기록하세요. 필드 위에 교체 마커가 표시되어 한눈에 파악할 수 있습니다.',
-    image: '/screenshots/substitution.png',
+    image: '/screenshots/substitution_01.png',
     color: 'from-purple-500 to-purple-600',
   },
   {
