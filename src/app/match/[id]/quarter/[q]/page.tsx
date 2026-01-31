@@ -42,6 +42,7 @@ export default function QuarterEditPage() {
   const [showPlayerPicker, setShowPlayerPicker] = useState(false)
   const [selectedPickerPlayers, setSelectedPickerPlayers] = useState<Set<string>>(new Set())
   const [uploadingMedia, setUploadingMedia] = useState(false)
+  const [savingPlayer, setSavingPlayer] = useState(false)
 
   const fieldRef = useRef<HTMLDivElement>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
@@ -365,12 +366,69 @@ export default function QuarterEditPage() {
         if (error) throw error
       }
 
-      toast.success('저장되었습니다')
-      router.push(`/match/${matchId}`)
+      // Reload data to get server-generated IDs
+      await loadData()
+      toast.success('쿼터 전체 저장 완료')
     } catch (error) {
       toast.error('저장에 실패했습니다')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleSavePlayer = async (fp: FieldPlayer) => {
+    if (!quarter) return
+
+    setSavingPlayer(true)
+
+    try {
+      const record = {
+        quarter_id: quarter.id,
+        player_id: fp.playerId,
+        position_type: fp.positionType,
+        position_x: fp.positionX,
+        position_y: fp.positionY,
+        rating: fp.rating,
+        goals: fp.goals,
+        assists: fp.assists,
+        clean_sheet: fp.cleanSheet,
+        contribution: fp.contribution,
+        praise_text: fp.praiseText || null,
+        improvement_text: fp.improvementText || null,
+        highlight_text: fp.highlightText || null,
+        media_urls: fp.mediaUrls.length > 0 ? fp.mediaUrls : null,
+      }
+
+      const isNew = fp.id.startsWith('new-')
+
+      if (isNew) {
+        const { data, error } = await supabase
+          .from('quarter_records')
+          .insert(record)
+          .select()
+          .single()
+
+        if (error) throw error
+
+        // Update local state with real ID
+        setFieldPlayers(prev =>
+          prev.map(p => p.id === fp.id ? { ...p, id: data.id } : p)
+        )
+        setSelectedPlayer(prev => prev?.id === fp.id ? { ...prev, id: data.id } : prev)
+      } else {
+        const { error } = await supabase
+          .from('quarter_records')
+          .update(record)
+          .eq('id', fp.id)
+
+        if (error) throw error
+      }
+
+      toast.success(`${fp.player.name} 저장 완료`)
+    } catch (error) {
+      toast.error('선수 저장에 실패했습니다')
+    } finally {
+      setSavingPlayer(false)
     }
   }
 
@@ -826,6 +884,16 @@ export default function QuarterEditPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
                 />
               </div>
+
+              {/* Per-player save button */}
+              <button
+                onClick={() => handleSavePlayer(selectedPlayer)}
+                disabled={savingPlayer}
+                className="w-full mt-4 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                {savingPlayer ? '저장 중...' : `${selectedPlayer.player.name} 저장`}
+              </button>
             </div>
           </section>
         )}
