@@ -475,6 +475,15 @@ export default function DashboardPage() {
                           <span className="text-gray-400 mx-1">:</span>
                           <span className="text-gray-600">{match.away_score}</span>
                         </p>
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          match.home_score > match.away_score
+                            ? 'bg-emerald-100 text-emerald-700'
+                            : match.home_score < match.away_score
+                              ? 'bg-red-100 text-red-700'
+                              : 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {match.home_score > match.away_score ? '승' : match.home_score < match.away_score ? '패' : '무'}
+                        </span>
                       </div>
                     </div>
                     {mvp && (
