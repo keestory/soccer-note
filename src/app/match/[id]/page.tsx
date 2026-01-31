@@ -243,21 +243,27 @@ export default function MatchDetailPage() {
                   <h3 className="font-semibold">{activeQuarter}쿼터 기록</h3>
                   {editingQuarterScore === activeQuarter ? (
                     <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        min={0}
-                        value={qHome}
-                        onChange={(e) => setQHome(parseInt(e.target.value) || 0)}
-                        className="w-12 text-center border rounded py-1 text-sm"
-                      />
-                      <span className="text-gray-400">:</span>
-                      <input
-                        type="number"
-                        min={0}
-                        value={qAway}
-                        onChange={(e) => setQAway(parseInt(e.target.value) || 0)}
-                        className="w-12 text-center border rounded py-1 text-sm"
-                      />
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] text-gray-400 mb-0.5">우리팀</span>
+                        <input
+                          type="number"
+                          min={0}
+                          value={qHome}
+                          onChange={(e) => setQHome(parseInt(e.target.value) || 0)}
+                          className="w-12 text-center border rounded py-1 text-sm"
+                        />
+                      </div>
+                      <span className="text-gray-400 mt-3">:</span>
+                      <div className="flex flex-col items-center">
+                        <span className="text-[10px] text-gray-400 mb-0.5">{match.opponent}</span>
+                        <input
+                          type="number"
+                          min={0}
+                          value={qAway}
+                          onChange={(e) => setQAway(parseInt(e.target.value) || 0)}
+                          className="w-12 text-center border rounded py-1 text-sm"
+                        />
+                      </div>
                       <button
                         onClick={handleSaveQuarterScore}
                         className="px-2 py-1 bg-emerald-600 text-white rounded text-xs"
@@ -276,7 +282,7 @@ export default function MatchDetailPage() {
                       onClick={() => startEditQuarterScore(activeQuarter)}
                       className="text-sm text-gray-500 hover:text-emerald-600 border rounded-lg px-2 py-0.5"
                     >
-                      {currentQuarter.home_score || 0} : {currentQuarter.away_score || 0}
+                      <span className="text-emerald-600">{currentQuarter.home_score || 0}</span> : <span>{currentQuarter.away_score || 0}</span>
                     </button>
                   )}
                 </div>
