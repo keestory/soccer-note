@@ -280,9 +280,11 @@ export default function MatchDetailPage() {
                   ) : (
                     <button
                       onClick={() => startEditQuarterScore(activeQuarter)}
-                      className="text-sm text-gray-500 hover:text-emerald-600 border rounded-lg px-2 py-0.5"
+                      className="text-sm text-gray-500 hover:text-emerald-600 border rounded-lg px-3 py-1"
                     >
-                      <span className="text-emerald-600">{currentQuarter.home_score || 0}</span> : <span>{currentQuarter.away_score || 0}</span>
+                      <span className="text-[10px] text-gray-400">우리팀</span> <span className="text-emerald-600 font-medium">{currentQuarter.home_score || 0}</span>
+                      <span className="mx-1">:</span>
+                      <span className="font-medium">{currentQuarter.away_score || 0}</span> <span className="text-[10px] text-gray-400">{match.opponent}</span>
                     </button>
                   )}
                 </div>
