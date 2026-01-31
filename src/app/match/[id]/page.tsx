@@ -610,27 +610,61 @@ export default function MatchDetailPage() {
                   <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-[18%] bg-white/40 rounded-l" />
 
                   {/* Players */}
-                  {currentQuarter.quarter_records?.map((record) => (
-                    <div
-                      key={record.id}
-                      className="absolute flex flex-col items-center"
-                      style={{
-                        left: `${record.position_x}%`,
-                        top: `${record.position_y}%`,
-                        transform: 'translate(-50%, -50%)',
-                      }}
-                    >
+                  {currentQuarter.quarter_records?.map((record) => {
+                    const hasStats = record.goals > 0 || record.assists > 0 || record.clean_sheet || record.contribution > 0
+                    return (
                       <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg"
-                        style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
+                        key={record.id}
+                        className="absolute flex flex-col items-center"
+                        style={{
+                          left: `${record.position_x}%`,
+                          top: `${record.position_y}%`,
+                          transform: 'translate(-50%, -50%)',
+                        }}
                       >
-                        {record.player?.number || '?'}
+                        {/* Rating badge */}
+                        {record.rating != null && (
+                          <span className="absolute -top-2 -right-3 px-1 py-0.5 bg-amber-400 text-[9px] font-bold text-white rounded shadow z-10">
+                            {record.rating.toFixed(1)}
+                          </span>
+                        )}
+                        <div
+                          className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg"
+                          style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
+                        >
+                          {record.player?.number || '?'}
+                        </div>
+                        <span className="mt-0.5 px-1 py-0.5 bg-black/50 text-white text-[10px] rounded font-medium whitespace-nowrap">
+                          {record.player?.name}
+                        </span>
+                        {/* Stats badges */}
+                        {hasStats && (
+                          <div className="flex gap-0.5 mt-0.5">
+                            {record.goals > 0 && (
+                              <span className="px-1 bg-emerald-500 text-white text-[8px] font-bold rounded">
+                                G{record.goals}
+                              </span>
+                            )}
+                            {record.assists > 0 && (
+                              <span className="px-1 bg-blue-500 text-white text-[8px] font-bold rounded">
+                                A{record.assists}
+                              </span>
+                            )}
+                            {record.clean_sheet && (
+                              <span className="px-1 bg-purple-500 text-white text-[8px] font-bold rounded">
+                                CS
+                              </span>
+                            )}
+                            {record.contribution > 0 && (
+                              <span className="px-1 bg-amber-600 text-white text-[8px] font-bold rounded">
+                                +
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <span className="mt-0.5 px-1 py-0.5 bg-black/50 text-white text-[10px] rounded font-medium whitespace-nowrap">
-                        {record.player?.name}
-                      </span>
-                    </div>
-                  ))}
+                    )
+                  })}
 
                   {currentQuarter.quarter_records?.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center text-white/70">
