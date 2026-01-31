@@ -138,6 +138,13 @@ export default function QuarterEditPage() {
   }, [matchId, quarterNumber])
 
   const loadData = async () => {
+    // Check permissions first
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      router.push('/login')
+      return
+    }
+
     // Load quarter
     const { data: matchData } = await supabase
       .from('matches')
@@ -157,6 +164,32 @@ export default function QuarterEditPage() {
     if (!matchData) {
       toast.error('경기를 찾을 수 없습니다')
       router.push('/dashboard')
+      return
+    }
+
+    // Check if user has quarter edit permission
+    const { data: team } = await supabase
+      .from('teams')
+      .select('user_id')
+      .eq('id', matchData.team_id)
+      .single()
+
+    let hasPermission = team?.user_id === user.id
+
+    if (!hasPermission) {
+      const { data: membership } = await supabase
+        .from('team_members')
+        .select('role, can_edit_quarters')
+        .eq('team_id', matchData.team_id)
+        .eq('user_id', user.id)
+        .single()
+
+      hasPermission = membership?.role === 'coach' || membership?.can_edit_quarters === true
+    }
+
+    if (!hasPermission) {
+      toast.error('쿼터 편집 권한이 없습니다')
+      router.push(`/match/${matchId}`)
       return
     }
 

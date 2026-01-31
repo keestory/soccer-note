@@ -29,6 +29,8 @@ export default function MatchDetailPage() {
   const [editOpponent, setEditOpponent] = useState('')
   const [editDate, setEditDate] = useState('')
   const [editLocation, setEditLocation] = useState('')
+  const [canEditMatches, setCanEditMatches] = useState(false)
+  const [canEditQuarters, setCanEditQuarters] = useState(false)
 
   const supabase = createClient()
 
@@ -37,6 +39,8 @@ export default function MatchDetailPage() {
   }, [matchId])
 
   const loadMatch = async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+
     const { data, error } = await supabase
       .from('matches')
       .select(`
@@ -67,6 +71,35 @@ export default function MatchDetailPage() {
     data.quarters = data.quarters?.sort((a: Quarter, b: Quarter) => a.quarter_number - b.quarter_number)
 
     setMatch(data)
+
+    // Check user permissions
+    if (user) {
+      // Check if owner
+      const { data: team } = await supabase
+        .from('teams')
+        .select('user_id')
+        .eq('id', data.team_id)
+        .single()
+
+      if (team?.user_id === user.id) {
+        setCanEditMatches(true)
+        setCanEditQuarters(true)
+      } else {
+        // Check team_members permissions
+        const { data: membership } = await supabase
+          .from('team_members')
+          .select('role, can_edit_matches, can_edit_quarters')
+          .eq('team_id', data.team_id)
+          .eq('user_id', user.id)
+          .single()
+
+        if (membership) {
+          const isCoach = membership.role === 'coach'
+          setCanEditMatches(isCoach || membership.can_edit_matches)
+          setCanEditQuarters(isCoach || membership.can_edit_quarters)
+        }
+      }
+    }
 
     // Load attendees
     const { data: attendeesData } = await supabase
@@ -301,20 +334,22 @@ export default function MatchDetailPage() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={startEditMatchInfo}
-              className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg"
-            >
-              <Edit2 className="w-5 h-5" />
-            </button>
-            <button
-              onClick={handleDeleteMatch}
-              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
-          </div>
+          {canEditMatches && (
+            <div className="flex items-center gap-1">
+              <button
+                onClick={startEditMatchInfo}
+                className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg"
+              >
+                <Edit2 className="w-5 h-5" />
+              </button>
+              <button
+                onClick={handleDeleteMatch}
+                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -423,13 +458,15 @@ export default function MatchDetailPage() {
               <Users className="w-4 h-4 text-gray-500" />
               참석 선수 ({attendees.length}명)
             </h3>
-            <button
-              onClick={openAttendeePicker}
-              className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium hover:bg-emerald-200"
-            >
-              <Plus className="w-4 h-4" />
-              편집
-            </button>
+            {canEditMatches && (
+              <button
+                onClick={openAttendeePicker}
+                className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium hover:bg-emerald-200"
+              >
+                <Plus className="w-4 h-4" />
+                편집
+              </button>
+            )}
           </div>
           {attendees.length > 0 ? (
             <div className="flex flex-wrap gap-2">
@@ -530,7 +567,7 @@ export default function MatchDetailPage() {
               <div className="p-4 border-b flex justify-between items-center">
                 <div className="flex items-center gap-3">
                   <h3 className="font-semibold">{activeQuarter}쿼터 기록</h3>
-                  {editingQuarterScore === activeQuarter ? (
+                  {canEditQuarters && editingQuarterScore === activeQuarter ? (
                     <div className="flex items-center gap-2">
                       <div className="flex flex-col items-center">
                         <span className="text-[10px] text-gray-400 mb-0.5">우리팀</span>
@@ -567,23 +604,25 @@ export default function MatchDetailPage() {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => startEditQuarterScore(activeQuarter)}
-                      className="text-sm text-gray-500 hover:text-emerald-600 border rounded-lg px-3 py-1"
+                    <span
+                      onClick={() => canEditQuarters && startEditQuarterScore(activeQuarter)}
+                      className={`text-sm text-gray-500 border rounded-lg px-3 py-1 ${canEditQuarters ? 'hover:text-emerald-600 cursor-pointer' : ''}`}
                     >
                       <span className="text-[10px] text-gray-400">우리팀</span> <span className="text-emerald-600 font-medium">{currentQuarter.home_score || 0}</span>
                       <span className="mx-1">:</span>
                       <span className="font-medium">{currentQuarter.away_score || 0}</span> <span className="text-[10px] text-gray-400">{match.opponent}</span>
-                    </button>
+                    </span>
                   )}
                 </div>
-                <Link
-                  href={`/match/${matchId}/quarter/${activeQuarter}`}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium hover:bg-emerald-200"
-                >
-                  <Edit2 className="w-4 h-4" />
-                  편집
-                </Link>
+                {canEditQuarters && (
+                  <Link
+                    href={`/match/${matchId}/quarter/${activeQuarter}`}
+                    className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium hover:bg-emerald-200"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                    편집
+                  </Link>
+                )}
               </div>
 
               {/* Soccer Field Preview */}
