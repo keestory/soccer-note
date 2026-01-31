@@ -1,0 +1,4 @@
+-- Add per-quarter scores
+ALTER TABLE quarters
+  ADD COLUMN IF NOT EXISTS home_score INTEGER DEFAULT 0,
+  ADD COLUMN IF NOT EXISTS away_score INTEGER DEFAULT 0;

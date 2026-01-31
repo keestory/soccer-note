@@ -18,9 +18,9 @@ export default function MatchDetailPage() {
   const [loading, setLoading] = useState(true)
   const [match, setMatch] = useState<Match | null>(null)
   const [activeQuarter, setActiveQuarter] = useState(1)
-  const [editingScore, setEditingScore] = useState(false)
-  const [homeScore, setHomeScore] = useState(0)
-  const [awayScore, setAwayScore] = useState(0)
+  const [editingQuarterScore, setEditingQuarterScore] = useState<number | null>(null)
+  const [qHome, setQHome] = useState(0)
+  const [qAway, setQAway] = useState(0)
 
   const supabase = createClient()
 
@@ -54,24 +54,69 @@ export default function MatchDetailPage() {
     data.quarters = data.quarters?.sort((a: Quarter, b: Quarter) => a.quarter_number - b.quarter_number)
 
     setMatch(data)
-    setHomeScore(data.home_score)
-    setAwayScore(data.away_score)
     setLoading(false)
   }
 
-  const handleUpdateScore = async () => {
+  const getTotalScore = () => {
+    if (!match?.quarters) return { home: 0, away: 0 }
+    return match.quarters.reduce(
+      (acc, q) => ({
+        home: acc.home + (q.home_score || 0),
+        away: acc.away + (q.away_score || 0),
+      }),
+      { home: 0, away: 0 }
+    )
+  }
+
+  const startEditQuarterScore = (quarterNum: number) => {
+    const q = match?.quarters?.find(q => q.quarter_number === quarterNum)
+    setQHome(q?.home_score || 0)
+    setQAway(q?.away_score || 0)
+    setEditingQuarterScore(quarterNum)
+  }
+
+  const handleSaveQuarterScore = async () => {
+    if (editingQuarterScore === null || !match) return
+    const q = match.quarters?.find(q => q.quarter_number === editingQuarterScore)
+    if (!q) return
+
     const { error } = await supabase
-      .from('matches')
-      .update({ home_score: homeScore, away_score: awayScore })
-      .eq('id', matchId)
+      .from('quarters')
+      .update({ home_score: qHome, away_score: qAway })
+      .eq('id', q.id)
 
     if (error) {
       toast.error('점수 저장에 실패했습니다')
       return
     }
 
-    setMatch(prev => prev ? { ...prev, home_score: homeScore, away_score: awayScore } : null)
-    setEditingScore(false)
+    // Update local state
+    setMatch(prev => {
+      if (!prev) return prev
+      const updatedQuarters = prev.quarters?.map(quarter =>
+        quarter.quarter_number === editingQuarterScore
+          ? { ...quarter, home_score: qHome, away_score: qAway }
+          : quarter
+      )
+      return { ...prev, quarters: updatedQuarters }
+    })
+
+    // Also update match total score
+    const newTotal = match.quarters?.reduce(
+      (acc, q) => ({
+        home: acc.home + (q.quarter_number === editingQuarterScore ? qHome : (q.home_score || 0)),
+        away: acc.away + (q.quarter_number === editingQuarterScore ? qAway : (q.away_score || 0)),
+      }),
+      { home: 0, away: 0 }
+    ) || { home: 0, away: 0 }
+
+    await supabase
+      .from('matches')
+      .update({ home_score: newTotal.home, away_score: newTotal.away })
+      .eq('id', matchId)
+
+    setMatch(prev => prev ? { ...prev, home_score: newTotal.home, away_score: newTotal.away } : null)
+    setEditingQuarterScore(null)
     toast.success('점수가 저장되었습니다')
   }
 
@@ -130,58 +175,28 @@ export default function MatchDetailPage() {
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Score Section */}
         <section className="bg-white rounded-xl p-6 text-center">
-          {editingScore ? (
-            <div className="flex items-center justify-center gap-4 mb-4">
-              <input
-                type="number"
-                min={0}
-                value={homeScore}
-                onChange={(e) => setHomeScore(parseInt(e.target.value) || 0)}
-                className="w-20 text-4xl font-bold text-center border rounded-lg py-2"
-              />
-              <span className="text-2xl text-gray-400">:</span>
-              <input
-                type="number"
-                min={0}
-                value={awayScore}
-                onChange={(e) => setAwayScore(parseInt(e.target.value) || 0)}
-                className="w-20 text-4xl font-bold text-center border rounded-lg py-2"
-              />
-            </div>
-          ) : (
-            <div className="text-4xl font-bold mb-2">
-              <span className="text-emerald-600">{match.home_score}</span>
-              <span className="text-gray-400 mx-3">:</span>
-              <span className="text-gray-700">{match.away_score}</span>
-            </div>
-          )}
-          <div className="flex justify-center gap-4 text-sm text-gray-500 mb-4">
+          {(() => {
+            const total = getTotalScore()
+            return (
+              <div className="text-4xl font-bold mb-2">
+                <span className="text-emerald-600">{total.home}</span>
+                <span className="text-gray-400 mx-3">:</span>
+                <span className="text-gray-700">{total.away}</span>
+              </div>
+            )
+          })()}
+          <div className="flex justify-center gap-4 text-sm text-gray-500 mb-3">
             <span>우리팀</span>
             <span>{match.opponent}</span>
           </div>
-          {editingScore ? (
-            <div className="flex gap-2 justify-center">
-              <button
-                onClick={() => setEditingScore(false)}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-              >
-                취소
-              </button>
-              <button
-                onClick={handleUpdateScore}
-                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
-              >
-                저장
-              </button>
-            </div>
-          ) : (
-            <button
-              onClick={() => setEditingScore(true)}
-              className="text-emerald-600 text-sm hover:underline"
-            >
-              점수 수정
-            </button>
-          )}
+          {/* Quarter score breakdown */}
+          <div className="flex justify-center gap-3 text-xs text-gray-400">
+            {match.quarters?.sort((a, b) => a.quarter_number - b.quarter_number).map(q => (
+              <span key={q.id}>
+                {q.quarter_number}Q {q.home_score || 0}:{q.away_score || 0}
+              </span>
+            ))}
+          </div>
         </section>
 
         {/* MVP Section */}
@@ -224,7 +239,47 @@ export default function MatchDetailPage() {
           {currentQuarter && (
             <div className="bg-white rounded-xl overflow-hidden">
               <div className="p-4 border-b flex justify-between items-center">
-                <h3 className="font-semibold">{activeQuarter}쿼터 기록</h3>
+                <div className="flex items-center gap-3">
+                  <h3 className="font-semibold">{activeQuarter}쿼터 기록</h3>
+                  {editingQuarterScore === activeQuarter ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="number"
+                        min={0}
+                        value={qHome}
+                        onChange={(e) => setQHome(parseInt(e.target.value) || 0)}
+                        className="w-12 text-center border rounded py-1 text-sm"
+                      />
+                      <span className="text-gray-400">:</span>
+                      <input
+                        type="number"
+                        min={0}
+                        value={qAway}
+                        onChange={(e) => setQAway(parseInt(e.target.value) || 0)}
+                        className="w-12 text-center border rounded py-1 text-sm"
+                      />
+                      <button
+                        onClick={handleSaveQuarterScore}
+                        className="px-2 py-1 bg-emerald-600 text-white rounded text-xs"
+                      >
+                        저장
+                      </button>
+                      <button
+                        onClick={() => setEditingQuarterScore(null)}
+                        className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs"
+                      >
+                        취소
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => startEditQuarterScore(activeQuarter)}
+                      className="text-sm text-gray-500 hover:text-emerald-600 border rounded-lg px-2 py-0.5"
+                    >
+                      {currentQuarter.home_score || 0} : {currentQuarter.away_score || 0}
+                    </button>
+                  )}
+                </div>
                 <Link
                   href={`/match/${matchId}/quarter/${activeQuarter}`}
                   className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium hover:bg-emerald-200"

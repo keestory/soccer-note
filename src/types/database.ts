@@ -67,6 +67,8 @@ export interface Quarter {
   match_id: string;
   quarter_number: number;
   duration_minutes: number;
+  home_score: number;
+  away_score: number;
   created_at: string;
   updated_at: string;
   quarter_records?: QuarterRecord[];
