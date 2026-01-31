@@ -137,6 +137,7 @@ function TeamMembersContent() {
       .from('team_members')
       .select('*')
       .eq('team_id', teamId)
+      .or('is_removed.is.null,is_removed.eq.false')
       .order('joined_at')
 
     console.log('Members query error:', membersError)
@@ -430,9 +431,11 @@ function TeamMembersContent() {
                         <p className="font-medium">
                           {member.profile?.display_name || member.profile?.email || '이름 없음'}
                         </p>
-                        <p className="text-sm text-gray-500">
-                          {member.profile?.email || member.user_id.slice(0, 8) + '...'}
-                        </p>
+                        {isCoach && (
+                          <p className="text-sm text-gray-500">
+                            {member.profile?.email || member.user_id.slice(0, 8) + '...'}
+                          </p>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -486,7 +489,7 @@ function TeamMembersContent() {
                         </p>
                         <p className="text-sm text-gray-500">
                           {member.role === 'coach' ? '감독' : '팀원'}
-                          {member.profile?.email ? ` · ${member.profile.email}` : ''}
+                          {isCoach && member.profile?.email ? ` · ${member.profile.email}` : ''}
                         </p>
                       </div>
                     </div>
@@ -673,9 +676,6 @@ function TeamMembersContent() {
                         <div>
                           <p className="font-medium">
                             {member.profile?.display_name || member.profile?.email || '이름 없음'}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            {member.profile?.email || ''}
                           </p>
                         </div>
                       </button>

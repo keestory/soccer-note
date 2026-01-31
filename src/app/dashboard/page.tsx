@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { Plus, Trophy, Users, LogOut, Star, Settings, ChevronDown, UserPlus } from 'lucide-react'
+import { Plus, Trophy, Users, LogOut, Star, Settings, ChevronDown, UserPlus, User } from 'lucide-react'
 import type { Team, Match, TeamMember } from '@/types/database'
 import { formatDate, calculateMVP } from '@/lib/utils'
 import toast from 'react-hot-toast'
@@ -23,6 +23,7 @@ export default function DashboardPage() {
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [showTeamPicker, setShowTeamPicker] = useState(false)
   const [teamName, setTeamName] = useState('')
+  const [displayName, setDisplayName] = useState<string | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -34,6 +35,18 @@ export default function DashboardPage() {
     if (!user) {
       router.push('/login')
       return
+    }
+
+    // Load user profile display name
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .single()
+    if (profile?.display_name) {
+      setDisplayName(profile.display_name)
+    } else if (user.user_metadata?.display_name) {
+      setDisplayName(user.user_metadata.display_name)
     }
 
     const teamsWithRole: TeamWithRole[] = []
@@ -287,10 +300,19 @@ export default function DashboardPage() {
             </Link>
           </div>
 
+          {/* 내 프로필 */}
+          <Link
+            href="/profile"
+            className="mt-6 w-full py-3 text-emerald-600 hover:text-emerald-700 flex items-center justify-center gap-2 font-medium"
+          >
+            <User className="w-4 h-4" />
+            내 프로필
+          </Link>
+
           {/* 로그아웃 */}
           <button
             onClick={handleLogout}
-            className="mt-6 w-full py-3 text-gray-500 hover:text-gray-700 flex items-center justify-center gap-2"
+            className="w-full py-3 text-gray-500 hover:text-gray-700 flex items-center justify-center gap-2"
           >
             <LogOut className="w-4 h-4" />
             로그아웃
@@ -381,6 +403,16 @@ export default function DashboardPage() {
               title="선수 관리"
             >
               <Users className="w-5 h-5" />
+            </Link>
+            <Link
+              href="/profile"
+              className="flex items-center gap-1.5 px-2 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition"
+              title="내 프로필"
+            >
+              <User className="w-5 h-5" />
+              {displayName && (
+                <span className="text-sm font-medium max-w-[80px] truncate">{displayName}</span>
+              )}
             </Link>
             <button
               onClick={handleLogout}

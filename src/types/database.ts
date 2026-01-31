@@ -84,6 +84,10 @@ export interface QuarterRecord {
   assists: number;
   clean_sheet: boolean;
   contribution: number;
+  praise_text: string | null;
+  improvement_text: string | null;
+  highlight_text: string | null;
+  media_urls: string[] | null;
   created_at: string;
   updated_at: string;
   player?: Player;

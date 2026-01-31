@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Save, Plus, X, Check } from 'lucide-react'
+import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner, Trash2 } from 'lucide-react'
 import type { Player, Quarter, QuarterRecord, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
@@ -21,6 +21,10 @@ interface FieldPlayer {
   assists: number
   cleanSheet: boolean
   contribution: number
+  praiseText: string
+  improvementText: string
+  highlightText: string
+  mediaUrls: string[]
 }
 
 export default function QuarterEditPage() {
@@ -37,8 +41,11 @@ export default function QuarterEditPage() {
   const [selectedPlayer, setSelectedPlayer] = useState<FieldPlayer | null>(null)
   const [showPlayerPicker, setShowPlayerPicker] = useState(false)
   const [selectedPickerPlayers, setSelectedPickerPlayers] = useState<Set<string>>(new Set())
+  const [uploadingMedia, setUploadingMedia] = useState(false)
 
   const fieldRef = useRef<HTMLDivElement>(null)
+  const mediaInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -90,6 +97,10 @@ export default function QuarterEditPage() {
       assists: r.assists,
       cleanSheet: r.clean_sheet,
       contribution: r.contribution,
+      praiseText: r.praise_text || '',
+      improvementText: r.improvement_text || '',
+      highlightText: r.highlight_text || '',
+      mediaUrls: r.media_urls || [],
     })) || []
 
     setFieldPlayers(existingPlayers)
@@ -137,9 +148,15 @@ export default function QuarterEditPage() {
   const addSelectedPlayersToField = () => {
     const playersToAdd = availablePlayers.filter(p => selectedPickerPlayers.has(p.id))
 
-    // Calculate positions in a grid pattern
+    // Group players by position to calculate per-group index
+    const positionCounters: Record<string, number> = { GK: 0, DF: 0, MF: 0, FW: 0 }
+    const positionTotals: Record<string, number> = { GK: 0, DF: 0, MF: 0, FW: 0 }
+    playersToAdd.forEach(p => { positionTotals[p.default_position]++ })
+
     const newFieldPlayers: FieldPlayer[] = playersToAdd.map((player, index) => {
-      // Spread players across the field based on their position
+      const posIndex = positionCounters[player.default_position]++
+      const posTotal = positionTotals[player.default_position]
+
       let baseX = 50
       let baseY = 50
 
@@ -148,13 +165,17 @@ export default function QuarterEditPage() {
         baseY = 50
       } else if (player.default_position === 'DF') {
         baseX = 25
-        baseY = 20 + (index % 4) * 20
+        // Evenly distribute defenders vertically
+        const spacing = 60 / Math.max(posTotal - 1, 1)
+        baseY = posTotal === 1 ? 50 : 20 + posIndex * spacing
       } else if (player.default_position === 'MF') {
-        baseX = 45
-        baseY = 20 + (index % 4) * 20
+        baseX = 50
+        const spacing = 60 / Math.max(posTotal - 1, 1)
+        baseY = posTotal === 1 ? 50 : 20 + posIndex * spacing
       } else if (player.default_position === 'FW') {
-        baseX = 70
-        baseY = 30 + (index % 3) * 20
+        baseX = 75
+        const spacing = 40 / Math.max(posTotal - 1, 1)
+        baseY = posTotal === 1 ? 50 : 30 + posIndex * spacing
       }
 
       return {
@@ -169,6 +190,10 @@ export default function QuarterEditPage() {
         assists: 0,
         cleanSheet: false,
         contribution: 0,
+        praiseText: '',
+        improvementText: '',
+        highlightText: '',
+        mediaUrls: [],
       }
     })
 
@@ -191,6 +216,10 @@ export default function QuarterEditPage() {
       assists: 0,
       cleanSheet: false,
       contribution: 0,
+      praiseText: '',
+      improvementText: '',
+      highlightText: '',
+      mediaUrls: [],
     }
 
     setFieldPlayers([...fieldPlayers, newFieldPlayer])
@@ -252,6 +281,52 @@ export default function QuarterEditPage() {
     }
   }
 
+  const handleMediaUpload = async (files: FileList | null) => {
+    if (!files || files.length === 0 || !selectedPlayer) return
+
+    setUploadingMedia(true)
+    const newUrls: string[] = []
+
+    for (const file of Array.from(files)) {
+      const fileExt = file.name.split('.').pop()
+      const filePath = `${matchId}/${quarter?.id}/${selectedPlayer.playerId}/${Date.now()}.${fileExt}`
+
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('filePath', filePath)
+
+      try {
+        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const result = await res.json()
+
+        if (!res.ok) {
+          console.error('Upload error:', result.error)
+          toast.error(`업로드 실패: ${file.name} - ${result.error}`)
+          continue
+        }
+
+        newUrls.push(result.url)
+      } catch (err) {
+        console.error('Upload error:', err)
+        toast.error(`업로드 실패: ${file.name}`)
+      }
+    }
+
+    if (newUrls.length > 0) {
+      const updated = [...selectedPlayer.mediaUrls, ...newUrls]
+      updateFieldPlayer(selectedPlayer.id, { mediaUrls: updated })
+      toast.success(`${newUrls.length}개 파일 업로드 완료`)
+    }
+
+    setUploadingMedia(false)
+  }
+
+  const removeMedia = (url: string) => {
+    if (!selectedPlayer) return
+    const updated = selectedPlayer.mediaUrls.filter(u => u !== url)
+    updateFieldPlayer(selectedPlayer.id, { mediaUrls: updated })
+  }
+
   const handleSave = async () => {
     if (!quarter) return
 
@@ -277,6 +352,10 @@ export default function QuarterEditPage() {
           assists: fp.assists,
           clean_sheet: fp.cleanSheet,
           contribution: fp.contribution,
+          praise_text: fp.praiseText || null,
+          improvement_text: fp.improvementText || null,
+          highlight_text: fp.highlightText || null,
+          media_urls: fp.mediaUrls.length > 0 ? fp.mediaUrls : null,
         }))
 
         const { error } = await supabase
@@ -357,37 +436,53 @@ export default function QuarterEditPage() {
                   <X className="w-5 h-5 text-gray-400" />
                 </button>
               </div>
-              <div className="grid grid-cols-3 gap-2 mb-3">
-                {availablePlayers.map(player => {
-                  const isSelected = selectedPickerPlayers.has(player.id)
+              <div className="space-y-3 mb-3">
+                {(['GK', 'DF', 'MF', 'FW'] as PositionType[]).map(posType => {
+                  const posPlayers = availablePlayers.filter(p => p.default_position === posType)
+                  if (posPlayers.length === 0) return null
                   return (
-                    <button
-                      key={player.id}
-                      onClick={() => togglePickerPlayer(player.id)}
-                      className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-all ${
-                        isSelected
-                          ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-200'
-                          : 'hover:bg-gray-50'
-                      }`}
-                    >
-                      <div className="relative">
+                    <div key={posType}>
+                      <div className="flex items-center gap-2 mb-1.5">
                         <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                          style={{ backgroundColor: POSITION_COLORS[player.default_position] }}
-                        >
-                          {player.number || '-'}
-                        </div>
-                        {isSelected && (
-                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                            <Check className="w-3 h-3 text-white" />
-                          </div>
-                        )}
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: POSITION_COLORS[posType] }}
+                        />
+                        <span className="text-xs font-semibold text-gray-500">{POSITION_LABELS[posType]}</span>
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium truncate">{player.name}</p>
-                        <p className="text-xs text-gray-500">{POSITION_LABELS[player.default_position]}</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {posPlayers.map(player => {
+                          const isSelected = selectedPickerPlayers.has(player.id)
+                          return (
+                            <button
+                              key={player.id}
+                              onClick={() => togglePickerPlayer(player.id)}
+                              className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-all ${
+                                isSelected
+                                  ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-200'
+                                  : 'hover:bg-gray-50'
+                              }`}
+                            >
+                              <div className="relative">
+                                <div
+                                  className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                                  style={{ backgroundColor: POSITION_COLORS[player.default_position] }}
+                                >
+                                  {player.number || '-'}
+                                </div>
+                                {isSelected && (
+                                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
+                                    <Check className="w-3 h-3 text-white" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="min-w-0">
+                                <p className="text-sm font-medium truncate">{player.name}</p>
+                              </div>
+                            </button>
+                          )
+                        })}
                       </div>
-                    </button>
+                    </div>
                   )
                 })}
               </div>
@@ -523,9 +618,22 @@ export default function QuarterEditPage() {
 
             {/* Rating Slider */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                평점: <span className="text-2xl font-bold font-mono">{selectedPlayer.rating?.toFixed(1) || '-'}</span>
-              </label>
+              <div className="flex items-center gap-2 mb-2">
+                <label className="text-sm font-medium text-gray-700">평점:</label>
+                <input
+                  type="number"
+                  min={0}
+                  max={10}
+                  step={0.1}
+                  value={selectedPlayer.rating ?? ''}
+                  onChange={(e) => {
+                    const val = e.target.value === '' ? null : Math.min(10, Math.max(0, parseFloat(e.target.value)))
+                    updateFieldPlayer(selectedPlayer.id, { rating: val })
+                  }}
+                  placeholder="-"
+                  className="w-20 px-2 py-1 text-2xl font-bold font-mono text-center border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                />
+              </div>
               <input
                 type="range"
                 min={0}
@@ -607,6 +715,115 @@ export default function QuarterEditPage() {
                     })
                   }
                   className="w-full px-3 py-2 border rounded-lg text-center"
+                />
+              </div>
+            </div>
+
+            {/* Review Section */}
+            <div className="mt-5 pt-5 border-t">
+              <h3 className="font-semibold text-gray-900 mb-3">선수 총평</h3>
+
+              {/* Media Upload */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">사진/동영상</label>
+                <div className="flex gap-2 mb-2">
+                  <button
+                    type="button"
+                    onClick={() => mediaInputRef.current?.click()}
+                    disabled={uploadingMedia}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium disabled:opacity-50"
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    갤러리
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => cameraInputRef.current?.click()}
+                    disabled={uploadingMedia}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium disabled:opacity-50"
+                  >
+                    <Camera className="w-4 h-4" />
+                    촬영하기
+                  </button>
+                  {uploadingMedia && <Spinner className="w-5 h-5 text-emerald-600 animate-spin self-center" />}
+                </div>
+                <input
+                  ref={mediaInputRef}
+                  type="file"
+                  accept="image/*,video/*"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => handleMediaUpload(e.target.files)}
+                />
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={(e) => handleMediaUpload(e.target.files)}
+                />
+                {/* Media Preview */}
+                {selectedPlayer.mediaUrls.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {selectedPlayer.mediaUrls.map((url, idx) => (
+                      <div key={idx} className="relative group rounded-lg overflow-hidden aspect-square bg-gray-100">
+                        {url.match(/\.(mp4|mov|webm)/i) ? (
+                          <video src={url} className="w-full h-full object-cover" />
+                        ) : (
+                          <img src={url} alt="" className="w-full h-full object-cover" />
+                        )}
+                        <button
+                          onClick={() => removeMedia(url)}
+                          className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Praise Text */}
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-emerald-700 mb-1">
+                  참 잘했어요
+                </label>
+                <textarea
+                  value={selectedPlayer.praiseText}
+                  onChange={(e) => updateFieldPlayer(selectedPlayer.id, { praiseText: e.target.value })}
+                  placeholder="잘한 점을 적어주세요"
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none"
+                />
+              </div>
+
+              {/* Improvement Text */}
+              <div className="mb-3">
+                <label className="block text-sm font-medium text-amber-700 mb-1">
+                  조금 더 연습해볼까요?
+                </label>
+                <textarea
+                  value={selectedPlayer.improvementText}
+                  onChange={(e) => updateFieldPlayer(selectedPlayer.id, { improvementText: e.target.value })}
+                  placeholder="개선할 점을 적어주세요"
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none resize-none"
+                />
+              </div>
+
+              {/* Highlight Text */}
+              <div>
+                <label className="block text-sm font-medium text-blue-700 mb-1">
+                  이 부분을 칭찬해주세요!
+                </label>
+                <textarea
+                  value={selectedPlayer.highlightText}
+                  onChange={(e) => updateFieldPlayer(selectedPlayer.id, { highlightText: e.target.value })}
+                  placeholder="특별히 칭찬할 부분을 적어주세요"
+                  rows={2}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
                 />
               </div>
             </div>

@@ -295,31 +295,73 @@ export default function MatchDetailPage() {
 
               {/* Quarter Players List */}
               <div className="divide-y">
-                {currentQuarter.quarter_records?.map((record) => (
-                  <div key={record.id} className="p-4 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                        style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
-                      >
-                        {record.player?.number || '?'}
+                {currentQuarter.quarter_records?.map((record) => {
+                  const hasReview = record.praise_text || record.improvement_text || record.highlight_text || (record.media_urls && record.media_urls.length > 0)
+                  return (
+                    <div key={record.id} className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                            style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
+                          >
+                            {record.player?.number || '?'}
+                          </div>
+                          <div>
+                            <p className="font-medium">{record.player?.name}</p>
+                            <p className="text-sm text-gray-500">
+                              {POSITION_LABELS[record.position_type]}
+                              {record.goals > 0 && ` | ${record.goals}골`}
+                              {record.assists > 0 && ` ${record.assists}어시`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xl font-bold font-mono">
+                            {formatRating(record.rating)}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-medium">{record.player?.name}</p>
-                        <p className="text-sm text-gray-500">
-                          {POSITION_LABELS[record.position_type]}
-                          {record.goals > 0 && ` | ${record.goals}골`}
-                          {record.assists > 0 && ` ${record.assists}어시`}
-                        </p>
-                      </div>
+
+                      {/* Review Display */}
+                      {hasReview && (
+                        <div className="mt-3 ml-11 space-y-2">
+                          {record.media_urls && record.media_urls.length > 0 && (
+                            <div className="grid grid-cols-4 gap-1.5">
+                              {record.media_urls.map((url: string, idx: number) => (
+                                <div key={idx} className="rounded-lg overflow-hidden aspect-square bg-gray-100">
+                                  {url.match(/\.(mp4|mov|webm)/i) ? (
+                                    <video src={url} className="w-full h-full object-cover" controls />
+                                  ) : (
+                                    <img src={url} alt="" className="w-full h-full object-cover" />
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {record.praise_text && (
+                            <div className="bg-emerald-50 rounded-lg px-3 py-2">
+                              <p className="text-xs font-semibold text-emerald-700 mb-0.5">참 잘했어요</p>
+                              <p className="text-sm text-emerald-900">{record.praise_text}</p>
+                            </div>
+                          )}
+                          {record.improvement_text && (
+                            <div className="bg-amber-50 rounded-lg px-3 py-2">
+                              <p className="text-xs font-semibold text-amber-700 mb-0.5">조금 더 연습해볼까요?</p>
+                              <p className="text-sm text-amber-900">{record.improvement_text}</p>
+                            </div>
+                          )}
+                          {record.highlight_text && (
+                            <div className="bg-blue-50 rounded-lg px-3 py-2">
+                              <p className="text-xs font-semibold text-blue-700 mb-0.5">이 부분을 칭찬해주세요!</p>
+                              <p className="text-sm text-blue-900">{record.highlight_text}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <div className="text-right">
-                      <p className="text-xl font-bold font-mono">
-                        {formatRating(record.rating)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           )}
