@@ -615,61 +615,95 @@ export default function MatchDetailPage() {
                   <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-[18%] bg-white/40 rounded-l" />
 
                   {/* Players */}
-                  {currentQuarter.quarter_records?.map((record) => {
-                    const hasStats = record.goals > 0 || record.assists > 0 || record.clean_sheet || record.contribution > 0
-                    return (
-                      <div
-                        key={record.id}
-                        className="absolute flex flex-col items-center"
-                        style={{
-                          left: `${record.position_x}%`,
-                          top: `${record.position_y}%`,
-                          transform: 'translate(-50%, -50%)',
-                        }}
-                      >
-                        {/* Rating badge */}
-                        {record.rating != null && (
-                          <span className="absolute -top-2 -right-3 px-1 py-0.5 bg-amber-400 text-[9px] font-bold text-white rounded shadow z-10">
-                            {record.rating.toFixed(1)}
-                          </span>
-                        )}
+                  {(() => {
+                    // Build substitution lookup maps
+                    const subsOutMap = new Map<string, { minute: number; player_in?: { name: string; number: number | null; default_position?: string } }>()
+                    const subsInMap = new Map<string, { minute: number; player_out?: { name: string; number: number | null } }>()
+                    currentQuarter.quarter_substitutions?.forEach((sub: { player_out_id?: string; player_in_id?: string; player_out?: { id: string; name: string; number: number | null }; player_in?: { id: string; name: string; number: number | null; default_position?: string }; minute: number }) => {
+                      const outId = sub.player_out_id || sub.player_out?.id
+                      const inId = sub.player_in_id || sub.player_in?.id
+                      if (outId) subsOutMap.set(outId, { minute: sub.minute, player_in: sub.player_in || undefined })
+                      if (inId) subsInMap.set(inId, { minute: sub.minute, player_out: sub.player_out || undefined })
+                    })
+
+                    return currentQuarter.quarter_records?.map((record) => {
+                      const hasStats = record.goals > 0 || record.assists > 0 || record.clean_sheet || record.contribution > 0
+                      const subOut = subsOutMap.get(record.player_id)
+                      const subIn = subsInMap.get(record.player_id)
+
+                      return (
                         <div
-                          className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg"
-                          style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
+                          key={record.id}
+                          className="absolute flex flex-col items-center"
+                          style={{
+                            left: `${record.position_x}%`,
+                            top: `${record.position_y}%`,
+                            transform: 'translate(-50%, -50%)',
+                          }}
                         >
-                          {record.player?.number || '?'}
-                        </div>
-                        <span className="mt-0.5 px-1 py-0.5 bg-black/50 text-white text-[10px] rounded font-medium whitespace-nowrap">
-                          {record.player?.name}
-                        </span>
-                        {/* Stats badges */}
-                        {hasStats && (
-                          <div className="flex gap-0.5 mt-0.5">
-                            {record.goals > 0 && (
-                              <span className="px-1 bg-emerald-500 text-white text-[8px] font-bold rounded">
-                                G{record.goals}
-                              </span>
-                            )}
-                            {record.assists > 0 && (
-                              <span className="px-1 bg-blue-500 text-white text-[8px] font-bold rounded">
-                                A{record.assists}
-                              </span>
-                            )}
-                            {record.clean_sheet && (
-                              <span className="px-1 bg-purple-500 text-white text-[8px] font-bold rounded">
-                                CS
-                              </span>
-                            )}
-                            {record.contribution > 0 && (
-                              <span className="px-1 bg-amber-600 text-white text-[8px] font-bold rounded">
-                                +
-                              </span>
-                            )}
+                          {/* Rating badge */}
+                          {record.rating != null && (
+                            <span className="absolute -top-2 -right-3 px-1 py-0.5 bg-amber-400 text-[9px] font-bold text-white rounded shadow z-10">
+                              {record.rating.toFixed(1)}
+                            </span>
+                          )}
+                          {/* IN badge for substituted-in players */}
+                          {subIn && (
+                            <span className="absolute -top-2 -left-3 px-1 py-0.5 bg-emerald-500 text-[8px] font-bold text-white rounded shadow z-10">
+                              IN {subIn.minute}&apos;
+                            </span>
+                          )}
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg ${subOut ? 'opacity-60' : ''}`}
+                            style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
+                          >
+                            {record.player?.number || '?'}
                           </div>
-                        )}
-                      </div>
-                    )
-                  })}
+                          <span className={`mt-0.5 px-1 py-0.5 bg-black/50 text-white text-[10px] rounded font-medium whitespace-nowrap ${subOut ? 'line-through opacity-70' : ''}`}>
+                            {record.player?.name}
+                          </span>
+                          {/* OUT indicator with sub info */}
+                          {subOut && (
+                            <div className="flex flex-col items-center mt-0.5">
+                              <span className="px-1 py-0.5 bg-red-500 text-white text-[8px] font-bold rounded">
+                                OUT {subOut.minute}&apos;
+                              </span>
+                              {subOut.player_in && (
+                                <span className="mt-0.5 px-1 py-0.5 bg-emerald-500/90 text-white text-[8px] font-bold rounded whitespace-nowrap">
+                                  ↑ {subOut.player_in.name}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          {/* Stats badges */}
+                          {hasStats && !subOut && (
+                            <div className="flex gap-0.5 mt-0.5">
+                              {record.goals > 0 && (
+                                <span className="px-1 bg-emerald-500 text-white text-[8px] font-bold rounded">
+                                  G{record.goals}
+                                </span>
+                              )}
+                              {record.assists > 0 && (
+                                <span className="px-1 bg-blue-500 text-white text-[8px] font-bold rounded">
+                                  A{record.assists}
+                                </span>
+                              )}
+                              {record.clean_sheet && (
+                                <span className="px-1 bg-purple-500 text-white text-[8px] font-bold rounded">
+                                  CS
+                                </span>
+                              )}
+                              {record.contribution > 0 && (
+                                <span className="px-1 bg-amber-600 text-white text-[8px] font-bold rounded">
+                                  +
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })
+                  })()}
 
                   {currentQuarter.quarter_records?.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center text-white/70">

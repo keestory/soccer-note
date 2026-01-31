@@ -445,6 +445,32 @@ export default function QuarterEditPage() {
     setSubstitutions([...substitutions, data].sort((a, b) => a.minute - b.minute))
     setShowSubModal(false)
     setSavingSub(false)
+
+    // Auto-add the IN player to the field for recording stats
+    const inPlayer = allTeamPlayers.find(p => p.id === subInId)
+    const outFieldPlayer = fieldPlayers.find(fp => fp.playerId === subOutId)
+    if (inPlayer && !fieldPlayers.some(fp => fp.playerId === subInId)) {
+      const newFieldPlayer: FieldPlayer = {
+        id: `new-${Date.now()}`,
+        playerId: inPlayer.id,
+        player: inPlayer,
+        positionType: outFieldPlayer?.positionType || inPlayer.default_position,
+        positionX: outFieldPlayer ? Math.min(90, outFieldPlayer.positionX + 3) : 50,
+        positionY: outFieldPlayer ? Math.min(90, outFieldPlayer.positionY + 3) : 50,
+        rating: null,
+        goals: 0,
+        assists: 0,
+        cleanSheet: false,
+        contribution: 0,
+        praiseText: '',
+        improvementText: '',
+        highlightText: '',
+        mediaUrls: [],
+      }
+      setFieldPlayers(prev => [...prev, newFieldPlayer])
+      setAvailablePlayers(prev => prev.filter(p => p.id !== inPlayer.id))
+    }
+
     toast.success('교체 기록이 추가되었습니다')
   }
 
@@ -852,32 +878,48 @@ export default function QuarterEditPage() {
             <div className="absolute right-3 bottom-3 w-6 h-6 border-t-2 border-l-2 border-white/70 rounded-tl-full" />
 
             {/* Players */}
-            {fieldPlayers.map(fp => (
-              <div
-                key={fp.id}
-                className="absolute flex flex-col items-center cursor-grab active:cursor-grabbing"
-                style={{
-                  left: `${fp.positionX}%`,
-                  top: `${fp.positionY}%`,
-                  transform: 'translate(-50%, -50%)',
-                }}
-                onMouseDown={(e) => handlePlayerDrag(fp.id, e)}
-                onTouchStart={(e) => handlePlayerDrag(fp.id, e)}
-                onClick={() => setSelectedPlayer(fp)}
-              >
+            {fieldPlayers.map(fp => {
+              const subOut = substitutions.find(s => s.player_out_id === fp.playerId)
+              const subIn = substitutions.find(s => s.player_in_id === fp.playerId)
+              return (
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-lg transition-transform ${
-                    selectedPlayer?.id === fp.id ? 'ring-4 ring-yellow-400 scale-110' : 'hover:scale-105'
-                  }`}
-                  style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}
+                  key={fp.id}
+                  className="absolute flex flex-col items-center cursor-grab active:cursor-grabbing"
+                  style={{
+                    left: `${fp.positionX}%`,
+                    top: `${fp.positionY}%`,
+                    transform: 'translate(-50%, -50%)',
+                  }}
+                  onMouseDown={(e) => handlePlayerDrag(fp.id, e)}
+                  onTouchStart={(e) => handlePlayerDrag(fp.id, e)}
+                  onClick={() => setSelectedPlayer(fp)}
                 >
-                  {fp.player.number || '?'}
+                  {/* IN badge */}
+                  {subIn && (
+                    <span className="absolute -top-1.5 -left-2 px-1 py-0.5 bg-emerald-500 text-[7px] font-bold text-white rounded shadow z-10">
+                      IN {subIn.minute}&apos;
+                    </span>
+                  )}
+                  {/* OUT badge */}
+                  {subOut && (
+                    <span className="absolute -top-1.5 -right-2 px-1 py-0.5 bg-red-500 text-[7px] font-bold text-white rounded shadow z-10">
+                      OUT {subOut.minute}&apos;
+                    </span>
+                  )}
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-lg transition-transform ${
+                      selectedPlayer?.id === fp.id ? 'ring-4 ring-yellow-400 scale-110' : 'hover:scale-105'
+                    } ${subOut ? 'opacity-60' : ''}`}
+                    style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}
+                  >
+                    {fp.player.number || '?'}
+                  </div>
+                  <span className={`mt-1 px-1.5 py-0.5 bg-black/60 text-white text-xs rounded font-medium whitespace-nowrap ${subOut ? 'line-through opacity-70' : ''}`}>
+                    {fp.player.name}
+                  </span>
                 </div>
-                <span className="mt-1 px-1.5 py-0.5 bg-black/60 text-white text-xs rounded font-medium whitespace-nowrap">
-                  {fp.player.name}
-                </span>
-              </div>
-            ))}
+              )
+            })}
 
             {fieldPlayers.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center text-white/60">
