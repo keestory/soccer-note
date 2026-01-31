@@ -71,6 +71,17 @@ export interface Match {
   match_attendees?: MatchAttendee[];
 }
 
+export interface QuarterSubstitution {
+  id: string;
+  quarter_id: string;
+  player_out_id: string;
+  player_in_id: string;
+  minute: number;
+  created_at: string;
+  player_out?: Player;
+  player_in?: Player;
+}
+
 export interface Quarter {
   id: string;
   match_id: string;
@@ -81,6 +92,7 @@ export interface Quarter {
   created_at: string;
   updated_at: string;
   quarter_records?: QuarterRecord[];
+  quarter_substitutions?: QuarterSubstitution[];
 }
 
 export interface QuarterRecord {

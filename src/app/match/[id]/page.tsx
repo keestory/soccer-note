@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Star, Edit2, Trash2, Plus, X, Users, MapPin, Calendar, Check } from 'lucide-react'
+import { ArrowLeft, Star, Edit2, Trash2, Plus, X, Users, MapPin, Calendar, Check, ArrowRightLeft } from 'lucide-react'
 import type { Match, Player, Quarter, MatchAttendee } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import { formatDate, calculateMVP, getPlayerStatsFromMatch, formatRating } from '@/lib/utils'
@@ -46,6 +46,11 @@ export default function MatchDetailPage() {
           quarter_records (
             *,
             player:players (*)
+          ),
+          quarter_substitutions (
+            *,
+            player_out:players!player_out_id (*),
+            player_in:players!player_in_id (*)
           )
         )
       `)
@@ -673,6 +678,28 @@ export default function MatchDetailPage() {
                   )}
                 </div>
               </div>
+
+              {/* Substitutions */}
+              {currentQuarter.quarter_substitutions && currentQuarter.quarter_substitutions.length > 0 && (
+                <div className="px-4 py-3 bg-orange-50 border-b">
+                  <p className="text-xs font-semibold text-orange-700 mb-2 flex items-center gap-1">
+                    <ArrowRightLeft className="w-3.5 h-3.5" />
+                    교체 ({currentQuarter.quarter_substitutions.length}건)
+                  </p>
+                  <div className="space-y-1.5">
+                    {currentQuarter.quarter_substitutions
+                      .sort((a: { minute: number }, b: { minute: number }) => a.minute - b.minute)
+                      .map((sub: { id: string; minute: number; player_out?: { name: string; number: number | null }; player_in?: { name: string; number: number | null } }) => (
+                        <div key={sub.id} className="flex items-center gap-2 text-sm">
+                          <span className="text-xs font-bold text-gray-500 w-8">{sub.minute}&apos;</span>
+                          <span className="text-red-600">{sub.player_out?.number ? `#${sub.player_out.number} ` : ''}{sub.player_out?.name}</span>
+                          <span className="text-gray-400">→</span>
+                          <span className="text-emerald-600">{sub.player_in?.number ? `#${sub.player_in.number} ` : ''}{sub.player_in?.name}</span>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
 
               {/* Quarter Players List */}
               <div className="divide-y">

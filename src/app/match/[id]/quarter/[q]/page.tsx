@@ -4,8 +4,8 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner, Trash2 } from 'lucide-react'
-import type { Player, Quarter, QuarterRecord, PositionType } from '@/types/database'
+import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner, Trash2, ArrowRightLeft } from 'lucide-react'
+import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
 
@@ -120,6 +120,13 @@ export default function QuarterEditPage() {
   const [selectedPickerPlayers, setSelectedPickerPlayers] = useState<Set<string>>(new Set())
   const [uploadingMedia, setUploadingMedia] = useState(false)
   const [savingPlayer, setSavingPlayer] = useState(false)
+  const [substitutions, setSubstitutions] = useState<QuarterSubstitution[]>([])
+  const [showSubModal, setShowSubModal] = useState(false)
+  const [subMinute, setSubMinute] = useState(0)
+  const [subOutId, setSubOutId] = useState('')
+  const [subInId, setSubInId] = useState('')
+  const [allTeamPlayers, setAllTeamPlayers] = useState<Player[]>([])
+  const [savingSub, setSavingSub] = useState(false)
 
   const fieldRef = useRef<HTMLDivElement>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
@@ -182,6 +189,28 @@ export default function QuarterEditPage() {
     })) || []
 
     setFieldPlayers(existingPlayers)
+
+    // Load substitutions for this quarter
+    const { data: subsData } = await supabase
+      .from('quarter_substitutions')
+      .select('*, player_out:players!player_out_id(*), player_in:players!player_in_id(*)')
+      .eq('quarter_id', currentQuarter.id)
+      .order('minute')
+
+    if (subsData) {
+      setSubstitutions(subsData)
+    }
+
+    // Load all team players (for substitution IN picker)
+    const { data: teamPlayers } = await supabase
+      .from('players')
+      .select('*')
+      .eq('team_id', matchData.team_id)
+      .order('number')
+
+    if (teamPlayers) {
+      setAllTeamPlayers(teamPlayers)
+    }
 
     // Load attendees for this match (prioritize attendees over all players)
     const { data: attendeesData } = await supabase
@@ -370,6 +399,68 @@ export default function QuarterEditPage() {
       if (updatedSelected) setSelectedPlayer(updatedSelected)
     }
     toast.success(`${formation.label} 포메이션 적용`)
+  }
+
+  const openSubModal = () => {
+    setSubMinute(0)
+    setSubOutId(fieldPlayers.length > 0 ? fieldPlayers[0].playerId : '')
+    setSubInId('')
+    setShowSubModal(true)
+  }
+
+  const getSubInCandidates = () => {
+    // Players on the field (already placed)
+    const fieldPlayerIds = new Set(fieldPlayers.map(fp => fp.playerId))
+    // Players already subbed IN this quarter
+    const subbedInIds = new Set(substitutions.map(s => s.player_in_id))
+    // Return team players not on field and not already subbed in
+    return allTeamPlayers.filter(p => !fieldPlayerIds.has(p.id) || subbedInIds.has(p.id))
+  }
+
+  const handleAddSubstitution = async () => {
+    if (!quarter || !subOutId || !subInId) return
+    if (subOutId === subInId) {
+      toast.error('같은 선수끼리 교체할 수 없습니다')
+      return
+    }
+
+    setSavingSub(true)
+    const { data, error } = await supabase
+      .from('quarter_substitutions')
+      .insert({
+        quarter_id: quarter.id,
+        player_out_id: subOutId,
+        player_in_id: subInId,
+        minute: subMinute,
+      })
+      .select('*, player_out:players!player_out_id(*), player_in:players!player_in_id(*)')
+      .single()
+
+    if (error) {
+      toast.error('교체 기록 추가에 실패했습니다')
+      setSavingSub(false)
+      return
+    }
+
+    setSubstitutions([...substitutions, data].sort((a, b) => a.minute - b.minute))
+    setShowSubModal(false)
+    setSavingSub(false)
+    toast.success('교체 기록이 추가되었습니다')
+  }
+
+  const handleDeleteSubstitution = async (subId: string) => {
+    const { error } = await supabase
+      .from('quarter_substitutions')
+      .delete()
+      .eq('id', subId)
+
+    if (error) {
+      toast.error('교체 기록 삭제에 실패했습니다')
+      return
+    }
+
+    setSubstitutions(substitutions.filter(s => s.id !== subId))
+    toast.success('교체 기록이 삭제되었습니다')
   }
 
   const removePlayerFromField = (fieldPlayer: FieldPlayer) => {
@@ -798,6 +889,131 @@ export default function QuarterEditPage() {
             선수를 드래그하여 위치를 조정하세요
           </p>
         </section>
+
+        {/* Substitutions Section */}
+        <section className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-semibold flex items-center gap-2">
+              <ArrowRightLeft className="w-4 h-4 text-gray-500" />
+              교체 기록 ({substitutions.length}건)
+            </h2>
+            <button
+              onClick={openSubModal}
+              className="flex items-center gap-1 px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-200"
+            >
+              <Plus className="w-4 h-4" />
+              교체 추가
+            </button>
+          </div>
+
+          {substitutions.length > 0 ? (
+            <div className="space-y-2">
+              {substitutions.map(sub => (
+                <div key={sub.id} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="px-2 py-0.5 bg-gray-200 text-gray-700 rounded text-xs font-bold">
+                      {sub.minute}&apos;
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
+                        style={{ backgroundColor: POSITION_COLORS[sub.player_out?.default_position || 'MF'] }}
+                      >
+                        {sub.player_out?.number || '?'}
+                      </div>
+                      <span className="text-red-600 font-medium">{sub.player_out?.name}</span>
+                    </div>
+                    <span className="text-gray-400">→</span>
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
+                        style={{ backgroundColor: POSITION_COLORS[sub.player_in?.default_position || 'MF'] }}
+                      >
+                        {sub.player_in?.number || '?'}
+                      </div>
+                      <span className="text-emerald-600 font-medium">{sub.player_in?.name}</span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleDeleteSubstitution(sub.id)}
+                    className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-400">교체 기록이 없습니다</p>
+          )}
+        </section>
+
+        {/* Substitution Modal */}
+        {showSubModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
+            <div className="bg-white rounded-xl w-full max-w-sm p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-lg">교체 추가</h3>
+                <button onClick={() => setShowSubModal(false)} className="p-1 hover:bg-gray-100 rounded">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">교체 시간 (분)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={subMinute}
+                    onChange={(e) => setSubMinute(parseInt(e.target.value) || 0)}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-red-600 mb-1">OUT 선수</label>
+                  <select
+                    value={subOutId}
+                    onChange={(e) => setSubOutId(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                  >
+                    <option value="">선택하세요</option>
+                    {fieldPlayers.map(fp => (
+                      <option key={fp.playerId} value={fp.playerId}>
+                        {fp.player.number ? `#${fp.player.number} ` : ''}{fp.player.name} ({POSITION_LABELS[fp.positionType]})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-emerald-600 mb-1">IN 선수</label>
+                  <select
+                    value={subInId}
+                    onChange={(e) => setSubInId(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                  >
+                    <option value="">선택하세요</option>
+                    {getSubInCandidates().map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.number ? `#${p.number} ` : ''}{p.name} ({POSITION_LABELS[p.default_position]})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  onClick={handleAddSubstitution}
+                  disabled={!subOutId || !subInId || savingSub}
+                  className="w-full py-3 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 disabled:opacity-50"
+                >
+                  {savingSub ? '저장 중...' : '교체 추가'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Selected Player Stats */}
         {selectedPlayer && (
