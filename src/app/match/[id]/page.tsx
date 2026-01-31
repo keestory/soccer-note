@@ -340,7 +340,7 @@ export default function MatchDetailPage() {
                         )}
                         {record.contribution > 0 && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                            기여도 {record.contribution}
+                            기여도
                           </span>
                         )}
                       </div>
@@ -425,7 +425,7 @@ export default function MatchDetailPage() {
                         )}
                         {stats.avgContribution > 0 && (
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                            기여도 {stats.avgContribution.toFixed(1)}
+                            기여도
                           </span>
                         )}
                       </div>
