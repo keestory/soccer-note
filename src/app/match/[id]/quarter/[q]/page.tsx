@@ -183,16 +183,32 @@ export default function QuarterEditPage() {
 
     setFieldPlayers(existingPlayers)
 
-    // Load available players (not already on field)
-    const { data: players } = await supabase
-      .from('players')
-      .select('*')
-      .eq('team_id', matchData.team_id)
-      .order('number')
+    // Load attendees for this match (prioritize attendees over all players)
+    const { data: attendeesData } = await supabase
+      .from('match_attendees')
+      .select('player_id, player:players(*)')
+      .eq('match_id', matchId)
 
-    if (players) {
-      const usedPlayerIds = new Set(existingPlayers.map(fp => fp.playerId))
-      setAvailablePlayers(players.filter(p => !usedPlayerIds.has(p.id)))
+    const usedPlayerIds = new Set(existingPlayers.map(fp => fp.playerId))
+
+    if (attendeesData && attendeesData.length > 0) {
+      // Use attendees as the available player pool
+      const attendeePlayers = attendeesData
+        .map(a => a.player as unknown as Player)
+        .filter(p => p && !usedPlayerIds.has(p.id))
+        .sort((a, b) => (a.number || 99) - (b.number || 99))
+      setAvailablePlayers(attendeePlayers)
+    } else {
+      // Fallback: if no attendees registered, show all team players
+      const { data: players } = await supabase
+        .from('players')
+        .select('*')
+        .eq('team_id', matchData.team_id)
+        .order('number')
+
+      if (players) {
+        setAvailablePlayers(players.filter(p => !usedPlayerIds.has(p.id)))
+      }
     }
 
     setLoading(false)
