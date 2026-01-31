@@ -311,8 +311,6 @@ export default function MatchDetailPage() {
                             <p className="font-medium">{record.player?.name}</p>
                             <p className="text-sm text-gray-500">
                               {POSITION_LABELS[record.position_type]}
-                              {record.goals > 0 && ` | ${record.goals}골`}
-                              {record.assists > 0 && ` ${record.assists}어시`}
                             </p>
                           </div>
                         </div>
@@ -321,6 +319,30 @@ export default function MatchDetailPage() {
                             {formatRating(record.rating)}
                           </p>
                         </div>
+                      </div>
+
+                      {/* Stats */}
+                      <div className="mt-2 ml-11 flex flex-wrap gap-2">
+                        {record.goals > 0 && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                            {record.goals}골
+                          </span>
+                        )}
+                        {record.assists > 0 && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {record.assists}어시스트
+                          </span>
+                        )}
+                        {record.clean_sheet && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            클린시트
+                          </span>
+                        )}
+                        {record.contribution > 0 && (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                            기여도 {record.contribution}
+                          </span>
+                        )}
                       </div>
 
                       {/* Review Display */}
@@ -385,9 +407,28 @@ export default function MatchDetailPage() {
                           <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
                         )}
                       </p>
-                      <p className="text-sm text-gray-500">
-                        {stats.totalGoals}골 {stats.totalAssists}어시
-                      </p>
+                      <div className="flex flex-wrap gap-1.5 mt-0.5">
+                        {stats.totalGoals > 0 && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                            {stats.totalGoals}골
+                          </span>
+                        )}
+                        {stats.totalAssists > 0 && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {stats.totalAssists}어시
+                          </span>
+                        )}
+                        {stats.cleanSheets > 0 && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            클린시트 {stats.cleanSheets}
+                          </span>
+                        )}
+                        {stats.avgContribution > 0 && (
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                            기여도 {stats.avgContribution.toFixed(1)}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <div className="text-right">
