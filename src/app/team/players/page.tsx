@@ -10,6 +10,7 @@ import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
 
 interface PlayerStats {
+  attendance: number
   games: number
   goals: number
   assists: number
@@ -139,12 +140,20 @@ export default function PlayersPage() {
       .select('player_id, goals, assists, clean_sheet, rating')
       .in('player_id', playerIds)
 
+    // Get attendance counts
+    const { data: attendanceData } = await supabase
+      .from('match_attendees')
+      .select('player_id')
+      .in('player_id', playerIds)
+
     // Calculate stats for each player
     const playersWithStats: PlayerWithStats[] = playersData.map(player => {
       const playerRecords = records?.filter(r => r.player_id === player.id) || []
       const ratingsWithValue = playerRecords.filter(r => r.rating !== null)
+      const attendanceCount = attendanceData?.filter(a => a.player_id === player.id).length || 0
 
       const stats: PlayerStats = {
+        attendance: attendanceCount,
         games: playerRecords.length,
         goals: playerRecords.reduce((sum, r) => sum + (r.goals || 0), 0),
         assists: playerRecords.reduce((sum, r) => sum + (r.assists || 0), 0),
@@ -183,7 +192,7 @@ export default function PlayersPage() {
     toast.success('선수가 추가되었습니다')
     const newPlayerWithStats: PlayerWithStats = {
       ...data,
-      stats: { games: 0, goals: 0, assists: 0, cleanSheets: 0, avgRating: null }
+      stats: { attendance: 0, games: 0, goals: 0, assists: 0, cleanSheets: 0, avgRating: null }
     }
     setPlayers([...players, newPlayerWithStats])
     resetForm()
@@ -404,7 +413,11 @@ export default function PlayersPage() {
                 </div>
 
                 {/* Player Stats */}
-                <div className="grid grid-cols-5 gap-2 pt-3 border-t">
+                <div className="grid grid-cols-6 gap-2 pt-3 border-t">
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500 mb-1">출석</p>
+                    <p className="font-bold text-gray-900">{player.stats.attendance}</p>
+                  </div>
                   <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">출전</p>
                     <p className="font-bold text-gray-900">{player.stats.games}</p>
