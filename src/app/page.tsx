@@ -1,7 +1,6 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
 import { useState } from 'react'
 import {
   Star, ArrowRight, BarChart3,
@@ -183,11 +182,10 @@ function FeatureSection({
       <div className="flex-1 max-w-md w-full">
         {!imgError ? (
           <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-gray-200">
-            <Image
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={image}
               alt={title}
-              width={400}
-              height={700}
               className="w-full h-auto"
               onError={() => setImgError(true)}
             />
