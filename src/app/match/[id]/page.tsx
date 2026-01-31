@@ -325,12 +325,12 @@ export default function MatchDetailPage() {
                       <div className="mt-2 ml-11 flex flex-wrap gap-2">
                         {record.goals > 0 && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                            {record.goals}골
+                            골 {record.goals}
                           </span>
                         )}
                         {record.assists > 0 && (
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {record.assists}어시스트
+                            어시스트 {record.assists}
                           </span>
                         )}
                         {record.clean_sheet && (
@@ -410,12 +410,12 @@ export default function MatchDetailPage() {
                       <div className="flex flex-wrap gap-1.5 mt-0.5">
                         {stats.totalGoals > 0 && (
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
-                            {stats.totalGoals}골
+                            골 {stats.totalGoals}
                           </span>
                         )}
                         {stats.totalAssists > 0 && (
                           <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {stats.totalAssists}어시
+                            어시스트 {stats.totalAssists}
                           </span>
                         )}
                         {stats.cleanSheets > 0 && (
