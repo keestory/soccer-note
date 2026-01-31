@@ -19,6 +19,8 @@ function JoinTeamContent() {
   const [error, setError] = useState<string | null>(null)
   const [inputCode, setInputCode] = useState(inviteCode || '')
   const [existingStatus, setExistingStatus] = useState<MemberStatus | null>(null)
+  const [displayName, setDisplayName] = useState<string | null>(null)
+  const [loadingProfile, setLoadingProfile] = useState(true)
 
   const supabase = createClient()
 
@@ -38,7 +40,24 @@ function JoinTeamContent() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) {
       router.push(`/login?redirect=/team/join${inviteCode ? `?code=${inviteCode}` : ''}`)
+      return
     }
+
+    // Load display_name from profile
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('display_name')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.display_name) {
+      setDisplayName(profile.display_name)
+    } else {
+      // Fallback to auth metadata
+      const metaName = user.user_metadata?.display_name
+      setDisplayName(metaName || null)
+    }
+    setLoadingProfile(false)
   }
 
   const findTeam = async (code: string) => {
@@ -268,10 +287,31 @@ function JoinTeamContent() {
               {team.description && (
                 <p className="text-gray-500 mb-4">{team.description}</p>
               )}
+
+              {/* Display name info */}
+              {!loadingProfile && (
+                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                  <p className="text-xs text-gray-500 mb-1">가입 이름</p>
+                  {displayName ? (
+                    <p className="font-semibold text-gray-900">{displayName}</p>
+                  ) : (
+                    <div>
+                      <p className="text-red-500 text-sm mb-2">이름이 설정되지 않았습니다. 프로필에서 이름을 먼저 설정해주세요.</p>
+                      <Link
+                        href="/profile"
+                        className="inline-block px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300"
+                      >
+                        프로필 설정하기
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <button
                 onClick={handleJoinRequest}
-                disabled={joining}
-                className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                disabled={joining || !displayName}
+                className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {joining ? (
                   <>

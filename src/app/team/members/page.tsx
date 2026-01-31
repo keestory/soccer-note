@@ -144,19 +144,22 @@ function TeamMembersContent() {
     console.log('Members data:', membersData)
 
     if (membersData && membersData.length > 0) {
-      // Get unique user IDs
-      const userIds = membersData.map(m => m.user_id)
-
-      // Fetch profiles separately
-      const { data: profilesData } = await supabase
-        .from('profiles')
-        .select('*')
-        .in('id', userIds)
+      // Fetch profiles via API (bypasses RLS)
+      let profilesData = null
+      try {
+        const res = await fetch(`/api/team-members-profiles?teamId=${teamId}`)
+        if (res.ok) {
+          const json = await res.json()
+          profilesData = json.profiles
+        }
+      } catch (e) {
+        console.error('Failed to fetch profiles:', e)
+      }
 
       console.log('Profiles data:', profilesData)
 
       // Map profiles to members
-      const profileMap = new Map(profilesData?.map(p => [p.id, p]) || [])
+      const profileMap = new Map((profilesData as Profile[])?.map((p: Profile) => [p.id, p]) || [])
 
       const allMembers: MemberWithProfile[] = membersData.map(m => ({
         ...m,

@@ -51,12 +51,15 @@ export default function SignupPage() {
         return
       }
 
-      // Update profile with display name
+      // Upsert profile with display name (ensures profile exists)
       if (data.user) {
         await supabase
           .from('profiles')
-          .update({ display_name: displayName.trim() })
-          .eq('id', data.user.id)
+          .upsert({
+            id: data.user.id,
+            email: email,
+            display_name: displayName.trim(),
+          })
       }
 
       toast.success('회원가입 성공! 이메일을 확인해주세요.')
