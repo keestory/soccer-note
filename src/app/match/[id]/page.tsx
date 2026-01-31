@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Star, Edit2, Trash2, Plus, X, Users } from 'lucide-react'
+import { ArrowLeft, Star, Edit2, Trash2, Plus, X, Users, MapPin, Calendar, Check } from 'lucide-react'
 import type { Match, Player, Quarter, MatchAttendee } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import { formatDate, calculateMVP, getPlayerStatsFromMatch, formatRating } from '@/lib/utils'
@@ -25,6 +25,10 @@ export default function MatchDetailPage() {
   const [allPlayers, setAllPlayers] = useState<Player[]>([])
   const [showAttendeePicker, setShowAttendeePicker] = useState(false)
   const [selectedAttendees, setSelectedAttendees] = useState<Set<string>>(new Set())
+  const [editingMatchInfo, setEditingMatchInfo] = useState(false)
+  const [editOpponent, setEditOpponent] = useState('')
+  const [editDate, setEditDate] = useState('')
+  const [editLocation, setEditLocation] = useState('')
 
   const supabase = createClient()
 
@@ -203,6 +207,41 @@ export default function MatchDetailPage() {
     toast.success('참석 선수가 저장되었습니다')
   }
 
+  const startEditMatchInfo = () => {
+    if (!match) return
+    setEditOpponent(match.opponent)
+    setEditDate(match.match_date)
+    setEditLocation(match.location || '')
+    setEditingMatchInfo(true)
+  }
+
+  const handleSaveMatchInfo = async () => {
+    if (!match || !editOpponent.trim() || !editDate) return
+
+    const { error } = await supabase
+      .from('matches')
+      .update({
+        opponent: editOpponent.trim(),
+        match_date: editDate,
+        location: editLocation.trim() || null,
+      })
+      .eq('id', matchId)
+
+    if (error) {
+      toast.error('경기 정보 수정에 실패했습니다')
+      return
+    }
+
+    setMatch(prev => prev ? {
+      ...prev,
+      opponent: editOpponent.trim(),
+      match_date: editDate,
+      location: editLocation.trim() || null,
+    } : null)
+    setEditingMatchInfo(false)
+    toast.success('경기 정보가 수정되었습니다')
+  }
+
   const handleDeleteMatch = async () => {
     if (!confirm('정말 이 경기를 삭제하시겠습니까?')) return
 
@@ -243,17 +282,89 @@ export default function MatchDetailPage() {
             </Link>
             <div>
               <h1 className="text-lg font-bold">vs {match.opponent}</h1>
-              <p className="text-sm text-gray-500">{formatDate(match.match_date)}</p>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <span>{formatDate(match.match_date)}</span>
+                {match.location && (
+                  <>
+                    <span className="text-gray-300">|</span>
+                    <span className="flex items-center gap-0.5">
+                      <MapPin className="w-3 h-3" />
+                      {match.location}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-          <button
-            onClick={handleDeleteMatch}
-            className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
-          >
-            <Trash2 className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={startEditMatchInfo}
+              className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg"
+            >
+              <Edit2 className="w-5 h-5" />
+            </button>
+            <button
+              onClick={handleDeleteMatch}
+              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
+          </div>
         </div>
       </header>
+
+      {/* Match Info Edit Form */}
+      {editingMatchInfo && (
+        <div className="max-w-4xl mx-auto px-4 pt-4">
+          <div className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="font-semibold">경기 정보 수정</h3>
+              <button onClick={() => setEditingMatchInfo(false)} className="p-1 hover:bg-gray-100 rounded">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">상대팀</label>
+                <input
+                  type="text"
+                  value={editOpponent}
+                  onChange={(e) => setEditOpponent(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                  placeholder="상대팀 이름"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">경기 날짜</label>
+                <input
+                  type="date"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">경기장</label>
+                <input
+                  type="text"
+                  value={editLocation}
+                  onChange={(e) => setEditLocation(e.target.value)}
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
+                  placeholder="경기장 이름 (선택사항)"
+                />
+              </div>
+              <button
+                onClick={handleSaveMatchInfo}
+                className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700"
+              >
+                수정 완료
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Score Section */}
