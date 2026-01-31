@@ -144,7 +144,8 @@ export default function DashboardPage() {
             *,
             player:players (*)
           )
-        )
+        ),
+        match_attendees (id, player_id)
       `)
       .eq('team_id', teamId)
       .order('match_date', { ascending: false })
@@ -456,8 +457,9 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {matches.map((match) => {
+              {matches.map((match: Match & { match_attendees?: { id: string }[] }) => {
                 const mvp = calculateMVP(match)
+                const attendeeCount = match.match_attendees?.length || 0
                 return (
                   <Link
                     key={match.id}
@@ -486,12 +488,20 @@ export default function DashboardPage() {
                         </span>
                       </div>
                     </div>
-                    {mvp && (
-                      <div className="flex items-center gap-1 text-sm text-amber-600">
-                        <Star className="w-4 h-4 fill-amber-400" />
-                        <span>MVP: {mvp.playerName} ({mvp.averageRating.toFixed(1)}점)</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {mvp && (
+                        <div className="flex items-center gap-1 text-sm text-amber-600">
+                          <Star className="w-4 h-4 fill-amber-400" />
+                          <span>MVP: {mvp.playerName} ({mvp.averageRating.toFixed(1)}점)</span>
+                        </div>
+                      )}
+                      {attendeeCount > 0 && (
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Users className="w-4 h-4" />
+                          <span>출석 {attendeeCount}명</span>
+                        </div>
+                      )}
+                    </div>
                   </Link>
                 )
               })}
