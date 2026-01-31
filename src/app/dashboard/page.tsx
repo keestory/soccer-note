@@ -451,9 +451,13 @@ export default function DashboardPage() {
           const wins = matches.filter(m => m.home_score > m.away_score).length
           const losses = matches.filter(m => m.home_score < m.away_score).length
           const draws = matches.filter(m => m.home_score === m.away_score).length
+          const winRate = Math.round((wins / totalGames) * 100)
           return (
             <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
-              <h2 className="text-sm font-semibold text-gray-500 mb-3">팀 전적</h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-semibold text-gray-500">팀 전적</h2>
+                <span className="text-sm font-bold text-emerald-600">승률 {winRate}%</span>
+              </div>
               <div className="grid grid-cols-4 gap-2 text-center">
                 <div>
                   <p className="text-2xl font-bold text-gray-900">{totalGames}</p>
