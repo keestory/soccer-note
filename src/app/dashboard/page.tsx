@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { Plus, Trophy, Users, LogOut, Star, Settings, ChevronDown, UserPlus, User } from 'lucide-react'
+import { Plus, Trophy, Users, LogOut, Star, Settings, ChevronDown, UserPlus, User, Bell } from 'lucide-react'
+import { NotificationBadge } from '@/components/NotificationBadge'
 import type { Team, Match, TeamMember } from '@/types/database'
 import { formatDate, calculateMVP } from '@/lib/utils'
 import toast from 'react-hot-toast'
@@ -395,6 +396,7 @@ export default function DashboardPage() {
             </button>
           </div>
           <div className="flex items-center gap-2">
+            <NotificationBadge />
             {isCoach && (
               <Link
                 href="/team/members"

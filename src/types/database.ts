@@ -19,7 +19,7 @@ export interface Team {
   updated_at: string;
 }
 
-export type TeamRole = 'coach' | 'member';
+export type TeamRole = 'coach' | 'member' | 'parent';
 export type MemberStatus = 'pending' | 'approved' | 'rejected';
 
 export interface TeamMember {
@@ -32,6 +32,8 @@ export interface TeamMember {
   can_edit_matches: boolean;
   can_edit_quarters: boolean;
   is_removed?: boolean;
+  child_name?: string | null;
+  linked_player_id?: string | null;
   joined_at: string;
   updated_at: string;
   team?: Team;
@@ -144,3 +146,46 @@ export const POSITION_LABELS: Record<PositionType, string> = {
   MF: '미드필더',
   FW: '공격수',
 };
+
+// Training types
+export type TrainingType = 'mini-game' | 'passing' | 'shooting' | 'fitness' | 'tactics' | 'mixed' | 'other';
+
+export interface TrainingSession {
+  id: string;
+  team_id: string;
+  training_date: string;
+  training_type: TrainingType;
+  location: string | null;
+  duration_minutes: number;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TrainingAttendee {
+  id: string;
+  training_id: string;
+  player_id: string;
+  rating: number | null;
+  feedback: string | null;
+  created_at: string;
+  updated_at: string;
+  player?: Player;
+}
+
+export interface TeamVisibilitySettings {
+  id: string;
+  team_id: string;
+  show_match_records: boolean;
+  show_player_stats: boolean;
+  show_player_ratings: boolean;
+  show_quarter_details: boolean;
+  show_formation: boolean;
+  show_attendance: boolean;
+  show_goals_assists: boolean;
+  show_training_records: boolean;
+  show_training_feedback: boolean;
+  created_at: string;
+  updated_at: string;
+}
