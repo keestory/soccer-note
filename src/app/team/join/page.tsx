@@ -194,10 +194,10 @@ function JoinTeamContent() {
         )
       case 'approved':
         return (
-          <div className="border-2 border-blue-200 bg-blue-50 rounded-xl p-6 mb-6">
+          <div className="border-2 border-emerald-200 bg-emerald-50 rounded-xl p-6 mb-6">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-emerald-600" />
               </div>
               <div>
                 <h2 className="text-lg font-bold text-gray-900">이미 가입된 팀입니다</h2>
@@ -206,7 +206,7 @@ function JoinTeamContent() {
             </div>
             <button
               onClick={() => router.push('/dashboard')}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700"
             >
               대시보드로 이동
             </button>
@@ -237,8 +237,8 @@ function JoinTeamContent() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-lg p-8">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Users className="w-8 h-8 text-blue-600" />
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Users className="w-8 h-8 text-emerald-600" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">팀 가입</h1>
             <p className="text-gray-500 mt-2">초대 코드를 입력하여 팀에 가입 요청하세요</p>
@@ -253,12 +253,12 @@ function JoinTeamContent() {
                 onChange={(e) => setInputCode(e.target.value.toUpperCase())}
                 placeholder="초대 코드 입력"
                 maxLength={8}
-                className="flex-1 px-4 py-3 border rounded-lg text-center text-lg font-mono tracking-widest uppercase focus:ring-2 focus:ring-blue-500 outline-none"
+                className="flex-1 px-4 py-3 border rounded-lg text-center text-lg font-mono tracking-widest uppercase focus:ring-2 focus:ring-emerald-500 outline-none"
               />
               <button
                 type="submit"
                 disabled={loading || !inputCode.trim()}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
+                className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50"
               >
                 검색
               </button>
@@ -267,7 +267,7 @@ function JoinTeamContent() {
 
           {loading && (
             <div className="flex justify-center py-8">
-              <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+              <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
             </div>
           )}
 
@@ -311,7 +311,7 @@ function JoinTeamContent() {
               <button
                 onClick={handleJoinRequest}
                 disabled={joining || !displayName}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {joining ? (
                   <>
@@ -329,7 +329,7 @@ function JoinTeamContent() {
           )}
 
           <div className="text-center">
-            <Link href="/dashboard" className="text-blue-600 hover:underline flex items-center justify-center gap-1">
+            <Link href="/dashboard" className="text-emerald-600 hover:underline flex items-center justify-center gap-1">
               <ArrowLeft className="w-4 h-4" />
               대시보드로 돌아가기
             </Link>
@@ -344,7 +344,7 @@ export default function JoinTeamPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+        <Loader2 className="w-8 h-8 text-emerald-600 animate-spin" />
       </div>
     }>
       <JoinTeamContent />

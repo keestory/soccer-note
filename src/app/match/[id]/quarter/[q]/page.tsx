@@ -729,7 +729,7 @@ export default function QuarterEditPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
       </div>
     )
   }
@@ -748,7 +748,7 @@ export default function QuarterEditPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
             {saving ? '저장 중...' : '저장'}
@@ -770,7 +770,7 @@ export default function QuarterEditPage() {
                   }
                 }}
                 defaultValue=""
-                className="px-2 py-1.5 border rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                className="px-2 py-1.5 border rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-emerald-500 outline-none"
               >
                 <option value="" disabled>포메이션</option>
                 {Object.entries(FORMATIONS).map(([key, f]) => (
@@ -780,7 +780,7 @@ export default function QuarterEditPage() {
               {availablePlayers.length > 0 && (
                 <button
                   onClick={() => setShowPlayerPicker(!showPlayerPicker)}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium"
+                  className="flex items-center gap-1 px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-sm font-medium"
                 >
                   <Plus className="w-4 h-4" />
                   선수 추가
@@ -796,7 +796,7 @@ export default function QuarterEditPage() {
                 <p className="text-sm text-gray-600">
                   추가할 선수를 선택하세요
                   {selectedPickerPlayers.size > 0 && (
-                    <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                    <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full text-xs font-medium">
                       {selectedPickerPlayers.size}명 선택
                     </span>
                   )}
@@ -827,7 +827,7 @@ export default function QuarterEditPage() {
                               onClick={() => togglePickerPlayer(player.id)}
                               className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-all ${
                                 isSelected
-                                  ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-200'
+                                  ? 'border-emerald-500 bg-emerald-50 ring-2 ring-emerald-200'
                                   : 'hover:bg-gray-50'
                               }`}
                             >
@@ -839,7 +839,7 @@ export default function QuarterEditPage() {
                                   {player.number || '-'}
                                 </div>
                                 {isSelected && (
-                                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
                                     <Check className="w-3 h-3 text-white" />
                                   </div>
                                 )}
@@ -858,7 +858,7 @@ export default function QuarterEditPage() {
               {selectedPickerPlayers.size > 0 && (
                 <button
                   onClick={addSelectedPlayersToField}
-                  className="w-full py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+                  className="w-full py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
                 >
                   {selectedPickerPlayers.size}명 추가하기
                 </button>
@@ -929,7 +929,7 @@ export default function QuarterEditPage() {
                 >
                   {/* IN badge */}
                   {subIn && (
-                    <span className="absolute -top-1.5 -left-2 px-1 py-0.5 bg-blue-500 text-[7px] font-bold text-white rounded shadow z-10">
+                    <span className="absolute -top-1.5 -left-2 px-1 py-0.5 bg-emerald-500 text-[7px] font-bold text-white rounded shadow z-10">
                       IN {subIn.minute}&apos;
                     </span>
                   )}
@@ -1006,7 +1006,7 @@ export default function QuarterEditPage() {
                       >
                         {sub.player_in?.number || '?'}
                       </div>
-                      <span className="text-blue-600 font-medium">{sub.player_in?.name}</span>
+                      <span className="text-emerald-600 font-medium">{sub.player_in?.name}</span>
                     </div>
                   </div>
                   <button
@@ -1063,7 +1063,7 @@ export default function QuarterEditPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-blue-600 mb-1">IN 선수</label>
+                  <label className="block text-sm font-medium text-emerald-600 mb-1">IN 선수</label>
                   <select
                     value={subInId}
                     onChange={(e) => setSubInId(e.target.value)}
@@ -1141,7 +1141,7 @@ export default function QuarterEditPage() {
                     updateFieldPlayer(selectedPlayer.id, { rating: val })
                   }}
                   placeholder="-"
-                  className="w-20 px-2 py-1 text-2xl font-bold font-mono text-center border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                  className="w-20 px-2 py-1 text-2xl font-bold font-mono text-center border rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
                 />
               </div>
               <input
@@ -1155,7 +1155,7 @@ export default function QuarterEditPage() {
                     rating: parseFloat(e.target.value),
                   })
                 }
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
               />
               <div className="flex justify-between text-xs text-gray-400 mt-1">
                 <span>0</span>
@@ -1204,7 +1204,7 @@ export default function QuarterEditPage() {
                   }
                   className={`w-full py-2 border rounded-lg flex items-center justify-center ${
                     selectedPlayer.cleanSheet
-                      ? 'bg-blue-100 border-blue-500 text-blue-700'
+                      ? 'bg-emerald-100 border-emerald-500 text-emerald-700'
                       : 'bg-gray-50 text-gray-400'
                   }`}
                 >
@@ -1221,7 +1221,7 @@ export default function QuarterEditPage() {
                   }
                   className={`w-full py-2 border rounded-lg flex items-center justify-center ${
                     selectedPlayer.contribution > 0
-                      ? 'bg-blue-100 border-blue-500 text-blue-700'
+                      ? 'bg-emerald-100 border-emerald-500 text-emerald-700'
                       : 'bg-gray-50 text-gray-400'
                   }`}
                 >
@@ -1256,7 +1256,7 @@ export default function QuarterEditPage() {
                     <Camera className="w-4 h-4" />
                     촬영하기
                   </button>
-                  {uploadingMedia && <Spinner className="w-5 h-5 text-blue-600 animate-spin self-center" />}
+                  {uploadingMedia && <Spinner className="w-5 h-5 text-emerald-600 animate-spin self-center" />}
                 </div>
                 <input
                   ref={mediaInputRef}
@@ -1298,7 +1298,7 @@ export default function QuarterEditPage() {
 
               {/* Praise Text */}
               <div className="mb-3">
-                <label className="block text-sm font-medium text-blue-700 mb-1">
+                <label className="block text-sm font-medium text-emerald-700 mb-1">
                   참 잘했어요
                 </label>
                 <textarea
@@ -1306,7 +1306,7 @@ export default function QuarterEditPage() {
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { praiseText: e.target.value })}
                   placeholder="잘한 점을 적어주세요"
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none resize-none"
                 />
               </div>
 
@@ -1342,7 +1342,7 @@ export default function QuarterEditPage() {
               <button
                 onClick={() => handleSavePlayer(selectedPlayer)}
                 disabled={savingPlayer}
-                className="w-full mt-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full mt-4 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 <Save className="w-4 h-4" />
                 {savingPlayer ? '저장 중...' : `${selectedPlayer.player.name} 저장`}
@@ -1361,7 +1361,7 @@ export default function QuarterEditPage() {
                   key={fp.id}
                   onClick={() => setSelectedPlayer(fp)}
                   className={`w-full p-4 flex items-center justify-between text-left hover:bg-gray-50 ${
-                    selectedPlayer?.id === fp.id ? 'bg-blue-50' : ''
+                    selectedPlayer?.id === fp.id ? 'bg-emerald-50' : ''
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -1380,7 +1380,7 @@ export default function QuarterEditPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="text-xl font-bold font-mono text-blue-600">
+                  <div className="text-xl font-bold font-mono text-emerald-600">
                     {fp.rating?.toFixed(1) || '-'}
                   </div>
                 </button>

@@ -261,7 +261,7 @@ export default function PlayersPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
       </div>
     )
   }
@@ -283,7 +283,7 @@ export default function PlayersPage() {
                 resetForm()
                 setShowAddForm(true)
               }}
-              className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+              className="flex items-center gap-1 px-3 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700"
             >
               <Plus className="w-4 h-4" />
               선수 추가
@@ -316,7 +316,7 @@ export default function PlayersPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
                   placeholder="선수 이름"
                 />
               </div>
@@ -328,7 +328,7 @@ export default function PlayersPage() {
                   onChange={(e) => setNumber(e.target.value)}
                   min={1}
                   max={99}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none"
                   placeholder="#"
                 />
               </div>
@@ -359,7 +359,7 @@ export default function PlayersPage() {
 
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700"
             >
               {editingPlayer ? '수정 완료' : '추가하기'}
             </button>
@@ -424,7 +424,7 @@ export default function PlayersPage() {
                   </div>
                   <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">골</p>
-                    <p className="font-bold text-blue-600">{player.stats.goals}</p>
+                    <p className="font-bold text-emerald-600">{player.stats.goals}</p>
                   </div>
                   <div className="text-center">
                     <p className="text-xs text-gray-500 mb-1">도움</p>
