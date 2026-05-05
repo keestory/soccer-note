@@ -220,7 +220,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
       </div>
     )
   }
@@ -230,7 +230,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-gray-50 px-4 py-8">
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-emerald-600">SoccerNote</h1>
+            <h1 className="text-3xl font-bold text-blue-600">SoccerNote</h1>
             <p className="text-gray-600 mt-2">축구 경기 기록 앱</p>
           </div>
 
@@ -238,7 +238,7 @@ export default function DashboardPage() {
           {teams.length > 0 && (
             <div className="bg-white rounded-xl shadow-lg p-6 mb-4">
               <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                <Users className="w-5 h-5 text-emerald-600" />
+                <Users className="w-5 h-5 text-blue-600" />
                 내 팀 목록 ({teams.length}개)
               </h2>
               <div className="space-y-2 max-h-[40vh] overflow-y-auto">
@@ -246,7 +246,7 @@ export default function DashboardPage() {
                   <button
                     key={team.id}
                     onClick={() => selectTeam(team)}
-                    className="w-full p-4 rounded-lg bg-gray-50 hover:bg-emerald-50 text-left transition flex items-center justify-between"
+                    className="w-full p-4 rounded-lg bg-gray-50 hover:bg-blue-50 text-left transition flex items-center justify-between"
                   >
                     <div>
                       <p className="font-medium text-gray-900">{team.name}</p>
@@ -266,7 +266,7 @@ export default function DashboardPage() {
           {/* 새 팀 만들기 */}
           <form onSubmit={handleCreateTeam} className="bg-white rounded-xl shadow-lg p-6 mb-4">
             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-              <Plus className="w-5 h-5 text-emerald-600" />
+              <Plus className="w-5 h-5 text-blue-600" />
               새 팀 만들기
             </h2>
             <div className="mb-4">
@@ -275,13 +275,13 @@ export default function DashboardPage() {
                 value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="팀 이름 입력"
               />
             </div>
             <button
               type="submit"
-              className="w-full py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition"
+              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
             >
               팀 만들기
             </button>
@@ -290,7 +290,7 @@ export default function DashboardPage() {
           {/* 팀 가입하기 */}
           <div className="bg-white rounded-xl shadow-lg p-6">
             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-emerald-600" />
+              <UserPlus className="w-5 h-5 text-blue-600" />
               팀에 가입하기
             </h2>
             <p className="text-gray-500 text-sm mb-4">
@@ -307,7 +307,7 @@ export default function DashboardPage() {
           {/* 내 프로필 */}
           <Link
             href="/profile"
-            className="mt-6 w-full py-3 text-emerald-600 hover:text-emerald-700 flex items-center justify-center gap-2 font-medium"
+            className="mt-6 w-full py-3 text-blue-600 hover:text-blue-700 flex items-center justify-center gap-2 font-medium"
           >
             <User className="w-4 h-4" />
             내 프로필
@@ -344,7 +344,7 @@ export default function DashboardPage() {
                   onClick={() => selectTeam(team)}
                   className={`w-full p-3 rounded-lg text-left flex items-center justify-between ${
                     selectedTeam?.id === team.id
-                      ? 'bg-emerald-100 border-2 border-emerald-500'
+                      ? 'bg-blue-100 border-2 border-blue-500'
                       : 'bg-gray-50 hover:bg-gray-100'
                   }`}
                 >
@@ -355,7 +355,7 @@ export default function DashboardPage() {
                     </p>
                   </div>
                   {selectedTeam?.id === team.id && (
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full" />
+                    <div className="w-2 h-2 bg-blue-500 rounded-full" />
                   )}
                 </button>
               ))}
@@ -369,13 +369,13 @@ export default function DashboardPage() {
               </button>
               <button
                 onClick={() => { setShowTeamPicker(false); setShowCreateTeam(true) }}
-                className="flex-1 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-center"
+                className="flex-1 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center"
               >
                 + 팀 만들기
               </button>
               <Link
                 href="/team/join"
-                className="flex-1 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 text-center"
+                className="flex-1 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 text-center"
               >
                 + 팀 가입
               </Link>
@@ -388,7 +388,7 @@ export default function DashboardPage() {
       <header className="bg-white border-b sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
-            <h1 className="text-xl font-bold text-emerald-600">SoccerNote</h1>
+            <h1 className="text-xl font-bold text-blue-600">SoccerNote</h1>
             <button
               onClick={() => setShowTeamPicker(true)}
               className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
@@ -451,7 +451,7 @@ export default function DashboardPage() {
         {canEditMatches && (
           <Link
             href="/match/new"
-            className="flex items-center justify-center gap-2 w-full py-4 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition mb-6"
+            className="flex items-center justify-center gap-2 w-full py-4 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition mb-6"
           >
             <Plus className="w-5 h-5" />
             새 경기 기록하기
@@ -469,7 +469,7 @@ export default function DashboardPage() {
             <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-sm font-semibold text-gray-500">팀 전적</h2>
-                <span className="text-sm font-bold text-emerald-600">승률 {winRate}%</span>
+                <span className="text-sm font-bold text-blue-600">승률 {winRate}%</span>
               </div>
               <div className="grid grid-cols-4 gap-2 text-center">
                 <div>
@@ -477,7 +477,7 @@ export default function DashboardPage() {
                   <p className="text-xs text-gray-500">총 경기</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-emerald-600">{wins}</p>
+                  <p className="text-2xl font-bold text-blue-600">{wins}</p>
                   <p className="text-xs text-gray-500">승</p>
                 </div>
                 <div>
@@ -521,13 +521,13 @@ export default function DashboardPage() {
                       </div>
                       <div className="text-right">
                         <p className="text-2xl font-bold">
-                          <span className="text-emerald-600">{match.home_score}</span>
+                          <span className="text-blue-600">{match.home_score}</span>
                           <span className="text-gray-400 mx-1">:</span>
                           <span className="text-gray-600">{match.away_score}</span>
                         </p>
                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
                           match.home_score > match.away_score
-                            ? 'bg-emerald-100 text-emerald-700'
+                            ? 'bg-blue-100 text-blue-700'
                             : match.home_score < match.away_score
                               ? 'bg-red-100 text-red-700'
                               : 'bg-gray-100 text-gray-600'
@@ -562,7 +562,7 @@ export default function DashboardPage() {
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex justify-around py-3">
-            <Link href="/dashboard" className="flex flex-col items-center text-emerald-600">
+            <Link href="/dashboard" className="flex flex-col items-center text-blue-600">
               <Trophy className="w-6 h-6" />
               <span className="text-xs mt-1">경기</span>
             </Link>
