@@ -11,7 +11,7 @@ import { formatDate, calculateMVP } from '@/lib/utils'
 import toast from 'react-hot-toast'
 
 interface TeamWithRole extends Team {
-  role: 'coach' | 'member'
+  role: 'coach' | 'member' | 'parent'
   membership: TeamMember
 }
 
@@ -25,6 +25,7 @@ export default function DashboardPage() {
   const [showTeamPicker, setShowTeamPicker] = useState(false)
   const [teamName, setTeamName] = useState('')
   const [displayName, setDisplayName] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
   const supabase = createClient()
 
   useEffect(() => {
@@ -37,6 +38,7 @@ export default function DashboardPage() {
       router.push('/login')
       return
     }
+    setUserId(user.id)
 
     // Load user profile display name
     const { data: profile } = await supabase
@@ -324,7 +326,7 @@ export default function DashboardPage() {
     )
   }
 
-  const isCoach = selectedTeam?.role === 'coach'
+  const isCoach = selectedTeam?.role === 'coach' || selectedTeam?.user_id === userId
   const canEditPlayers = isCoach || selectedTeam?.membership?.can_edit_players
   const canEditMatches = isCoach || selectedTeam?.membership?.can_edit_matches
 
