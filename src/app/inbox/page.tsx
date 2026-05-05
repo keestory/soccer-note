@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Bell, Check, CheckCheck, Loader2, Inbox, Calendar, Users } from 'lucide-react'
+import { ArrowLeft, Bell, Check, CheckCheck, Loader2, Inbox, Calendar, Users, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 
@@ -31,6 +31,7 @@ export default function InboxPage() {
   const [unreadCount, setUnreadCount] = useState(0)
   const [filter, setFilter] = useState<'all' | 'unread'>('all')
   const [markingAll, setMarkingAll] = useState(false)
+  const [expandedId, setExpandedId] = useState<string | null>(null)
 
   const supabase = createClient()
   const { t } = useI18n()
@@ -113,6 +114,11 @@ export default function InboxPage() {
       markAsRead(notification.receipt_id)
     }
 
+    // 확장/축소 토글
+    setExpandedId(expandedId === notification.receipt_id ? null : notification.receipt_id)
+  }
+
+  const handleNavigate = (notification: UserNotification) => {
     // 관련 페이지로 이동
     if (notification.data?.matchId) {
       router.push(`/match/${notification.data.matchId}`)
@@ -233,60 +239,86 @@ export default function InboxPage() {
           </div>
         ) : (
           <div className="divide-y">
-            {notifications.map((notification) => (
-              <button
-                key={notification.receipt_id}
-                onClick={() => handleNotificationClick(notification)}
-                className={`w-full px-4 py-4 flex items-start gap-3 text-left transition-colors ${
-                  notification.read_at
-                    ? 'bg-white hover:bg-gray-50'
-                    : 'bg-blue-50 hover:bg-blue-100'
-                }`}
-              >
-                {/* 읽음 상태 표시 */}
-                <div className="flex-shrink-0 mt-1">
-                  {notification.read_at ? (
-                    <div className="w-2 h-2 rounded-full bg-transparent" />
-                  ) : (
-                    <div className="w-2 h-2 rounded-full bg-blue-600" />
+            {notifications.map((notification) => {
+              const isExpanded = expandedId === notification.receipt_id
+              return (
+                <div
+                  key={notification.receipt_id}
+                  className={`transition-colors ${
+                    notification.read_at
+                      ? 'bg-white'
+                      : 'bg-blue-50'
+                  }`}
+                >
+                  <button
+                    onClick={() => handleNotificationClick(notification)}
+                    className={`w-full px-4 py-4 flex items-start gap-3 text-left ${
+                      notification.read_at
+                        ? 'hover:bg-gray-50'
+                        : 'hover:bg-blue-100'
+                    }`}
+                  >
+                    {/* 읽음 상태 표시 */}
+                    <div className="flex-shrink-0 mt-1">
+                      {notification.read_at ? (
+                        <div className="w-2 h-2 rounded-full bg-transparent" />
+                      ) : (
+                        <div className="w-2 h-2 rounded-full bg-blue-600" />
+                      )}
+                    </div>
+
+                    {/* 아이콘 */}
+                    <div className="flex-shrink-0 mt-0.5">
+                      {getNotificationIcon(notification.notification_type)}
+                    </div>
+
+                    {/* 내용 */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                          {notification.team_name}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          {formatDate(notification.sent_at)}
+                        </span>
+                      </div>
+                      <h3 className={`font-medium ${isExpanded ? '' : 'truncate'} ${
+                        notification.read_at ? 'text-gray-700' : 'text-gray-900'
+                      }`}>
+                        {notification.title}
+                      </h3>
+                      <p className={`text-sm mt-0.5 ${isExpanded ? 'whitespace-pre-wrap' : 'line-clamp-2'} ${
+                        notification.read_at ? 'text-gray-500' : 'text-gray-600'
+                      }`}>
+                        {notification.body}
+                      </p>
+                    </div>
+
+                    {/* 확장/축소 아이콘 */}
+                    <div className="flex-shrink-0 text-gray-400">
+                      {isExpanded ? (
+                        <ChevronUp className="w-5 h-5" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5" />
+                      )}
+                    </div>
+                  </button>
+
+                  {/* 확장된 경우 이동 버튼 표시 */}
+                  {isExpanded && (notification.data?.matchId || notification.team_id) && (
+                    <div className="px-4 pb-4 pl-14">
+                      <button
+                        onClick={() => handleNavigate(notification)}
+                        className="flex items-center gap-1.5 px-3 py-2 text-sm text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+                      >
+                        <ExternalLink className="w-4 h-4" />
+                        {notification.data?.matchId ? '경기 상세 보기' : '대시보드로 이동'}
+                      </button>
+                    </div>
                   )}
                 </div>
-
-                {/* 아이콘 */}
-                <div className="flex-shrink-0 mt-0.5">
-                  {getNotificationIcon(notification.notification_type)}
-                </div>
-
-                {/* 내용 */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
-                      {notification.team_name}
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      {formatDate(notification.sent_at)}
-                    </span>
-                  </div>
-                  <h3 className={`font-medium truncate ${
-                    notification.read_at ? 'text-gray-700' : 'text-gray-900'
-                  }`}>
-                    {notification.title}
-                  </h3>
-                  <p className={`text-sm mt-0.5 line-clamp-2 ${
-                    notification.read_at ? 'text-gray-500' : 'text-gray-600'
-                  }`}>
-                    {notification.body}
-                  </p>
-                </div>
-
-                {/* 화살표 */}
-                {(notification.data?.matchId || notification.team_id) && (
-                  <div className="flex-shrink-0 text-gray-400">
-                    <ArrowLeft className="w-4 h-4 rotate-180" />
-                  </div>
-                )}
-              </button>
-            ))}
+              )
+            })}
           </div>
         )}
       </main>
