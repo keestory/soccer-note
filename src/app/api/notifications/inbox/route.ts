@@ -77,3 +77,33 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ success: true, updatedCount: count })
 }
+
+// 알림 확인 완료 처리
+export async function PUT(request: NextRequest) {
+  const supabase = await createServerSupabaseClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    return NextResponse.json({ error: '인증이 필요합니다' }, { status: 401 })
+  }
+
+  const { receiptId } = await request.json()
+
+  if (!receiptId) {
+    return NextResponse.json({ error: 'receiptId가 필요합니다' }, { status: 400 })
+  }
+
+  // 확인 완료 처리
+  const { data: success, error } = await supabaseAdmin
+    .rpc('confirm_notification', {
+      p_user_id: user.id,
+      p_receipt_id: receiptId
+    })
+
+  if (error) {
+    console.error('확인 처리 실패:', error)
+    return NextResponse.json({ error: '확인 처리에 실패했습니다' }, { status: 500 })
+  }
+
+  return NextResponse.json({ success })
+}

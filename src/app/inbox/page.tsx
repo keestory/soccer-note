@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Bell, Check, CheckCheck, Loader2, Inbox, Calendar, Users, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Bell, Check, CheckCheck, Loader2, Inbox, Calendar, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 
@@ -20,6 +20,7 @@ interface UserNotification {
   status: string
   read_at: string | null
   clicked_at: string | null
+  confirmed_at: string | null
   sent_at: string
   created_at: string
 }
@@ -118,12 +119,28 @@ export default function InboxPage() {
     setExpandedId(expandedId === notification.receipt_id ? null : notification.receipt_id)
   }
 
-  const handleNavigate = (notification: UserNotification) => {
-    // 관련 페이지로 이동
-    if (notification.data?.matchId) {
-      router.push(`/match/${notification.data.matchId}`)
-    } else if (notification.team_id) {
-      router.push(`/dashboard?team=${notification.team_id}`)
+  const confirmNotification = async (receiptId: string) => {
+    try {
+      const response = await fetch('/api/notifications/inbox', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ receiptId })
+      })
+
+      if (response.ok) {
+        // UI 업데이트
+        setNotifications(prev =>
+          prev.map(n =>
+            n.receipt_id === receiptId
+              ? { ...n, confirmed_at: new Date().toISOString() }
+              : n
+          )
+        )
+        toast.success('확인 완료!')
+      }
+    } catch (error) {
+      console.error('확인 처리 실패:', error)
+      toast.error('처리에 실패했습니다')
     }
   }
 
@@ -304,16 +321,23 @@ export default function InboxPage() {
                     </div>
                   </button>
 
-                  {/* 확장된 경우 이동 버튼 표시 */}
-                  {isExpanded && (notification.data?.matchId || notification.team_id) && (
+                  {/* 확장된 경우 확인 완료 버튼 표시 */}
+                  {isExpanded && (
                     <div className="px-4 pb-4 pl-14">
-                      <button
-                        onClick={() => handleNavigate(notification)}
-                        className="flex items-center gap-1.5 px-3 py-2 text-sm text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                        {notification.data?.matchId ? '경기 상세 보기' : '대시보드로 이동'}
-                      </button>
+                      {notification.confirmed_at ? (
+                        <div className="flex items-center gap-1.5 px-3 py-2 text-sm text-green-600 bg-green-50 rounded-lg">
+                          <CheckCircle2 className="w-4 h-4" />
+                          확인 완료됨
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => confirmNotification(notification.receipt_id)}
+                          className="flex items-center gap-1.5 px-4 py-2 text-sm text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors font-medium"
+                        >
+                          <Check className="w-4 h-4" />
+                          확인 완료!
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

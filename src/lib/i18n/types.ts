@@ -1,0 +1,529 @@
+export type Locale = 'ko' | 'en_US' | 'en_GB' | 'ja' | 'fr' | 'de' | 'it' | 'es'
+
+export interface LocaleInfo {
+  code: Locale
+  flag: string
+  label: string
+}
+
+export const LOCALES: LocaleInfo[] = [
+  { code: 'ko', flag: '🇰🇷', label: '한국어' },
+  { code: 'en_US', flag: '🇺🇸', label: 'English (US)' },
+  { code: 'en_GB', flag: '🇬🇧', label: 'English (UK)' },
+  { code: 'ja', flag: '🇯🇵', label: '日本語' },
+  { code: 'fr', flag: '🇫🇷', label: 'Français' },
+  { code: 'de', flag: '🇩🇪', label: 'Deutsch' },
+  { code: 'it', flag: '🇮🇹', label: 'Italiano' },
+  { code: 'es', flag: '🇪🇸', label: 'Español' },
+]
+
+export interface Translations {
+  // Common
+  appName: string
+  appDescription: string
+  loading: string
+  save: string
+  cancel: string
+  delete: string
+  edit: string
+  close: string
+  back: string
+  confirm: string
+  copy: string
+  copied: string
+  language: string
+
+  // Auth
+  login: string
+  signup: string
+  logout: string
+  email: string
+  password: string
+  displayName: string
+  loginTitle: string
+  signupTitle: string
+  loginButton: string
+  signupButton: string
+  noAccount: string
+  hasAccount: string
+  emailPlaceholder: string
+  passwordPlaceholder: string
+  displayNamePlaceholder: string
+  loginFailed: string
+  signupSuccess: string
+  signupFailed: string
+  emailConfirmMessage: string
+  authRequired: string
+  loginSuccess: string
+  loginError: string
+  signupSuccessMessage: string
+  signupError: string
+  loggingIn: string
+  signingUp: string
+  displayNameLabel: string
+  passwordConfirm: string
+  passwordMinLength: string
+  passwordsNoMatch: string
+  nameRequired: string
+  passwordReenter: string
+  passwordMin6: string
+  displayNameForTeam: string
+  loginToStart: string
+  createAccountToStart: string
+
+  // Profile
+  myProfile: string
+  profileUpdated: string
+  profileUpdateFailed: string
+  nameLabel: string
+  namePlaceholder: string
+  saving: string
+  nameChangeSuccess: string
+  nameChangeFailed: string
+
+  // Dashboard
+  createTeam: string
+  teamName: string
+  teamNamePlaceholder: string
+  createTeamButton: string
+  joinTeam: string
+  joinTeamDescription: string
+  joinByInviteCode: string
+  myTeams: string
+  teamsCount: string
+  coach: string
+  member: string
+  editMatch: string
+  editPlayer: string
+  teamRecord: string
+  winRate: string
+  totalGames: string
+  wins: string
+  losses: string
+  draws: string
+  recentMatches: string
+  noMatches: string
+  noMatchesDescription: string
+  selectTeam: string
+  teamCreated: string
+  teamCreateFailed: string
+  vs: string
+  win: string
+  loss: string
+  draw: string
+  attendance: string
+  persons: string
+  newMatchRecord: string
+
+  // Team
+  inviteCode: string
+  inviteCodePlaceholder: string
+  joinButton: string
+  teamNotFound: string
+  alreadyMember: string
+  joinRequested: string
+  joinFailed: string
+  teamMembers: string
+  pendingMembers: string
+  approve: string
+  reject: string
+  removeMember: string
+  permissions: string
+  canEditPlayers: string
+  canEditMatches: string
+  canEditQuarters: string
+  memberApproved: string
+  memberRejected: string
+  memberRemoved: string
+
+  // Players
+  players: string
+  playerManagement: string
+  addPlayer: string
+  playerName: string
+  playerNumber: string
+  position: string
+  defaultPosition: string
+  playerAdded: string
+  playerUpdated: string
+  playerDeleted: string
+  noPlayers: string
+  addPlayerDescription: string
+  editPlayerTitle: string
+  addPlayerTitle: string
+  totalPlayersCount: string
+  rankingByStats: string
+  noRecords: string
+
+  // Soccer Positions
+  positionGK: string
+  positionDF: string
+  positionMF: string
+  positionFW: string
+
+  // Match
+  newMatch: string
+  opponent: string
+  opponentPlaceholder: string
+  matchDate: string
+  location: string
+  locationPlaceholder: string
+  attendees: string
+  selectAttendees: string
+  createMatch: string
+  matchCreated: string
+  matchCreateFailed: string
+  deleteMatch: string
+  matchDeleted: string
+  matchStatusUpcoming: string
+  matchStatusCompleted: string
+  upcomingMatches: string
+  completedMatches: string
+  allMatches: string
+  schedule: string
+  markAsCompleted: string
+  markAsCompletedConfirm: string
+  quarter: string
+  quarterN: string
+  score: string
+  homeTeam: string
+  awayTeam: string
+  notes: string
+  mvp: string
+  playerStats: string
+  matchSummary: string
+  matchInfoEdit: string
+  matchLoadFailed: string
+  scoreSaved: string
+  scoreSaveFailed: string
+  attendeeSaved: string
+  attendeeSaveFailed: string
+  attendeeDeleteFailed: string
+  matchInfoSaved: string
+  matchInfoSaveFailed: string
+  deleteMatchConfirm: string
+  deleteFailed: string
+  matchDeletedSuccess: string
+  placePlayersMessage: string
+
+  // Match Summary
+  goals: string
+  assistsLabel: string
+  cleanSheet: string
+  contribution: string
+  noRecord: string
+  averageRating: string
+  overallPlayerStats: string
+
+  // Quarter
+  quarterRecord: string
+  formation: string
+  substitution: string
+  substitutionCount: string
+  rating: string
+  goal: string
+  assist: string
+  praise: string
+  improvement: string
+  highlight: string
+  playerOut: string
+  playerIn: string
+  minute: string
+  saveQuarter: string
+  quarterSaved: string
+  quarterSaveFailed: string
+
+  // Quarter Edit
+  quarterEditTitle: string
+  lineupPlacement: string
+  addPlayersFirst: string
+  matchNotFound: string
+  quarterNotFound: string
+  noQuarterPermission: string
+  selectPlayersToAdd: string
+  addAndDragPlayers: string
+  dragToAdjust: string
+  substitutionRecords: string
+  addSubstitution: string
+  noSubstitutions: string
+  substitutionTime: string
+  outPlayer: string
+  inPlayer: string
+  selectPlayer: string
+  samePlayerSubError: string
+  subAddFailed: string
+  subAdded: string
+  subDeleteFailed: string
+  subDeleted: string
+  playerReview: string
+  photoVideo: string
+  gallery: string
+  takePhoto: string
+  uploadFailed: string
+  filesUploaded: string
+  praiseLabel: string
+  improvementLabel: string
+  highlightLabel: string
+  praisePlaceholder: string
+  improvementPlaceholder: string
+  highlightPlaceholder: string
+  playerSaved: string
+  playerSaveFailed: string
+  placedPlayers: string
+  allQuarterSaved: string
+  saveFailed: string
+  formationApplied: string
+
+  // Quarter Edit extra
+  selectedCount: string
+  addNPlayers: string
+  goalsCount: string
+  assistsCount: string
+
+  // New Match
+  noCreateMatchPermission: string
+  opponentNameRequired: string
+  matchDateRequired: string
+  quartersCount: string
+  creating: string
+  createMatchDescription: string
+
+  // Team Join
+  invalidInviteCode: string
+  alreadyRequested: string
+  joinRequestFailed: string
+  joinRequestSent: string
+  pendingApproval: string
+  pendingApprovalDescription: string
+  alreadyJoinedTeam: string
+  goToDashboard: string
+  joinRequestRejected: string
+  joinRejectedDescription: string
+  enterInviteCodeDescription: string
+  search: string
+  joinName: string
+  nameNotSet: string
+  goToProfile: string
+  requesting: string
+  requestJoin: string
+  approvalRequired: string
+  goBackToDashboard: string
+  noName: string
+
+  // Team Join - Role Selection
+  selectRole: string
+  roleCoach: string
+  roleCoachDesc: string
+  roleParent: string
+  roleParentDesc: string
+  childName: string
+  childNamePlaceholder: string
+  childNameHint: string
+  linkPlayer: string
+  linkPlayerTitle: string
+  linkPlayerDescription: string
+  searchPlayer: string
+  noPlayerLinked: string
+  playerLinked: string
+  playerLinkFailed: string
+
+  // Visibility Settings
+  visibilitySettings: string
+  visibilityDescription: string
+  showMatchRecords: string
+  showPlayerStats: string
+  showPlayerRatings: string
+  showQuarterDetails: string
+  showFormation: string
+  showAttendance: string
+  showGoalsAssists: string
+  visibilitySaved: string
+  visibilitySaveFailed: string
+
+  // Team Members
+  inviteLinkCopied: string
+  approveFailed: string
+  rejectConfirm: string
+  rejectFailed: string
+  permissionChangeFailed: string
+  permissionChanged: string
+  removeMemberConfirm: string
+  memberRemoveFailed: string
+  coachCannotLeave: string
+  leaveTeamConfirm: string
+  leaveTeamFailed: string
+  leftTeam: string
+  transferFailed: string
+  transferred: string
+  disbandFailed: string
+  disbanded: string
+  memberManagement: string
+  teamInvite: string
+  copyLink: string
+  shareCodeDescription: string
+  joinRequests: string
+  memberList: string
+  noApprovedMembers: string
+  permissionSettings: string
+  playerManagementPermission: string
+  matchManagementPermission: string
+  quarterEditPermission: string
+  leaveTeam: string
+  leaveTeamDescription: string
+  disbandTeam: string
+  disbandDescription: string
+  selectNewCoachQuestion: string
+  yesSelectNewCoach: string
+  noDisbandTeam: string
+  noMembersToTransfer: string
+  selectNewCoach: string
+  selectNewCoachDescription: string
+  transferCoach: string
+  disbandConfirm: string
+  disbandConfirmMessage: string
+  disbandWarning: string
+  yesDisbandTeam: string
+  noGoBack: string
+
+  // Ranking
+  rankAttendance: string
+  rankGames: string
+  rankGoals: string
+  rankAssists: string
+  rankCleanSheets: string
+  rankRating: string
+
+  // Team management
+  teamManagement: string
+  matchesLabel: string
+  playersLabel: string
+
+  // Landing page
+  getStarted: string
+  landingHeroTitle: string
+  landingHeroSubtitle: string
+  landingHeroButton: string
+  landingFeatures: string
+  landingFeaturesSubtitle: string
+  featureDashboardTitle: string
+  featureDashboardDescription: string
+  featureFormationTitle: string
+  featureFormationDescription: string
+  featureQuarterTitle: string
+  featureQuarterDescription: string
+  featureSubstitutionTitle: string
+  featureSubstitutionDescription: string
+  featureMVPTitle: string
+  featureMVPDescription: string
+  featurePermissionsTitle: string
+  featurePermissionsDescription: string
+  landingCTATitle: string
+  landingCTADescription: string
+
+  // Training Session
+  trainingLabel: string
+  newTraining: string
+  newTrainingRecord: string
+  trainingDate: string
+  trainingType: string
+  trainingDuration: string
+  trainingNotes: string
+  trainingNotesPlaceholder: string
+  trainingCreated: string
+  trainingCreateFailed: string
+  trainingDeleted: string
+  deleteTraining: string
+  deleteTrainingConfirm: string
+  trainingLoadFailed: string
+  trainingInfoSaved: string
+  trainingInfoSaveFailed: string
+  noTrainings: string
+  noTrainingsDescription: string
+  noCreateTrainingPermission: string
+
+  // Training Types
+  trainingTypeMiniGame: string
+  trainingTypePassing: string
+  trainingTypeShooting: string
+  trainingTypeFitness: string
+  trainingTypeTactics: string
+  trainingTypeMixed: string
+  trainingTypeOther: string
+
+  // Training Attendance & Evaluation
+  trainingAttendees: string
+  trainingAttendance: string
+  trainingRating: string
+  trainingFeedback: string
+  trainingFeedbackPlaceholder: string
+  trainingEvaluation: string
+  trainingEvaluationOptional: string
+  trainingAttendeeSaved: string
+  trainingAttendeeSaveFailed: string
+  trainingEvalSaved: string
+  trainingEvalSaveFailed: string
+
+  // Training Visibility
+  showTrainingRecords: string
+  showTrainingFeedback: string
+
+  // Training Stats
+  totalTrainings: string
+
+  // Push Notifications
+  notifications: string
+  sendNotification: string
+  notificationTitle: string
+  notificationTitlePlaceholder: string
+  notificationBody: string
+  notificationBodyPlaceholder: string
+  send: string
+  sending: string
+  notificationSent: string
+  notificationSendFailed: string
+  notificationHistory: string
+  noNotifications: string
+  noNotificationsDescription: string
+  recipientsCount: string
+  successCount: string
+  failureCount: string
+  manualNotification: string
+  newMatchNotification: string
+
+  // Player Stats Page
+  playerSeasonStats: string
+  matchHistory: string
+  noMatchRecord: string
+  seasonSummary: string
+  viewPlayerStats: string
+
+  // Onboarding
+  onboardingForCoach: string
+  onboardingForParent: string
+  onboardingSkip: string
+  onboardingPrev: string
+  onboardingNext: string
+  onboardingStart: string
+  onboardingSlide1Title: string
+  onboardingSlide1Desc: string
+  onboardingSlide2Title: string
+  onboardingSlide2Desc: string
+  onboardingSlide3Title: string
+  onboardingSlide3Desc: string
+  onboardingSlide4Title: string
+  onboardingSlide4Desc: string
+  onboardingSlide5Title: string
+  onboardingSlide5Desc: string
+  onboardingSlide6Title: string
+  onboardingSlide6Desc: string
+
+  // Account Deletion
+  deleteAccount: string
+  deleteAccountDescription: string
+  deleteAccountConfirm: string
+  deleteAccountWarning: string
+  deleteAccountButton: string
+  deleteAccountSuccess: string
+  deleteAccountFailed: string
+  deleting: string
+}
