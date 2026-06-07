@@ -403,7 +403,7 @@ function TeamMembersContent() {
               </div>
               <button
                 onClick={copyInviteLink}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 flex-shrink-0 whitespace-nowrap"
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                 {copied ? '복사됨' : '링크 복사'}
@@ -425,23 +425,23 @@ function TeamMembersContent() {
             <div className="bg-amber-50 border-2 border-amber-200 rounded-xl divide-y divide-amber-200">
               {pendingMembers.map((member) => (
                 <div key={member.id} className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
                         <Clock className="w-5 h-5 text-amber-600" />
                       </div>
-                      <div>
-                        <p className="font-medium">
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">
                           {member.profile?.display_name || member.profile?.email || '이름 없음'}
                         </p>
                         {isCoach && (
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-gray-500 truncate">
                             {member.profile?.email || member.user_id.slice(0, 8) + '...'}
                           </p>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-shrink-0">
                       <button
                         onClick={() => approveMember(member)}
                         className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1 text-sm font-medium"
@@ -475,9 +475,9 @@ function TeamMembersContent() {
             ) : (
               members.map((member) => (
                 <div key={member.id} className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                         member.role === 'coach' ? 'bg-amber-100' : 'bg-gray-100'
                       }`}>
                         {member.role === 'coach' ? (
@@ -486,11 +486,11 @@ function TeamMembersContent() {
                           <Users className="w-5 h-5 text-gray-500" />
                         )}
                       </div>
-                      <div>
-                        <p className="font-medium">
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">
                           {member.profile?.display_name || member.profile?.email || '이름 없음'}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 truncate">
                           {member.role === 'coach' ? '감독' : '팀원'}
                           {isCoach && member.profile?.email ? ` · ${member.profile.email}` : ''}
                         </p>
@@ -498,7 +498,7 @@ function TeamMembersContent() {
                     </div>
 
                     {isCoach && member.role !== 'coach' && (
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-shrink-0">
                         <button
                           onClick={() => setEditingMember(editingMember === member.id ? null : member.id)}
                           className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
@@ -575,14 +575,14 @@ function TeamMembersContent() {
             {/* Leave Team - for non-owners */}
             {!isOwner && (
               <div className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
                     <p className="font-medium text-gray-900">팀 탈퇴</p>
                     <p className="text-sm text-gray-500">이 팀에서 나갑니다</p>
                   </div>
                   <button
                     onClick={leaveTeam}
-                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm font-medium"
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm font-medium flex-shrink-0 whitespace-nowrap"
                   >
                     <LogOut className="w-4 h-4" />
                     팀 탈퇴
@@ -594,8 +594,8 @@ function TeamMembersContent() {
             {/* Disband Team - only for owner */}
             {isOwner && (
               <div className="p-4 bg-red-50">
-                <div className="flex items-center justify-between">
-                  <div>
+                <div className="flex items-center justify-between gap-3">
+                  <div className="min-w-0">
                     <p className="font-medium text-red-700">팀 해체</p>
                     <p className="text-sm text-red-600">
                       다른 멤버에게 감독을 위임하거나 팀을 해체합니다
@@ -603,7 +603,7 @@ function TeamMembersContent() {
                   </div>
                   <button
                     onClick={openDisbandModal}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 text-sm font-medium"
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 flex items-center gap-2 text-sm font-medium flex-shrink-0 whitespace-nowrap"
                   >
                     <Trash2 className="w-4 h-4" />
                     팀 해체
