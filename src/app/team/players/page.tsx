@@ -269,7 +269,7 @@ export default function PlayersPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10">
+      <header className="bg-white border-b sticky top-0 z-10 safe-top">
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="p-1 hover:bg-gray-100 rounded-lg">
