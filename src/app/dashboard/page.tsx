@@ -385,7 +385,7 @@ export default function DashboardPage() {
       )}
 
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10">
+      <header className="bg-white border-b sticky top-0 z-10 safe-top">
         <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold text-blue-600">SoccerNote</h1>
@@ -446,7 +446,7 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-4 pt-6 pb-28">
         {/* New Match Button */}
         {canEditMatches && (
           <Link
@@ -559,7 +559,7 @@ export default function DashboardPage() {
       </main>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t safe-bottom">
         <div className="max-w-4xl mx-auto px-4">
           <div className="flex justify-around py-3">
             <Link href="/dashboard" className="flex flex-col items-center text-blue-600">

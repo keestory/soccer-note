@@ -1,10 +1,17 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Providers } from '@/components/Providers'
 import './globals.css'
 
 export const metadata: Metadata = {
   title: 'SoccerNote - 축구팀 경기 기록',
   description: '축구팀 경기 결과와 선수 평가를 기록하고 MVP를 선정하세요',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#ffffff',
 }
 
 export default function RootLayout({

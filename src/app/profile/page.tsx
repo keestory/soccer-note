@@ -98,7 +98,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white shadow-sm sticky top-0 z-10">
+      <header className="bg-white shadow-sm sticky top-0 z-10 safe-top">
         <div className="max-w-lg mx-auto px-4 py-4 flex items-center gap-3">
           <Link href="/dashboard" className="p-1 hover:bg-gray-100 rounded-lg">
             <ArrowLeft className="w-5 h-5 text-gray-600" />
