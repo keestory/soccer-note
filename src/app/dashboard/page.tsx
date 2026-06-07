@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [teams, setTeams] = useState<TeamWithRole[]>([])
   const [selectedTeam, setSelectedTeam] = useState<TeamWithRole | null>(null)
   const [matches, setMatches] = useState<Match[]>([])
+  const [matchFilter, setMatchFilter] = useState<'all' | 'upcoming' | 'completed'>('all')
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [showTeamPicker, setShowTeamPicker] = useState(false)
   const [teamName, setTeamName] = useState('')
@@ -330,6 +331,13 @@ export default function DashboardPage() {
   const canEditPlayers = isCoach || selectedTeam?.membership?.can_edit_players
   const canEditMatches = isCoach || selectedTeam?.membership?.can_edit_matches
 
+  const todayStr = new Date().toISOString().slice(0, 10)
+  const filteredMatches = matches.filter((m) => {
+    if (matchFilter === 'upcoming') return m.match_date >= todayStr
+    if (matchFilter === 'completed') return m.match_date < todayStr
+    return true
+  })
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Team Picker Modal */}
@@ -386,18 +394,18 @@ export default function DashboardPage() {
 
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-10 safe-top">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div>
+        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center gap-2">
+          <div className="min-w-0">
             <h1 className="text-xl font-bold text-blue-600">SoccerNote</h1>
             <button
               onClick={() => setShowTeamPicker(true)}
-              className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900"
+              className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 max-w-full"
             >
-              {selectedTeam?.name || '팀 선택'}
-              <ChevronDown className="w-4 h-4" />
+              <span className="truncate">{selectedTeam?.name || '팀 선택'}</span>
+              <ChevronDown className="w-4 h-4 flex-shrink-0" />
             </button>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <NotificationBadge />
             {isCoach && (
               <Link
@@ -408,22 +416,6 @@ export default function DashboardPage() {
                 <Send className="w-5 h-5" />
               </Link>
             )}
-            {isCoach && (
-              <Link
-                href="/team/members"
-                className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-                title="팀원 관리"
-              >
-                <Settings className="w-5 h-5" />
-              </Link>
-            )}
-            <Link
-              href="/team/players"
-              className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition"
-              title="선수 관리"
-            >
-              <Users className="w-5 h-5" />
-            </Link>
             <Link
               href="/profile"
               className="flex items-center gap-1.5 px-2 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition"
@@ -493,19 +485,47 @@ export default function DashboardPage() {
           )
         })()}
 
-        {/* Recent Matches */}
+        {/* Matches */}
         <section>
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">최근 경기</h2>
-
           {matches.length === 0 ? (
-            <div className="bg-white rounded-xl p-8 text-center">
-              <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500">아직 기록된 경기가 없습니다</p>
-              <p className="text-gray-400 text-sm">첫 경기를 기록해보세요!</p>
-            </div>
+            <>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">최근 경기</h2>
+              <div className="bg-white rounded-xl p-8 text-center">
+                <Trophy className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">아직 기록된 경기가 없습니다</p>
+                <p className="text-gray-400 text-sm">첫 경기를 기록해보세요!</p>
+              </div>
+            </>
           ) : (
-            <div className="space-y-3">
-              {matches.map((match: Match & { match_attendees?: { id: string }[] }) => {
+            <>
+              {/* Filter Tabs */}
+              <div className="flex gap-2 mb-4">
+                {([
+                  { key: 'all', label: '전체' },
+                  { key: 'upcoming', label: '예정' },
+                  { key: 'completed', label: '완료' },
+                ] as const).map((t) => (
+                  <button
+                    key={t.key}
+                    onClick={() => setMatchFilter(t.key)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition ${
+                      matchFilter === t.key
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-white text-gray-600 border border-gray-200'
+                    }`}
+                  >
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+
+              {filteredMatches.length === 0 ? (
+                <div className="bg-white rounded-xl p-8 text-center text-gray-500">
+                  {matchFilter === 'upcoming' ? '예정된 경기가 없습니다' : '완료된 경기가 없습니다'}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredMatches.map((match: Match & { match_attendees?: { id: string }[] }) => {
                 const mvp = calculateMVP(match)
                 const attendeeCount = match.match_attendees?.length || 0
                 return (
@@ -552,8 +572,10 @@ export default function DashboardPage() {
                     </div>
                   </Link>
                 )
-              })}
-            </div>
+                  })}
+                </div>
+              )}
+            </>
           )}
         </section>
       </main>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { ArrowLeft, Plus, Trash2, Edit2, X } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Edit2, X, Users, Trophy } from 'lucide-react'
 import type { Player, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
@@ -22,6 +22,25 @@ interface PlayerWithStats extends Player {
   stats: PlayerStats
 }
 
+type RankStatKey = 'goals' | 'assists' | 'avgRating' | 'attendance' | 'cleanSheets'
+
+const STAT_TABS: { key: RankStatKey; label: string; color: string; suffix: string }[] = [
+  { key: 'goals', label: '골', color: 'text-blue-600', suffix: '골' },
+  { key: 'assists', label: '도움', color: 'text-blue-600', suffix: '도움' },
+  { key: 'avgRating', label: '평점', color: 'text-amber-600', suffix: '' },
+  { key: 'attendance', label: '출석', color: 'text-green-600', suffix: '회' },
+  { key: 'cleanSheets', label: '클린시트', color: 'text-purple-600', suffix: '' },
+]
+
+// Rank badge colors for top 3
+const RANK_BADGE = ['bg-amber-400 text-white', 'bg-gray-300 text-white', 'bg-amber-700 text-white']
+
+function formatStat(v: number | null, key: RankStatKey, suffix: string): string {
+  if (v === null) return '-'
+  if (key === 'avgRating') return v.toFixed(1)
+  return `${v}${suffix}`
+}
+
 export default function PlayersPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
@@ -30,6 +49,8 @@ export default function PlayersPage() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
   const [canEdit, setCanEdit] = useState(false)
+  const [view, setView] = useState<'roster' | 'ranking'>('roster')
+  const [rankStat, setRankStat] = useState<RankStatKey>('goals')
 
   // Form state
   const [name, setName] = useState('')
@@ -266,6 +287,16 @@ export default function PlayersPage() {
     )
   }
 
+  const currentTab = STAT_TABS.find((t) => t.key === rankStat)!
+  const rankedPlayers = [...players].sort((a, b) => {
+    const av = a.stats[rankStat]
+    const bv = b.stats[rankStat]
+    if (av === null && bv === null) return 0
+    if (av === null) return 1
+    if (bv === null) return -1
+    return bv - av
+  })
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
@@ -292,8 +323,32 @@ export default function PlayersPage() {
         </div>
       </header>
 
+      {/* View Toggle: Roster / Ranking */}
+      <div className="max-w-4xl mx-auto px-4 pt-4">
+        <div className="flex gap-2 bg-gray-100 rounded-xl p-1">
+          <button
+            onClick={() => setView('roster')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition ${
+              view === 'roster' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            명단
+          </button>
+          <button
+            onClick={() => setView('ranking')}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition ${
+              view === 'ranking' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'
+            }`}
+          >
+            <Trophy className="w-4 h-4" />
+            랭킹
+          </button>
+        </div>
+      </div>
+
       {/* Add/Edit Form */}
-      {canEdit && (showAddForm || editingPlayer) && (
+      {canEdit && view === 'roster' && (showAddForm || editingPlayer) && (
         <div className="max-w-4xl mx-auto px-4 py-4">
           <form
             onSubmit={editingPlayer ? handleUpdatePlayer : handleAddPlayer}
@@ -367,7 +422,8 @@ export default function PlayersPage() {
         </div>
       )}
 
-      {/* Players List */}
+      {/* Players List (Roster) */}
+      {view === 'roster' && (
       <main className="max-w-4xl mx-auto px-4 py-4">
         {players.length === 0 ? (
           <div className="bg-white rounded-xl p-8 text-center">
@@ -450,6 +506,65 @@ export default function PlayersPage() {
           총 {players.length}명의 선수
         </p>
       </main>
+      )}
+
+      {/* Ranking */}
+      {view === 'ranking' && (
+        <main className="max-w-4xl mx-auto px-4 py-4">
+          {/* Stat tabs */}
+          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+            {STAT_TABS.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setRankStat(tab.key)}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition ${
+                  rankStat === tab.key
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-600 border border-gray-200'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {players.length === 0 ? (
+            <div className="bg-white rounded-xl p-8 text-center mt-3">
+              <p className="text-gray-500">등록된 선수가 없습니다</p>
+            </div>
+          ) : (
+            <div className="space-y-2 mt-3">
+              {rankedPlayers.map((player, i) => (
+                <div
+                  key={player.id}
+                  className="bg-white rounded-xl p-3 shadow-sm flex items-center gap-3"
+                >
+                  <div
+                    className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                      i < 3 ? RANK_BADGE[i] : 'text-gray-400'
+                    }`}
+                  >
+                    {i + 1}
+                  </div>
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
+                    style={{ backgroundColor: POSITION_COLORS[player.default_position] }}
+                  >
+                    {player.number || '-'}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold text-gray-900 truncate">{player.name}</p>
+                    <p className="text-xs text-gray-500">{POSITION_LABELS[player.default_position]}</p>
+                  </div>
+                  <p className={`text-lg font-bold flex-shrink-0 ${currentTab.color}`}>
+                    {formatStat(player.stats[rankStat], rankStat, currentTab.suffix)}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+        </main>
+      )}
     </div>
   )
 }
