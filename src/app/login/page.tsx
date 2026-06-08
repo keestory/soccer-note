@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { getAuthRedirectUrl } from '@/lib/auth-redirect'
 import toast from 'react-hot-toast'
 
 export default function LoginPage() {
@@ -11,10 +12,13 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [needsConfirm, setNeedsConfirm] = useState(false)
+  const [resending, setResending] = useState(false)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setNeedsConfirm(false)
 
     try {
       const supabase = createClient()
@@ -24,7 +28,13 @@ export default function LoginPage() {
       })
 
       if (error) {
-        toast.error(error.message)
+        // Supabase returns this when the email hasn't been verified yet
+        if (error.message.toLowerCase().includes('not confirmed')) {
+          setNeedsConfirm(true)
+          toast.error('이메일 인증이 필요합니다')
+        } else {
+          toast.error(error.message)
+        }
         return
       }
 
@@ -34,6 +44,27 @@ export default function LoginPage() {
       toast.error('로그인 중 오류가 발생했습니다')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleResend = async () => {
+    setResending(true)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: getAuthRedirectUrl() },
+      })
+      if (error) {
+        toast.error(error.message)
+        return
+      }
+      toast.success('확인 메일을 다시 보냈습니다')
+    } catch {
+      toast.error('재전송 중 오류가 발생했습니다')
+    } finally {
+      setResending(false)
     }
   }
 
@@ -63,7 +94,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-2">
             <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
               비밀번호
             </label>
@@ -78,6 +109,15 @@ export default function LoginPage() {
             />
           </div>
 
+          <div className="flex justify-end mb-6">
+            <Link
+              href="/auth/forgot-password"
+              className="text-sm text-blue-600 hover:underline"
+            >
+              비밀번호를 잊으셨나요?
+            </Link>
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -85,6 +125,22 @@ export default function LoginPage() {
           >
             {loading ? '로그인 중...' : '로그인'}
           </button>
+
+          {needsConfirm && (
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-center">
+              <p className="text-sm text-amber-700 mb-2">
+                이메일 인증을 완료해야 로그인할 수 있습니다.
+              </p>
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resending}
+                className="text-sm font-medium text-blue-600 hover:underline disabled:opacity-50"
+              >
+                {resending ? '재전송 중...' : '확인 메일 다시 보내기'}
+              </button>
+            </div>
+          )}
         </form>
 
         <p className="text-center mt-6 text-gray-600">

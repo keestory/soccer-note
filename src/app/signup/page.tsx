@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { MailCheck } from 'lucide-react'
 import { createClient } from '@/lib/supabase'
+import { getAuthRedirectUrl } from '@/lib/auth-redirect'
 import toast from 'react-hot-toast'
 
 export default function SignupPage() {
@@ -13,6 +15,8 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sent, setSent] = useState(false)
+  const [resending, setResending] = useState(false)
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,6 +44,7 @@ export default function SignupPage() {
         email,
         password,
         options: {
+          emailRedirectTo: getAuthRedirectUrl(),
           data: {
             display_name: displayName.trim()
           }
@@ -51,24 +56,79 @@ export default function SignupPage() {
         return
       }
 
-      // Upsert profile with display name (ensures profile exists)
-      if (data.user) {
-        await supabase
-          .from('profiles')
-          .upsert({
+      // If email confirmation is enabled there is no session yet — show the
+      // "check your email" screen. Otherwise the user is logged in immediately.
+      if (data.session) {
+        if (data.user) {
+          await supabase.from('profiles').upsert({
             id: data.user.id,
-            email: email,
+            email,
             display_name: displayName.trim(),
           })
+        }
+        toast.success('회원가입 성공!')
+        router.push('/dashboard')
+      } else {
+        setSent(true)
       }
-
-      toast.success('회원가입 성공! 이메일을 확인해주세요.')
-      router.push('/login')
     } catch (error) {
       toast.error('회원가입 중 오류가 발생했습니다')
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleResend = async () => {
+    setResending(true)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: { emailRedirectTo: getAuthRedirectUrl() },
+      })
+      if (error) {
+        toast.error(error.message)
+        return
+      }
+      toast.success('확인 메일을 다시 보냈습니다')
+    } catch {
+      toast.error('재전송 중 오류가 발생했습니다')
+    } finally {
+      setResending(false)
+    }
+  }
+
+  if (sent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="w-full max-w-md">
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center">
+            <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mx-auto mb-4">
+              <MailCheck className="w-7 h-7 text-blue-600" />
+            </div>
+            <h2 className="text-lg font-bold text-gray-900 mb-2">확인 메일을 보냈어요</h2>
+            <p className="text-gray-500 text-sm">
+              <span className="font-medium text-gray-700">{email}</span> 로 인증 메일을 보냈습니다.
+              메일의 링크를 눌러 가입을 완료해주세요.
+            </p>
+            <button
+              onClick={handleResend}
+              disabled={resending}
+              className="w-full mt-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+            >
+              {resending ? '재전송 중...' : '확인 메일 다시 보내기'}
+            </button>
+            <Link
+              href="/login"
+              className="inline-block mt-4 text-blue-600 font-medium hover:underline"
+            >
+              로그인으로 돌아가기
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
