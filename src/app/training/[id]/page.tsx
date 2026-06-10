@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
 import { ArrowLeft, Edit2, Trash2, Users, MapPin, Calendar, Check, Clock, X, Star, ChevronDown, ChevronUp } from 'lucide-react'
 import type { Player, TrainingSession, TrainingAttendee, TrainingType, TeamVisibilitySettings } from '@/types/database'
 import { formatDate } from '@/lib/utils'
@@ -74,7 +74,7 @@ export default function TrainingDetailPage() {
   }
 
   const loadTraining = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push('/login')
       return

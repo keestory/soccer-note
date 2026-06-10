@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
 import { ArrowLeft, Bell, Check, CheckCheck, Loader2, Inbox, Calendar, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
@@ -54,7 +54,7 @@ export default function InboxPage() {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
+      const user = await getSessionUser(supabase)
       if (!user) {
         router.push('/login')
         return

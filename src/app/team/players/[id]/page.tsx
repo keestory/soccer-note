@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
 import { ArrowLeft, Star, Trophy, Target, Shield, TrendingUp, Calendar, Dumbbell } from 'lucide-react'
 import type { Player, Match, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
@@ -52,7 +52,7 @@ export default function PlayerStatsPage() {
   }, [playerId])
 
   const loadPlayerData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push('/login')
       return

@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
 import { Users, ArrowLeft, Loader2, Clock, CheckCircle, XCircle } from 'lucide-react'
 import type { Team, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
@@ -37,7 +37,7 @@ function JoinTeamContent() {
   }, [inviteCode])
 
   const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push(`/login?redirect=/team/join${inviteCode ? `?code=${inviteCode}` : ''}`)
       return
@@ -65,7 +65,7 @@ function JoinTeamContent() {
     setError(null)
     setExistingStatus(null)
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
 
     const { data, error } = await supabase
       .from('teams')
@@ -117,7 +117,7 @@ function JoinTeamContent() {
 
     setJoining(true)
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       toast.error('로그인이 필요합니다')
       return
