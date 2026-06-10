@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
 import { ArrowLeft, Bell, Send, Loader2, MessageSquare, Users, CheckCircle, XCircle, Search, Check, UserCheck, ChevronDown, ChevronUp, Eye, CheckCircle2 } from 'lucide-react'
 import { NotificationsPageSkeleton } from '@/components/Skeleton'
 import { getStore, MemberWithProfile } from '@/lib/dataStore'
@@ -125,7 +125,7 @@ function NotificationsContent() {
   }, [teamIdParam])
 
   const loadData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push('/login')
       return
