@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
 import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner, Trash2, ArrowRightLeft } from 'lucide-react'
 import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
@@ -139,7 +139,7 @@ export default function QuarterEditPage() {
 
   const loadData = async () => {
     // Check permissions first
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push('/login')
       return

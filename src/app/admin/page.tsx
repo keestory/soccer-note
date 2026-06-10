@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
 import { Users, Trophy, ArrowLeft, RefreshCw, Shield, Clock, LogIn, Eye, EyeOff } from 'lucide-react'
 
 interface AdminUser {
@@ -54,7 +54,7 @@ export default function AdminPage() {
   }, [])
 
   const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       setAuthState('not-logged-in')
       return

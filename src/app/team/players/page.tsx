@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
+import { resolveTeam } from '@/lib/team-resolver'
 import { ArrowLeft, Plus, Trash2, Edit2, X, Users, Trophy } from 'lucide-react'
 import type { Player, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
@@ -64,83 +65,25 @@ export default function PlayersPage() {
   }, [])
 
   const loadData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push('/login')
       return
     }
 
-    // Get selected team from localStorage
-    const savedTeamId = localStorage.getItem('selectedTeamId')
-
-    if (savedTeamId) {
-      // First check if user OWNS this team (no RLS issues)
-      const { data: ownedTeam } = await supabase
-        .from('teams')
-        .select('id')
-        .eq('id', savedTeamId)
-        .eq('user_id', user.id)
-        .single()
-
-      if (ownedTeam) {
-        setTeamId(savedTeamId)
-        setCanEdit(true) // Owner has all permissions
-        await loadPlayers(savedTeamId)
-        setLoading(false)
-        return
-      }
-
-      // Then check team_members for permission
-      const { data: membership } = await supabase
-        .from('team_members')
-        .select('*')
-        .eq('team_id', savedTeamId)
-        .eq('user_id', user.id)
-        .single()
-
-      if (membership) {
-        setTeamId(savedTeamId)
-        setCanEdit(membership.role === 'coach' || membership.can_edit_players)
-        await loadPlayers(savedTeamId)
-        setLoading(false)
-        return
-      }
-    }
-
-    // Fallback: find any team user OWNS
-    const { data: ownedTeams } = await supabase
-      .from('teams')
-      .select('id')
-      .eq('user_id', user.id)
-      .limit(1)
-
-    if (ownedTeams && ownedTeams.length > 0) {
-      setTeamId(ownedTeams[0].id)
-      setCanEdit(true)
-      localStorage.setItem('selectedTeamId', ownedTeams[0].id)
-      await loadPlayers(ownedTeams[0].id)
-      setLoading(false)
-      return
-    }
-
-    // Last resort: check team_members
-    const { data: memberships } = await supabase
-      .from('team_members')
-      .select('team_id, role, can_edit_players')
-      .eq('user_id', user.id)
-      .limit(1)
-
-    if (memberships && memberships.length > 0) {
-      const m = memberships[0]
-      setTeamId(m.team_id)
-      setCanEdit(m.role === 'coach' || m.can_edit_players)
-      localStorage.setItem('selectedTeamId', m.team_id)
-      await loadPlayers(m.team_id)
-    } else {
+    // Resolve the active team (cached across tabs — skips repeat queries)
+    const team = await resolveTeam(supabase, user.id)
+    if (!team) {
       router.push('/dashboard')
       return
     }
 
+    setTeamId(team.teamId)
+    setCanEdit(team.canEditPlayers)
+    if (!localStorage.getItem('selectedTeamId')) {
+      localStorage.setItem('selectedTeamId', team.teamId)
+    }
+    await loadPlayers(team.teamId)
     setLoading(false)
   }
 
@@ -154,18 +97,18 @@ export default function PlayersPage() {
 
     if (!playersData) return
 
-    // Get all quarter_records for these players
+    // Fetch stats and attendance in parallel
     const playerIds = playersData.map(p => p.id)
-    const { data: records } = await supabase
-      .from('quarter_records')
-      .select('player_id, goals, assists, clean_sheet, rating')
-      .in('player_id', playerIds)
-
-    // Get attendance counts
-    const { data: attendanceData } = await supabase
-      .from('match_attendees')
-      .select('player_id')
-      .in('player_id', playerIds)
+    const [{ data: records }, { data: attendanceData }] = await Promise.all([
+      supabase
+        .from('quarter_records')
+        .select('player_id, goals, assists, clean_sheet, rating')
+        .in('player_id', playerIds),
+      supabase
+        .from('match_attendees')
+        .select('player_id')
+        .in('player_id', playerIds),
+    ])
 
     // Calculate stats for each player
     const playersWithStats: PlayerWithStats[] = playersData.map(player => {

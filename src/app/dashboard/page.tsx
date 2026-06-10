@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
+import { cacheResolvedTeam } from '@/lib/team-resolver'
 import { Plus, Trophy, Users, LogOut, Star, Settings, ChevronDown, UserPlus, User, Bell, Send, Dumbbell } from 'lucide-react'
 import { NotificationBadge } from '@/components/NotificationBadge'
 import type { Team, Match, TeamMember } from '@/types/database'
@@ -13,6 +14,18 @@ import toast from 'react-hot-toast'
 interface TeamWithRole extends Team {
   role: 'coach' | 'member' | 'parent'
   membership: TeamMember
+}
+
+function primeTeamCache(userId: string, team: TeamWithRole) {
+  const isCoach = team.role === 'coach' || team.user_id === userId
+  cacheResolvedTeam(userId, {
+    teamId: team.id,
+    role: team.role,
+    isOwner: team.user_id === userId,
+    canEditPlayers: isCoach || !!team.membership?.can_edit_players,
+    canEditMatches: isCoach || !!team.membership?.can_edit_matches,
+    canEditQuarters: isCoach || !!team.membership?.can_edit_quarters,
+  })
 }
 
 export default function DashboardPage() {
@@ -34,19 +47,38 @@ export default function DashboardPage() {
   }, [])
 
   const checkAuthAndLoadData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push('/login')
       return
     }
     setUserId(user.id)
 
-    // Load user profile display name
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('display_name')
-      .eq('id', user.id)
-      .single()
+    // Run the three independent lookups in parallel instead of sequentially
+    const [{ data: profile }, { data: ownedTeams }, { data: memberships }] = await Promise.all([
+      supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .single(),
+      // 1. Teams where user is the OWNER (always works, no RLS issues)
+      supabase
+        .from('teams')
+        .select('*')
+        .eq('user_id', user.id)
+        .or('is_removed.is.null,is_removed.eq.false'),
+      // 2. Teams joined via team_members (approved, not removed)
+      supabase
+        .from('team_members')
+        .select(`
+          *,
+          team:teams (*)
+        `)
+        .eq('user_id', user.id)
+        .eq('status', 'approved')
+        .or('is_removed.is.null,is_removed.eq.false'),
+    ])
+
     if (profile?.display_name) {
       setDisplayName(profile.display_name)
     } else if (user.user_metadata?.display_name) {
@@ -54,14 +86,6 @@ export default function DashboardPage() {
     }
 
     const teamsWithRole: TeamWithRole[] = []
-
-    // 1. First, load teams where user is the OWNER (always works, no RLS issues)
-    // Filter out removed teams
-    const { data: ownedTeams } = await supabase
-      .from('teams')
-      .select('*')
-      .eq('user_id', user.id)
-      .or('is_removed.is.null,is_removed.eq.false')
 
     if (ownedTeams && ownedTeams.length > 0) {
       for (const team of ownedTeams) {
@@ -83,18 +107,6 @@ export default function DashboardPage() {
       }
     }
 
-    // 2. Then try to load teams via team_members (for teams user joined but doesn't own)
-    // Only show approved memberships that are not removed
-    const { data: memberships } = await supabase
-      .from('team_members')
-      .select(`
-        *,
-        team:teams (*)
-      `)
-      .eq('user_id', user.id)
-      .eq('status', 'approved')
-      .or('is_removed.is.null,is_removed.eq.false')
-
     if (memberships && memberships.length > 0) {
       for (const m of memberships) {
         // Skip if we already have this team (from owned teams)
@@ -115,14 +127,12 @@ export default function DashboardPage() {
       // Check localStorage for previously selected team
       const savedTeamId = localStorage.getItem('selectedTeamId')
       const savedTeam = teamsWithRole.find(t => t.id === savedTeamId)
+      const activeTeam = savedTeam || teamsWithRole[0]
 
-      if (savedTeam) {
-        setSelectedTeam(savedTeam)
-        await loadMatches(savedTeam.id)
-      } else {
-        setSelectedTeam(teamsWithRole[0])
-        await loadMatches(teamsWithRole[0].id)
-      }
+      setSelectedTeam(activeTeam)
+      // Prime the shared team cache so other tabs skip their resolution queries
+      primeTeamCache(user.id, activeTeam)
+      await loadMatches(activeTeam.id)
     } else {
       setShowCreateTeam(true)
     }
@@ -134,6 +144,7 @@ export default function DashboardPage() {
     setSelectedTeam(team)
     setShowTeamPicker(false)
     localStorage.setItem('selectedTeamId', team.id)
+    if (userId) primeTeamCache(userId, team)
     await loadMatches(team.id)
   }
 
@@ -163,7 +174,7 @@ export default function DashboardPage() {
     e.preventDefault()
     if (!teamName.trim()) return
 
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) return
 
     const { data: team, error } = await supabase
