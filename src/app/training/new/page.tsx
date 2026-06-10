@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
+import { resolveTeam } from '@/lib/team-resolver'
 import { ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
@@ -51,62 +52,20 @@ export default function NewTrainingPage() {
   }, [])
 
   const loadTeam = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push('/login')
       return
     }
 
-    const savedTeamId = localStorage.getItem('selectedTeamId')
+    // Resolve the active team (cached across tabs — skips repeat queries)
+    const team = await resolveTeam(supabase, user.id)
 
-    if (savedTeamId) {
-      const { data: ownedTeam } = await supabase
-        .from('teams')
-        .select('id')
-        .eq('id', savedTeamId)
-        .eq('user_id', user.id)
-        .single()
-
-      if (ownedTeam) {
-        setTeamId(savedTeamId)
-        return
+    if (team && team.canEditMatches) {
+      setTeamId(team.teamId)
+      if (!localStorage.getItem('selectedTeamId')) {
+        localStorage.setItem('selectedTeamId', team.teamId)
       }
-
-      const { data: membership } = await supabase
-        .from('team_members')
-        .select('*')
-        .eq('team_id', savedTeamId)
-        .eq('user_id', user.id)
-        .single()
-
-      if (membership && (membership.role === 'coach' || membership.can_edit_matches)) {
-        setTeamId(savedTeamId)
-        return
-      }
-    }
-
-    const { data: ownedTeams } = await supabase
-      .from('teams')
-      .select('id')
-      .eq('user_id', user.id)
-      .limit(1)
-
-    if (ownedTeams && ownedTeams.length > 0) {
-      setTeamId(ownedTeams[0].id)
-      localStorage.setItem('selectedTeamId', ownedTeams[0].id)
-      return
-    }
-
-    const { data: memberships } = await supabase
-      .from('team_members')
-      .select('team_id, role, can_edit_matches')
-      .eq('user_id', user.id)
-
-    const canCreate = memberships?.find(m => m.role === 'coach' || m.can_edit_matches)
-
-    if (canCreate) {
-      setTeamId(canCreate.team_id)
-      localStorage.setItem('selectedTeamId', canCreate.team_id)
     } else {
       toast.error(t.noCreateTrainingPermission)
       router.push('/dashboard')
@@ -125,7 +84,7 @@ export default function NewTrainingPage() {
     setLoading(true)
 
     try {
-      const { data: { user } } = await supabase.auth.getUser()
+      const user = await getSessionUser(supabase)
 
       const { data, error } = await supabase
         .from('training_sessions')

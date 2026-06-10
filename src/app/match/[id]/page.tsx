@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
 import { ArrowLeft, Star, Edit2, Trash2, Plus, X, Users, MapPin, Calendar, Check, ArrowRightLeft } from 'lucide-react'
 import type { Match, Player, Quarter, MatchAttendee } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
@@ -39,7 +39,7 @@ export default function MatchDetailPage() {
   }, [matchId])
 
   const loadMatch = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
 
     const { data, error } = await supabase
       .from('matches')

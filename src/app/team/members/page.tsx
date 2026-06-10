@@ -3,7 +3,8 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase'
+import { createClient, getSessionUser } from '@/lib/supabase'
+import { resolveTeam, clearResolvedTeam } from '@/lib/team-resolver'
 import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle } from 'lucide-react'
 import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
@@ -37,72 +38,35 @@ function TeamMembersContent() {
   }, [teamIdParam])
 
   const loadData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getSessionUser(supabase)
     if (!user) {
       router.push('/login')
       return
     }
 
-    // Get team
-    let teamId = teamIdParam
-
-    if (!teamId) {
-      // First check localStorage
-      const savedTeamId = localStorage.getItem('selectedTeamId')
-      if (savedTeamId) {
-        // Verify user owns or is member of this team
-        const { data: ownedTeam } = await supabase
-          .from('teams')
-          .select('id')
-          .eq('id', savedTeamId)
-          .eq('user_id', user.id)
-          .single()
-
-        if (ownedTeam) {
-          teamId = savedTeamId
-        }
-      }
-    }
-
-    if (!teamId) {
-      // Find any team user OWNS
-      const { data: ownedTeams } = await supabase
-        .from('teams')
-        .select('id')
-        .eq('user_id', user.id)
-        .limit(1)
-
-      if (ownedTeams && ownedTeams.length > 0) {
-        teamId = ownedTeams[0].id
-      }
-    }
-
-    if (!teamId) {
-      // Last resort: check team_members
-      const { data: membership } = await supabase
-        .from('team_members')
-        .select('team_id')
-        .eq('user_id', user.id)
-        .eq('status', 'approved')
-        .limit(1)
-        .single()
-
-      if (membership) {
-        teamId = membership.team_id
-      }
-    }
-
-    if (!teamId) {
+    // Resolve the active team (cached across tabs — skips repeat queries)
+    const resolved = await resolveTeam(supabase, user.id, teamIdParam)
+    if (!resolved) {
       router.push('/dashboard')
       return
     }
+    const teamId = resolved.teamId
 
-    // Get team details
-    const { data: teamData } = await supabase
-      .from('teams')
-      .select('*')
-      .eq('id', teamId)
-      .single()
+    setCurrentUserId(user.id)
+
+    // Fetch team details, member list, and profiles in parallel
+    const [{ data: teamData }, { data: membersData }, profilesJson] = await Promise.all([
+      supabase.from('teams').select('*').eq('id', teamId).single(),
+      supabase
+        .from('team_members')
+        .select('*')
+        .eq('team_id', teamId)
+        .or('is_removed.is.null,is_removed.eq.false')
+        .order('joined_at'),
+      fetch(`/api/team-members-profiles?teamId=${teamId}`)
+        .then(res => (res.ok ? res.json() : null))
+        .catch(() => null),
+    ])
 
     if (!teamData) {
       toast.error('팀을 찾을 수 없습니다')
@@ -111,70 +75,25 @@ function TeamMembersContent() {
     }
 
     setTeam(teamData)
-    setCurrentUserId(user.id)
 
     // Check if user is team owner
     const ownerCheck = teamData.user_id === user.id
     setIsOwner(ownerCheck)
-
-    // If owner, set as coach immediately
-    if (ownerCheck) {
-      setCurrentUserRole('coach')
-    } else {
-      // Try to get user's membership role
-      const { data: userMembership } = await supabase
-        .from('team_members')
-        .select('role, status')
-        .eq('team_id', teamId)
-        .eq('user_id', user.id)
-        .single()
-
-      setCurrentUserRole(userMembership?.role || null)
-    }
-
-    // Get all members (without profile join - we'll fetch profiles separately)
-    const { data: membersData, error: membersError } = await supabase
-      .from('team_members')
-      .select('*')
-      .eq('team_id', teamId)
-      .or('is_removed.is.null,is_removed.eq.false')
-      .order('joined_at')
-
-    console.log('Members query error:', membersError)
-    console.log('Members data:', membersData)
+    setCurrentUserRole(ownerCheck ? 'coach' : resolved.role)
 
     if (membersData && membersData.length > 0) {
-      // Fetch profiles via API (bypasses RLS)
-      let profilesData = null
-      try {
-        const res = await fetch(`/api/team-members-profiles?teamId=${teamId}`)
-        if (res.ok) {
-          const json = await res.json()
-          profilesData = json.profiles
-        }
-      } catch (e) {
-        console.error('Failed to fetch profiles:', e)
-      }
-
-      console.log('Profiles data:', profilesData)
+      const profilesData: Profile[] | null = profilesJson?.profiles ?? null
 
       // Map profiles to members
-      const profileMap = new Map((profilesData as Profile[])?.map((p: Profile) => [p.id, p]) || [])
+      const profileMap = new Map(profilesData?.map((p: Profile) => [p.id, p]) || [])
 
       const allMembers: MemberWithProfile[] = membersData.map(m => ({
         ...m,
         profile: profileMap.get(m.user_id)
       }))
 
-      const pending = allMembers.filter(m => m.status === 'pending')
-      const approved = allMembers.filter(m => m.status === 'approved' || !m.status)
-
-      console.log('All members:', allMembers.map(m => ({ id: m.id, status: m.status, email: m.profile?.email })))
-      console.log('Pending members:', pending.length)
-      console.log('Approved members:', approved.length)
-
-      setPendingMembers(pending)
-      setMembers(approved)
+      setPendingMembers(allMembers.filter(m => m.status === 'pending'))
+      setMembers(allMembers.filter(m => m.status === 'approved' || !m.status))
     }
 
     setLoading(false)
@@ -283,6 +202,7 @@ function TeamMembersContent() {
 
     // Clear localStorage
     localStorage.removeItem('selectedTeamId')
+    if (currentUserId) clearResolvedTeam(currentUserId)
     toast.success('팀에서 탈퇴했습니다')
     router.push('/dashboard')
   }
@@ -331,6 +251,7 @@ function TeamMembersContent() {
 
     // Clear localStorage
     localStorage.removeItem('selectedTeamId')
+    if (currentUserId) clearResolvedTeam(currentUserId)
     toast.success('새 감독에게 팀을 인계했습니다')
     router.push('/dashboard')
   }
@@ -358,6 +279,7 @@ function TeamMembersContent() {
 
     // Clear localStorage
     localStorage.removeItem('selectedTeamId')
+    if (currentUserId) clearResolvedTeam(currentUserId)
     toast.success('팀이 해체되었습니다')
     router.push('/dashboard')
   }
