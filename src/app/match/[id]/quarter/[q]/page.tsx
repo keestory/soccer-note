@@ -127,6 +127,7 @@ export default function QuarterEditPage() {
   const [subInId, setSubInId] = useState('')
   const [allTeamPlayers, setAllTeamPlayers] = useState<Player[]>([])
   const [savingSub, setSavingSub] = useState(false)
+  const [draggingId, setDraggingId] = useState<string | null>(null)
 
   const fieldRef = useRef<HTMLDivElement>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
@@ -533,10 +534,13 @@ export default function QuarterEditPage() {
     const rect = fieldRef.current?.getBoundingClientRect()
     if (!rect) return
 
+    setDraggingId(fieldPlayerId)
+
     const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
       let clientX: number, clientY: number
 
       if ('touches' in moveEvent) {
+        moveEvent.preventDefault()
         clientX = moveEvent.touches[0].clientX
         clientY = moveEvent.touches[0].clientY
       } else {
@@ -555,6 +559,7 @@ export default function QuarterEditPage() {
     }
 
     const handleEnd = () => {
+      setDraggingId(null)
       document.removeEventListener('mousemove', handleMove)
       document.removeEventListener('mouseup', handleEnd)
       document.removeEventListener('touchmove', handleMove)
@@ -563,7 +568,7 @@ export default function QuarterEditPage() {
 
     document.addEventListener('mousemove', handleMove)
     document.addEventListener('mouseup', handleEnd)
-    document.addEventListener('touchmove', handleMove)
+    document.addEventListener('touchmove', handleMove, { passive: false })
     document.addEventListener('touchend', handleEnd)
   }
 
@@ -917,11 +922,16 @@ export default function QuarterEditPage() {
               return (
                 <div
                   key={fp.id}
-                  className="absolute flex flex-col items-center cursor-grab active:cursor-grabbing"
+                  className={`absolute flex flex-col items-center cursor-grab active:cursor-grabbing touch-none transition-transform ${
+                    draggingId === fp.id ? 'z-20' : ''
+                  }`}
                   style={{
                     left: `${fp.positionX}%`,
                     top: `${fp.positionY}%`,
-                    transform: 'translate(-50%, -50%)',
+                    // Lift the marker above the finger while dragging so it isn't hidden underneath
+                    transform: draggingId === fp.id
+                      ? 'translate(-50%, calc(-50% - 28px)) scale(1.15)'
+                      : 'translate(-50%, -50%)',
                   }}
                   onMouseDown={(e) => handlePlayerDrag(fp.id, e)}
                   onTouchStart={(e) => handlePlayerDrag(fp.id, e)}
@@ -940,8 +950,10 @@ export default function QuarterEditPage() {
                     </span>
                   )}
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shadow-lg transition-transform ${
-                      selectedPlayer?.id === fp.id ? 'ring-4 ring-yellow-400 scale-110' : 'hover:scale-105'
+                    className={`w-11 h-11 rounded-full flex items-center justify-center text-white font-bold shadow-lg transition-transform ${
+                      draggingId === fp.id
+                        ? 'ring-4 ring-white shadow-2xl'
+                        : selectedPlayer?.id === fp.id ? 'ring-4 ring-yellow-400 scale-110' : 'hover:scale-105'
                     } ${subOut ? 'opacity-60' : ''}`}
                     style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}
                   >
