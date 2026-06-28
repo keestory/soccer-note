@@ -52,9 +52,9 @@ export default function Screenshot4Page() {
               </div>
 
               <div className="flex gap-3 mb-3">
-                <div className="flex items-center gap-1.5 bg-blue-50 px-2.5 py-1 rounded-lg">
-                  <span className="text-blue-600 text-xs font-bold">2</span>
-                  <span className="text-[10px] text-blue-600">골</span>
+                <div className="flex items-center gap-1.5 bg-primary-50 px-2.5 py-1 rounded-lg">
+                  <span className="text-primary-600 text-xs font-bold">2</span>
+                  <span className="text-[10px] text-primary-600">골</span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-green-50 px-2.5 py-1 rounded-lg">
                   <span className="text-green-600 text-xs font-bold">1</span>
@@ -79,7 +79,7 @@ export default function Screenshot4Page() {
           <div className="px-4 mt-2.5">
             <div className="bg-white rounded-xl p-3.5 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">8</div>
+                <div className="w-9 h-9 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-xs">8</div>
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900 text-sm">김민수</p>
                   <span className="text-[10px] text-slate-500 font-medium">MF</span>
@@ -93,7 +93,7 @@ export default function Screenshot4Page() {
                 </div>
               </div>
               <div className="flex gap-2 mt-2">
-                <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-medium">1골</span>
+                <span className="text-[10px] bg-primary-50 text-primary-600 px-2 py-0.5 rounded font-medium">1골</span>
                 <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded font-medium">2어시스트</span>
               </div>
             </div>
@@ -125,10 +125,10 @@ export default function Screenshot4Page() {
           <div className="px-4 mt-2.5">
             <div className="bg-white rounded-xl p-3.5 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">5</div>
+                <div className="w-9 h-9 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-xs">5</div>
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900 text-sm">박서진</p>
-                  <span className="text-[10px] text-blue-500 font-medium">DF</span>
+                  <span className="text-[10px] text-primary-500 font-medium">DF</span>
                 </div>
                 <div className="flex items-center gap-0.5">
                   {[1,2,3].map(i => (
@@ -147,7 +147,7 @@ export default function Screenshot4Page() {
 
           {/* Save Button */}
           <div className="px-4 pb-4">
-            <div className="w-full py-3 bg-blue-600 text-white rounded-xl text-center text-sm font-semibold">
+            <div className="w-full py-3 bg-primary-600 text-white rounded-xl text-center text-sm font-semibold">
               저장하기
             </div>
           </div>

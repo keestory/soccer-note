@@ -75,7 +75,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-bold text-blue-600">
+          <Link href="/" className="text-3xl font-bold text-primary-600">
             SoccerNote
           </Link>
           <p className="text-gray-600 mt-2">새 계정을 만들어 시작하세요</p>
@@ -92,7 +92,7 @@ export default function SignupPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
               placeholder="팀원들에게 보여질 이름"
             />
           </div>
@@ -107,7 +107,7 @@ export default function SignupPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
               placeholder="email@example.com"
             />
           </div>
@@ -122,7 +122,7 @@ export default function SignupPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
               placeholder="6자 이상 입력"
             />
           </div>
@@ -137,7 +137,7 @@ export default function SignupPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
               placeholder="비밀번호 재입력"
             />
           </div>
@@ -145,7 +145,7 @@ export default function SignupPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             {loading ? '가입 중...' : '회원가입'}
           </button>
@@ -153,7 +153,7 @@ export default function SignupPage() {
 
         <p className="text-center mt-6 text-gray-600">
           이미 계정이 있으신가요?{' '}
-          <Link href="/login" className="text-blue-600 font-medium hover:underline">
+          <Link href="/login" className="text-primary-600 font-medium hover:underline">
             로그인
           </Link>
         </p>

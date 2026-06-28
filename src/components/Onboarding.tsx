@@ -104,7 +104,7 @@ export default function Onboarding() {
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-b from-blue-50 to-white flex flex-col safe-top safe-bottom"
+      className="min-h-screen bg-gradient-to-b from-primary-50 to-white flex flex-col safe-top safe-bottom"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -113,12 +113,12 @@ export default function Onboarding() {
       <div className="flex justify-between items-center p-4">
         <div>
           {slide.forCoach && (
-            <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+            <span className="px-3 py-1 bg-primary-100 text-primary-700 text-xs font-semibold rounded-full">
               {t.onboardingForCoach}
             </span>
           )}
           {slide.forParent && (
-            <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+            <span className="px-3 py-1 bg-primary-100 text-primary-700 text-xs font-semibold rounded-full">
               {t.onboardingForParent}
             </span>
           )}
@@ -156,7 +156,7 @@ export default function Onboarding() {
             onClick={() => setCurrentSlide(index)}
             className={`h-2 rounded-full transition-all ${
               index === currentSlide
-                ? 'w-6 bg-blue-500'
+                ? 'w-6 bg-primary-500'
                 : 'w-2 bg-gray-300'
             }`}
           />
@@ -176,7 +176,7 @@ export default function Onboarding() {
         )}
         <button
           onClick={handleNext}
-          className={`flex-1 py-4 bg-blue-600 text-white rounded-xl font-medium flex items-center justify-center gap-2 ${
+          className={`flex-1 py-4 bg-primary-600 text-white rounded-xl font-medium flex items-center justify-center gap-2 ${
             currentSlide === 0 ? 'w-full' : ''
           }`}
         >
@@ -202,11 +202,11 @@ function MockDashboard() {
       <div className="bg-white rounded-xl p-4 shadow-toss mb-4">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-semibold text-gray-500">팀 전적</span>
-          <span className="text-sm font-bold text-blue-600">승률 67%</span>
+          <span className="text-sm font-bold text-primary-600">승률 67%</span>
         </div>
         <div className="grid grid-cols-4 gap-2 text-center">
           <div><p className="text-2xl font-bold text-gray-900">12</p><p className="text-xs text-gray-500">총 경기</p></div>
-          <div><p className="text-2xl font-bold text-blue-600">8</p><p className="text-xs text-gray-500">승</p></div>
+          <div><p className="text-2xl font-bold text-primary-600">8</p><p className="text-xs text-gray-500">승</p></div>
           <div><p className="text-2xl font-bold text-red-500">2</p><p className="text-xs text-gray-500">패</p></div>
           <div><p className="text-2xl font-bold text-gray-400">2</p><p className="text-xs text-gray-500">무</p></div>
         </div>
@@ -223,12 +223,12 @@ function MockDashboard() {
               </div>
               <div className="text-right">
                 <p className="text-2xl font-bold">
-                  <span className="text-blue-600">{m.home}</span>
+                  <span className="text-primary-600">{m.home}</span>
                   <span className="text-gray-400 mx-1">:</span>
                   <span className="text-gray-600">{m.away}</span>
                 </p>
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                  m.home > m.away ? 'bg-blue-100 text-blue-700' : m.home < m.away ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
+                  m.home > m.away ? 'bg-primary-100 text-primary-700' : m.home < m.away ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-600'
                 }`}>
                   {m.home > m.away ? '승' : m.home < m.away ? '패' : '무'}
                 </span>
@@ -263,7 +263,7 @@ function MockFormation() {
     <div className="p-4 h-full flex flex-col">
       <div className="flex items-center justify-between mb-3">
         <p className="font-semibold text-gray-900">1쿼터 포메이션</p>
-        <span className="text-sm bg-blue-100 text-blue-700 px-3 py-1 rounded-full font-medium">4-3-3</span>
+        <span className="text-sm bg-primary-100 text-primary-700 px-3 py-1 rounded-full font-medium">4-3-3</span>
       </div>
       <div className="flex-1 relative bg-gradient-to-b from-green-700 via-green-600 to-green-700 rounded-xl overflow-hidden min-h-[300px]">
         {/* Field lines */}
@@ -299,7 +299,7 @@ function MockPlayerRecord() {
     <div className="p-4 h-full overflow-y-auto">
       <div className="flex items-center justify-between mb-4">
         <p className="font-semibold text-gray-900">1쿼터 선수 평가</p>
-        <span className="text-sm text-gray-500">우리팀 <span className="text-blue-600 font-bold">3</span> : <span className="font-bold">1</span></span>
+        <span className="text-sm text-gray-500">우리팀 <span className="text-primary-600 font-bold">3</span> : <span className="font-bold">1</span></span>
       </div>
       <div className="space-y-3">
         {records.map((r, i) => (
@@ -309,11 +309,11 @@ function MockPlayerRecord() {
               <div className="flex-1">
                 <p className="font-medium text-gray-900">{r.name}</p>
                 <div className="flex items-center gap-2 text-sm">
-                  {r.goals > 0 && <span className="text-blue-600 font-bold">{r.goals}골</span>}
-                  {r.assists > 0 && <span className="text-blue-600 font-bold">{r.assists}도움</span>}
+                  {r.goals > 0 && <span className="text-primary-600 font-bold">{r.goals}골</span>}
+                  {r.assists > 0 && <span className="text-primary-600 font-bold">{r.assists}도움</span>}
                 </div>
               </div>
-              <span className={`text-lg font-bold px-3 py-1 rounded-lg ${r.rating >= 8 ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>{r.rating}.0</span>
+              <span className={`text-lg font-bold px-3 py-1 rounded-lg ${r.rating >= 8 ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-600'}`}>{r.rating}.0</span>
             </div>
             <div className="bg-amber-50 rounded-lg p-2 text-sm text-amber-700">
               <span className="font-medium">칭찬:</span> {r.praise}
@@ -335,7 +335,7 @@ function MockSubstitution() {
           <div className="flex items-center gap-2 flex-1">
             <span className="text-red-500 font-medium">임준서</span>
             <ArrowLeftRight className="w-4 h-4 text-gray-400" />
-            <span className="text-blue-600 font-medium">신동현</span>
+            <span className="text-primary-600 font-medium">신동현</span>
           </div>
           <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded">FW → FW</span>
         </div>
@@ -344,7 +344,7 @@ function MockSubstitution() {
           <div className="flex items-center gap-2 flex-1">
             <span className="text-red-500 font-medium">강현우</span>
             <ArrowLeftRight className="w-4 h-4 text-gray-400" />
-            <span className="text-blue-600 font-medium">오재원</span>
+            <span className="text-primary-600 font-medium">오재원</span>
           </div>
           <span className="text-xs text-gray-400 bg-gray-200 px-2 py-1 rounded">MF → MF</span>
         </div>
@@ -371,19 +371,19 @@ function MockChildStats() {
   return (
     <div className="p-4 h-full overflow-y-auto">
       <div className="text-center mb-4">
-        <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+        <div className="w-20 h-20 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
           <span className="text-3xl">⚽</span>
         </div>
         <h3 className="font-bold text-lg text-gray-900">우리 아이: 배승호</h3>
         <p className="text-sm text-gray-500">포지션: FW</p>
       </div>
       <div className="grid grid-cols-3 gap-3 mb-4">
-        <div className="bg-blue-50 rounded-xl p-3 text-center">
-          <p className="text-2xl font-bold text-blue-600">12</p>
+        <div className="bg-primary-50 rounded-xl p-3 text-center">
+          <p className="text-2xl font-bold text-primary-600">12</p>
           <p className="text-xs text-gray-500">총 골</p>
         </div>
-        <div className="bg-blue-50 rounded-xl p-3 text-center">
-          <p className="text-2xl font-bold text-blue-600">8</p>
+        <div className="bg-primary-50 rounded-xl p-3 text-center">
+          <p className="text-2xl font-bold text-primary-600">8</p>
           <p className="text-xs text-gray-500">어시스트</p>
         </div>
         <div className="bg-amber-50 rounded-xl p-3 text-center">
@@ -397,19 +397,19 @@ function MockChildStats() {
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">vs FC 레드스타</span>
             <div className="flex items-center gap-2">
-              <span className="text-blue-600 font-bold text-sm">2골</span>
+              <span className="text-primary-600 font-bold text-sm">2골</span>
               <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
             </div>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">vs 블루윙즈 FC</span>
-            <span className="text-blue-600 font-bold text-sm">1도움</span>
+            <span className="text-primary-600 font-bold text-sm">1도움</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">vs 드래곤 시티</span>
             <div className="flex items-center gap-2">
-              <span className="text-blue-600 font-bold text-sm">1골</span>
-              <span className="text-blue-600 font-bold text-sm">1도움</span>
+              <span className="text-primary-600 font-bold text-sm">1골</span>
+              <span className="text-primary-600 font-bold text-sm">1도움</span>
             </div>
           </div>
         </div>
@@ -422,7 +422,7 @@ function MockFeedback() {
   return (
     <div className="p-4 h-full overflow-y-auto">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+        <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
           <span className="text-xl">⚽</span>
         </div>
         <div>
@@ -431,12 +431,12 @@ function MockFeedback() {
         </div>
       </div>
       <div className="space-y-4">
-        <div className="bg-blue-50 rounded-xl p-4 border-l-4 border-blue-500">
-          <p className="font-semibold text-blue-700 mb-2">👍 잘한 점</p>
+        <div className="bg-primary-50 rounded-xl p-4 border-l-4 border-primary-500">
+          <p className="font-semibold text-primary-700 mb-2">👍 잘한 점</p>
           <p className="text-gray-700">적극적인 슈팅 시도가 좋았어요. 골 결정력이 많이 늘었습니다!</p>
         </div>
-        <div className="bg-blue-50 rounded-xl p-4 border-l-4 border-blue-500">
-          <p className="font-semibold text-blue-700 mb-2">📈 개선할 점</p>
+        <div className="bg-primary-50 rounded-xl p-4 border-l-4 border-primary-500">
+          <p className="font-semibold text-primary-700 mb-2">📈 개선할 점</p>
           <p className="text-gray-700">수비 가담을 조금 더 적극적으로 해주면 좋겠어요.</p>
         </div>
         <div className="bg-amber-50 rounded-xl p-4 border-l-4 border-amber-500">

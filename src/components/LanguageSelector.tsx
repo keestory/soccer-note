@@ -40,13 +40,13 @@ export default function LanguageSelector() {
               key={l.code}
               onClick={() => { setLocale(l.code); setOpen(false) }}
               className={`w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-gray-50 transition ${
-                locale === l.code ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                locale === l.code ? 'bg-primary-50 text-primary-700' : 'text-gray-700'
               }`}
             >
               <span className="text-lg">{l.flag}</span>
               <span className="text-sm font-medium">{l.label}</span>
               {locale === l.code && (
-                <span className="ml-auto w-2 h-2 bg-blue-500 rounded-full" />
+                <span className="ml-auto w-2 h-2 bg-primary-500 rounded-full" />
               )}
             </button>
           ))}

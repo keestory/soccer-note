@@ -32,7 +32,7 @@ export default function IPadScreenshot3() {
               <svg className="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7"/></svg>
               <h1 className="text-lg font-bold">선수 관리</h1>
             </div>
-            <span className="text-sm text-blue-600 font-semibold">15명</span>
+            <span className="text-sm text-primary-600 font-semibold">15명</span>
           </div>
 
           <div className="px-5 pt-4 flex gap-2">
@@ -44,7 +44,7 @@ export default function IPadScreenshot3() {
               { label: '클린시트', active: false },
             ].map(tab => (
               <span key={tab.label} className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                tab.active ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'
+                tab.active ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
               }`}>{tab.label}</span>
             ))}
           </div>
@@ -64,17 +64,17 @@ export default function IPadScreenshot3() {
                   <p className="font-semibold text-gray-900">{r.name}</p>
                   <span className="text-xs font-medium px-2 py-0.5 rounded" style={{ backgroundColor: `${POSITION_COLORS[r.pos]}15`, color: POSITION_COLORS[r.pos] }}>{r.pos}</span>
                 </div>
-                <span className="font-bold text-blue-600 text-lg">{r.value}</span>
+                <span className="font-bold text-primary-600 text-lg">{r.value}</span>
               </div>
             ))}
           </div>
 
-          <div className="mx-5 mb-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-4 shadow-lg">
+          <div className="mx-5 mb-4 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-4 shadow-lg">
             <div className="flex items-center gap-4 mb-3">
               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white font-bold">7</div>
               <div>
                 <p className="font-bold text-white">박지훈</p>
-                <p className="text-blue-200 text-xs">FW | 최다 골 | 12경기</p>
+                <p className="text-primary-200 text-xs">FW | 최다 골 | 12경기</p>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-3 text-center">
@@ -86,7 +86,7 @@ export default function IPadScreenshot3() {
               ].map(s => (
                 <div key={s.label}>
                   <p className="text-xl font-bold text-white">{s.val}</p>
-                  <p className="text-[10px] text-blue-200">{s.label}</p>
+                  <p className="text-[10px] text-primary-200">{s.label}</p>
                 </div>
               ))}
             </div>

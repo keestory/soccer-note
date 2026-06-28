@@ -174,7 +174,7 @@ export default function PlayerStatsPage() {
   if (loading || !player) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
       </div>
     )
   }
@@ -231,12 +231,12 @@ export default function PlayerStatsPage() {
                 <p className="text-2xl font-bold text-gray-900">{seasonStats.matchAttendance}</p>
                 <p className="text-xs text-gray-500 mt-1">{t.rankAttendance}</p>
               </div>
-              <div className="text-center p-3 bg-blue-50 rounded-xl">
-                <p className="text-2xl font-bold text-blue-600">{seasonStats.goals}</p>
+              <div className="text-center p-3 bg-primary-50 rounded-xl">
+                <p className="text-2xl font-bold text-primary-600">{seasonStats.goals}</p>
                 <p className="text-xs text-gray-500 mt-1">{t.rankGoals}</p>
               </div>
-              <div className="text-center p-3 bg-blue-50 rounded-xl">
-                <p className="text-2xl font-bold text-blue-600">{seasonStats.assists}</p>
+              <div className="text-center p-3 bg-primary-50 rounded-xl">
+                <p className="text-2xl font-bold text-primary-600">{seasonStats.assists}</p>
                 <p className="text-xs text-gray-500 mt-1">{t.rankAssists}</p>
               </div>
               <div className="text-center p-3 bg-purple-50 rounded-xl">
@@ -260,7 +260,7 @@ export default function PlayerStatsPage() {
         {/* Match History */}
         <section>
           <h3 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-blue-500" />
+            <Calendar className="w-4 h-4 text-primary-500" />
             {t.matchHistory}
           </h3>
 
@@ -293,13 +293,13 @@ export default function PlayerStatsPage() {
                   <div className="grid grid-cols-4 gap-2">
                     <div className="text-center">
                       <p className="text-xs text-gray-400 mb-0.5">{t.goal}</p>
-                      <p className={`font-bold text-lg ${record.goals > 0 ? 'text-blue-600' : 'text-gray-300'}`}>
+                      <p className={`font-bold text-lg ${record.goals > 0 ? 'text-primary-600' : 'text-gray-300'}`}>
                         {record.goals}
                       </p>
                     </div>
                     <div className="text-center">
                       <p className="text-xs text-gray-400 mb-0.5">{t.assist}</p>
-                      <p className={`font-bold text-lg ${record.assists > 0 ? 'text-blue-600' : 'text-gray-300'}`}>
+                      <p className={`font-bold text-lg ${record.assists > 0 ? 'text-primary-600' : 'text-gray-300'}`}>
                         {record.assists}
                       </p>
                     </div>
@@ -331,7 +331,7 @@ export default function PlayerStatsPage() {
                         </p>
                       )}
                       {record.improvement && (
-                        <p className="text-xs text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                        <p className="text-xs text-primary-700 bg-primary-50 px-2 py-1 rounded">
                           💡 {record.improvement}
                         </p>
                       )}

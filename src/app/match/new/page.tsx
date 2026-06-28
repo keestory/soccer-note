@@ -98,7 +98,7 @@ export default function NewMatchPage() {
               value={opponent}
               onChange={(e) => setOpponent(e.target.value)}
               required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
               placeholder="예: FC 서울"
             />
           </div>
@@ -112,7 +112,7 @@ export default function NewMatchPage() {
               value={matchDate}
               onChange={(e) => setMatchDate(e.target.value)}
               required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
             />
           </div>
 
@@ -124,7 +124,7 @@ export default function NewMatchPage() {
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
               placeholder="예: 잠실 운동장"
             />
           </div>
@@ -132,7 +132,7 @@ export default function NewMatchPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+            className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 transition"
           >
             {loading ? '생성 중...' : '경기 생성하기'}
           </button>

@@ -300,7 +300,7 @@ export default function MatchDetailPage() {
   if (loading || !match) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
       </div>
     )
   }
@@ -338,7 +338,7 @@ export default function MatchDetailPage() {
             <div className="flex items-center gap-1">
               <button
                 onClick={startEditMatchInfo}
-                className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg"
+                className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
               >
                 <Edit2 className="w-5 h-5" />
               </button>
@@ -371,7 +371,7 @@ export default function MatchDetailPage() {
                   value={editOpponent}
                   onChange={(e) => setEditOpponent(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   placeholder="상대팀 이름"
                 />
               </div>
@@ -382,7 +382,7 @@ export default function MatchDetailPage() {
                   value={editDate}
                   onChange={(e) => setEditDate(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                 />
               </div>
               <div>
@@ -391,13 +391,13 @@ export default function MatchDetailPage() {
                   type="text"
                   value={editLocation}
                   onChange={(e) => setEditLocation(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   placeholder="경기장 이름 (선택사항)"
                 />
               </div>
               <button
                 onClick={handleSaveMatchInfo}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+                className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
               >
                 수정 완료
               </button>
@@ -413,7 +413,7 @@ export default function MatchDetailPage() {
             const total = getTotalScore()
             return (
               <div className="text-4xl font-bold mb-2">
-                <span className="text-blue-600">{total.home}</span>
+                <span className="text-primary-600">{total.home}</span>
                 <span className="text-gray-400 mx-3">:</span>
                 <span className="text-gray-700">{total.away}</span>
               </div>
@@ -461,7 +461,7 @@ export default function MatchDetailPage() {
             {canEditMatches && (
               <button
                 onClick={openAttendeePicker}
-                className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200"
+                className="flex items-center gap-1 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-200"
               >
                 <Plus className="w-4 h-4" />
                 편집
@@ -513,7 +513,7 @@ export default function MatchDetailPage() {
                               onClick={() => toggleAttendee(p.id)}
                               className={`flex flex-col items-center p-2 rounded-lg border-2 transition ${
                                 isSelected
-                                  ? 'border-blue-500 bg-blue-50'
+                                  ? 'border-primary-500 bg-primary-50'
                                   : 'border-gray-200 hover:border-gray-300'
                               }`}
                             >
@@ -535,7 +535,7 @@ export default function MatchDetailPage() {
 
               <button
                 onClick={saveAttendees}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+                className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
               >
                 {selectedAttendees.size}명 저장
               </button>
@@ -552,7 +552,7 @@ export default function MatchDetailPage() {
                 onClick={() => setActiveQuarter(q)}
                 className={`flex-1 py-3 rounded-lg font-medium transition ${
                   activeQuarter === q
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary-600 text-white'
                     : 'bg-white text-gray-600 hover:bg-gray-50'
                 }`}
               >
@@ -592,7 +592,7 @@ export default function MatchDetailPage() {
                       </div>
                       <button
                         onClick={handleSaveQuarterScore}
-                        className="px-2 py-1 bg-blue-600 text-white rounded text-xs"
+                        className="px-2 py-1 bg-primary-600 text-white rounded text-xs"
                       >
                         저장
                       </button>
@@ -606,9 +606,9 @@ export default function MatchDetailPage() {
                   ) : (
                     <span
                       onClick={() => canEditQuarters && startEditQuarterScore(activeQuarter)}
-                      className={`text-sm text-gray-500 border rounded-lg px-3 py-1 ${canEditQuarters ? 'hover:text-blue-600 cursor-pointer' : ''}`}
+                      className={`text-sm text-gray-500 border rounded-lg px-3 py-1 ${canEditQuarters ? 'hover:text-primary-600 cursor-pointer' : ''}`}
                     >
-                      <span className="text-[10px] text-gray-400">우리팀</span> <span className="text-blue-600 font-medium">{currentQuarter.home_score || 0}</span>
+                      <span className="text-[10px] text-gray-400">우리팀</span> <span className="text-primary-600 font-medium">{currentQuarter.home_score || 0}</span>
                       <span className="mx-1">:</span>
                       <span className="font-medium">{currentQuarter.away_score || 0}</span> <span className="text-[10px] text-gray-400">{match.opponent}</span>
                     </span>
@@ -617,7 +617,7 @@ export default function MatchDetailPage() {
                 {canEditQuarters && (
                   <Link
                     href={`/match/${matchId}/quarter/${activeQuarter}`}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg text-sm font-medium hover:bg-blue-200"
+                    className="flex items-center gap-1 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-200"
                   >
                     <Edit2 className="w-4 h-4" />
                     편집
@@ -688,7 +688,7 @@ export default function MatchDetailPage() {
                           )}
                           {/* IN badge for substituted-in players */}
                           {subIn && (
-                            <span className="absolute -top-2 -left-3 px-1 py-0.5 bg-blue-500 text-[8px] font-bold text-white rounded shadow z-10">
+                            <span className="absolute -top-2 -left-3 px-1 py-0.5 bg-primary-500 text-[8px] font-bold text-white rounded shadow z-10">
                               IN {subIn.minute}&apos;
                             </span>
                           )}
@@ -708,7 +708,7 @@ export default function MatchDetailPage() {
                                 OUT {subOut.minute}&apos;
                               </span>
                               {subOut.player_in && (
-                                <span className="mt-0.5 px-1 py-0.5 bg-blue-500/90 text-white text-[8px] font-bold rounded whitespace-nowrap">
+                                <span className="mt-0.5 px-1 py-0.5 bg-primary-500/90 text-white text-[8px] font-bold rounded whitespace-nowrap">
                                   ↑ {subOut.player_in.name}
                                 </span>
                               )}
@@ -718,12 +718,12 @@ export default function MatchDetailPage() {
                           {hasStats && !subOut && (
                             <div className="flex gap-0.5 mt-0.5">
                               {record.goals > 0 && (
-                                <span className="px-1 bg-blue-500 text-white text-[8px] font-bold rounded">
+                                <span className="px-1 bg-primary-500 text-white text-[8px] font-bold rounded">
                                   G{record.goals}
                                 </span>
                               )}
                               {record.assists > 0 && (
-                                <span className="px-1 bg-blue-500 text-white text-[8px] font-bold rounded">
+                                <span className="px-1 bg-primary-500 text-white text-[8px] font-bold rounded">
                                   A{record.assists}
                                 </span>
                               )}
@@ -767,7 +767,7 @@ export default function MatchDetailPage() {
                           <span className="text-xs font-bold text-gray-500 w-8">{sub.minute}&apos;</span>
                           <span className="text-red-600">{sub.player_out?.number ? `#${sub.player_out.number} ` : ''}{sub.player_out?.name}</span>
                           <span className="text-gray-400">→</span>
-                          <span className="text-blue-600">{sub.player_in?.number ? `#${sub.player_in.number} ` : ''}{sub.player_in?.name}</span>
+                          <span className="text-primary-600">{sub.player_in?.number ? `#${sub.player_in.number} ` : ''}{sub.player_in?.name}</span>
                         </div>
                       ))}
                   </div>
@@ -805,12 +805,12 @@ export default function MatchDetailPage() {
                       {/* Stats */}
                       <div className="mt-2 ml-11 flex flex-wrap gap-2">
                         {record.goals > 0 && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
                             골 {record.goals}
                           </span>
                         )}
                         {record.assists > 0 && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
                             어시스트 {record.assists}
                           </span>
                         )}
@@ -843,9 +843,9 @@ export default function MatchDetailPage() {
                             </div>
                           )}
                           {record.praise_text && (
-                            <div className="bg-blue-50 rounded-lg px-3 py-2">
-                              <p className="text-xs font-semibold text-blue-700 mb-0.5">참 잘했어요</p>
-                              <p className="text-sm text-blue-900">{record.praise_text}</p>
+                            <div className="bg-primary-50 rounded-lg px-3 py-2">
+                              <p className="text-xs font-semibold text-primary-700 mb-0.5">참 잘했어요</p>
+                              <p className="text-sm text-primary-900">{record.praise_text}</p>
                             </div>
                           )}
                           {record.improvement_text && (
@@ -855,9 +855,9 @@ export default function MatchDetailPage() {
                             </div>
                           )}
                           {record.highlight_text && (
-                            <div className="bg-blue-50 rounded-lg px-3 py-2">
-                              <p className="text-xs font-semibold text-blue-700 mb-0.5">이 부분을 칭찬해주세요!</p>
-                              <p className="text-sm text-blue-900">{record.highlight_text}</p>
+                            <div className="bg-primary-50 rounded-lg px-3 py-2">
+                              <p className="text-xs font-semibold text-primary-700 mb-0.5">이 부분을 칭찬해주세요!</p>
+                              <p className="text-sm text-primary-900">{record.highlight_text}</p>
                             </div>
                           )}
                         </div>
@@ -890,12 +890,12 @@ export default function MatchDetailPage() {
                       </p>
                       <div className="flex flex-wrap gap-1.5 mt-0.5">
                         {stats.totalGoals > 0 && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
                             골 {stats.totalGoals}
                           </span>
                         )}
                         {stats.totalAssists > 0 && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
                             어시스트 {stats.totalAssists}
                           </span>
                         )}
@@ -913,7 +913,7 @@ export default function MatchDetailPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold font-mono text-blue-600">
+                    <p className="text-xl font-bold font-mono text-primary-600">
                       {stats.averageRating.toFixed(1)}
                     </p>
                     <p className="text-xs text-gray-400">평균</p>

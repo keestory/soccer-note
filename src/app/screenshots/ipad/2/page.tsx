@@ -67,7 +67,7 @@ export default function IPadScreenshot2() {
           <div className="px-5 py-4 bg-white border-t flex items-center justify-center gap-12">
             <div className="text-center">
               <p className="text-xs text-gray-500">우리팀</p>
-              <p className="text-3xl font-bold text-blue-600">3</p>
+              <p className="text-3xl font-bold text-primary-600">3</p>
             </div>
             <div className="text-gray-400 text-2xl font-bold">:</div>
             <div className="text-center">

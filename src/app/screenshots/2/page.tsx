@@ -103,7 +103,7 @@ export default function Screenshot2Page() {
           <div className="px-4 py-3 bg-white border-t flex items-center justify-between">
             <div className="text-center flex-1">
               <p className="text-[10px] text-gray-500">우리팀</p>
-              <p className="text-2xl font-bold text-blue-600">3</p>
+              <p className="text-2xl font-bold text-primary-600">3</p>
             </div>
             <div className="text-gray-400 text-lg font-bold">:</div>
             <div className="text-center flex-1">

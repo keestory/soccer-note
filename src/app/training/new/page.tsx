@@ -136,7 +136,7 @@ export default function NewTrainingPage() {
               value={trainingDate}
               onChange={(e) => setTrainingDate(e.target.value)}
               required
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
             />
           </div>
 
@@ -153,7 +153,7 @@ export default function NewTrainingPage() {
                   onClick={() => setTrainingType(key)}
                   className={`px-3 py-2 rounded-lg text-sm font-medium border transition ${
                     trainingType === key
-                      ? `${color} ring-2 ring-blue-500`
+                      ? `${color} ring-2 ring-primary-500`
                       : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
                   }`}
                 >
@@ -176,7 +176,7 @@ export default function NewTrainingPage() {
                   onClick={() => setDuration(d)}
                   className={`flex-1 py-2 rounded-lg text-sm font-medium border transition ${
                     duration === d
-                      ? 'bg-blue-100 text-blue-700 border-blue-300'
+                      ? 'bg-primary-100 text-primary-700 border-primary-300'
                       : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
                   }`}
                 >
@@ -190,7 +190,7 @@ export default function NewTrainingPage() {
               onChange={(e) => setDuration(Math.max(1, parseInt(e.target.value) || 1))}
               min={1}
               max={480}
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
             />
           </div>
 
@@ -203,7 +203,7 @@ export default function NewTrainingPage() {
               type="text"
               value={locationVal}
               onChange={(e) => setLocationVal(e.target.value)}
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
               placeholder={t.locationPlaceholder}
             />
           </div>
@@ -217,7 +217,7 @@ export default function NewTrainingPage() {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
               placeholder={t.trainingNotesPlaceholder}
             />
           </div>
@@ -225,7 +225,7 @@ export default function NewTrainingPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+            className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 transition"
           >
             {loading ? t.creating : t.newTrainingRecord}
           </button>

@@ -8,13 +8,13 @@ const USERS_PATH = "M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-
 
 export default function Screenshot1Page() {
   return (
-    <div className="w-screen h-screen bg-gradient-to-b from-blue-600 to-blue-800 flex flex-col items-center overflow-hidden">
+    <div className="w-screen h-screen bg-gradient-to-b from-primary-600 to-primary-800 flex flex-col items-center overflow-hidden">
       {/* Title Area */}
       <div className="pt-[8%] pb-[4%] text-center px-[10%]">
         <h2 className="text-[clamp(2rem,5vw,4rem)] font-extrabold text-white leading-tight">
           경기 기록을<br />한눈에 관리
         </h2>
-        <p className="text-blue-200 text-[clamp(1rem,2.5vw,1.5rem)] mt-3">팀 전적, MVP, 출석까지</p>
+        <p className="text-primary-200 text-[clamp(1rem,2.5vw,1.5rem)] mt-3">팀 전적, MVP, 출석까지</p>
       </div>
 
       {/* Phone Frame */}
@@ -28,7 +28,7 @@ export default function Screenshot1Page() {
 
           {/* Header */}
           <div className="bg-white px-5 pb-3 border-b">
-            <h1 className="text-xl font-bold text-blue-600">SoccerNote</h1>
+            <h1 className="text-xl font-bold text-primary-600">SoccerNote</h1>
             <p className="text-xs text-gray-500">FC 드림즈 ▾</p>
           </div>
 
@@ -36,12 +36,12 @@ export default function Screenshot1Page() {
           <div className="bg-white mx-4 mt-4 rounded-xl p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm font-semibold text-gray-500">팀 전적</span>
-              <span className="text-sm font-bold text-blue-600">승률 67%</span>
+              <span className="text-sm font-bold text-primary-600">승률 67%</span>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center">
               {[
                 { val: '12', label: '경기', color: 'text-gray-900' },
-                { val: '8', label: '승', color: 'text-blue-600' },
+                { val: '8', label: '승', color: 'text-primary-600' },
                 { val: '2', label: '패', color: 'text-red-500' },
                 { val: '2', label: '무', color: 'text-gray-400' },
               ].map(s => (
@@ -55,7 +55,7 @@ export default function Screenshot1Page() {
 
           {/* Filter Tabs */}
           <div className="flex gap-2 mx-4 mt-4">
-            <span className="flex-1 py-1.5 bg-blue-600 text-white text-center text-xs font-medium rounded-lg">전체</span>
+            <span className="flex-1 py-1.5 bg-primary-600 text-white text-center text-xs font-medium rounded-lg">전체</span>
             <span className="flex-1 py-1.5 bg-white text-gray-600 text-center text-xs font-medium rounded-lg">예정</span>
             <span className="flex-1 py-1.5 bg-white text-gray-600 text-center text-xs font-medium rounded-lg">완료</span>
           </div>
@@ -75,12 +75,12 @@ export default function Screenshot1Page() {
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold">
-                      <span className="text-blue-600">{m.home}</span>
+                      <span className="text-primary-600">{m.home}</span>
                       <span className="text-gray-400 mx-0.5">:</span>
                       <span className="text-gray-600">{m.away}</span>
                     </p>
                     <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
-                      m.result === '승' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
+                      m.result === '승' ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-600'
                     }`}>{m.result}</span>
                   </div>
                 </div>
@@ -100,7 +100,7 @@ export default function Screenshot1Page() {
 
           {/* Bottom Nav */}
           <div className="bg-white border-t px-6 py-2.5 flex justify-around">
-            <div className="flex flex-col items-center text-blue-600">
+            <div className="flex flex-col items-center text-primary-600">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
               <span className="text-[9px] mt-0.5">경기</span>
             </div>

@@ -41,7 +41,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-bold text-blue-600">
+          <Link href="/" className="text-3xl font-bold text-primary-600">
             SoccerNote
           </Link>
           <p className="text-gray-600 mt-2">로그인하여 팀 관리를 시작하세요</p>
@@ -58,7 +58,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
               placeholder="email@example.com"
             />
           </div>
@@ -73,7 +73,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
               placeholder="••••••••"
             />
           </div>
@@ -81,7 +81,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
           >
             {loading ? '로그인 중...' : '로그인'}
           </button>
@@ -89,7 +89,7 @@ export default function LoginPage() {
 
         <p className="text-center mt-6 text-gray-600">
           계정이 없으신가요?{' '}
-          <Link href="/signup" className="text-blue-600 font-medium hover:underline">
+          <Link href="/signup" className="text-primary-600 font-medium hover:underline">
             회원가입
           </Link>
         </p>
