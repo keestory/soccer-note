@@ -88,6 +88,155 @@ export function MembersPageSkeleton() {
   )
 }
 
+// 대시보드 스켈레톤
+export function DashboardSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white border-b sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="space-y-2">
+            <Skeleton className="h-5 w-24" />
+            <Skeleton className="h-4 w-16" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="w-9 h-9 rounded-lg" />
+            <Skeleton className="w-9 h-9 rounded-lg" />
+          </div>
+        </div>
+      </header>
+      <main className="max-w-4xl mx-auto px-4 pt-6 pb-28 space-y-6">
+        <Skeleton className="h-14 w-full rounded-xl" />
+        <div className="bg-white rounded-xl p-4 space-y-3">
+          <Skeleton className="h-4 w-20" />
+          <div className="grid grid-cols-4 gap-2">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-10 w-full" />
+            ))}
+          </div>
+        </div>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="bg-white rounded-xl p-4 space-y-2">
+              <div className="flex justify-between">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-6 w-14" />
+              </div>
+              <Skeleton className="h-3 w-36" />
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
+
+// 선수 목록 스켈레톤
+export function PlayersListSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <header className="bg-white border-b sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
+          <Skeleton className="w-8 h-8 rounded-lg" />
+          <Skeleton className="h-5 w-24" />
+        </div>
+      </header>
+      <main className="max-w-4xl mx-auto px-4 py-6">
+        <div className="bg-white rounded-xl shadow-sm divide-y">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <ListItemSkeleton key={i} />
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
+
+// 선수 상세(통계) 스켈레톤
+export function PlayerDetailSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <header className="bg-white border-b sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
+          <Skeleton className="w-8 h-8 rounded-lg" />
+          <Skeleton className="h-5 w-20" />
+        </div>
+      </header>
+      <main className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+        <div className="bg-white rounded-xl p-6 flex items-center gap-4">
+          <Skeleton className="w-16 h-16 rounded-full" />
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-4 w-16" />
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-16 rounded-xl" />
+          ))}
+        </div>
+        <CardSkeleton />
+      </main>
+    </div>
+  )
+}
+
+// 경기 상세 스켈레톤
+export function MatchDetailSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <header className="bg-white border-b sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
+          <Skeleton className="w-8 h-8 rounded-lg" />
+          <Skeleton className="h-5 w-28" />
+        </div>
+      </header>
+      <main className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+        <div className="bg-white rounded-xl p-6 space-y-3 text-center">
+          <Skeleton className="h-4 w-32 mx-auto" />
+          <Skeleton className="h-10 w-40 mx-auto" />
+        </div>
+        <div className="flex gap-2">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-9 flex-1 rounded-lg" />
+          ))}
+        </div>
+        <Skeleton className="h-56 w-full rounded-xl" />
+        <div className="space-y-2">
+          {[1, 2].map((i) => (
+            <ListItemSkeleton key={i} />
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
+
+// 쿼터 편집(포메이션) 스켈레톤
+export function QuarterEditSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <header className="bg-white border-b sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-8 h-8 rounded-lg" />
+            <Skeleton className="h-5 w-20" />
+          </div>
+          <Skeleton className="h-9 w-16 rounded-lg" />
+        </div>
+      </header>
+      <main className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+        <Skeleton className="aspect-field w-full rounded-xl bg-gray-300" />
+        <div className="bg-white rounded-xl p-4 space-y-3">
+          <Skeleton className="h-4 w-20" />
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-10 w-full rounded-lg" />
+          ))}
+        </div>
+      </main>
+    </div>
+  )
+}
+
 // 알림 페이지 스켈레톤
 export function NotificationsPageSkeleton() {
   return (

@@ -9,6 +9,7 @@ import type { Player, Match, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import { formatDate } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n/context'
+import { PlayerDetailSkeleton } from '@/components/Skeleton'
 
 interface MatchRecord {
   matchId: string
@@ -172,11 +173,7 @@ export default function PlayerStatsPage() {
   }
 
   if (loading || !player) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
-    )
+    return <PlayerDetailSkeleton />
   }
 
   const posColor = POSITION_COLORS[player.default_position as PositionType]

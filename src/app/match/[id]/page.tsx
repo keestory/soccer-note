@@ -9,6 +9,7 @@ import type { Match, Player, Quarter, MatchAttendee } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import { formatDate, calculateMVP, getPlayerStatsFromMatch, formatRating } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import { MatchDetailSkeleton } from '@/components/Skeleton'
 
 export default function MatchDetailPage() {
   const router = useRouter()
@@ -298,11 +299,7 @@ export default function MatchDetailPage() {
   }
 
   if (loading || !match) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
-    )
+    return <MatchDetailSkeleton />
   }
 
   const mvp = calculateMVP(match)

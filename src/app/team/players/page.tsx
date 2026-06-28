@@ -9,6 +9,7 @@ import { ArrowLeft, Plus, Trash2, Edit2, X, Users, Trophy } from 'lucide-react'
 import type { Player, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
+import { PlayersListSkeleton } from '@/components/Skeleton'
 
 interface PlayerStats {
   attendance: number
@@ -223,11 +224,7 @@ export default function PlayersPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
-    )
+    return <PlayersListSkeleton />
   }
 
   const currentTab = STAT_TABS.find((t) => t.key === rankStat)!

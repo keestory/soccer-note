@@ -8,6 +8,7 @@ import { resolveTeam, clearResolvedTeam } from '@/lib/team-resolver'
 import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle } from 'lucide-react'
 import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
+import { MembersPageSkeleton } from '@/components/Skeleton'
 
 interface MemberWithProfile extends TeamMember {
   profile: Profile | undefined
@@ -287,11 +288,7 @@ function TeamMembersContent() {
   const isCoach = currentUserRole === 'coach'
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
-    )
+    return <MembersPageSkeleton />
   }
 
   return (

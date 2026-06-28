@@ -8,6 +8,7 @@ import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner,
 import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
+import { QuarterEditSkeleton } from '@/components/Skeleton'
 
 // Formation presets: positions as [x%, y%] for each role
 // Field is horizontal: left = our goal, right = opponent goal
@@ -732,11 +733,7 @@ export default function QuarterEditPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
-    )
+    return <QuarterEditSkeleton />
   }
 
   return (

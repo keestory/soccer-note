@@ -10,6 +10,7 @@ import { NotificationBadge } from '@/components/NotificationBadge'
 import type { Team, Match, TeamMember } from '@/types/database'
 import { formatDate, calculateMVP } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import { DashboardSkeleton } from '@/components/Skeleton'
 
 interface TeamWithRole extends Team {
   role: 'coach' | 'member' | 'parent'
@@ -230,11 +231,7 @@ export default function DashboardPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-      </div>
-    )
+    return <DashboardSkeleton />
   }
 
   if (showCreateTeam) {
