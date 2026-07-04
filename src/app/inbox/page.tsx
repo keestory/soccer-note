@@ -261,10 +261,10 @@ export default function InboxPage() {
               return (
                 <div
                   key={notification.receipt_id}
-                  className={`transition-colors ${
+                  className={`transition-colors border-l-4 ${
                     notification.read_at
-                      ? 'bg-white'
-                      : 'bg-primary-50'
+                      ? 'bg-white border-transparent'
+                      : 'bg-[#0f2d0f]/[0.04] border-[#0f2d0f]'
                   }`}
                 >
                   <button
@@ -272,7 +272,7 @@ export default function InboxPage() {
                     className={`w-full px-4 py-4 flex items-start gap-3 text-left ${
                       notification.read_at
                         ? 'hover:bg-gray-50'
-                        : 'hover:bg-primary-100'
+                        : 'hover:bg-[#0f2d0f]/[0.07]'
                     }`}
                   >
                     {/* 읽음 상태 표시 */}
@@ -280,7 +280,7 @@ export default function InboxPage() {
                       {notification.read_at ? (
                         <div className="w-2 h-2 rounded-full bg-transparent" />
                       ) : (
-                        <div className="w-2 h-2 rounded-full bg-primary-600" />
+                        <div className="w-2 h-2 rounded-full bg-[#0f2d0f]" />
                       )}
                     </div>
 

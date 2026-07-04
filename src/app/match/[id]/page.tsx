@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
-import { ArrowLeft, Star, Edit2, Trash2, Plus, X, Users, MapPin, Calendar, Check, ArrowRightLeft } from 'lucide-react'
+import { ArrowLeft, Star, Edit2, Trash2, Plus, X, Users, MapPin, Check, ArrowRightLeft, FileText } from 'lucide-react'
 import type { Match, Player, Quarter, MatchAttendee } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import { formatDate, calculateMVP, getPlayerStatsFromMatch, formatRating } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { MatchDetailSkeleton } from '@/components/Skeleton'
+import { ConfirmSheet } from '@/components/ConfirmSheet'
 
 export default function MatchDetailPage() {
   const router = useRouter()
@@ -32,6 +33,10 @@ export default function MatchDetailPage() {
   const [editLocation, setEditLocation] = useState('')
   const [canEditMatches, setCanEditMatches] = useState(false)
   const [canEditQuarters, setCanEditQuarters] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [notes, setNotes] = useState('')
+  const [editingNotes, setEditingNotes] = useState(false)
+  const [savingNotes, setSavingNotes] = useState(false)
 
   const supabase = createClient()
 
@@ -72,6 +77,7 @@ export default function MatchDetailPage() {
     data.quarters = data.quarters?.sort((a: Quarter, b: Quarter) => a.quarter_number - b.quarter_number)
 
     setMatch(data)
+    setNotes(data.notes || '')
 
     // Check user permissions
     if (user) {
@@ -243,7 +249,30 @@ export default function MatchDetailPage() {
 
     if (data) setAttendees(data)
     setShowAttendeePicker(false)
-    toast.success('참석 선수가 저장되었습니다')
+    toast.success('참석 선수가 저장되었습니다', {
+      duration: 4000,
+      icon: '✅',
+    })
+    // Prompt quick lineup edit
+    if (selectedAttendees.size > 0) {
+      setTimeout(() => {
+        toast(
+          (t) => (
+            <span className="flex items-center gap-2">
+              <span>1쿼터 라인업 바로 편집할까요?</span>
+              <Link
+                href={`/match/${matchId}/quarter/1`}
+                className="px-2 py-1 bg-primary-600 text-white text-xs rounded-lg font-medium"
+                onClick={() => toast.dismiss(t.id)}
+              >
+                바로가기
+              </Link>
+            </span>
+          ),
+          { duration: 5000 }
+        )
+      }, 500)
+    }
   }
 
   const startEditMatchInfo = () => {
@@ -282,8 +311,6 @@ export default function MatchDetailPage() {
   }
 
   const handleDeleteMatch = async () => {
-    if (!confirm('정말 이 경기를 삭제하시겠습니까?')) return
-
     const { error } = await supabase
       .from('matches')
       .delete()
@@ -296,6 +323,20 @@ export default function MatchDetailPage() {
 
     toast.success('경기가 삭제되었습니다')
     router.push('/dashboard')
+  }
+
+  const handleSaveNotes = async () => {
+    if (!match) return
+    setSavingNotes(true)
+    const { error } = await supabase
+      .from('matches')
+      .update({ notes: notes.trim() || null })
+      .eq('id', matchId)
+    setSavingNotes(false)
+    if (error) { toast.error('저장에 실패했습니다'); return }
+    setMatch(prev => prev ? { ...prev, notes: notes.trim() || null } : null)
+    setEditingNotes(false)
+    toast.success('경기 메모가 저장되었습니다')
   }
 
   if (loading || !match) {
@@ -340,7 +381,7 @@ export default function MatchDetailPage() {
                 <Edit2 className="w-5 h-5" />
               </button>
               <button
-                onClick={handleDeleteMatch}
+                onClick={() => setShowDeleteConfirm(true)}
                 className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
               >
                 <Trash2 className="w-5 h-5" />
@@ -600,11 +641,18 @@ export default function MatchDetailPage() {
                         취소
                       </button>
                     </div>
-                  ) : (
-                    <span
-                      onClick={() => canEditQuarters && startEditQuarterScore(activeQuarter)}
-                      className={`text-sm text-gray-500 border rounded-lg px-3 py-1 ${canEditQuarters ? 'hover:text-primary-600 cursor-pointer' : ''}`}
+                  ) : canEditQuarters ? (
+                    <button
+                      onClick={() => startEditQuarterScore(activeQuarter)}
+                      className="flex items-center gap-1.5 text-sm text-gray-500 border rounded-lg px-3 min-h-[44px] hover:text-primary-600 hover:border-primary-300 hover:bg-primary-50 transition"
                     >
+                      <Edit2 className="w-3 h-3 text-gray-400" />
+                      <span className="text-[10px] text-gray-400">우리팀</span> <span className="text-primary-600 font-medium">{currentQuarter.home_score || 0}</span>
+                      <span className="mx-1">:</span>
+                      <span className="font-medium">{currentQuarter.away_score || 0}</span> <span className="text-[10px] text-gray-400">{match.opponent}</span>
+                    </button>
+                  ) : (
+                    <span className="text-sm text-gray-500 border rounded-lg px-3 py-2">
                       <span className="text-[10px] text-gray-400">우리팀</span> <span className="text-primary-600 font-medium">{currentQuarter.home_score || 0}</span>
                       <span className="mx-1">:</span>
                       <span className="font-medium">{currentQuarter.away_score || 0}</span> <span className="text-[10px] text-gray-400">{match.opponent}</span>
@@ -867,6 +915,62 @@ export default function MatchDetailPage() {
           )}
         </section>
 
+        {/* Match Notes */}
+        {(canEditMatches || match.notes) && (
+          <section className="bg-white rounded-xl p-4 shadow-sm">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold flex items-center gap-2">
+                <FileText className="w-4 h-4 text-gray-500" />
+                경기 메모
+              </h3>
+              {canEditMatches && !editingNotes && (
+                <button
+                  onClick={() => setEditingNotes(true)}
+                  className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
+                >
+                  <Edit2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            {editingNotes ? (
+              <div>
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  rows={4}
+                  placeholder="경기에 대한 메모를 남겨보세요"
+                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none"
+                  autoFocus
+                />
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={handleSaveNotes}
+                    disabled={savingNotes}
+                    className="flex-1 py-2.5 bg-primary-600 text-white rounded-xl font-medium text-sm hover:bg-primary-700 disabled:opacity-50"
+                  >
+                    {savingNotes ? '저장 중...' : '저장'}
+                  </button>
+                  <button
+                    onClick={() => { setNotes(match.notes || ''); setEditingNotes(false) }}
+                    className="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-medium text-sm"
+                  >
+                    취소
+                  </button>
+                </div>
+              </div>
+            ) : match.notes ? (
+              <p className="text-sm text-gray-700 whitespace-pre-wrap">{match.notes}</p>
+            ) : (
+              <button
+                onClick={() => setEditingNotes(true)}
+                className="w-full py-4 border-2 border-dashed border-gray-200 rounded-xl text-sm text-gray-400 hover:border-primary-300 hover:text-primary-500 transition"
+              >
+                메모 추가하기
+              </button>
+            )}
+          </section>
+        )}
+
         {/* Overall Player Stats */}
         {playerStats.length > 0 && (
           <section>
@@ -921,6 +1025,16 @@ export default function MatchDetailPage() {
           </section>
         )}
       </main>
+
+      <ConfirmSheet
+        open={showDeleteConfirm}
+        title="경기를 삭제하시겠습니까?"
+        description="삭제된 경기는 복구할 수 없습니다."
+        confirmLabel="삭제"
+        danger
+        onConfirm={() => { setShowDeleteConfirm(false); handleDeleteMatch() }}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   )
 }

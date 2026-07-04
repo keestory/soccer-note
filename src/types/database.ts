@@ -189,3 +189,53 @@ export interface TeamVisibilitySettings {
   created_at: string;
   updated_at: string;
 }
+
+// Community matching types
+export type PostStatus = 'open' | 'matched' | 'closed';
+export type ApplicationStatus = 'pending' | 'accepted' | 'rejected';
+export type MatchFormat = '5vs5' | '6vs6' | '7vs7' | '8vs8' | '11vs11';
+export type TeamLevel = '입문' | '초급' | '중급' | '고급';
+
+export interface TeamPublicProfile {
+  team_id: string;
+  emoji: string;
+  bio: string | null;
+  region: string | null;
+  preferred_format: string | null;
+  level: string | null;
+  is_public: boolean;
+  updated_at: string;
+  team?: Team;
+}
+
+export interface MatchPost {
+  id: string;
+  team_id: string;
+  title: string;
+  match_date: string;
+  match_time: string | null;
+  location: string;
+  region: string;
+  format: string;
+  level: string;
+  description: string | null;
+  status: PostStatus;
+  expires_at: string;
+  created_at: string;
+  team?: Team;
+  team_profile?: TeamPublicProfile;
+  applications_count?: number;
+}
+
+export interface MatchApplication {
+  id: string;
+  post_id: string;
+  applying_team_id: string;
+  message: string | null;
+  status: ApplicationStatus;
+  match_id: string | null;
+  created_at: string;
+  applying_team?: Team;
+  applying_team_profile?: TeamPublicProfile;
+  post?: MatchPost;
+}

@@ -10,6 +10,7 @@ import type { Player, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
 import { PlayersListSkeleton } from '@/components/Skeleton'
+import { ConfirmSheet } from '@/components/ConfirmSheet'
 
 interface PlayerStats {
   attendance: number
@@ -48,6 +49,7 @@ export default function PlayersPage() {
   const [loading, setLoading] = useState(true)
   const [players, setPlayers] = useState<PlayerWithStats[]>([])
   const [teamId, setTeamId] = useState<string | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
   const [canEdit, setCanEdit] = useState(false)
@@ -191,8 +193,6 @@ export default function PlayersPage() {
   }
 
   const handleDeletePlayer = async (playerId: string) => {
-    if (!confirm('정말 삭제하시겠습니까?')) return
-
     const { error } = await supabase
       .from('players')
       .delete()
@@ -399,7 +399,7 @@ export default function PlayersPage() {
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={() => handleDeletePlayer(player.id)}
+                        onClick={() => setDeleteTarget(player.id)}
                         className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -505,6 +505,15 @@ export default function PlayersPage() {
           )}
         </main>
       )}
+      <ConfirmSheet
+        open={!!deleteTarget}
+        title="선수를 삭제하시겠습니까?"
+        description="삭제된 선수 정보는 복구할 수 없습니다."
+        confirmLabel="삭제"
+        danger
+        onConfirm={() => { const id = deleteTarget!; setDeleteTarget(null); handleDeletePlayer(id) }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   )
 }

@@ -5,10 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam, clearResolvedTeam } from '@/lib/team-resolver'
-import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle, Globe, ChevronRight } from 'lucide-react'
 import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
 import { MembersPageSkeleton } from '@/components/Skeleton'
+import { ConfirmSheet } from '@/components/ConfirmSheet'
 
 interface MemberWithProfile extends TeamMember {
   profile: Profile | undefined
@@ -28,6 +29,9 @@ function TeamMembersContent() {
   const [isOwner, setIsOwner] = useState(false)
   const [copied, setCopied] = useState(false)
   const [editingMember, setEditingMember] = useState<string | null>(null)
+  const [rejectTarget, setRejectTarget] = useState<MemberWithProfile | null>(null)
+  const [removeTarget, setRemoveTarget] = useState<MemberWithProfile | null>(null)
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
   const [showDisbandModal, setShowDisbandModal] = useState(false)
   const [disbandStep, setDisbandStep] = useState<'initial' | 'select-coach' | 'confirm-delete'>('initial')
   const [selectedNewCoach, setSelectedNewCoach] = useState<string | null>(null)
@@ -128,8 +132,6 @@ function TeamMembersContent() {
   }
 
   const rejectMember = async (member: MemberWithProfile) => {
-    if (!confirm(`${member.profile?.display_name || member.profile?.email || '이 사용자'}님의 가입 요청을 거절하시겠습니까?`)) return
-
     const { error } = await supabase
       .from('team_members')
       .update({ status: 'rejected' })
@@ -163,8 +165,6 @@ function TeamMembersContent() {
   }
 
   const removeMember = async (member: MemberWithProfile) => {
-    if (!confirm(`${member.profile?.display_name || member.profile?.email || '이 멤버'}님을 팀에서 제외하시겠습니까?`)) return
-
     const { error } = await supabase
       .from('team_members')
       .delete()
@@ -186,8 +186,6 @@ function TeamMembersContent() {
       toast.error('감독은 탈퇴할 수 없습니다. 팀 해체를 이용해주세요.')
       return
     }
-
-    if (!confirm(`정말 "${team.name}" 팀에서 탈퇴하시겠습니까?`)) return
 
     // Soft delete - mark as removed instead of actual delete
     const { error } = await supabase
@@ -309,6 +307,23 @@ function TeamMembersContent() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Community Profile Link */}
+        {isCoach && (
+          <Link href="/team/public-profile"
+            className="flex items-center justify-between bg-white rounded-xl p-4 shadow-sm active:scale-[0.99] transition">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
+                <Globe className="w-5 h-5 text-primary-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">매칭 커뮤니티 프로필</p>
+                <p className="text-xs text-gray-500">팀 소개, 선호 경기 방식 등을 설정해요</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-300" />
+          </Link>
+        )}
+
         {/* Invite Section */}
         {isCoach && team?.invite_code && (
           <section className="bg-white rounded-xl p-4 shadow-sm">
@@ -369,7 +384,7 @@ function TeamMembersContent() {
                         승인
                       </button>
                       <button
-                        onClick={() => rejectMember(member)}
+                        onClick={() => setRejectTarget(member)}
                         className="px-3 py-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 flex items-center gap-1 text-sm font-medium"
                       >
                         <XCircle className="w-4 h-4" />
@@ -425,7 +440,7 @@ function TeamMembersContent() {
                           <UserCog className="w-5 h-5" />
                         </button>
                         <button
-                          onClick={() => removeMember(member)}
+                          onClick={() => setRemoveTarget(member)}
                           className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
                         >
                           <Trash2 className="w-5 h-5" />
@@ -500,7 +515,7 @@ function TeamMembersContent() {
                     <p className="text-sm text-gray-500">이 팀에서 나갑니다</p>
                   </div>
                   <button
-                    onClick={leaveTeam}
+                    onClick={() => setShowLeaveConfirm(true)}
                     className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2 text-sm font-medium flex-shrink-0 whitespace-nowrap"
                   >
                     <LogOut className="w-4 h-4" />
@@ -533,6 +548,31 @@ function TeamMembersContent() {
           </div>
         </section>
       </main>
+
+      <ConfirmSheet
+        open={!!rejectTarget}
+        title={`${rejectTarget?.profile?.display_name || '이 사용자'}님의 가입 요청을 거절하시겠습니까?`}
+        confirmLabel="거절"
+        danger
+        onConfirm={() => { const m = rejectTarget!; setRejectTarget(null); rejectMember(m) }}
+        onCancel={() => setRejectTarget(null)}
+      />
+      <ConfirmSheet
+        open={!!removeTarget}
+        title={`${removeTarget?.profile?.display_name || '이 멤버'}님을 팀에서 제외하시겠습니까?`}
+        confirmLabel="제외"
+        danger
+        onConfirm={() => { const m = removeTarget!; setRemoveTarget(null); removeMember(m) }}
+        onCancel={() => setRemoveTarget(null)}
+      />
+      <ConfirmSheet
+        open={showLeaveConfirm}
+        title={`"${team?.name}" 팀에서 탈퇴하시겠습니까?`}
+        confirmLabel="탈퇴"
+        danger
+        onConfirm={() => { setShowLeaveConfirm(false); leaveTeam() }}
+        onCancel={() => setShowLeaveConfirm(false)}
+      />
 
       {/* Disband Modal */}
       {showDisbandModal && (
