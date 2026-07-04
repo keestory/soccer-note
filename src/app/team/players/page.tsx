@@ -408,33 +408,33 @@ export default function PlayersPage() {
                   )}
                 </div>
 
-                {/* Player Stats */}
-                <div className="grid grid-cols-6 gap-2 pt-3 border-t">
+                {/* Player Stats — 3×2 grid for comfortable mobile reading */}
+                <div className="grid grid-cols-3 gap-x-2 gap-y-3 pt-3 border-t">
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">출석</p>
+                    <p className="text-xs text-gray-400 mb-0.5">출석</p>
                     <p className="font-bold text-gray-900">{player.stats.attendance}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">출전</p>
+                    <p className="text-xs text-gray-400 mb-0.5">출전</p>
                     <p className="font-bold text-gray-900">{player.stats.games}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">골</p>
+                    <p className="text-xs text-gray-400 mb-0.5">평점</p>
+                    <p className="font-bold text-amber-500">
+                      {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '−'}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-400 mb-0.5">골</p>
                     <p className="font-bold text-primary-600">{player.stats.goals}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">도움</p>
+                    <p className="text-xs text-gray-400 mb-0.5">도움</p>
                     <p className="font-bold text-primary-600">{player.stats.assists}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">클린시트</p>
+                    <p className="text-xs text-gray-400 mb-0.5">클린시트</p>
                     <p className="font-bold text-purple-600">{player.stats.cleanSheets}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">평점</p>
-                    <p className="font-bold text-amber-600">
-                      {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '-'}
-                    </p>
                   </div>
                 </div>
               </div>
