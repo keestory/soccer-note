@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
 import { cacheResolvedTeam } from '@/lib/team-resolver'
-import { Plus, Trophy, Users, LogOut, Star, Settings, ChevronDown, UserPlus, User, Bell, Send, Dumbbell } from 'lucide-react'
+import { Plus, Trophy, Users, LogOut, Star, Settings, ChevronDown, UserPlus, User, Bell, Send, Dumbbell, Swords } from 'lucide-react'
 import { NotificationBadge } from '@/components/NotificationBadge'
 import type { Team, Match, TeamMember } from '@/types/database'
 import { formatDate, calculateMVP } from '@/lib/utils'
@@ -625,24 +625,26 @@ export default function DashboardPage() {
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t safe-bottom">
         <div className="max-w-4xl mx-auto px-2">
           <div className="flex justify-around py-2">
-            <Link href="/dashboard" className="flex flex-col items-center gap-0.5 min-w-[64px] py-1.5 rounded-xl bg-primary-50 text-primary-600">
+            <Link href="/dashboard" className="flex flex-col items-center gap-0.5 min-w-[56px] py-1.5 rounded-xl bg-primary-50 text-primary-600">
               <Trophy className="w-6 h-6" />
               <span className="text-xs font-medium">경기</span>
             </Link>
-            <Link href="/team/players" className="flex flex-col items-center gap-0.5 min-w-[64px] py-1.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600">
+            <Link href="/team/players" className="flex flex-col items-center gap-0.5 min-w-[56px] py-1.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600">
               <Users className="w-6 h-6" />
               <span className="text-xs font-medium">선수</span>
             </Link>
-            <Link href="/training/new" className="flex flex-col items-center gap-0.5 min-w-[64px] py-1.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600">
+            <Link href="/training/new" className="flex flex-col items-center gap-0.5 min-w-[56px] py-1.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600">
               <Dumbbell className="w-6 h-6" />
               <span className="text-xs font-medium">훈련</span>
             </Link>
-            {isCoach && (
-              <Link href="/team/members" className="flex flex-col items-center gap-0.5 min-w-[64px] py-1.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600">
-                <Settings className="w-6 h-6" />
-                <span className="text-xs font-medium">팀 관리</span>
-              </Link>
-            )}
+            <Link href="/community" className="flex flex-col items-center gap-0.5 min-w-[56px] py-1.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600">
+              <span className="text-xl leading-6">⚽</span>
+              <span className="text-xs font-medium">매칭</span>
+            </Link>
+            <Link href="/team/members" className="flex flex-col items-center gap-0.5 min-w-[56px] py-1.5 rounded-xl text-gray-400 hover:bg-gray-50 hover:text-gray-600">
+              <Settings className="w-6 h-6" />
+              <span className="text-xs font-medium">팀 관리</span>
+            </Link>
           </div>
         </div>
       </nav>

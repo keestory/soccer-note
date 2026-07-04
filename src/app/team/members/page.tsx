@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam, clearResolvedTeam } from '@/lib/team-resolver'
-import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle, Globe, ChevronRight } from 'lucide-react'
 import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
 import { MembersPageSkeleton } from '@/components/Skeleton'
@@ -307,6 +307,23 @@ function TeamMembersContent() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        {/* Community Profile Link */}
+        {isCoach && (
+          <Link href="/team/public-profile"
+            className="flex items-center justify-between bg-white rounded-xl p-4 shadow-sm active:scale-[0.99] transition">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary-50 rounded-xl flex items-center justify-center">
+                <Globe className="w-5 h-5 text-primary-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">매칭 커뮤니티 프로필</p>
+                <p className="text-xs text-gray-500">팀 소개, 선호 경기 방식 등을 설정해요</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-300" />
+          </Link>
+        )}
+
         {/* Invite Section */}
         {isCoach && team?.invite_code && (
           <section className="bg-white rounded-xl p-4 shadow-sm">
