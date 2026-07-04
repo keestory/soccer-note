@@ -10,14 +10,14 @@ import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 import type { TrainingType } from '@/types/database'
 
-const TRAINING_TYPES: { key: TrainingType; color: string }[] = [
-  { key: 'mini-game', color: 'bg-gray-100 text-gray-800 border-gray-300' },
-  { key: 'passing', color: 'bg-gray-100 text-gray-700 border-gray-300' },
-  { key: 'shooting', color: 'bg-gray-100 text-gray-800 border-gray-300' },
-  { key: 'fitness', color: 'bg-gray-50 text-gray-600 border-gray-200' },
-  { key: 'tactics', color: 'bg-gray-100 text-gray-700 border-gray-300' },
-  { key: 'mixed', color: 'bg-gray-100 text-gray-800 border-gray-300' },
-  { key: 'other', color: 'bg-gray-50 text-gray-500 border-gray-200' },
+const TRAINING_TYPES: { key: TrainingType; color: string; activeColor: string }[] = [
+  { key: 'mini-game', color: 'border-gray-200 text-gray-500', activeColor: 'bg-amber-100 text-amber-800 border-amber-400 ring-amber-400' },
+  { key: 'passing',   color: 'border-gray-200 text-gray-500', activeColor: 'bg-sky-100 text-sky-800 border-sky-400 ring-sky-400' },
+  { key: 'shooting',  color: 'border-gray-200 text-gray-500', activeColor: 'bg-red-100 text-red-800 border-red-400 ring-red-400' },
+  { key: 'fitness',   color: 'border-gray-200 text-gray-500', activeColor: 'bg-green-100 text-green-800 border-green-400 ring-green-400' },
+  { key: 'tactics',   color: 'border-gray-200 text-gray-500', activeColor: 'bg-indigo-100 text-indigo-800 border-indigo-400 ring-indigo-400' },
+  { key: 'mixed',     color: 'border-gray-200 text-gray-500', activeColor: 'bg-primary-100 text-primary-800 border-primary-400 ring-primary-400' },
+  { key: 'other',     color: 'border-gray-200 text-gray-500', activeColor: 'bg-gray-200 text-gray-700 border-gray-400 ring-gray-400' },
 ]
 
 const DURATION_PRESETS = [30, 60, 90, 120]
@@ -146,15 +146,15 @@ export default function NewTrainingPage() {
               {t.trainingType}
             </label>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {TRAINING_TYPES.map(({ key, color }) => (
+              {TRAINING_TYPES.map(({ key, color, activeColor }) => (
                 <button
                   key={key}
                   type="button"
                   onClick={() => setTrainingType(key)}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium border transition ${
+                  className={`px-3 py-2.5 rounded-xl text-sm font-medium border transition ${
                     trainingType === key
-                      ? `${color} ring-2 ring-primary-500`
-                      : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                      ? `${activeColor} ring-2`
+                      : `bg-white ${color} hover:bg-gray-50`
                   }`}
                 >
                   {getTypeLabel(key)}

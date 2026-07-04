@@ -237,6 +237,39 @@ export function QuarterEditSkeleton() {
   )
 }
 
+// 훈련 상세 스켈레톤
+export function TrainingDetailSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50 pb-20">
+      <header className="bg-white border-b sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-8 h-8 rounded-lg" />
+            <Skeleton className="h-5 w-24" />
+          </div>
+          <Skeleton className="w-8 h-8 rounded-lg" />
+        </div>
+      </header>
+      <main className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+        <div className="bg-white rounded-xl p-5 space-y-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-7 w-20 rounded-full" />
+            <Skeleton className="h-5 w-28" />
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {[1, 2, 3].map((i) => <Skeleton key={i} className="h-14 rounded-xl" />)}
+          </div>
+          <Skeleton className="h-16 w-full rounded-lg" />
+        </div>
+        <div className="bg-white rounded-xl p-5 space-y-3">
+          <Skeleton className="h-5 w-24" />
+          {[1, 2, 3, 4].map((i) => <ListItemSkeleton key={i} />)}
+        </div>
+      </main>
+    </div>
+  )
+}
+
 // 알림 페이지 스켈레톤
 export function NotificationsPageSkeleton() {
   return (

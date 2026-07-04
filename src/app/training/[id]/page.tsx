@@ -9,6 +9,7 @@ import type { Player, TrainingSession, TrainingAttendee, TrainingType, TeamVisib
 import { formatDate } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
+import { TrainingDetailSkeleton } from '@/components/Skeleton'
 
 const TRAINING_TYPES: TrainingType[] = ['mini-game', 'passing', 'shooting', 'fitness', 'tactics', 'mixed', 'other']
 
@@ -23,13 +24,13 @@ const TRAINING_TYPE_LABEL_KEYS: Record<TrainingType, string> = {
 }
 
 const TRAINING_TYPE_STYLES: Record<TrainingType, string> = {
-  'mini-game': 'bg-gray-100 text-gray-800 border border-gray-300',
-  'passing': 'bg-gray-100 text-gray-700 border border-gray-300',
-  'shooting': 'bg-gray-100 text-gray-800 border border-gray-300',
-  'fitness': 'bg-gray-50 text-gray-600 border border-gray-200',
-  'tactics': 'bg-gray-100 text-gray-700 border border-gray-300',
-  'mixed': 'bg-gray-100 text-gray-800 border border-gray-300',
-  'other': 'bg-gray-50 text-gray-500 border border-gray-200',
+  'mini-game': 'bg-amber-100 text-amber-800 border border-amber-300',
+  'passing':   'bg-sky-100 text-sky-800 border border-sky-300',
+  'shooting':  'bg-red-100 text-red-800 border border-red-300',
+  'fitness':   'bg-green-100 text-green-800 border border-green-300',
+  'tactics':   'bg-indigo-100 text-indigo-800 border border-indigo-300',
+  'mixed':     'bg-primary-100 text-primary-800 border border-primary-300',
+  'other':     'bg-gray-100 text-gray-700 border border-gray-300',
 }
 
 export default function TrainingDetailPage() {
@@ -317,11 +318,7 @@ export default function TrainingDetailPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">{t.loading}</p>
-      </div>
-    )
+    return <TrainingDetailSkeleton />
   }
 
   if (!training) return null
