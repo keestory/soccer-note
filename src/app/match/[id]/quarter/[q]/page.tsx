@@ -1221,7 +1221,7 @@ export default function QuarterEditPage() {
                     type="range"
                     min={0}
                     max={10}
-                    step={0.1}
+                    step={0.5}
                     value={selectedPlayer.rating ?? 0}
                     onChange={(e) =>
                       updateFieldPlayer(selectedPlayer.id, {
