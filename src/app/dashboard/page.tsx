@@ -457,7 +457,7 @@ export default function DashboardPage() {
           const recentStreak = matches.slice(0, 5).map(m =>
             m.home_score > m.away_score ? 'W' : m.home_score < m.away_score ? 'L' : 'D'
           )
-          const greeting = displayName ? `${displayName}님, 오늘도 달려볼까요!` : '오늘도 달려볼까요!'
+          const greeting = displayName ? `${displayName}님, 오늘도 달려요! 🔥` : '오늘도 같이 달려요! 🔥'
           return (
             <div
               className="relative rounded-2xl overflow-hidden mb-5 px-5 pt-5 pb-6"
@@ -470,7 +470,7 @@ export default function DashboardPage() {
                 <p className="text-white/60 text-sm font-medium mb-1">⚽ {greeting}</p>
                 {winRate !== null ? (
                   <div className="flex items-end gap-3 mb-4">
-                    <span className="text-6xl font-black leading-none" style={{ color: '#a3e635' }}>{winRate}%</span>
+                    <span className="font-display text-6xl font-black leading-none" style={{ color: '#a3e635' }}>{winRate}%</span>
                     <div className="pb-1">
                       <p className="text-white font-bold text-sm leading-tight">승률</p>
                       <p className="text-white/50 text-xs">함께한 {totalGames}경기</p>
@@ -481,17 +481,17 @@ export default function DashboardPage() {
                 )}
                 <div className="flex items-center gap-4 mb-4">
                   <div className="text-center">
-                    <p className="text-3xl font-black text-white">{wins}</p>
+                    <p className="font-display text-3xl font-black text-white">{wins}</p>
                     <p className="text-white/50 text-xs mt-0.5">승</p>
                   </div>
                   <div className="w-px h-8 bg-white/15" />
                   <div className="text-center">
-                    <p className="text-3xl font-black text-red-400">{losses}</p>
+                    <p className="font-display text-3xl font-black text-red-400">{losses}</p>
                     <p className="text-white/50 text-xs mt-0.5">패</p>
                   </div>
                   <div className="w-px h-8 bg-white/15" />
                   <div className="text-center">
-                    <p className="text-3xl font-black text-white/50">{draws}</p>
+                    <p className="font-display text-3xl font-black text-white/50">{draws}</p>
                     <p className="text-white/50 text-xs mt-0.5">무</p>
                   </div>
                   {recentStreak.length > 0 && (

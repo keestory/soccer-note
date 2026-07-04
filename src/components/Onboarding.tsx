@@ -131,11 +131,11 @@ export default function Onboarding() {
             </div>
           </div>
 
-          <h1 className="text-5xl font-black text-white tracking-tight leading-[1.1] mb-5">
-            함께 뛰고<br />함께 빛나요
+          <h1 className="font-display text-5xl font-black text-white tracking-tight leading-[1.15] mb-5">
+            같이 뛰면<br />더 즐겁잖아요
           </h1>
           <p className="text-white/55 text-lg leading-relaxed max-w-xs">
-            팀의 모든 순간을 즐기고<br />함께 성장하세요
+            우리 팀의 모든 순간을<br />함께 기록해요 📋
           </p>
         </div>
 

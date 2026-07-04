@@ -20,7 +20,8 @@ const config: Config = {
         }
       },
       fontFamily: {
-        sans: ['Pretendard', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'var(--font-sans)', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       aspectRatio: {
