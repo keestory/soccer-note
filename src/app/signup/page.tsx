@@ -6,6 +6,17 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import toast from 'react-hot-toast'
 
+function GoogleIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+    </svg>
+  )
+}
+
 export default function SignupPage() {
   const router = useRouter()
   const [displayName, setDisplayName] = useState('')
@@ -13,6 +24,23 @@ export default function SignupPage() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [googleLoading, setGoogleLoading] = useState(false)
+
+  const handleGoogleSignup = async () => {
+    setGoogleLoading(true)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo: `${window.location.origin}/dashboard` },
+      })
+      if (error) toast.error(error.message)
+    } catch {
+      toast.error('Google 로그인 중 오류가 발생했습니다')
+    } finally {
+      setGoogleLoading(false)
+    }
+  }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,18 +75,25 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 safe-top">
-      {/* Branded header */}
-      <div className="bg-gradient-to-b from-[#1a3f1a] to-[#2D5A27] px-6 pt-14 pb-10 text-center field-pattern flex-shrink-0">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 mb-3">
-          <span className="text-2xl">⚽</span>
-        </div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">SoccerNote</h1>
-        <p className="text-white/70 mt-1 text-sm">새 계정을 만들어 시작하세요</p>
-      </div>
-
-      {/* Form card */}
-      <div className="flex-1 bg-gray-50 rounded-t-3xl -mt-4 px-6 pt-8 pb-8 overflow-y-auto">
+      <div className="flex-1 px-6 pt-16 pb-8 overflow-y-auto">
         <h2 className="text-xl font-bold text-gray-900 mb-6">회원가입</h2>
+
+        {/* Google 가입 */}
+        <button
+          onClick={handleGoogleSignup}
+          disabled={googleLoading}
+          className="w-full flex items-center justify-center gap-3 py-3.5 bg-white border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 disabled:opacity-50 transition shadow-sm mb-5"
+        >
+          <GoogleIcon />
+          {googleLoading ? '연결 중…' : 'Google로 계속하기'}
+        </button>
+
+        {/* 구분선 */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-xs text-gray-400 font-medium">또는 이메일로 가입</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
 
         <form onSubmit={handleSignup} className="space-y-4">
           <div>
@@ -141,3 +176,4 @@ export default function SignupPage() {
     </div>
   )
 }
+
