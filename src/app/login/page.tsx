@@ -30,13 +30,41 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 safe-top">
-      {/* Branded header — soccer-green gradient */}
-      <div className="bg-gradient-to-b from-[#1a3f1a] to-[#2D5A27] px-6 pt-16 pb-12 text-center field-pattern flex-shrink-0">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white/10 mb-4">
-          <span className="text-3xl">⚽</span>
+      {/* Branded hero — KV with speed lines */}
+      <div className="relative overflow-hidden px-6 pt-16 pb-12 text-center flex-shrink-0" style={{ background: 'linear-gradient(135deg, #0a1f0a 0%, #1a3f1a 55%, #2D5A27 100%)' }}>
+        <div className="field-pattern absolute inset-0" />
+        {/* KV SVG layer */}
+        <svg viewBox="0 0 390 220" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 w-full h-full" preserveAspectRatio="xMidYMid slice">
+          {/* Speed streaks */}
+          <line x1="390" y1="42"  x2="200" y2="-16" stroke="rgba(163,230,53,0.5)"  strokeWidth="1.8" strokeLinecap="round"/>
+          <line x1="390" y1="72"  x2="225" y2="4"   stroke="rgba(163,230,53,0.32)" strokeWidth="1.3" strokeLinecap="round"/>
+          <line x1="390" y1="102" x2="245" y2="16"  stroke="rgba(163,230,53,0.2)"  strokeWidth="0.9" strokeLinecap="round"/>
+          <line x1="390" y1="135" x2="215" y2="32"  stroke="rgba(255,255,255,0.09)" strokeWidth="1.3" strokeLinecap="round"/>
+          <line x1="378" y1="162" x2="178" y2="58"  stroke="rgba(163,230,53,0.15)" strokeWidth="2.2" strokeLinecap="round"/>
+          <line x1="390" y1="22"  x2="218" y2="-26" stroke="rgba(255,255,255,0.06)" strokeWidth="0.9" strokeLinecap="round"/>
+          {/* Stadium circle hint */}
+          <circle cx="335" cy="185" r="135" stroke="rgba(255,255,255,0.05)" strokeWidth="1.2" fill="none"/>
+          {/* Ball motion trail */}
+          <ellipse cx="122" cy="186" rx="58" ry="15" fill="rgba(163,230,53,0.07)" transform="rotate(-20 122 186)"/>
+          <ellipse cx="162" cy="175" rx="38" ry="10" fill="rgba(163,230,53,0.04)" transform="rotate(-20 162 175)"/>
+          {/* Ball */}
+          <circle cx="74" cy="195" r="42" fill="rgba(255,255,255,0.09)" stroke="rgba(255,255,255,0.28)" strokeWidth="1.3"/>
+          <polygon points="74,166 89,177 84,195 64,195 59,177" fill="rgba(0,0,0,0.2)"  stroke="rgba(255,255,255,0.22)" strokeWidth="0.7"/>
+          <polygon points="74,166 59,177 48,167 52,149 74,148" fill="rgba(0,0,0,0.15)" stroke="rgba(255,255,255,0.15)" strokeWidth="0.7"/>
+          <polygon points="89,177 101,169 103,151 78,148 74,166" fill="rgba(0,0,0,0.15)" stroke="rgba(255,255,255,0.15)" strokeWidth="0.7"/>
+          {/* Bokeh dots */}
+          <circle cx="298" cy="30"  r="2.5" fill="rgba(163,230,53,0.45)"/>
+          <circle cx="263" cy="58"  r="1.8" fill="rgba(163,230,53,0.28)"/>
+          <circle cx="325" cy="68"  r="3.5" fill="rgba(255,255,255,0.06)"/>
+          <circle cx="283" cy="16"  r="1.8" fill="rgba(163,230,53,0.32)"/>
+          <circle cx="348" cy="108" r="2.2" fill="rgba(255,255,255,0.05)"/>
+          <circle cx="48"  cy="60"  r="2"   fill="rgba(163,230,53,0.2)"/>
+        </svg>
+        {/* Text */}
+        <div className="relative z-10">
+          <h1 className="text-3xl font-black text-white tracking-tight">SoccerNote</h1>
+          <p className="text-white/60 mt-2 text-sm font-medium tracking-wide">함께 뛰고, 함께 빛나요 ⚡</p>
         </div>
-        <h1 className="text-3xl font-bold text-white tracking-tight">SoccerNote</h1>
-        <p className="text-white/70 mt-1.5 text-sm">축구팀 경기 기록의 모든 것</p>
       </div>
 
       {/* Form card — slides up over the background */}

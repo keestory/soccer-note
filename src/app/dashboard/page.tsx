@@ -447,47 +447,80 @@ export default function DashboardPage() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 pt-6 pb-28">
-        {/* New Match Button */}
-        {canEditMatches && (
-          <Link
-            href="/match/new"
-            className="flex items-center justify-center gap-2 w-full py-4 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition mb-6"
-          >
-            <Plus className="w-5 h-5" />
-            새 경기 기록하기
-          </Link>
-        )}
-
-        {/* Team Stats */}
-        {matches.length > 0 && (() => {
+        {/* Hero card */}
+        {(() => {
           const totalGames = matches.length
-          const wins = matches.filter(m => m.home_score > m.away_score).length
-          const losses = matches.filter(m => m.home_score < m.away_score).length
-          const draws = matches.filter(m => m.home_score === m.away_score).length
-          const winRate = Math.round((wins / totalGames) * 100)
+          const wins    = matches.filter(m => m.home_score >  m.away_score).length
+          const losses  = matches.filter(m => m.home_score <  m.away_score).length
+          const draws   = matches.filter(m => m.home_score === m.away_score).length
+          const winRate = totalGames > 0 ? Math.round((wins / totalGames) * 100) : null
+          const recentStreak = matches.slice(0, 5).map(m =>
+            m.home_score > m.away_score ? 'W' : m.home_score < m.away_score ? 'L' : 'D'
+          )
+          const greeting = displayName ? `${displayName}님, 오늘도 달려볼까요!` : '오늘도 달려볼까요!'
           return (
-            <div className="bg-white rounded-xl p-4 shadow-sm mb-6">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="text-sm font-semibold text-gray-500">팀 전적</h2>
-                <span className="text-sm font-bold text-primary-600">승률 {winRate}%</span>
-              </div>
-              <div className="grid grid-cols-4 gap-2 text-center">
-                <div>
-                  <p className="text-2xl font-bold text-gray-900">{totalGames}</p>
-                  <p className="text-xs text-gray-500">총 경기</p>
+            <div
+              className="relative rounded-2xl overflow-hidden mb-5 px-5 pt-5 pb-6"
+              style={{ background: 'linear-gradient(135deg, #0a1f0a 0%, #1a3f1a 55%, #2D5A27 100%)' }}
+            >
+              <div className="field-pattern absolute inset-0" />
+              {/* Speed accent line */}
+              <div className="absolute top-0 right-0 w-40 h-40 opacity-20" style={{ background: 'radial-gradient(circle at 100% 0%, #a3e635 0%, transparent 70%)' }} />
+              <div className="relative z-10">
+                <p className="text-white/60 text-sm font-medium mb-1">⚽ {greeting}</p>
+                {winRate !== null ? (
+                  <div className="flex items-end gap-3 mb-4">
+                    <span className="text-6xl font-black leading-none" style={{ color: '#a3e635' }}>{winRate}%</span>
+                    <div className="pb-1">
+                      <p className="text-white font-bold text-sm leading-tight">승률</p>
+                      <p className="text-white/50 text-xs">함께한 {totalGames}경기</p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-white/50 text-sm mb-4">첫 경기를 기록해볼까요? 🏆</p>
+                )}
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="text-center">
+                    <p className="text-3xl font-black text-white">{wins}</p>
+                    <p className="text-white/50 text-xs mt-0.5">승</p>
+                  </div>
+                  <div className="w-px h-8 bg-white/15" />
+                  <div className="text-center">
+                    <p className="text-3xl font-black text-red-400">{losses}</p>
+                    <p className="text-white/50 text-xs mt-0.5">패</p>
+                  </div>
+                  <div className="w-px h-8 bg-white/15" />
+                  <div className="text-center">
+                    <p className="text-3xl font-black text-white/50">{draws}</p>
+                    <p className="text-white/50 text-xs mt-0.5">무</p>
+                  </div>
+                  {recentStreak.length > 0 && (
+                    <>
+                      <div className="w-px h-8 bg-white/15" />
+                      <div>
+                        <p className="text-white/50 text-xs mb-1.5">최근</p>
+                        <div className="flex gap-1.5">
+                          {recentStreak.map((r, i) => (
+                            <span key={i} className={`w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center ${r === 'W' ? 'text-[#0a1f0a]' : r === 'L' ? 'bg-red-500/80 text-white' : 'bg-white/20 text-white/60'}`}
+                              style={r === 'W' ? { background: '#a3e635' } : {}}>
+                              {r}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-primary-600">{wins}</p>
-                  <p className="text-xs text-gray-500">승</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-red-500">{losses}</p>
-                  <p className="text-xs text-gray-500">패</p>
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-gray-400">{draws}</p>
-                  <p className="text-xs text-gray-500">무</p>
-                </div>
+                {canEditMatches && (
+                  <Link
+                    href="/match/new"
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold text-sm transition active:scale-[0.98]"
+                    style={{ background: '#a3e635', color: '#0a1f0a' }}
+                  >
+                    <Plus className="w-4 h-4" />
+                    새 경기 기록하기
+                  </Link>
+                )}
               </div>
             </div>
           )
