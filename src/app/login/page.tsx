@@ -62,8 +62,8 @@ export default function LoginPage() {
         </svg>
         {/* Text */}
         <div className="relative z-10">
-          <h1 className="font-display text-3xl font-black text-white tracking-tight">SoccerNote</h1>
-          <p className="text-white/60 mt-2 text-sm font-medium">같이 뛰면 더 즐겁잖아요 ⚡</p>
+          <h1 className="font-display text-3xl font-black text-white">SoccerNote</h1>
+          <p className="text-white/55 mt-2 text-sm">같이 뛰면 더 즐겁잖아요</p>
         </div>
       </div>
 
