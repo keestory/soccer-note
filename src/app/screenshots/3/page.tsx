@@ -48,7 +48,7 @@ export default function Screenshot3Page() {
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
               <h1 className="text-base font-bold">선수 관리</h1>
             </div>
-            <span className="text-xs text-blue-600 font-semibold">15명</span>
+            <span className="text-xs text-primary-600 font-semibold">15명</span>
           </div>
 
           {/* Ranking Tabs */}
@@ -63,7 +63,7 @@ export default function Screenshot3Page() {
               <span
                 key={tab.label}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${
-                  tab.active ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'
+                  tab.active ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
                 }`}
               >
                 {tab.label}
@@ -105,20 +105,20 @@ export default function Screenshot3Page() {
                     {r.pos}
                   </span>
                 </div>
-                <span className="font-bold text-blue-600 text-base">{r.value}</span>
+                <span className="font-bold text-primary-600 text-base">{r.value}</span>
               </div>
             ))}
           </div>
 
           {/* Player Detail Card */}
-          <div className="mx-4 mb-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-3.5 shadow-lg">
+          <div className="mx-4 mb-3 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-3.5 shadow-lg">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white text-sm font-bold">
                 7
               </div>
               <div>
                 <p className="font-bold text-white text-sm">박지훈</p>
-                <p className="text-blue-200 text-[10px]">FW | 최다 골 | 12경기</p>
+                <p className="text-primary-200 text-[10px]">FW | 최다 골 | 12경기</p>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center">
@@ -130,7 +130,7 @@ export default function Screenshot3Page() {
               ].map(s => (
                 <div key={s.label}>
                   <p className="text-lg font-bold text-white">{s.val}</p>
-                  <p className="text-[9px] text-blue-200">{s.label}</p>
+                  <p className="text-[9px] text-primary-200">{s.label}</p>
                 </div>
               ))}
             </div>

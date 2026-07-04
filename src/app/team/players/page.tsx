@@ -9,6 +9,7 @@ import { ArrowLeft, Plus, Trash2, Edit2, X, Users, Trophy } from 'lucide-react'
 import type { Player, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
+import { PlayersListSkeleton } from '@/components/Skeleton'
 
 interface PlayerStats {
   attendance: number
@@ -26,8 +27,8 @@ interface PlayerWithStats extends Player {
 type RankStatKey = 'goals' | 'assists' | 'avgRating' | 'attendance' | 'cleanSheets'
 
 const STAT_TABS: { key: RankStatKey; label: string; color: string; suffix: string }[] = [
-  { key: 'goals', label: '골', color: 'text-blue-600', suffix: '골' },
-  { key: 'assists', label: '도움', color: 'text-blue-600', suffix: '도움' },
+  { key: 'goals', label: '골', color: 'text-primary-600', suffix: '골' },
+  { key: 'assists', label: '도움', color: 'text-primary-600', suffix: '도움' },
   { key: 'avgRating', label: '평점', color: 'text-amber-600', suffix: '' },
   { key: 'attendance', label: '출석', color: 'text-green-600', suffix: '회' },
   { key: 'cleanSheets', label: '클린시트', color: 'text-purple-600', suffix: '' },
@@ -223,11 +224,7 @@ export default function PlayersPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    )
+    return <PlayersListSkeleton />
   }
 
   const currentTab = STAT_TABS.find((t) => t.key === rankStat)!
@@ -257,7 +254,7 @@ export default function PlayersPage() {
                 resetForm()
                 setShowAddForm(true)
               }}
-              className="flex items-center gap-1 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+              className="flex items-center gap-1 px-3 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
             >
               <Plus className="w-4 h-4" />
               선수 추가
@@ -272,7 +269,7 @@ export default function PlayersPage() {
           <button
             onClick={() => setView('roster')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition ${
-              view === 'roster' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'
+              view === 'roster' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -281,7 +278,7 @@ export default function PlayersPage() {
           <button
             onClick={() => setView('ranking')}
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition ${
-              view === 'ranking' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500'
+              view === 'ranking' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500'
             }`}
           >
             <Trophy className="w-4 h-4" />
@@ -314,7 +311,7 @@ export default function PlayersPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   placeholder="선수 이름"
                 />
               </div>
@@ -326,7 +323,7 @@ export default function PlayersPage() {
                   onChange={(e) => setNumber(e.target.value)}
                   min={1}
                   max={99}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
                   placeholder="#"
                 />
               </div>
@@ -357,7 +354,7 @@ export default function PlayersPage() {
 
             <button
               type="submit"
-              className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+              className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
             >
               {editingPlayer ? '수정 완료' : '추가하기'}
             </button>
@@ -411,33 +408,33 @@ export default function PlayersPage() {
                   )}
                 </div>
 
-                {/* Player Stats */}
-                <div className="grid grid-cols-6 gap-2 pt-3 border-t">
+                {/* Player Stats — 3×2 grid for comfortable mobile reading */}
+                <div className="grid grid-cols-3 gap-x-2 gap-y-3 pt-3 border-t">
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">출석</p>
+                    <p className="text-xs text-gray-400 mb-0.5">출석</p>
                     <p className="font-bold text-gray-900">{player.stats.attendance}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">출전</p>
+                    <p className="text-xs text-gray-400 mb-0.5">출전</p>
                     <p className="font-bold text-gray-900">{player.stats.games}</p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">골</p>
-                    <p className="font-bold text-blue-600">{player.stats.goals}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">도움</p>
-                    <p className="font-bold text-blue-600">{player.stats.assists}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">클린시트</p>
-                    <p className="font-bold text-purple-600">{player.stats.cleanSheets}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-500 mb-1">평점</p>
-                    <p className="font-bold text-amber-600">
-                      {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '-'}
+                    <p className="text-xs text-gray-400 mb-0.5">평점</p>
+                    <p className="font-bold text-amber-500">
+                      {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '−'}
                     </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-400 mb-0.5">골</p>
+                    <p className="font-bold text-primary-600">{player.stats.goals}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-400 mb-0.5">도움</p>
+                    <p className="font-bold text-primary-600">{player.stats.assists}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-xs text-gray-400 mb-0.5">클린시트</p>
+                    <p className="font-bold text-purple-600">{player.stats.cleanSheets}</p>
                   </div>
                 </div>
               </div>
@@ -462,7 +459,7 @@ export default function PlayersPage() {
                 onClick={() => setRankStat(tab.key)}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition ${
                   rankStat === tab.key
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary-600 text-white'
                     : 'bg-white text-gray-600 border border-gray-200'
                 }`}
               >

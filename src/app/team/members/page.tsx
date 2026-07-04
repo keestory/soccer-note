@@ -8,6 +8,7 @@ import { resolveTeam, clearResolvedTeam } from '@/lib/team-resolver'
 import { ArrowLeft, Users, Copy, Check, Shield, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle } from 'lucide-react'
 import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
+import { MembersPageSkeleton } from '@/components/Skeleton'
 
 interface MemberWithProfile extends TeamMember {
   profile: Profile | undefined
@@ -287,11 +288,7 @@ function TeamMembersContent() {
   const isCoach = currentUserRole === 'coach'
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    )
+    return <MembersPageSkeleton />
   }
 
   return (
@@ -316,7 +313,7 @@ function TeamMembersContent() {
         {isCoach && team?.invite_code && (
           <section className="bg-white rounded-xl p-4 shadow-sm">
             <h2 className="font-semibold flex items-center gap-2 mb-3">
-              <Users className="w-5 h-5 text-blue-600" />
+              <Users className="w-5 h-5 text-primary-600" />
               팀 초대
             </h2>
             <div className="flex gap-2">
@@ -325,7 +322,7 @@ function TeamMembersContent() {
               </div>
               <button
                 onClick={copyInviteLink}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 flex-shrink-0 whitespace-nowrap"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 flex items-center gap-2 flex-shrink-0 whitespace-nowrap"
               >
                 {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
                 {copied ? '복사됨' : '링크 복사'}
@@ -366,7 +363,7 @@ function TeamMembersContent() {
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <button
                         onClick={() => approveMember(member)}
-                        className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-1 text-sm font-medium"
+                        className="px-3 py-1.5 bg-primary-600 text-white rounded-lg hover:bg-primary-700 flex items-center gap-1 text-sm font-medium"
                       >
                         <CheckCircle className="w-4 h-4" />
                         승인
@@ -452,7 +449,7 @@ function TeamMembersContent() {
                             onChange={(e) =>
                               updateMemberPermissions(member.id, { can_edit_players: e.target.checked })
                             }
-                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                           />
                           <span className="text-sm">선수 관리 (추가/수정/삭제)</span>
                         </label>
@@ -463,7 +460,7 @@ function TeamMembersContent() {
                             onChange={(e) =>
                               updateMemberPermissions(member.id, { can_edit_matches: e.target.checked })
                             }
-                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                           />
                           <span className="text-sm">경기 관리 (추가/수정/삭제)</span>
                         </label>
@@ -474,7 +471,7 @@ function TeamMembersContent() {
                             onChange={(e) =>
                               updateMemberPermissions(member.id, { can_edit_quarters: e.target.checked })
                             }
-                            className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                           />
                           <span className="text-sm">쿼터 기록 편집</span>
                         </label>
@@ -551,7 +548,7 @@ function TeamMembersContent() {
                   <button
                     onClick={() => setDisbandStep('select-coach')}
                     disabled={members.filter(m => m.user_id !== currentUserId).length === 0}
-                    className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     예, 새 감독 선택하기
                   </button>
@@ -591,7 +588,7 @@ function TeamMembersContent() {
                         onClick={() => setSelectedNewCoach(member.user_id)}
                         className={`w-full p-3 rounded-lg text-left flex items-center gap-3 transition ${
                           selectedNewCoach === member.user_id
-                            ? 'bg-blue-100 border-2 border-blue-500'
+                            ? 'bg-primary-100 border-2 border-primary-500'
                             : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
                         }`}
                       >
@@ -610,7 +607,7 @@ function TeamMembersContent() {
                   <button
                     onClick={transferOwnership}
                     disabled={!selectedNewCoach}
-                    className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     감독 위임하기
                   </button>
@@ -665,7 +662,7 @@ export default function TeamMembersPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+        <Loader2 className="w-8 h-8 text-primary-600 animate-spin" />
       </div>
     }>
       <TeamMembersContent />

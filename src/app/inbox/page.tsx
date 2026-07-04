@@ -166,7 +166,7 @@ export default function InboxPage() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'new_match':
-        return <Calendar className="w-5 h-5 text-blue-500" />
+        return <Calendar className="w-5 h-5 text-primary-500" />
       case 'match_update':
         return <Calendar className="w-5 h-5 text-orange-500" />
       default:
@@ -177,7 +177,7 @@ export default function InboxPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
       </div>
     )
   }
@@ -192,7 +192,7 @@ export default function InboxPage() {
           </Link>
           <div className="flex-1">
             <h1 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <Inbox className="w-5 h-5 text-blue-600" />
+              <Inbox className="w-5 h-5 text-primary-600" />
               알림함
               {unreadCount > 0 && (
                 <span className="px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
@@ -205,7 +205,7 @@ export default function InboxPage() {
             <button
               onClick={markAllAsRead}
               disabled={markingAll}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-1.5 text-sm text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
             >
               {markingAll ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -225,7 +225,7 @@ export default function InboxPage() {
             onClick={() => setFilter('all')}
             className={`py-3 px-1 border-b-2 text-sm font-medium transition-colors ${
               filter === 'all'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-primary-600 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -235,7 +235,7 @@ export default function InboxPage() {
             onClick={() => setFilter('unread')}
             className={`py-3 px-1 border-b-2 text-sm font-medium transition-colors ${
               filter === 'unread'
-                ? 'border-blue-600 text-blue-600'
+                ? 'border-primary-600 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -264,7 +264,7 @@ export default function InboxPage() {
                   className={`transition-colors ${
                     notification.read_at
                       ? 'bg-white'
-                      : 'bg-blue-50'
+                      : 'bg-primary-50'
                   }`}
                 >
                   <button
@@ -272,7 +272,7 @@ export default function InboxPage() {
                     className={`w-full px-4 py-4 flex items-start gap-3 text-left ${
                       notification.read_at
                         ? 'hover:bg-gray-50'
-                        : 'hover:bg-blue-100'
+                        : 'hover:bg-primary-100'
                     }`}
                   >
                     {/* 읽음 상태 표시 */}
@@ -280,7 +280,7 @@ export default function InboxPage() {
                       {notification.read_at ? (
                         <div className="w-2 h-2 rounded-full bg-transparent" />
                       ) : (
-                        <div className="w-2 h-2 rounded-full bg-blue-600" />
+                        <div className="w-2 h-2 rounded-full bg-primary-600" />
                       )}
                     </div>
 

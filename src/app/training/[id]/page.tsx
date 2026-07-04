@@ -9,6 +9,7 @@ import type { Player, TrainingSession, TrainingAttendee, TrainingType, TeamVisib
 import { formatDate } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
+import { TrainingDetailSkeleton } from '@/components/Skeleton'
 
 const TRAINING_TYPES: TrainingType[] = ['mini-game', 'passing', 'shooting', 'fitness', 'tactics', 'mixed', 'other']
 
@@ -23,13 +24,13 @@ const TRAINING_TYPE_LABEL_KEYS: Record<TrainingType, string> = {
 }
 
 const TRAINING_TYPE_STYLES: Record<TrainingType, string> = {
-  'mini-game': 'bg-gray-100 text-gray-800 border border-gray-300',
-  'passing': 'bg-gray-100 text-gray-700 border border-gray-300',
-  'shooting': 'bg-gray-100 text-gray-800 border border-gray-300',
-  'fitness': 'bg-gray-50 text-gray-600 border border-gray-200',
-  'tactics': 'bg-gray-100 text-gray-700 border border-gray-300',
-  'mixed': 'bg-gray-100 text-gray-800 border border-gray-300',
-  'other': 'bg-gray-50 text-gray-500 border border-gray-200',
+  'mini-game': 'bg-amber-100 text-amber-800 border border-amber-300',
+  'passing':   'bg-sky-100 text-sky-800 border border-sky-300',
+  'shooting':  'bg-red-100 text-red-800 border border-red-300',
+  'fitness':   'bg-green-100 text-green-800 border border-green-300',
+  'tactics':   'bg-indigo-100 text-indigo-800 border border-indigo-300',
+  'mixed':     'bg-primary-100 text-primary-800 border border-primary-300',
+  'other':     'bg-gray-100 text-gray-700 border border-gray-300',
 }
 
 export default function TrainingDetailPage() {
@@ -317,11 +318,7 @@ export default function TrainingDetailPage() {
   }
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <p className="text-gray-500">{t.loading}</p>
-      </div>
-    )
+    return <TrainingDetailSkeleton />
   }
 
   if (!training) return null
@@ -380,7 +377,7 @@ export default function TrainingDetailPage() {
                 type="date"
                 value={editDate}
                 onChange={(e) => setEditDate(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
               />
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
                 {TRAINING_TYPES.map(type => (
@@ -390,7 +387,7 @@ export default function TrainingDetailPage() {
                     onClick={() => setEditType(type)}
                     className={`px-2 py-1.5 rounded-lg text-xs font-medium border transition ${
                       editType === type
-                        ? `${TRAINING_TYPE_STYLES[type]} ring-1 ring-blue-500`
+                        ? `${TRAINING_TYPE_STYLES[type]} ring-1 ring-primary-500`
                         : 'bg-white text-gray-500 border-gray-200'
                     }`}
                   >
@@ -403,7 +400,7 @@ export default function TrainingDetailPage() {
                 value={editLocation}
                 onChange={(e) => setEditLocation(e.target.value)}
                 placeholder={t.locationPlaceholder}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
               />
               <input
                 type="number"
@@ -411,17 +408,17 @@ export default function TrainingDetailPage() {
                 onChange={(e) => setEditDuration(Math.max(1, parseInt(e.target.value) || 1))}
                 min={1}
                 max={480}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
               />
               <textarea
                 value={editNotes}
                 onChange={(e) => setEditNotes(e.target.value)}
                 rows={2}
                 placeholder={t.trainingNotesPlaceholder}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none resize-none"
               />
               <div className="flex gap-2">
-                <button onClick={handleSaveInfo} className="flex-1 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                <button onClick={handleSaveInfo} className="flex-1 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition">
                   {t.save}
                 </button>
                 <button onClick={() => setEditingInfo(false)} className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
@@ -456,14 +453,14 @@ export default function TrainingDetailPage() {
         <div className="bg-white rounded-xl p-5 shadow-toss">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-bold flex items-center gap-2">
-              <Users className="w-5 h-5 text-blue-500" />
+              <Users className="w-5 h-5 text-primary-500" />
               {t.trainingAttendees}
               <span className="text-sm font-normal text-gray-400">({displayAttendees.length})</span>
             </h2>
             {canEdit && (
               <button
                 onClick={openAttendeePicker}
-                className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-100 transition"
+                className="px-3 py-1.5 bg-primary-50 text-primary-600 rounded-lg text-sm font-medium hover:bg-primary-100 transition"
               >
                 {t.edit}
               </button>
@@ -481,7 +478,7 @@ export default function TrainingDetailPage() {
                   key={a.id}
                   className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg"
                 >
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 text-xs font-bold">
+                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 text-xs font-bold">
                     {a.player?.number || '-'}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -522,7 +519,7 @@ export default function TrainingDetailPage() {
                 {attendees.map(a => (
                   <div key={a.id} className="p-3 bg-gray-50 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className="w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center text-blue-700 text-xs font-bold">
+                      <div className="w-7 h-7 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 text-xs font-bold">
                         {a.player?.number || '-'}
                       </div>
                       <span className="text-sm font-medium">{a.player?.name}</span>
@@ -542,7 +539,7 @@ export default function TrainingDetailPage() {
                             [a.player_id]: { ...prev[a.player_id], rating: val }
                           }))
                         }}
-                        className="flex-1 px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="flex-1 px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
                         placeholder="1-10"
                       />
                     </div>
@@ -557,7 +554,7 @@ export default function TrainingDetailPage() {
                           }))
                         }}
                         rows={1}
-                        className="flex-1 px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                        className="flex-1 px-2 py-1.5 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none resize-none"
                         placeholder={t.trainingFeedbackPlaceholder}
                       />
                     </div>
@@ -567,7 +564,7 @@ export default function TrainingDetailPage() {
                 <button
                   onClick={handleSaveEvaluation}
                   disabled={savingEval}
-                  className="w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition"
+                  className="w-full py-2.5 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition"
                 >
                   {savingEval ? t.saving : t.save}
                 </button>
@@ -630,7 +627,7 @@ export default function TrainingDetailPage() {
                     setSelectedAttendees(new Set(allPlayers.map(p => p.id)))
                   }
                 }}
-                className="text-sm text-blue-600 font-medium"
+                className="text-sm text-primary-600 font-medium"
               >
                 {selectedAttendees.size === allPlayers.length ? t.cancel : `${t.selectAttendees} (${allPlayers.length})`}
               </button>
@@ -644,11 +641,11 @@ export default function TrainingDetailPage() {
                     key={player.id}
                     onClick={() => toggleAttendee(player.id)}
                     className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${
-                      isSelected ? 'bg-blue-50' : 'hover:bg-gray-50'
+                      isSelected ? 'bg-primary-50' : 'hover:bg-gray-50'
                     }`}
                   >
                     <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      isSelected ? 'bg-blue-600 border-blue-600' : 'border-gray-300'
+                      isSelected ? 'bg-primary-600 border-primary-600' : 'border-gray-300'
                     }`}>
                       {isSelected && <Check className="w-4 h-4 text-white" />}
                     </div>
@@ -666,7 +663,7 @@ export default function TrainingDetailPage() {
             <div className="p-4 border-t">
               <button
                 onClick={saveAttendees}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+                className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition"
               >
                 {t.save} ({selectedAttendees.size}{t.persons})
               </button>

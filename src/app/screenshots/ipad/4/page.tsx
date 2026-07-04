@@ -39,9 +39,9 @@ export default function IPadScreenshot4() {
                 </div>
               </div>
               <div className="flex gap-3 mb-3">
-                <div className="flex items-center gap-1.5 bg-blue-50 px-3 py-1.5 rounded-lg">
-                  <span className="text-blue-600 text-sm font-bold">2</span>
-                  <span className="text-xs text-blue-600">골</span>
+                <div className="flex items-center gap-1.5 bg-primary-50 px-3 py-1.5 rounded-lg">
+                  <span className="text-primary-600 text-sm font-bold">2</span>
+                  <span className="text-xs text-primary-600">골</span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-green-50 px-3 py-1.5 rounded-lg">
                   <span className="text-green-600 text-sm font-bold">1</span>
@@ -65,7 +65,7 @@ export default function IPadScreenshot4() {
           <div className="px-5 mt-3">
             <div className="bg-white rounded-xl p-4 shadow-sm">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">8</div>
+                <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-sm">8</div>
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900">김민수</p>
                   <span className="text-xs text-slate-500 font-medium">MF</span>
@@ -77,7 +77,7 @@ export default function IPadScreenshot4() {
                 </div>
               </div>
               <div className="flex gap-2 mt-2">
-                <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-medium">1골</span>
+                <span className="text-xs bg-primary-50 text-primary-600 px-2 py-0.5 rounded font-medium">1골</span>
                 <span className="text-xs bg-green-50 text-green-600 px-2 py-0.5 rounded font-medium">2어시스트</span>
               </div>
             </div>
@@ -108,10 +108,10 @@ export default function IPadScreenshot4() {
           <div className="px-5 mt-3">
             <div className="bg-white rounded-xl p-4 shadow-sm">
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">5</div>
+                <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-sm">5</div>
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900">박서진</p>
-                  <span className="text-xs text-blue-500 font-medium">DF</span>
+                  <span className="text-xs text-primary-500 font-medium">DF</span>
                 </div>
                 <div className="flex items-center gap-0.5">
                   {[1,2,3].map(i => (<svg key={i} className="w-4 h-4" fill="#fbbf24" viewBox="0 0 20 20"><path d={STAR_PATH}/></svg>))}
@@ -125,7 +125,7 @@ export default function IPadScreenshot4() {
           <div className="flex-1" />
 
           <div className="px-5 pb-5">
-            <div className="w-full py-3.5 bg-blue-600 text-white rounded-xl text-center font-semibold">저장하기</div>
+            <div className="w-full py-3.5 bg-primary-600 text-white rounded-xl text-center font-semibold">저장하기</div>
           </div>
         </div>
       </div>

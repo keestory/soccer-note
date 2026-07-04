@@ -124,7 +124,7 @@ export default function AdminPage() {
   if (authState === 'checking') {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" />
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
       </div>
     )
   }
@@ -135,8 +135,8 @@ export default function AdminPage() {
       <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-100 rounded-full mb-4">
-              <Shield className="w-7 h-7 text-blue-600" />
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-100 rounded-full mb-4">
+              <Shield className="w-7 h-7 text-primary-600" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900">어드민 로그인</h1>
             <p className="text-gray-500 text-sm mt-1">관리자 계정으로 로그인하세요</p>
@@ -151,7 +151,7 @@ export default function AdminPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm"
+                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-sm"
                 placeholder="admin@example.com"
               />
             </div>
@@ -164,7 +164,7 @@ export default function AdminPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-sm pr-10"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-sm pr-10"
                   placeholder="••••••••"
                 />
                 <button
@@ -184,7 +184,7 @@ export default function AdminPage() {
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
               {loginLoading ? (
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -205,7 +205,7 @@ export default function AdminPage() {
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
         <Shield className="w-16 h-16 text-red-400" />
         <p className="text-xl font-semibold text-gray-800">접근 권한이 없습니다.</p>
-        <Link href="/dashboard" className="text-blue-600 hover:underline flex items-center gap-1">
+        <Link href="/dashboard" className="text-primary-600 hover:underline flex items-center gap-1">
           <ArrowLeft className="w-4 h-4" /> 대시보드로 돌아가기
         </Link>
       </div>
@@ -222,7 +222,7 @@ export default function AdminPage() {
               <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-blue-600" />
+              <Shield className="w-5 h-5 text-primary-600" />
               <h1 className="text-xl font-bold text-gray-900">어드민</h1>
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function AdminPage() {
           <div className="grid grid-cols-3 gap-4 mb-6">
             <div className="bg-white rounded-xl p-5 shadow-sm border">
               <p className="text-sm text-gray-500 mb-1">총 사용자</p>
-              <p className="text-3xl font-bold text-blue-600">{stats.totalUsers}</p>
+              <p className="text-3xl font-bold text-primary-600">{stats.totalUsers}</p>
             </div>
             <div className="bg-white rounded-xl p-5 shadow-sm border">
               <p className="text-sm text-gray-500 mb-1">총 팀</p>
@@ -262,7 +262,7 @@ export default function AdminPage() {
             onClick={() => setActiveTab('users')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition ${
               activeTab === 'users'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-primary-600 text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-100 border'
             }`}
           >
@@ -273,7 +273,7 @@ export default function AdminPage() {
             onClick={() => setActiveTab('teams')}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition ${
               activeTab === 'teams'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-primary-600 text-white'
                 : 'bg-white text-gray-600 hover:bg-gray-100 border'
             }`}
           >
@@ -348,7 +348,7 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3 text-gray-600 text-xs">{getOwnerEmail(team.user_id)}</td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                        <span className="inline-flex items-center gap-1 bg-primary-50 text-primary-700 text-xs font-semibold px-2 py-0.5 rounded-full">
                           <Users className="w-3 h-3" />
                           {team.member_count}
                         </span>

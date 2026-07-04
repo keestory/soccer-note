@@ -18,13 +18,13 @@ const POSITION_COLORS: Record<string, string> = {
 // ==========================================
 function Screenshot1() {
   return (
-    <div className="w-full h-full bg-gradient-to-b from-blue-600 to-blue-800 flex flex-col items-center">
+    <div className="w-full h-full bg-gradient-to-b from-primary-600 to-primary-800 flex flex-col items-center">
       {/* Title Area */}
       <div className="pt-16 pb-8 text-center px-8">
         <h2 className="text-4xl font-extrabold text-white leading-tight">
           경기 기록을<br />한눈에 관리
         </h2>
-        <p className="text-blue-200 text-lg mt-3">팀 전적, MVP, 출석까지</p>
+        <p className="text-primary-200 text-lg mt-3">팀 전적, MVP, 출석까지</p>
       </div>
 
       {/* Phone Frame */}
@@ -40,7 +40,7 @@ function Screenshot1() {
 
           {/* Header */}
           <div className="bg-white px-5 pb-3 border-b">
-            <h1 className="text-xl font-bold text-blue-600">SoccerNote</h1>
+            <h1 className="text-xl font-bold text-primary-600">SoccerNote</h1>
             <p className="text-xs text-gray-500">FC 드림즈 ▾</p>
           </div>
 
@@ -48,7 +48,7 @@ function Screenshot1() {
           <div className="bg-white mx-4 mt-4 rounded-xl p-4 shadow-sm">
             <div className="flex items-center justify-between mb-3">
               <span className="text-sm font-semibold text-gray-500">팀 전적</span>
-              <span className="text-sm font-bold text-blue-600">승률 67%</span>
+              <span className="text-sm font-bold text-primary-600">승률 67%</span>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center">
               <div>
@@ -56,7 +56,7 @@ function Screenshot1() {
                 <p className="text-[10px] text-gray-500">경기</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-600">8</p>
+                <p className="text-2xl font-bold text-primary-600">8</p>
                 <p className="text-[10px] text-gray-500">승</p>
               </div>
               <div>
@@ -72,7 +72,7 @@ function Screenshot1() {
 
           {/* Filter Tabs */}
           <div className="flex gap-2 mx-4 mt-4">
-            <span className="flex-1 py-1.5 bg-blue-600 text-white text-center text-xs font-medium rounded-lg">전체</span>
+            <span className="flex-1 py-1.5 bg-primary-600 text-white text-center text-xs font-medium rounded-lg">전체</span>
             <span className="flex-1 py-1.5 bg-white text-gray-600 text-center text-xs font-medium rounded-lg">예정</span>
             <span className="flex-1 py-1.5 bg-white text-gray-600 text-center text-xs font-medium rounded-lg">완료</span>
           </div>
@@ -88,11 +88,11 @@ function Screenshot1() {
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-bold">
-                    <span className="text-blue-600">3</span>
+                    <span className="text-primary-600">3</span>
                     <span className="text-gray-400 mx-0.5">:</span>
                     <span className="text-gray-600">1</span>
                   </p>
-                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">승</span>
+                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-primary-100 text-primary-700">승</span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -116,11 +116,11 @@ function Screenshot1() {
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-bold">
-                    <span className="text-blue-600">2</span>
+                    <span className="text-primary-600">2</span>
                     <span className="text-gray-400 mx-0.5">:</span>
                     <span className="text-gray-600">0</span>
                   </p>
-                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">승</span>
+                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-primary-100 text-primary-700">승</span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -144,7 +144,7 @@ function Screenshot1() {
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-bold">
-                    <span className="text-blue-600">1</span>
+                    <span className="text-primary-600">1</span>
                     <span className="text-gray-400 mx-0.5">:</span>
                     <span className="text-gray-600">1</span>
                   </p>
@@ -156,7 +156,7 @@ function Screenshot1() {
 
           {/* Bottom Nav */}
           <div className="bg-white border-t px-6 py-2.5 flex justify-around">
-            <div className="flex flex-col items-center text-blue-600">
+            <div className="flex flex-col items-center text-primary-600">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>
               <span className="text-[9px] mt-0.5">경기</span>
             </div>
@@ -279,7 +279,7 @@ function Screenshot2() {
           <div className="px-4 py-3 bg-white border-t flex items-center justify-between">
             <div className="text-center flex-1">
               <p className="text-[10px] text-gray-500">우리팀</p>
-              <p className="text-2xl font-bold text-blue-600">3</p>
+              <p className="text-2xl font-bold text-primary-600">3</p>
             </div>
             <div className="text-gray-400 text-lg font-bold">:</div>
             <div className="text-center flex-1">
@@ -338,7 +338,7 @@ function Screenshot3() {
               <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
               <h1 className="text-base font-bold">선수 관리</h1>
             </div>
-            <span className="text-xs text-blue-600 font-semibold">15명</span>
+            <span className="text-xs text-primary-600 font-semibold">15명</span>
           </div>
 
           {/* Ranking Tabs */}
@@ -353,7 +353,7 @@ function Screenshot3() {
               <span
                 key={tab.label}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap ${
-                  tab.active ? 'bg-blue-600 text-white' : 'bg-white text-gray-600'
+                  tab.active ? 'bg-primary-600 text-white' : 'bg-white text-gray-600'
                 }`}
               >
                 {tab.label}
@@ -395,38 +395,38 @@ function Screenshot3() {
                     {r.pos}
                   </span>
                 </div>
-                <span className="font-bold text-blue-600 text-base">{r.value}</span>
+                <span className="font-bold text-primary-600 text-base">{r.value}</span>
               </div>
             ))}
           </div>
 
           {/* Player Detail Card Preview */}
-          <div className="mx-4 mb-3 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-3.5 shadow-lg">
+          <div className="mx-4 mb-3 bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-3.5 shadow-lg">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center text-white text-sm font-bold">
                 7
               </div>
               <div>
                 <p className="font-bold text-white text-sm">박지훈</p>
-                <p className="text-blue-200 text-[10px]">FW | 최다 골 | 12경기</p>
+                <p className="text-primary-200 text-[10px]">FW | 최다 골 | 12경기</p>
               </div>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center">
               <div>
                 <p className="text-lg font-bold text-white">12</p>
-                <p className="text-[9px] text-blue-200">골</p>
+                <p className="text-[9px] text-primary-200">골</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-white">5</p>
-                <p className="text-[9px] text-blue-200">어시스트</p>
+                <p className="text-[9px] text-primary-200">어시스트</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-white">8.5</p>
-                <p className="text-[9px] text-blue-200">평균 평점</p>
+                <p className="text-[9px] text-primary-200">평균 평점</p>
               </div>
               <div>
                 <p className="text-lg font-bold text-white">95%</p>
-                <p className="text-[9px] text-blue-200">출석률</p>
+                <p className="text-[9px] text-primary-200">출석률</p>
               </div>
             </div>
           </div>
@@ -498,9 +498,9 @@ function Screenshot4() {
 
               {/* Stats Row */}
               <div className="flex gap-3 mb-3">
-                <div className="flex items-center gap-1.5 bg-blue-50 px-2.5 py-1 rounded-lg">
-                  <span className="text-blue-600 text-xs font-bold">2</span>
-                  <span className="text-[10px] text-blue-600">골</span>
+                <div className="flex items-center gap-1.5 bg-primary-50 px-2.5 py-1 rounded-lg">
+                  <span className="text-primary-600 text-xs font-bold">2</span>
+                  <span className="text-[10px] text-primary-600">골</span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-green-50 px-2.5 py-1 rounded-lg">
                   <span className="text-green-600 text-xs font-bold">1</span>
@@ -526,7 +526,7 @@ function Screenshot4() {
           <div className="px-4 mt-2.5">
             <div className="bg-white rounded-xl p-3.5 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-xs">
+                <div className="w-9 h-9 rounded-full bg-primary-500 flex items-center justify-center text-white font-bold text-xs">
                   8
                 </div>
                 <div className="flex-1">
@@ -546,7 +546,7 @@ function Screenshot4() {
                 </div>
               </div>
               <div className="flex gap-2 mt-2">
-                <span className="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded font-medium">1골</span>
+                <span className="text-[10px] bg-primary-50 text-primary-600 px-2 py-0.5 rounded font-medium">1골</span>
                 <span className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded font-medium">2어시스트</span>
               </div>
             </div>
@@ -583,7 +583,7 @@ function Screenshot4() {
 
           {/* Save Button */}
           <div className="px-4 pb-4">
-            <div className="w-full py-3 bg-blue-600 text-white rounded-xl text-center text-sm font-semibold">
+            <div className="w-full py-3 bg-primary-600 text-white rounded-xl text-center text-sm font-semibold">
               저장하기
             </div>
           </div>
@@ -629,7 +629,7 @@ export default function ScreenshotsPage() {
               onClick={() => setCurrentIndex(i)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
                 currentIndex === i
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary-600 text-white'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
               }`}
             >
@@ -647,7 +647,7 @@ export default function ScreenshotsPage() {
               </p>
               <div
                 className={`w-full rounded-2xl overflow-hidden shadow-2xl cursor-pointer transition-transform hover:scale-[1.02] ${
-                  currentIndex === i ? 'ring-4 ring-blue-500' : ''
+                  currentIndex === i ? 'ring-4 ring-primary-500' : ''
                 }`}
                 style={{ aspectRatio: '1290 / 2796' }}
                 onClick={() => setCurrentIndex(i)}
