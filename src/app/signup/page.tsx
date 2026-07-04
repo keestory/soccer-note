@@ -74,103 +74,110 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 safe-top">
-      <div className="flex-1 px-6 pt-16 pb-8 overflow-y-auto">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">회원가입</h2>
+    <div className="min-h-screen flex flex-col bg-[#f0f4f0] safe-top">
 
-        {/* Google 가입 */}
+      {/* KV Hero */}
+      <div
+        className="relative overflow-hidden flex-shrink-0"
+        style={{ background: 'linear-gradient(135deg, #0a1f0a 0%, #1a3f1a 55%, #2D5A27 100%)', minHeight: '200px' }}
+      >
+        <div className="field-pattern absolute inset-0" />
+        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 390 200" fill="none" preserveAspectRatio="xMidYMid slice">
+          <line x1="420" y1="50"  x2="190" y2="-10" stroke="rgba(163,230,53,0.4)"  strokeWidth="2"   strokeLinecap="round"/>
+          <line x1="420" y1="90"  x2="220" y2="5"   stroke="rgba(163,230,53,0.25)" strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="420" y1="130" x2="250" y2="20"  stroke="rgba(163,230,53,0.14)" strokeWidth="1"   strokeLinecap="round"/>
+          <circle cx="360" cy="100" r="140" stroke="rgba(255,255,255,0.04)" strokeWidth="1.5" fill="none"/>
+          <circle cx="30"  cy="170" r="35"  fill="rgba(255,255,255,0.06)"   stroke="rgba(255,255,255,0.2)"  strokeWidth="1"/>
+          <circle cx="300" cy="35" r="3"    fill="rgba(163,230,53,0.5)"/>
+          <circle cx="260" cy="60" r="2"    fill="rgba(163,230,53,0.3)"/>
+        </svg>
+
+        <div className="relative z-10 px-6 pt-10 pb-10">
+          <div className="flex items-center gap-2 mb-5">
+            <div className="w-9 h-9 rounded-xl bg-lime-400/20 border border-lime-400/30 flex items-center justify-center">
+              <span className="text-lg">⚽</span>
+            </div>
+            <span className="text-white font-black text-lg tracking-tight">SoccerNote</span>
+          </div>
+          <h1 className="font-display text-3xl font-black text-white leading-tight">새 계정 만들기</h1>
+          <p className="text-white/50 text-sm mt-1">팀을 만들고 기록을 시작해요</p>
+        </div>
+      </div>
+
+      {/* Form card */}
+      <div className="flex-1 -mt-5 bg-white rounded-t-3xl px-6 pt-7 pb-10 shadow-xl overflow-y-auto">
+
+        {/* Google */}
         <button
           onClick={handleGoogleSignup}
           disabled={googleLoading}
-          className="w-full flex items-center justify-center gap-3 py-3.5 bg-white border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-gray-50 active:bg-gray-100 disabled:opacity-50 transition shadow-sm mb-5"
+          className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-semibold text-gray-700 hover:border-gray-200 active:bg-gray-50 disabled:opacity-50 transition shadow-sm mb-5"
         >
           <GoogleIcon />
           {googleLoading ? '연결 중…' : 'Google로 계속하기'}
         </button>
 
-        {/* 구분선 */}
         <div className="flex items-center gap-3 mb-5">
-          <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400 font-medium">또는 이메일로 가입</span>
-          <div className="flex-1 h-px bg-gray-200" />
+          <div className="flex-1 h-px bg-gray-100" />
+          <span className="text-xs text-gray-400 font-medium">또는 이메일</span>
+          <div className="flex-1 h-px bg-gray-100" />
         </div>
 
-        <form onSubmit={handleSignup} className="space-y-4">
-          <div>
-            <label htmlFor="displayName" className="block text-sm font-medium text-gray-600 mb-1.5">이름 / 닉네임</label>
-            <input
-              id="displayName"
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              required
-              autoFocus
-              className="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base"
-              placeholder="팀원들에게 보여질 이름"
-            />
-          </div>
+        <form onSubmit={handleSignup} className="space-y-3.5">
+          {[
+            { id: 'displayName', label: '이름 / 닉네임', type: 'text', value: displayName, onChange: setDisplayName, placeholder: '팀원들에게 보여질 이름', autoComplete: 'name' },
+            { id: 'email', label: '이메일', type: 'email', value: email, onChange: setEmail, placeholder: 'email@example.com', autoComplete: 'email' },
+            { id: 'password', label: '비밀번호', type: 'password', value: password, onChange: setPassword, placeholder: '6자 이상 입력', autoComplete: 'new-password' },
+          ].map(field => (
+            <div key={field.id}>
+              <label htmlFor={field.id} className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">{field.label}</label>
+              <input
+                id={field.id}
+                type={field.type}
+                value={field.value}
+                onChange={e => field.onChange(e.target.value)}
+                required
+                autoComplete={field.autoComplete}
+                className="w-full px-4 py-3.5 rounded-2xl border-2 border-gray-100 bg-gray-50 focus:border-[#0f2d0f] focus:bg-white outline-none transition text-base font-medium"
+                placeholder={field.placeholder}
+              />
+            </div>
+          ))}
 
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1.5">이메일</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-              className="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base"
-              placeholder="email@example.com"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1.5">비밀번호</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              autoComplete="new-password"
-              className="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base"
-              placeholder="6자 이상 입력"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-600 mb-1.5">비밀번호 확인</label>
+            <label htmlFor="confirmPassword" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">비밀번호 확인</label>
             <input
               id="confirmPassword"
               type="password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={e => setConfirmPassword(e.target.value)}
               required
               autoComplete="new-password"
-              className={`w-full px-4 py-3.5 rounded-xl border bg-white focus:ring-2 focus:ring-primary-500 outline-none transition text-base ${
+              className={`w-full px-4 py-3.5 rounded-2xl border-2 bg-gray-50 outline-none transition text-base font-medium ${
                 confirmPassword && password !== confirmPassword
-                  ? 'border-red-400 focus:border-red-400 focus:ring-red-400'
-                  : 'border-gray-200 focus:border-primary-500'
+                  ? 'border-red-400 bg-red-50 focus:border-red-500'
+                  : 'border-gray-100 focus:border-[#0f2d0f] focus:bg-white'
               }`}
               placeholder="비밀번호 재입력"
             />
             {confirmPassword && password !== confirmPassword && (
-              <p className="text-xs text-red-500 mt-1">비밀번호가 일치하지 않습니다</p>
+              <p className="text-xs text-red-500 mt-1 font-medium">비밀번호가 일치하지 않습니다</p>
             )}
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 bg-primary-600 text-white rounded-xl font-semibold text-base hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 transition mt-2"
+            className="w-full py-4 rounded-2xl font-black text-base disabled:opacity-50 active:scale-[0.98] transition mt-1"
+            style={{ background: '#0f2d0f', color: '#a3e635' }}
           >
-            {loading ? '가입 중…' : '회원가입'}
+            {loading ? '가입 중…' : '시작하기 🎉'}
           </button>
         </form>
 
         <p className="text-center mt-6 text-gray-500 text-sm">
           이미 계정이 있으신가요?{' '}
-          <Link href="/login" className="text-primary-600 font-semibold">로그인</Link>
+          <Link href="/login" className="font-black text-[#0f2d0f]">로그인</Link>
         </p>
       </div>
     </div>
