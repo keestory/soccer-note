@@ -136,6 +136,7 @@ export default function QuarterEditPage() {
   const [allTeamPlayers, setAllTeamPlayers] = useState<Player[]>([])
   const [savingSub, setSavingSub] = useState(false)
   const [draggingId, setDraggingId] = useState<string | null>(null)
+  const [subPickerMode, setSubPickerMode] = useState<'out' | 'in' | null>(null)
 
   const fieldRef = useRef<HTMLDivElement>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
@@ -445,8 +446,9 @@ export default function QuarterEditPage() {
 
   const openSubModal = () => {
     setSubMinute(0)
-    setSubOutId(fieldPlayers.length > 0 ? fieldPlayers[0].playerId : '')
+    setSubOutId('')
     setSubInId('')
+    setSubPickerMode(null)
     setShowSubModal(true)
   }
 
@@ -1041,67 +1043,129 @@ export default function QuarterEditPage() {
 
         {/* Substitution Modal */}
         {showSubModal && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-            <div className="bg-white rounded-xl w-full max-w-sm p-4">
+          <div className="fixed inset-0 z-50 flex items-end" onClick={() => { setShowSubModal(false); setSubPickerMode(null) }}>
+            <div className="absolute inset-0 bg-black/40" />
+            <div
+              className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-8 safe-bottom max-h-[90vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-semibold text-lg">교체 추가</h3>
-                <button onClick={() => setShowSubModal(false)} className="p-1 hover:bg-gray-100 rounded">
+                <button onClick={() => { setShowSubModal(false); setSubPickerMode(null) }} className="p-1 hover:bg-gray-100 rounded">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">교체 시간 (분)</label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={subMinute}
-                    onChange={(e) => setSubMinute(parseInt(e.target.value) || 0)}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                  />
+              {/* Player picker mode */}
+              {subPickerMode ? (
+                <div className="flex flex-col flex-1 min-h-0">
+                  <p className="text-sm font-medium mb-3 flex items-center gap-2">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${subPickerMode === 'out' ? 'bg-red-100 text-red-700' : 'bg-primary-100 text-primary-700'}`}>
+                      {subPickerMode === 'out' ? 'OUT' : 'IN'}
+                    </span>
+                    선수를 선택하세요
+                  </p>
+                  <div className="overflow-y-auto flex-1 space-y-1.5 mb-4">
+                    {(subPickerMode === 'out'
+                      ? fieldPlayers.map(fp => ({ id: fp.playerId, player: fp.player, positionType: fp.positionType }))
+                      : getSubInCandidates().map(p => ({ id: p.id, player: p, positionType: p.default_position as PositionType }))
+                    ).map((fp) => {
+                      const id = fp.id
+                      const isSelected = subPickerMode === 'out' ? subOutId === id : subInId === id
+                      return (
+                        <button
+                          key={id}
+                          onClick={() => {
+                            if (subPickerMode === 'out') setSubOutId(id)
+                            else setSubInId(id)
+                            setSubPickerMode(null)
+                          }}
+                          className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 transition ${
+                            isSelected ? 'border-orange-400 bg-orange-50' : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
+                          }`}
+                        >
+                          <div
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
+                            style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}
+                          >
+                            {fp.player.number || '?'}
+                          </div>
+                          <div className="text-left">
+                            <p className="font-medium">{fp.player.name}</p>
+                            <p className="text-xs text-gray-500">{POSITION_LABELS[fp.positionType]}</p>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
                 </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">교체 시간 (분)</label>
+                    <input
+                      type="number"
+                      min={0}
+                      value={subMinute}
+                      onChange={(e) => setSubMinute(parseInt(e.target.value) || 0)}
+                      className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-base"
+                    />
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-red-600 mb-1">OUT 선수</label>
-                  <select
-                    value={subOutId}
-                    onChange={(e) => setSubOutId(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
+                  <div>
+                    <label className="block text-sm font-medium text-red-600 mb-1">OUT 선수</label>
+                    <button
+                      onClick={() => setSubPickerMode('out')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition ${
+                        subOutId ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      {subOutId ? (() => {
+                        const fp = fieldPlayers.find(p => p.playerId === subOutId)
+                        return fp ? (
+                          <>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}>
+                              {fp.player.number || '?'}
+                            </div>
+                            <span className="font-medium">{fp.player.name}</span>
+                          </>
+                        ) : <span className="text-gray-400">선택하세요</span>
+                      })() : <span className="text-gray-400">선수를 선택하세요</span>}
+                    </button>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-primary-600 mb-1">IN 선수</label>
+                    <button
+                      onClick={() => setSubPickerMode('in')}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition ${
+                        subInId ? 'border-primary-300 bg-primary-50' : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      {subInId ? (() => {
+                        const p = getSubInCandidates().find(p => p.id === subInId)
+                        return p ? (
+                          <>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: POSITION_COLORS[p.default_position] }}>
+                              {p.number || '?'}
+                            </div>
+                            <span className="font-medium">{p.name}</span>
+                          </>
+                        ) : <span className="text-gray-400">선택하세요</span>
+                      })() : <span className="text-gray-400">선수를 선택하세요</span>}
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={handleAddSubstitution}
+                    disabled={!subOutId || !subInId || savingSub}
+                    className="w-full py-4 bg-orange-600 text-white rounded-2xl font-semibold hover:bg-orange-700 disabled:opacity-50 text-base"
                   >
-                    <option value="">선택하세요</option>
-                    {fieldPlayers.map(fp => (
-                      <option key={fp.playerId} value={fp.playerId}>
-                        {fp.player.number ? `#${fp.player.number} ` : ''}{fp.player.name} ({POSITION_LABELS[fp.positionType]})
-                      </option>
-                    ))}
-                  </select>
+                    {savingSub ? '저장 중...' : '교체 추가'}
+                  </button>
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-primary-600 mb-1">IN 선수</label>
-                  <select
-                    value={subInId}
-                    onChange={(e) => setSubInId(e.target.value)}
-                    className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 outline-none"
-                  >
-                    <option value="">선택하세요</option>
-                    {getSubInCandidates().map(p => (
-                      <option key={p.id} value={p.id}>
-                        {p.number ? `#${p.number} ` : ''}{p.name} ({POSITION_LABELS[p.default_position]})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <button
-                  onClick={handleAddSubstitution}
-                  disabled={!subOutId || !subInId || savingSub}
-                  className="w-full py-3 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700 disabled:opacity-50"
-                >
-                  {savingSub ? '저장 중...' : '교체 추가'}
-                </button>
-              </div>
+              )}
             </div>
           </div>
         )}
@@ -1343,15 +1407,7 @@ export default function QuarterEditPage() {
                 />
               </div>
 
-              {/* Per-player save button */}
-              <button
-                onClick={() => handleSavePlayer(selectedPlayer)}
-                disabled={savingPlayer}
-                className="w-full mt-4 py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 flex items-center justify-center gap-2"
-              >
-                <Save className="w-4 h-4" />
-                {savingPlayer ? '저장 중...' : `${selectedPlayer.player.name} 저장`}
-              </button>
+              <p className="text-xs text-gray-400 mt-4 text-center">상단 저장 버튼으로 전체 한 번에 저장됩니다</p>
             </div>
           </section>
         )}
