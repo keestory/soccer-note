@@ -78,8 +78,8 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen safe-top pb-20" style={{ background: '#0a0a0a' }}>
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+    <div className="flex flex-col safe-top" style={{ background: '#0a0a0a', minHeight: '100dvh' }}>
+      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
@@ -88,7 +88,7 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <main className="max-w-lg mx-auto px-4 py-6 space-y-5">
+      <main className="flex-1 overflow-y-auto max-w-lg mx-auto w-full px-4 py-6 space-y-5 safe-bottom">
         {/* Avatar hero */}
         <div className="flex flex-col items-center pt-2 pb-4">
           <div className="w-20 h-20 rounded-full flex items-center justify-center text-[#0a0a0a] text-3xl font-bold mb-3" style={{ background: 'var(--accent)' }}>

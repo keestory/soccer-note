@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam, clearResolvedTeam } from '@/lib/team-resolver'
+import { getStore } from '@/lib/dataStore'
 import { Copy, Check, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle, Globe, Settings, Users } from 'lucide-react'
 import type { Team, TeamMember, Profile } from '@/types/database'
 import toast from 'react-hot-toast'
@@ -42,6 +43,27 @@ function TeamMembersContent() {
   useEffect(() => { loadData() }, [teamIdParam])
 
   const loadData = async () => {
+    // Fast path: use cached store data when no explicit teamIdParam
+    if (!teamIdParam) {
+      const store = getStore()
+      if (store.isLoaded && store.userId && store.selectedTeamId) {
+        const cachedTeam = store.teams.find(t => t.id === store.selectedTeamId)
+        if (cachedTeam) {
+          setCurrentUserId(store.userId)
+          setTeam(cachedTeam as unknown as Team)
+          const ownerCheck = cachedTeam.user_id === store.userId
+          setIsOwner(ownerCheck)
+          setCurrentUserRole(ownerCheck ? 'coach' : cachedTeam.role)
+          const allMembers = store.members as MemberWithProfile[]
+          setPendingMembers(allMembers.filter(m => m.status === 'pending'))
+          setMembers(allMembers.filter(m => m.status === 'approved' || !m.status))
+          setLoading(false)
+          return
+        }
+      }
+    }
+
+    // Fallback: fetch from DB (used when teamIdParam is set or store not ready)
     const user = await getSessionUser(supabase)
     if (!user) { router.push('/login'); return }
     const resolved = await resolveTeam(supabase, user.id, teamIdParam)

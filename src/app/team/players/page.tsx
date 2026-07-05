@@ -1,10 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient, getSessionUser } from '@/lib/supabase'
-import { resolveTeam } from '@/lib/team-resolver'
+import { createClient } from '@/lib/supabase'
 import { Plus, Trash2, Edit2, X } from 'lucide-react'
 import type { Player, PositionType } from '@/types/database'
 import { POSITION_LABELS } from '@/types/database'
@@ -12,19 +11,13 @@ import toast from 'react-hot-toast'
 import { PlayersListSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
+import { useAppData } from '@/hooks/useAppData'
 
-// Dark-theme position colors matching design spec
 const POS_COLOR: Record<PositionType, string> = {
-  GK: '#f5a623',
-  DF: '#3b82f6',
-  MF: '#2dd4bf',
-  FW: '#ef4444',
+  GK: '#f5a623', DF: '#3b82f6', MF: '#2dd4bf', FW: '#ef4444',
 }
 const POS_TEXT: Record<PositionType, string> = {
-  GK: '#3a2600',
-  DF: '#fff',
-  MF: '#06231d',
-  FW: '#fff',
+  GK: '#3a2600', DF: '#fff', MF: '#06231d', FW: '#fff',
 }
 
 interface PlayerStats {
@@ -42,90 +35,91 @@ interface PlayerWithStats extends Player {
 
 export default function PlayersPage() {
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [players, setPlayers] = useState<PlayerWithStats[]>([])
-  const [teamId, setTeamId] = useState<string | null>(null)
-  const [teamName, setTeamName] = useState('')
+  const data = useAppData()
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
-  const [canEdit, setCanEdit] = useState(false)
   const [search, setSearch] = useState('')
+  const [localPlayers, setLocalPlayers] = useState<Player[] | null>(null)
 
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [position, setPosition] = useState<PositionType>('MF')
 
-  const supabase = createClient()
+  useEffect(() => {
+    if (data.isLoaded && !data.userId) router.push('/login')
+    if (data.isLoaded && !data.selectedTeam) router.push('/dashboard')
+  }, [data.isLoaded, data.userId, data.selectedTeam])
 
-  useEffect(() => { loadData() }, [])
+  const canEdit = data.selectedTeam?.role === 'coach' ||
+    data.selectedTeam?.membership?.can_edit_players || false
 
-  const loadData = async () => {
-    const user = await getSessionUser(supabase)
-    if (!user) { router.push('/login'); return }
-    const team = await resolveTeam(supabase, user.id)
-    if (!team) { router.push('/dashboard'); return }
-    setTeamId(team.teamId)
-    setCanEdit(team.canEditPlayers)
-    if (!localStorage.getItem('selectedTeamId')) localStorage.setItem('selectedTeamId', team.teamId)
+  // Compute player stats from cached matches (no extra DB queries)
+  const playersWithStats = useMemo<PlayerWithStats[]>(() => {
+    const basePlayers = localPlayers ?? data.players
+    return basePlayers.map(player => {
+      const allRecords = data.matches.flatMap((m: any) =>
+        (m.quarters ?? []).flatMap((q: any) => q.quarter_records ?? [])
+      ).filter((r: any) => r.player_id === player.id)
 
-    const { data: teamData } = await supabase.from('teams').select('name').eq('id', team.teamId).single()
-    if (teamData) setTeamName(teamData.name)
+      const attendance = data.matches.filter((m: any) =>
+        (m.match_attendees ?? []).some((a: any) => a.player_id === player.id)
+      ).length
 
-    await loadPlayers(team.teamId)
-    setLoading(false)
-  }
-
-  const loadPlayers = async (tid: string) => {
-    const { data: playersData } = await supabase.from('players').select('*').eq('team_id', tid).order('number')
-    if (!playersData) return
-    const playerIds = playersData.map(p => p.id)
-    const [{ data: records }, { data: attendanceData }] = await Promise.all([
-      supabase.from('quarter_records').select('player_id, goals, assists, clean_sheet, rating').in('player_id', playerIds),
-      supabase.from('match_attendees').select('player_id').in('player_id', playerIds),
-    ])
-    setPlayers(playersData.map(player => {
-      const pr = records?.filter(r => r.player_id === player.id) || []
-      const rated = pr.filter(r => r.rating !== null)
+      const rated = allRecords.filter((r: any) => r.rating !== null)
       return {
         ...player,
         stats: {
-          attendance: attendanceData?.filter(a => a.player_id === player.id).length || 0,
-          games: pr.length,
-          goals: pr.reduce((s, r) => s + (r.goals||0), 0),
-          assists: pr.reduce((s, r) => s + (r.assists||0), 0),
-          cleanSheets: pr.filter(r => r.clean_sheet).length,
-          avgRating: rated.length > 0 ? rated.reduce((s, r) => s + (r.rating||0), 0) / rated.length : null,
+          attendance,
+          games: allRecords.length,
+          goals: allRecords.reduce((s: number, r: any) => s + (r.goals || 0), 0),
+          assists: allRecords.reduce((s: number, r: any) => s + (r.assists || 0), 0),
+          cleanSheets: allRecords.filter((r: any) => r.clean_sheet).length,
+          avgRating: rated.length > 0
+            ? rated.reduce((s: number, r: any) => s + (r.rating || 0), 0) / rated.length
+            : null,
         }
       }
-    }))
-  }
+    })
+  }, [localPlayers, data.players, data.matches])
 
   const handleAddPlayer = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!teamId || !name.trim()) return
-    const { data, error } = await supabase.from('players').insert({ team_id: teamId, name: name.trim(), number: number ? parseInt(number) : null, default_position: position }).select().single()
+    if (!data.selectedTeamId || !name.trim()) return
+    const supabase = createClient()
+    const { data: newPlayer, error } = await supabase
+      .from('players')
+      .insert({ team_id: data.selectedTeamId, name: name.trim(), number: number ? parseInt(number) : null, default_position: position })
+      .select().single()
     if (error) { toast.error('선수 추가에 실패했습니다'); return }
     toast.success('선수가 추가되었습니다')
-    setPlayers([...players, { ...data, stats: { attendance:0, games:0, goals:0, assists:0, cleanSheets:0, avgRating:null } }])
+    setLocalPlayers([...(localPlayers ?? data.players), newPlayer])
     resetForm()
   }
 
   const handleUpdatePlayer = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingPlayer || !name.trim()) return
-    const { error } = await supabase.from('players').update({ name: name.trim(), number: number ? parseInt(number) : null, default_position: position }).eq('id', editingPlayer.id)
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('players')
+      .update({ name: name.trim(), number: number ? parseInt(number) : null, default_position: position })
+      .eq('id', editingPlayer.id)
     if (error) { toast.error('수정에 실패했습니다'); return }
     toast.success('선수 정보가 수정되었습니다')
-    setPlayers(players.map(p => p.id === editingPlayer.id ? { ...p, name: name.trim(), number: number ? parseInt(number) : null, default_position: position } : p))
+    const updated = (localPlayers ?? data.players).map(p =>
+      p.id === editingPlayer.id ? { ...p, name: name.trim(), number: number ? parseInt(number) : null, default_position: position } : p
+    )
+    setLocalPlayers(updated)
     resetForm()
   }
 
   const handleDeletePlayer = async (playerId: string) => {
+    const supabase = createClient()
     const { error } = await supabase.from('players').delete().eq('id', playerId)
     if (error) { toast.error('삭제에 실패했습니다'); return }
     toast.success('선수가 삭제되었습니다')
-    setPlayers(players.filter(p => p.id !== playerId))
+    setLocalPlayers((localPlayers ?? data.players).filter(p => p.id !== playerId))
   }
 
   const startEditing = (player: Player) => {
@@ -136,13 +130,17 @@ export default function PlayersPage() {
     setShowAddForm(false)
   }
 
-  const resetForm = () => { setName(''); setNumber(''); setPosition('MF'); setShowAddForm(false); setEditingPlayer(null) }
+  const resetForm = () => {
+    setName(''); setNumber(''); setPosition('MF')
+    setShowAddForm(false); setEditingPlayer(null)
+  }
 
-  if (loading) return <PlayersListSkeleton />
+  if (data.loading) return <PlayersListSkeleton />
 
+  const teamName = data.selectedTeam?.name || ''
   const filtered = search.trim()
-    ? players.filter(p => p.name.includes(search.trim()))
-    : players
+    ? playersWithStats.filter(p => p.name.includes(search.trim()))
+    : playersWithStats
 
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg)' }}>
@@ -152,7 +150,7 @@ export default function PlayersPage() {
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex justify-between items-center">
           <div>
             <h1 className="font-black text-[20px] text-white">선수</h1>
-            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {players.length}명</p>
+            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {playersWithStats.length}명</p>
           </div>
           {canEdit && (
             <button onClick={() => { resetForm(); setShowAddForm(true) }}
@@ -168,9 +166,7 @@ export default function PlayersPage() {
 
         {/* Search */}
         <input
-          type="text"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
+          type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder="선수 검색…"
           className="w-full outline-none text-white placeholder-[#555] text-[14px]"
           style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 12, padding: '12px 14px' }}
@@ -221,12 +217,10 @@ export default function PlayersPage() {
               <Link key={player.id} href={`/team/players/${player.id}`}
                 className="flex items-center gap-3 p-4 rounded-[14px] active:opacity-80 transition"
                 style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-                {/* Position badge */}
                 <div className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center flex-shrink-0 font-black text-[10px]"
                   style={{ background: POS_COLOR[player.default_position], color: POS_TEXT[player.default_position] }}>
                   {player.default_position}
                 </div>
-                {/* Name + stats */}
                 <div className="flex-1 min-w-0">
                   <p className="font-bold text-[14px] text-white">
                     {player.name} <span style={{ color: '#555' }}>#{player.number || '–'}</span>
@@ -237,14 +231,12 @@ export default function PlayersPage() {
                       : `골${player.stats.goals} 어시${player.stats.assists}`}
                   </p>
                 </div>
-                {/* Avg rating */}
                 <div className="text-right flex-shrink-0">
                   <p className="font-display text-[22px] leading-none" style={{ color: 'var(--accent)' }}>
                     {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '–'}
                   </p>
                   <p className="text-[9px] mt-0.5" style={{ color: '#555' }}>평균 평점</p>
                 </div>
-                {/* Edit/Delete (coach only) */}
                 {canEdit && (
                   <div className="flex gap-1 ml-1" onClick={e => e.preventDefault()}>
                     <button onClick={e => { e.preventDefault(); startEditing(player) }}
