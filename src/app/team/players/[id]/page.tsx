@@ -10,6 +10,7 @@ import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import { formatDate } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n/context'
 import { PlayerDetailSkeleton } from '@/components/Skeleton'
+import { BottomNav } from '@/components/BottomNav'
 
 interface MatchRecord {
   matchId: string
@@ -371,6 +372,7 @@ export default function PlayerStatsPage() {
           )}
         </section>
       </main>
+      <BottomNav />
     </div>
   )
 }

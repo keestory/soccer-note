@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
-import { Plus, MapPin, Calendar, Users, ChevronRight, Filter, Clock, Trophy, Dumbbell, Settings, Swords } from 'lucide-react'
+import { Plus, MapPin, Calendar, Filter, Swords } from 'lucide-react'
+import { BottomNav } from '@/components/BottomNav'
 import type { MatchPost } from '@/types/database'
 import { format, isToday, isTomorrow, parseISO, differenceInDays } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -245,28 +246,7 @@ export default function CommunityPage() {
         )}
       </main>
 
-      {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t safe-bottom">
-        <div className="max-w-4xl mx-auto px-2">
-          <div className="flex justify-around py-1">
-            <Link href="/dashboard" className="flex flex-col items-center gap-1 min-w-[56px] py-2.5 rounded-xl text-gray-400 hover:bg-gray-50">
-              <Trophy className="w-6 h-6" /><span className="text-[11px] font-bold">경기</span>
-            </Link>
-            <Link href="/team/players" className="flex flex-col items-center gap-1 min-w-[56px] py-2.5 rounded-xl text-gray-400 hover:bg-gray-50">
-              <Users className="w-6 h-6" /><span className="text-[11px] font-bold">선수</span>
-            </Link>
-            <Link href="/training/new" className="flex flex-col items-center gap-1 min-w-[56px] py-2.5 rounded-xl text-gray-400 hover:bg-gray-50">
-              <Dumbbell className="w-6 h-6" /><span className="text-[11px] font-bold">훈련</span>
-            </Link>
-            <Link href="/community" className="flex flex-col items-center gap-1 min-w-[56px] py-2.5 rounded-xl bg-[#0f2d0f] text-lime-400">
-              <span className="text-xl leading-6">⚽</span><span className="text-[11px] font-black">매칭</span>
-            </Link>
-            <Link href="/team/members" className="flex flex-col items-center gap-1 min-w-[56px] py-2.5 rounded-xl text-gray-400 hover:bg-gray-50">
-              <Settings className="w-6 h-6" /><span className="text-[11px] font-bold">팀 관리</span>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <BottomNav />
     </div>
   )
 }

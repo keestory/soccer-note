@@ -7,6 +7,7 @@ import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
 import { ArrowLeft, MapPin, Calendar, Swords } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { BottomNav } from '@/components/BottomNav'
 
 export default function NewMatchPage() {
   const router = useRouter()
@@ -58,7 +59,7 @@ export default function NewMatchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0]">
+    <div className="min-h-screen bg-[#f0f4f0] pb-20">
       <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
@@ -157,6 +158,7 @@ export default function NewMatchPage() {
           </div>
         </form>
       </main>
+      <BottomNav />
     </div>
   )
 }

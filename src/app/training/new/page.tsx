@@ -9,6 +9,7 @@ import { ArrowLeft, MapPin, Calendar, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 import type { TrainingType } from '@/types/database'
+import { BottomNav } from '@/components/BottomNav'
 
 const TRAINING_TYPES: { key: TrainingType; emoji: string; label: string; color: string; activeColor: string }[] = [
   { key: 'mini-game', emoji: '⚡', label: '미니게임', color: 'border-gray-100 text-gray-500 bg-gray-50', activeColor: 'border-amber-400 bg-amber-50 text-amber-800 ring-2 ring-amber-300' },
@@ -216,6 +217,7 @@ export default function NewTrainingPage() {
           </div>
         </form>
       </main>
+      <BottomNav />
     </div>
   )
 }

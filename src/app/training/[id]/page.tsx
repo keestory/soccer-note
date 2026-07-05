@@ -11,6 +11,7 @@ import { formatDate } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 import { TrainingDetailSkeleton } from '@/components/Skeleton'
+import { BottomNav } from '@/components/BottomNav'
 
 const TRAINING_TYPES: TrainingType[] = ['mini-game', 'passing', 'shooting', 'fitness', 'tactics', 'mixed', 'other']
 
@@ -338,7 +339,7 @@ export default function TrainingDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0]">
+    <div className="min-h-screen bg-[#f0f4f0] pb-20">
       {/* Hero header */}
       <div className="relative overflow-hidden safe-top" style={{ background: 'linear-gradient(135deg, #0a1f0a 0%, #1a3f1a 55%, #2D5A27 100%)' }}>
         <div className="field-pattern absolute inset-0" />
@@ -696,6 +697,7 @@ export default function TrainingDetailPage() {
           </div>
         </div>
       )}
+      <BottomNav />
     </div>
   )
 }
