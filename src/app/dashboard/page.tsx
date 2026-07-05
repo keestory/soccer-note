@@ -3,20 +3,18 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient, getSessionUser } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase'
 import { cacheResolvedTeam } from '@/lib/team-resolver'
-import { ChevronDown, UserPlus, User, Plus, Users, LogOut } from 'lucide-react'
+import { ChevronDown, UserPlus, User, LogOut } from 'lucide-react'
 import { NotificationBadge } from '@/components/NotificationBadge'
 import { BottomNav } from '@/components/BottomNav'
-import type { Team, Match, TeamMember } from '@/types/database'
+import type { TeamMember } from '@/types/database'
 import { formatDate, calculateMVP } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { DashboardSkeleton } from '@/components/Skeleton'
-
-interface TeamWithRole extends Team {
-  role: 'coach' | 'member' | 'parent'
-  membership: TeamMember
-}
+import { useAppData } from '@/hooks/useAppData'
+import { loadTeamData, updateStore } from '@/lib/dataStore'
+import type { TeamWithRole } from '@/lib/dataStore'
 
 function primeTeamCache(userId: string, team: TeamWithRole) {
   const isCoach = team.role === 'coach' || team.user_id === userId
@@ -32,106 +30,74 @@ function primeTeamCache(userId: string, team: TeamWithRole) {
 
 export default function DashboardPage() {
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [teams, setTeams] = useState<TeamWithRole[]>([])
-  const [selectedTeam, setSelectedTeam] = useState<TeamWithRole | null>(null)
-  const [matches, setMatches] = useState<Match[]>([])
+  const data = useAppData()
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [showTeamPicker, setShowTeamPicker] = useState(false)
   const [teamName, setTeamName] = useState('')
-  const [displayName, setDisplayName] = useState<string | null>(null)
-  const [userId, setUserId] = useState<string | null>(null)
-  const supabase = createClient()
 
-  useEffect(() => { checkAuthAndLoadData() }, [])
-
-  const checkAuthAndLoadData = async () => {
-    const user = await getSessionUser(supabase)
-    if (!user) { router.push('/login'); return }
-    setUserId(user.id)
-
-    const [{ data: profile }, { data: ownedTeams }, { data: memberships }] = await Promise.all([
-      supabase.from('profiles').select('display_name').eq('id', user.id).single(),
-      supabase.from('teams').select('*').eq('user_id', user.id).or('is_removed.is.null,is_removed.eq.false'),
-      supabase.from('team_members').select('*, team:teams (*)').eq('user_id', user.id).eq('status', 'approved').or('is_removed.is.null,is_removed.eq.false'),
-    ])
-
-    if (profile?.display_name) setDisplayName(profile.display_name)
-    else if (user.user_metadata?.display_name) setDisplayName(user.user_metadata.display_name)
-
-    const teamsWithRole: TeamWithRole[] = []
-    if (ownedTeams?.length) {
-      for (const team of ownedTeams) {
-        teamsWithRole.push({ ...team, role: 'coach', membership: { id:'owner', team_id:team.id, user_id:user.id, role:'coach', can_edit_players:true, can_edit_matches:true, can_edit_quarters:true, joined_at:team.created_at, updated_at:team.updated_at } as TeamMember })
-      }
+  // Redirect to login when store confirms no session
+  useEffect(() => {
+    if (data.isLoaded && !data.userId) {
+      router.push('/login')
     }
-    if (memberships?.length) {
-      for (const m of memberships) {
-        if (!teamsWithRole.find(t => t.id === m.team_id) && m.team && !m.team.is_removed) {
-          teamsWithRole.push({ ...m.team, role: m.role as 'coach'|'member', membership: m })
-        }
-      }
-    }
+  }, [data.isLoaded, data.userId])
 
-    if (teamsWithRole.length > 0) {
-      setTeams(teamsWithRole)
-      const savedTeamId = localStorage.getItem('selectedTeamId')
-      const activeTeam = teamsWithRole.find(t => t.id === savedTeamId) || teamsWithRole[0]
-      setSelectedTeam(activeTeam)
-      primeTeamCache(user.id, activeTeam)
-      await loadMatches(activeTeam.id)
-    } else {
-      setShowCreateTeam(true)
+  // Prime team-resolver cache whenever selected team changes
+  useEffect(() => {
+    if (data.userId && data.selectedTeam) {
+      primeTeamCache(data.userId, data.selectedTeam)
+      // Show create-team form only after we know there are no teams
+      if (data.teams.length === 0) setShowCreateTeam(true)
     }
-    setLoading(false)
-  }
+  }, [data.userId, data.selectedTeam?.id])
 
-  const selectTeam = async (team: TeamWithRole) => {
-    setSelectedTeam(team)
+  const handleSelectTeam = async (team: TeamWithRole) => {
     setShowTeamPicker(false)
-    localStorage.setItem('selectedTeamId', team.id)
-    if (userId) primeTeamCache(userId, team)
-    await loadMatches(team.id)
-  }
-
-  const loadMatches = async (teamId: string) => {
-    const { data } = await supabase
-      .from('matches')
-      .select('*, quarters(*, quarter_records(*, player:players(*))), match_attendees(id, player_id)')
-      .eq('team_id', teamId)
-      .order('match_date', { ascending: false })
-    if (data) setMatches(data)
+    await data.selectTeam(team.id)
+    if (data.userId) primeTeamCache(data.userId, team)
   }
 
   const handleCreateTeam = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!teamName.trim()) return
-    const user = await getSessionUser(supabase)
-    if (!user) return
-    const { data: team, error } = await supabase.from('teams').insert({ name: teamName, user_id: user.id }).select().single()
+    if (!teamName.trim() || !data.userId) return
+    const supabase = createClient()
+    const { data: team, error } = await supabase
+      .from('teams').insert({ name: teamName, user_id: data.userId }).select().single()
     if (error) { toast.error('팀 생성에 실패했습니다'); return }
-    const memberData = { id: crypto.randomUUID(), team_id: team.id, user_id: user.id, role: 'coach' as const, can_edit_players: true, can_edit_matches: true, can_edit_quarters: true, joined_at: new Date().toISOString(), updated_at: new Date().toISOString() }
+    const memberData = {
+      id: crypto.randomUUID(), team_id: team.id, user_id: data.userId,
+      role: 'coach' as const, can_edit_players: true, can_edit_matches: true,
+      can_edit_quarters: true, joined_at: new Date().toISOString(), updated_at: new Date().toISOString()
+    }
     await supabase.from('team_members').upsert(memberData)
     toast.success('팀이 생성되었습니다!')
-    const newTeam: TeamWithRole = { ...team, role: 'coach', membership: memberData as TeamMember }
-    setTeams([newTeam])
-    setSelectedTeam(newTeam)
-    localStorage.setItem('selectedTeamId', team.id)
-    setMatches([])
     setTeamName('')
     setShowCreateTeam(false)
-    setLoading(false)
+    // Refresh store so new team appears
+    updateStore({ isLoaded: false })
+    await data.refresh()
   }
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
+    await createClient().auth.signOut()
     router.push('/')
   }
 
-  if (loading) return <DashboardSkeleton />
+  if (data.loading) return <DashboardSkeleton />
 
-  // Create team flow
-  if (showCreateTeam) {
+  const { teams, selectedTeam, matches, displayName, userId } = data
+  const isCoach = selectedTeam?.role === 'coach' || selectedTeam?.user_id === userId
+  const canEditMatches = isCoach || selectedTeam?.membership?.can_edit_matches
+
+  const wins   = matches.filter(m => m.home_score >  m.away_score).length
+  const losses = matches.filter(m => m.home_score <  m.away_score).length
+  const draws  = matches.filter(m => m.home_score === m.away_score).length
+  const total  = matches.length
+  const winRate = total > 0 ? Math.round((wins / total) * 100) : null
+  const latestMatch = matches[0] ?? null
+
+  // No teams yet
+  if (!selectedTeam || showCreateTeam) {
     return (
       <div className="min-h-screen px-5 py-8" style={{ background: 'var(--bg)', color: '#fff' }}>
         <div className="max-w-lg mx-auto">
@@ -144,7 +110,7 @@ export default function DashboardPage() {
               <h2 className="font-black text-white mb-4">내 팀 목록 ({teams.length}개)</h2>
               <div className="space-y-2 max-h-[40vh] overflow-y-auto">
                 {teams.map(team => (
-                  <button key={team.id} onClick={() => selectTeam(team)}
+                  <button key={team.id} onClick={() => handleSelectTeam(team)}
                     className="w-full p-4 rounded-xl text-left flex items-center justify-between transition active:opacity-70"
                     style={{ background: '#1a1a1a' }}>
                     <div>
@@ -191,17 +157,6 @@ export default function DashboardPage() {
     )
   }
 
-  const isCoach = selectedTeam?.role === 'coach' || selectedTeam?.user_id === userId
-  const canEditMatches = isCoach || selectedTeam?.membership?.can_edit_matches
-
-  const wins   = matches.filter(m => m.home_score >  m.away_score).length
-  const losses = matches.filter(m => m.home_score <  m.away_score).length
-  const draws  = matches.filter(m => m.home_score === m.away_score).length
-  const total  = matches.length
-  const winRate = total > 0 ? Math.round((wins / total) * 100) : null
-
-  const latestMatch = matches[0] ?? null
-
   return (
     <div className="min-h-screen pb-24" style={{ background: 'var(--bg)' }}>
 
@@ -212,9 +167,12 @@ export default function DashboardPage() {
             <h3 className="font-black text-white mb-4">팀 선택</h3>
             <div className="space-y-2 mb-4 overflow-y-auto flex-1">
               {teams.map(team => (
-                <button key={team.id} onClick={() => selectTeam(team)}
+                <button key={team.id} onClick={() => handleSelectTeam(team)}
                   className="w-full p-4 rounded-xl text-left flex items-center justify-between transition active:opacity-70"
-                  style={{ background: selectedTeam?.id === team.id ? 'var(--chip)' : '#1a1a1a', border: selectedTeam?.id === team.id ? '1px solid var(--accent)' : '1px solid transparent' }}>
+                  style={{
+                    background: selectedTeam?.id === team.id ? 'var(--chip)' : '#1a1a1a',
+                    border: selectedTeam?.id === team.id ? '1px solid var(--accent)' : '1px solid transparent'
+                  }}>
                   <div>
                     <p className="font-bold text-white">{team.name}</p>
                     <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? '감독' : '팀원'}</p>
@@ -288,7 +246,6 @@ export default function DashboardPage() {
                   <p className="font-black text-[19px] text-white">vs {latestMatch.opponent}</p>
                 </div>
               </div>
-              {/* Quarter chips */}
               {quarters.length > 0 && (
                 <div className="flex gap-2 mb-3">
                   {quarters.map((q: any) => {
@@ -361,7 +318,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="space-y-2">
-              {matches.map((match: Match & { match_attendees?: {id:string}[] }) => {
+              {matches.map((match: any) => {
                 const mvp = calculateMVP(match)
                 const isWin = match.home_score > match.away_score
                 const isLoss = match.home_score < match.away_score
