@@ -5,18 +5,18 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
-import { ArrowLeft, Calendar, MapPin, Users, Clock, ChevronRight, Send, Trash2, CheckCircle, Swords } from 'lucide-react'
+import { ArrowLeft, Calendar, MapPin, Send, Trash2, ChevronRight, Swords } from 'lucide-react'
 import type { MatchPost, MatchApplication } from '@/types/database'
 import { format, parseISO, isToday, isTomorrow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import toast from 'react-hot-toast'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 
-const LEVEL_STYLE: Record<string, { bg: string; text: string }> = {
-  '입문': { bg: 'bg-slate-100', text: 'text-slate-600' },
-  '초급': { bg: 'bg-sky-100', text: 'text-sky-700' },
-  '중급': { bg: 'bg-emerald-100', text: 'text-emerald-700' },
-  '고급': { bg: 'bg-amber-100', text: 'text-amber-700' },
+const LEVEL_STYLE: Record<string, { bg: string; color: string }> = {
+  '입문': { bg: '#334155', color: '#94a3b8' },
+  '초급': { bg: '#0c3d5e', color: '#38bdf8' },
+  '중급': { bg: '#052e16', color: '#4ade80' },
+  '고급': { bg: '#451a03', color: '#fbbf24' },
 }
 
 function formatDate(dateStr: string) {
@@ -119,12 +119,14 @@ export default function PostDetailPage() {
     else { toast.success('게시글을 삭제했어요'); router.push('/community') }
   }
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f0f4f0]">
-        <div className="bg-[#0f2d0f] safe-top h-24" />
+      <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
+        <div className="safe-top h-24" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }} />
         <div className="max-w-4xl mx-auto px-4 pt-4 space-y-3">
-          {[1,2,3].map(i => <div key={i} className="bg-white rounded-2xl h-24 animate-pulse" />)}
+          {[1,2,3].map(i => <div key={i} className="rounded-2xl h-24 animate-pulse" style={{ background: '#111010' }} />)}
         </div>
       </div>
     )
@@ -136,27 +138,27 @@ export default function PostDetailPage() {
   const levelStyle = LEVEL_STYLE[post.level] || LEVEL_STYLE['입문']
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-32">
+    <div className="min-h-screen pb-32" style={{ background: '#0a0a0a' }}>
 
       {/* Hero header */}
-      <div className="relative bg-[#0f2d0f] overflow-hidden safe-top">
-        <div className="absolute inset-0 field-pattern opacity-60" />
+      <div className="relative overflow-hidden safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+        <div className="absolute inset-0 field-pattern opacity-20" />
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 140" preserveAspectRatio="xMidYMid slice">
-          <line x1="340" y1="-10" x2="200" y2="150" stroke="rgba(163,230,53,0.12)" strokeWidth="1.5" />
-          <line x1="380" y1="-10" x2="240" y2="150" stroke="rgba(163,230,53,0.08)" strokeWidth="1" />
-          <circle cx="50" cy="100" r="50" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
+          <line x1="340" y1="-10" x2="200" y2="150" stroke="rgba(204,255,0,0.08)" strokeWidth="1.5" />
+          <line x1="380" y1="-10" x2="240" y2="150" stroke="rgba(204,255,0,0.04)" strokeWidth="1" />
+          <circle cx="50" cy="100" r="50" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
         </svg>
 
         <div className="relative px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest">매칭 요청</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>매칭 요청</p>
             <p className="text-sm font-black text-white truncate">{post.team?.name}</p>
           </div>
           {isMyPost && isCoach && (
-            <button onClick={() => setShowDeleteConfirm(true)} className="p-2 rounded-xl text-white/40 hover:text-red-400 hover:bg-red-400/10">
+            <button onClick={() => setShowDeleteConfirm(true)} className="p-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.3)' }}>
               <Trash2 className="w-5 h-5" />
             </button>
           )}
@@ -165,18 +167,21 @@ export default function PostDetailPage() {
         {/* Post title in hero */}
         <div className="relative px-4 pb-6">
           <div className="flex items-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-3xl flex-shrink-0">
+            <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl flex-shrink-0"
+              style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
               {emoji}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-lg font-black text-white leading-snug">{post.title}</p>
               <div className="flex items-center gap-2 mt-1.5">
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-lg ${levelStyle.bg} ${levelStyle.text}`}>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-lg"
+                  style={{ background: levelStyle.bg, color: levelStyle.color }}>
                   {post.level}
                 </span>
-                <span className="text-xs text-white/50 font-semibold">{post.format}</span>
+                <span className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>{post.format}</span>
                 {matchedOrClosed && (
-                  <span className="text-xs font-bold bg-white/20 text-white/70 px-2 py-0.5 rounded-lg">
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-lg"
+                    style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
                     {post.status === 'matched' ? '매칭완료' : '마감'}
                   </span>
                 )}
@@ -190,68 +195,71 @@ export default function PostDetailPage() {
 
         {/* Info chips */}
         <div className="grid grid-cols-2 gap-2">
-          <div className="bg-white rounded-2xl p-3.5 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#0f2d0f]/10 flex items-center justify-center flex-shrink-0">
-              <Calendar className="w-4 h-4 text-[#0f2d0f]" />
+          <div style={cardStyle} className="p-3.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--chip)' }}>
+              <Calendar className="w-4 h-4" style={{ color: 'var(--accent)' }} />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase">날짜</p>
-              <p className="text-sm font-bold text-gray-900">{formatDate(post.match_date)}</p>
-              {post.match_time && <p className="text-xs text-gray-500">{post.match_time}</p>}
+              <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>날짜</p>
+              <p className="text-sm font-bold text-white">{formatDate(post.match_date)}</p>
+              {post.match_time && <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{post.match_time}</p>}
             </div>
           </div>
-          <div className="bg-white rounded-2xl p-3.5 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-[#0f2d0f]/10 flex items-center justify-center flex-shrink-0">
-              <MapPin className="w-4 h-4 text-[#0f2d0f]" />
+          <div style={cardStyle} className="p-3.5 flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--chip)' }}>
+              <MapPin className="w-4 h-4" style={{ color: 'var(--accent)' }} />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-gray-400 uppercase">장소</p>
-              <p className="text-sm font-bold text-gray-900 truncate">{post.region}</p>
-              <p className="text-xs text-gray-500 truncate">{post.location}</p>
+              <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>장소</p>
+              <p className="text-sm font-bold text-white truncate">{post.region}</p>
+              <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>{post.location}</p>
             </div>
           </div>
         </div>
 
         {/* Description */}
         {post.description && (
-          <div className="bg-white rounded-2xl p-4">
-            <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-2">팀 메시지</p>
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{post.description}</p>
+          <div style={cardStyle} className="p-4">
+            <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>팀 메시지</p>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.description}</p>
           </div>
         )}
 
         {/* Applications (my post) */}
         {isMyPost && isCoach && (
           <Link href={`/community/${postId}/applications`}
-            className="flex items-center justify-between bg-[#0f2d0f] rounded-2xl p-4 active:scale-[0.99] transition">
+            className="flex items-center justify-between rounded-2xl p-4 active:scale-[0.99] transition"
+            style={{ background: '#111010', border: '1px solid var(--line)' }}>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-lime-400/20 rounded-xl flex items-center justify-center">
-                <Send className="w-5 h-5 text-lime-400" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'var(--chip)' }}>
+                <Send className="w-5 h-5" style={{ color: 'var(--accent)' }} />
               </div>
               <div>
                 <p className="font-black text-white">받은 신청 확인</p>
-                <p className="text-xs text-white/50">
+                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
                   {applicationCount > 0 ? `${applicationCount}팀이 신청했어요` : '아직 신청이 없어요'}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               {applicationCount > 0 && (
-                <span className="w-6 h-6 bg-lime-400 text-[#0f2d0f] text-xs font-black rounded-full flex items-center justify-center">
+                <span className="w-6 h-6 text-xs font-black rounded-full flex items-center justify-center"
+                  style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                   {applicationCount}
                 </span>
               )}
-              <ChevronRight className="w-5 h-5 text-white/30" />
+              <ChevronRight className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.2)' }} />
             </div>
           </Link>
         )}
 
         {/* My application status */}
         {!isMyPost && myApplication && (
-          <div className={`rounded-2xl p-4 ${
-            myApplication.status === 'accepted' ? 'bg-emerald-600' :
-            myApplication.status === 'rejected' ? 'bg-gray-700' : 'bg-amber-500'
-          }`}>
+          <div className="rounded-2xl p-4" style={{
+            background: myApplication.status === 'accepted' ? '#052e16' :
+                        myApplication.status === 'rejected' ? '#1a1a1a' : '#451a03',
+            border: `1px solid ${myApplication.status === 'accepted' ? '#166534' : myApplication.status === 'rejected' ? '#2a2a2a' : '#92400e'}`,
+          }}>
             <div className="flex items-center gap-3">
               <div className="text-2xl">
                 {myApplication.status === 'accepted' ? '🎉' :
@@ -262,14 +270,15 @@ export default function PostDetailPage() {
                   {myApplication.status === 'accepted' ? '매칭 성사! 경기가 등록됐어요' :
                    myApplication.status === 'rejected' ? '이번엔 아쉽게도 거절됐어요' : '신청 검토 중이에요'}
                 </p>
-                <p className="text-xs text-white/70 mt-0.5">
+                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
                   {myApplication.status === 'accepted' ? '경기 탭에서 확인해보세요' :
                    myApplication.status === 'rejected' ? '다른 매칭을 찾아보세요' : '상대팀의 응답을 기다리고 있어요'}
                 </p>
               </div>
               {myApplication.status === 'pending' && (
                 <button onClick={() => setShowWithdrawConfirm(true)}
-                  className="text-xs text-white/60 hover:text-white border border-white/30 px-3 py-1.5 rounded-xl transition">
+                  className="text-xs px-3 py-1.5 rounded-xl transition"
+                  style={{ color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.2)' }}>
                   취소
                 </button>
               )}
@@ -280,10 +289,12 @@ export default function PostDetailPage() {
 
       {/* Apply CTA */}
       {!isMyPost && !myApplication && !matchedOrClosed && isCoach && (
-        <div className="fixed bottom-0 left-0 right-0 safe-bottom bg-gradient-to-t from-white via-white to-transparent pt-4 px-4 pb-3">
+        <div className="fixed bottom-0 left-0 right-0 safe-bottom pt-4 px-4 pb-3"
+          style={{ background: 'linear-gradient(to top, #0a0a0a 60%, transparent)' }}>
           <button
             onClick={() => setShowApplySheet(true)}
-            className="w-full max-w-4xl mx-auto bg-[#0f2d0f] text-lime-400 py-4 rounded-2xl font-black text-base active:scale-[0.98] transition flex items-center justify-center gap-2 shadow-xl shadow-[#0f2d0f]/30">
+            className="w-full max-w-4xl mx-auto py-4 rounded-2xl font-black text-base active:scale-[0.98] transition flex items-center justify-center gap-2"
+            style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
             <Swords className="w-5 h-5" />
             매칭 신청하기
           </button>
@@ -293,15 +304,17 @@ export default function PostDetailPage() {
       {/* Apply Sheet */}
       {showApplySheet && (
         <div className="fixed inset-0 z-50 flex items-end" onClick={() => setShowApplySheet(false)}>
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-          <div className="relative w-full bg-white rounded-t-3xl px-5 pt-5 pb-8 safe-bottom"
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+          <div className="relative w-full rounded-t-3xl px-5 pt-5 pb-8 safe-bottom"
+            style={{ background: '#111010', border: '1px solid var(--line)' }}
             onClick={e => e.stopPropagation()}>
-            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-5" />
+            <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: '#2a2a2a' }} />
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-2xl bg-[#0f2d0f] flex items-center justify-center text-xl">{emoji}</div>
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center text-xl"
+                style={{ background: 'var(--chip)' }}>{emoji}</div>
               <div>
-                <h3 className="font-black text-gray-900">{post.team?.name}에 신청</h3>
-                <p className="text-xs text-gray-500">짧은 팀 소개를 남겨보세요</p>
+                <h3 className="font-black text-white">{post.team?.name}에 신청</h3>
+                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>짧은 팀 소개를 남겨보세요</p>
               </div>
             </div>
             <textarea
@@ -310,18 +323,21 @@ export default function PostDetailPage() {
               placeholder="안녕하세요! 저희 팀은 창단 3년차 직장인팀이에요. 잘 부탁드립니다 🙏"
               rows={4}
               maxLength={200}
-              className="w-full border-2 border-gray-100 focus:border-[#0f2d0f] rounded-2xl p-3.5 text-sm resize-none outline-none transition"
+              className="w-full rounded-2xl p-3.5 text-sm resize-none outline-none transition placeholder-white/20"
+              style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'rgba(255,255,255,0.9)', caretColor: 'var(--accent)' }}
             />
             <div className="flex justify-end mb-4">
-              <span className="text-xs text-gray-400">{applyMessage.length}/200</span>
+              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>{applyMessage.length}/200</span>
             </div>
             <div className="space-y-2">
               <button onClick={handleApply} disabled={submitting}
-                className="w-full bg-[#0f2d0f] text-lime-400 py-4 rounded-2xl font-black text-base disabled:opacity-50 active:scale-[0.98] transition">
+                className="w-full py-4 rounded-2xl font-black text-base disabled:opacity-50 active:scale-[0.98] transition"
+                style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                 {submitting ? '신청 중...' : '신청 완료 🎯'}
               </button>
               <button onClick={() => setShowApplySheet(false)}
-                className="w-full bg-gray-100 text-gray-600 py-4 rounded-2xl font-semibold">
+                className="w-full py-4 rounded-2xl font-semibold"
+                style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}>
                 취소
               </button>
             </div>
