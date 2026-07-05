@@ -50,7 +50,7 @@ function computeBadges(stats: SeasonStats, records: MatchRecord[]): Badge[] {
     badges.push({ emoji: '🔥', label: '출석왕', desc: `${stats.matchAttendance}경기 출전`, color: 'bg-orange-50 text-orange-700 border-orange-200' })
 
   if (stats.goals >= 10)
-    badges.push({ emoji: '⚽', label: '득점왕', desc: `${stats.goals}골`, color: 'bg-lime-50 text-[#0f2d0f] border-lime-300' })
+    badges.push({ emoji: '⚽', label: '득점왕', desc: `${stats.goals}골`, color: 'bg-[#1a2600] text-[#ccff00] border-[#ccff00]/40' })
   else if (stats.goals >= 5)
     badges.push({ emoji: '🎯', label: '공격수', desc: `${stats.goals}골`, color: 'bg-green-50 text-green-700 border-green-200' })
 
