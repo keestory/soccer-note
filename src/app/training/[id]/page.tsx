@@ -25,14 +25,14 @@ const TRAINING_TYPE_LABEL_KEYS: Record<TrainingType, string> = {
   'other': 'trainingTypeOther',
 }
 
-const TRAINING_TYPE_STYLES: Record<TrainingType, string> = {
-  'mini-game': 'bg-amber-100 text-amber-800 border border-amber-300',
-  'passing':   'bg-sky-100 text-sky-800 border border-sky-300',
-  'shooting':  'bg-red-100 text-red-800 border border-red-300',
-  'fitness':   'bg-green-100 text-green-800 border border-green-300',
-  'tactics':   'bg-indigo-100 text-indigo-800 border border-indigo-300',
-  'mixed':     'bg-primary-100 text-primary-800 border border-primary-300',
-  'other':     'bg-gray-100 text-gray-700 border border-gray-300',
+const TRAINING_TYPE_STYLES: Record<TrainingType, { bg: string; color: string }> = {
+  'mini-game': { bg: '#1a1200', color: '#f59e0b' },
+  'passing':   { bg: '#001a2a', color: '#38bdf8' },
+  'shooting':  { bg: '#2a0a0a', color: '#ef4444' },
+  'fitness':   { bg: '#002a1a', color: '#2dd4bf' },
+  'tactics':   { bg: '#120a2a', color: '#6366f1' },
+  'mixed':     { bg: '#1a2a00', color: '#a3e635' },
+  'other':     { bg: '#1a1a1a', color: '#666' },
 }
 
 export default function TrainingDetailPage() {
@@ -338,60 +338,55 @@ export default function TrainingDetailPage() {
     'fitness': '💪', 'tactics': '🧠', 'mixed': '🌀', 'other': '📋',
   }
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const inputStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 10 }
+
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-20">
-      {/* Hero header */}
-      <div className="relative overflow-hidden safe-top" style={{ background: 'linear-gradient(135deg, #0a1f0a 0%, #1a3f1a 55%, #2D5A27 100%)' }}>
-        <div className="field-pattern absolute inset-0" />
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 390 140" fill="none" preserveAspectRatio="xMidYMid slice">
-          <line x1="340" y1="-10" x2="200" y2="150" stroke="rgba(163,230,53,0.15)" strokeWidth="1.5" strokeLinecap="round"/>
-          <line x1="375" y1="-10" x2="235" y2="150" stroke="rgba(163,230,53,0.08)" strokeWidth="1" strokeLinecap="round"/>
-          <circle cx="50" cy="110" r="55" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1"/>
-        </svg>
-        <div className="relative px-4 py-4 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+    <div className="min-h-screen pb-20" style={{ background: '#0a0a0a' }}>
+      {/* Header */}
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+        <div className="px-4 py-3 flex items-center gap-3">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex-1">
-            <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest">훈련 기록</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>훈련 기록</p>
             <h1 className="text-base font-black text-white">{getTypeLabel(training.training_type)}</h1>
           </div>
           {canEdit && (
-            <button onClick={() => setShowDeleteConfirm(true)} className="p-2 rounded-xl text-white/40 hover:text-red-400 hover:bg-red-400/10">
+            <button onClick={() => setShowDeleteConfirm(true)} className="p-2 rounded-xl text-white/40 hover:text-red-400">
               <Trash2 className="w-5 h-5" />
             </button>
           )}
         </div>
-        <div className="relative px-4 pb-5">
-          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-3 flex items-center gap-3">
-            <span className="text-3xl">{TYPE_EMOJI[training.training_type]}</span>
-            <div className="flex gap-4 text-sm">
-              <div>
-                <p className="text-white/40 text-[10px] uppercase font-bold">날짜</p>
-                <p className="text-white font-bold">{formatDate(training.training_date)}</p>
+      </header>
+
+      {/* Summary card */}
+      <div className="px-4 pt-4">
+        <div className="p-4 rounded-2xl flex items-center gap-3" style={cardStyle}>
+          <span className="text-3xl">{TYPE_EMOJI[training.training_type]}</span>
+          <div className="flex gap-5 text-sm">
+            {[
+              { label: '날짜', val: formatDate(training.training_date) },
+              { label: '시간', val: `${training.duration_minutes}분` },
+              ...(training.location ? [{ label: '장소', val: training.location }] : []),
+            ].map(item => (
+              <div key={item.label}>
+                <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{item.label}</p>
+                <p className="text-white font-bold text-[13px]">{item.val}</p>
               </div>
-              <div>
-                <p className="text-white/40 text-[10px] uppercase font-bold">시간</p>
-                <p className="text-white font-bold">{training.duration_minutes}분</p>
-              </div>
-              {training.location && (
-                <div>
-                  <p className="text-white/40 text-[10px] uppercase font-bold">장소</p>
-                  <p className="text-white font-bold truncate max-w-[100px]">{training.location}</p>
-                </div>
-              )}
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
       <main className="max-w-4xl mx-auto px-4 pt-4 pb-12 space-y-3">
         {/* Training Info Card */}
-        <div className="bg-white rounded-2xl p-4">
+        <div className="p-4" style={cardStyle}>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">훈련 정보</p>
+            <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>훈련 정보</p>
             {canEdit && !editingInfo && (
-              <button onClick={startEditInfo} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl">
+              <button onClick={startEditInfo} className="p-1.5 text-white/40 hover:text-white rounded-xl">
                 <Edit2 className="w-4 h-4" />
               </button>
             )}
@@ -399,114 +394,69 @@ export default function TrainingDetailPage() {
 
           {editingInfo ? (
             <div className="space-y-3">
-              <input
-                type="date"
-                value={editDate}
-                onChange={(e) => setEditDate(e.target.value)}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
-              />
+              <input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} className="w-full px-3 py-2 rounded-lg text-sm outline-none text-white" style={inputStyle} />
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5">
                 {TRAINING_TYPES.map(type => (
                   <button
                     key={type}
                     type="button"
                     onClick={() => setEditType(type)}
-                    className={`px-2 py-1.5 rounded-lg text-xs font-medium border transition ${
-                      editType === type
-                        ? `${TRAINING_TYPE_STYLES[type]} ring-1 ring-primary-500`
-                        : 'bg-white text-gray-500 border-gray-200'
-                    }`}
+                    className="px-2 py-1.5 rounded-lg text-xs font-bold border-2 transition"
+                    style={{
+                      background: editType === type ? TRAINING_TYPE_STYLES[type].bg : '#1a1a1a',
+                      color: editType === type ? TRAINING_TYPE_STYLES[type].color : 'var(--muted2)',
+                      borderColor: editType === type ? TRAINING_TYPE_STYLES[type].color : '#2a2a2a',
+                    }}
                   >
                     {getTypeLabel(type)}
                   </button>
                 ))}
               </div>
-              <input
-                type="text"
-                value={editLocation}
-                onChange={(e) => setEditLocation(e.target.value)}
-                placeholder={t.locationPlaceholder}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
-              />
-              <input
-                type="number"
-                value={editDuration}
-                onChange={(e) => setEditDuration(Math.max(1, parseInt(e.target.value) || 1))}
-                min={1}
-                max={480}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
-              />
-              <textarea
-                value={editNotes}
-                onChange={(e) => setEditNotes(e.target.value)}
-                rows={2}
-                placeholder={t.trainingNotesPlaceholder}
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none resize-none"
-              />
+              <input type="text" value={editLocation} onChange={(e) => setEditLocation(e.target.value)} placeholder={t.locationPlaceholder} className="w-full px-3 py-2 rounded-lg text-sm outline-none text-white placeholder:text-white/20" style={inputStyle} />
+              <input type="number" value={editDuration} onChange={(e) => setEditDuration(Math.max(1, parseInt(e.target.value) || 1))} min={1} max={480} className="w-full px-3 py-2 rounded-lg text-sm outline-none text-white" style={inputStyle} />
+              <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} rows={2} placeholder={t.trainingNotesPlaceholder} className="w-full px-3 py-2 rounded-lg text-sm outline-none resize-none text-white placeholder:text-white/20" style={inputStyle} />
               <div className="flex gap-2">
-                <button onClick={handleSaveInfo} className="flex-1 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 transition">
-                  {t.save}
-                </button>
-                <button onClick={() => setEditingInfo(false)} className="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition">
-                  {t.cancel}
-                </button>
+                <button onClick={handleSaveInfo} className="flex-1 py-2 rounded-lg text-sm font-bold" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>{t.save}</button>
+                <button onClick={() => setEditingInfo(false)} className="px-4 py-2 rounded-lg text-sm font-bold text-white/50" style={{ background: '#1a1a1a' }}>{t.cancel}</button>
               </div>
             </div>
           ) : (
-            <div className="space-y-2 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-400" />
-                <span>{formatDate(training.training_date)}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-gray-400" />
-                <span>{training.duration_minutes}min</span>
-              </div>
-              {training.location && (
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-gray-400" />
-                  <span>{training.location}</span>
-                </div>
-              )}
-              {training.notes && (
-                <p className="pt-2 text-gray-500 border-t mt-2">{training.notes}</p>
-              )}
+            <div className="space-y-2 text-[13px]" style={{ color: 'var(--muted2)' }}>
+              <div className="flex items-center gap-2"><Calendar className="w-4 h-4" /><span>{formatDate(training.training_date)}</span></div>
+              <div className="flex items-center gap-2"><Clock className="w-4 h-4" /><span>{training.duration_minutes}min</span></div>
+              {training.location && <div className="flex items-center gap-2"><MapPin className="w-4 h-4" /><span>{training.location}</span></div>}
+              {training.notes && <p className="pt-2 text-white/50" style={{ borderTop: '1px solid var(--line)', marginTop: 8 }}>{training.notes}</p>}
             </div>
           )}
         </div>
 
         {/* Attendance Section */}
-        <div className="bg-white rounded-2xl p-4">
+        <div className="p-4" style={cardStyle}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">참석 선수</p>
-              <span className="text-xs font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">{displayAttendees.length}명</span>
+              <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>참석 선수</p>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{displayAttendees.length}명</span>
             </div>
             {canEdit && (
-              <button
-                onClick={openAttendeePicker}
-                className="px-3 py-1.5 bg-[#0f2d0f] text-lime-400 rounded-xl text-xs font-bold transition active:scale-95"
-              >
-                편집
-              </button>
+              <button onClick={openAttendeePicker} className="px-3 py-1.5 rounded-xl text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>편집</button>
             )}
           </div>
 
           {displayAttendees.length === 0 ? (
-            <p className="text-gray-400 text-sm text-center py-6">참석 선수를 추가해주세요</p>
+            <p className="text-[13px] text-center py-6" style={{ color: 'var(--muted2)' }}>참석 선수를 추가해주세요</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {displayAttendees.map(a => (
-                <div key={a.id} className="flex items-center gap-2 p-2.5 bg-gray-50 rounded-xl">
-                  <div className="w-8 h-8 bg-[#0f2d0f]/10 rounded-xl flex items-center justify-center text-[#0f2d0f] text-xs font-black">
+                <div key={a.id} className="flex items-center gap-2 p-2.5 rounded-xl" style={{ background: '#1a1a1a' }}>
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
                     {a.player?.number || '-'}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold truncate text-gray-800">{a.player?.name}</p>
+                    <p className="text-[13px] font-bold truncate text-white">{a.player?.name}</p>
                     {showFeedback && a.rating && (
                       <div className="flex items-center gap-1">
-                        <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
-                        <span className="text-xs font-semibold text-amber-600">{a.rating}</span>
+                        <Star className="w-3 h-3 fill-current" style={{ color: 'var(--accent)' }} />
+                        <span className="text-xs font-semibold" style={{ color: 'var(--accent)' }}>{a.rating}</span>
                       </div>
                     )}
                   </div>
@@ -518,70 +468,49 @@ export default function TrainingDetailPage() {
 
         {/* Player Evaluation Section */}
         {canEdit && attendees.length > 0 && (
-          <div className="bg-white rounded-2xl overflow-hidden">
-            <button
-              onClick={() => setShowEvaluation(!showEvaluation)}
-              className="flex items-center justify-between w-full px-4 py-4"
-            >
+          <div className="overflow-hidden" style={cardStyle}>
+            <button onClick={() => setShowEvaluation(!showEvaluation)} className="flex items-center justify-between w-full px-4 py-4">
               <div className="flex items-center gap-2">
-                <Star className="w-5 h-5 text-amber-500" />
-                <span className="font-black text-gray-900">{t.trainingEvaluationOptional}</span>
+                <Star className="w-5 h-5 fill-current" style={{ color: 'var(--accent)' }} />
+                <span className="font-black text-white">{t.trainingEvaluationOptional}</span>
               </div>
-              {showEvaluation ? <ChevronUp className="w-5 h-5 text-gray-400" /> : <ChevronDown className="w-5 h-5 text-gray-400" />}
+              {showEvaluation ? <ChevronUp className="w-5 h-5 text-white/40" /> : <ChevronDown className="w-5 h-5 text-white/40" />}
             </button>
 
             {showEvaluation && (
-              <div className="border-t border-gray-50 px-4 py-4 space-y-4">
+              <div className="px-4 py-4 space-y-4" style={{ borderTop: '1px solid var(--line)' }}>
                 {attendees.map(a => {
                   const rating = evalData[a.player_id]?.rating ?? null
-                  const ratingColor = rating === null ? 'text-gray-400' : rating <= 4 ? 'text-red-500' : rating <= 6 ? 'text-amber-500' : 'text-emerald-600'
+                  const ratingColor = rating === null ? 'var(--muted2)' : rating <= 4 ? '#ef4444' : rating <= 6 ? '#f59e0b' : 'var(--accent)'
                   return (
-                    <div key={a.id} className="bg-gray-50 rounded-2xl p-3">
+                    <div key={a.id} className="p-3 rounded-2xl" style={{ background: '#1a1a1a' }}>
                       <div className="flex items-center gap-2 mb-3">
-                        <div className="w-8 h-8 bg-[#0f2d0f]/10 rounded-xl flex items-center justify-center text-[#0f2d0f] text-xs font-black">
-                          {a.player?.number || '-'}
-                        </div>
-                        <span className="font-bold text-gray-900">{a.player?.name}</span>
-                        <span className={`ml-auto text-2xl font-black font-mono tabular-nums ${ratingColor}`}>
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{a.player?.number || '-'}</div>
+                        <span className="font-bold text-white">{a.player?.name}</span>
+                        <span className="ml-auto text-2xl font-black font-display tabular-nums" style={{ color: ratingColor }}>
                           {rating !== null ? rating.toFixed(1) : '−'}
                         </span>
                       </div>
-                      {/* Rating stepper */}
                       <div className="flex items-center gap-2 mb-2">
-                        <button
-                          type="button"
-                          onClick={() => setEvalData(prev => ({ ...prev, [a.player_id]: { ...prev[a.player_id], rating: Math.max(1, (prev[a.player_id]?.rating ?? 5) - 0.5) } }))}
-                          className="w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-600 font-bold text-lg flex items-center justify-center active:bg-gray-100 flex-shrink-0"
-                        >−</button>
-                        <input
-                          type="range" min={1} max={10} step={0.5}
+                        <button type="button" onClick={() => setEvalData(prev => ({ ...prev, [a.player_id]: { ...prev[a.player_id], rating: Math.max(1, (prev[a.player_id]?.rating ?? 5) - 0.5) } }))}
+                          className="w-10 h-10 rounded-xl font-bold text-lg flex items-center justify-center flex-shrink-0 text-white" style={{ background: '#2a2a2a' }}>−</button>
+                        <input type="range" min={1} max={10} step={0.5}
                           value={evalData[a.player_id]?.rating ?? 5}
                           onChange={(e) => setEvalData(prev => ({ ...prev, [a.player_id]: { ...prev[a.player_id], rating: parseFloat(e.target.value) } }))}
-                          className="flex-1 h-2 appearance-none cursor-pointer rounded-full bg-gray-200 accent-[#0f2d0f]"
+                          className="flex-1 h-2 appearance-none cursor-pointer rounded-full"
+                          style={{ accentColor: 'var(--accent)', background: '#2a2a2a' }}
                         />
-                        <button
-                          type="button"
-                          onClick={() => setEvalData(prev => ({ ...prev, [a.player_id]: { ...prev[a.player_id], rating: Math.min(10, (prev[a.player_id]?.rating ?? 5) + 0.5) } }))}
-                          className="w-10 h-10 rounded-xl bg-white border border-gray-200 text-[#0f2d0f] font-bold text-lg flex items-center justify-center active:bg-gray-100 flex-shrink-0"
-                        >+</button>
+                        <button type="button" onClick={() => setEvalData(prev => ({ ...prev, [a.player_id]: { ...prev[a.player_id], rating: Math.min(10, (prev[a.player_id]?.rating ?? 5) + 0.5) } }))}
+                          className="w-10 h-10 rounded-xl font-bold text-lg flex items-center justify-center flex-shrink-0" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>+</button>
                       </div>
-                      <textarea
-                        value={evalData[a.player_id]?.feedback || ''}
-                        onChange={(e) => setEvalData(prev => ({ ...prev, [a.player_id]: { ...prev[a.player_id], feedback: e.target.value } }))}
-                        rows={2}
-                        className="w-full px-3 py-2 border-2 border-gray-100 focus:border-[#0f2d0f] rounded-xl text-sm outline-none resize-none bg-white"
-                        placeholder={t.trainingFeedbackPlaceholder}
-                      />
+                      <textarea value={evalData[a.player_id]?.feedback || ''} onChange={(e) => setEvalData(prev => ({ ...prev, [a.player_id]: { ...prev[a.player_id], feedback: e.target.value } }))}
+                        rows={2} className="w-full px-3 py-2 rounded-xl text-sm outline-none resize-none text-white placeholder:text-white/20" style={inputStyle}
+                        placeholder={t.trainingFeedbackPlaceholder} />
                     </div>
                   )
                 })}
 
-                <button
-                  onClick={handleSaveEvaluation}
-                  disabled={savingEval}
-                  className="w-full py-3.5 rounded-2xl text-sm font-black disabled:opacity-50 transition active:scale-[0.98]"
-                  style={{ background: '#0f2d0f', color: '#a3e635' }}
-                >
+                <button onClick={handleSaveEvaluation} disabled={savingEval} className="w-full py-3.5 rounded-2xl text-sm font-black disabled:opacity-50 transition active:scale-[0.98]" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                   {savingEval ? t.saving : `${t.save} 💾`}
                 </button>
               </div>
@@ -589,32 +518,32 @@ export default function TrainingDetailPage() {
           </div>
         )}
 
-        {/* Parent view: show feedback for linked player */}
+        {/* Parent view */}
         {isParent && showFeedback && displayAttendees.length > 0 && (
-          <div className="bg-white rounded-xl p-5 shadow-toss">
-            <h2 className="text-lg font-bold flex items-center gap-2 mb-3">
-              <Star className="w-5 h-5 text-amber-500" />
+          <div className="p-5 rounded-xl" style={cardStyle}>
+            <h2 className="text-[15px] font-bold flex items-center gap-2 mb-3 text-white">
+              <Star className="w-5 h-5 fill-current" style={{ color: 'var(--accent)' }} />
               {t.trainingEvaluation}
             </h2>
             {displayAttendees.map(a => (
               <div key={a.id} className="space-y-2">
                 {a.rating && (
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">{t.rating}:</span>
+                    <span className="text-sm" style={{ color: 'var(--muted2)' }}>{t.rating}:</span>
                     <div className="flex items-center gap-1">
-                      <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                      <span className="font-medium">{a.rating}</span>
+                      <Star className="w-4 h-4 fill-current" style={{ color: 'var(--accent)' }} />
+                      <span className="font-bold text-white">{a.rating}</span>
                     </div>
                   </div>
                 )}
                 {a.feedback && (
                   <div>
-                    <span className="text-sm text-gray-500">{t.trainingFeedback}:</span>
-                    <p className="text-sm mt-1">{a.feedback}</p>
+                    <span className="text-sm" style={{ color: 'var(--muted2)' }}>{t.trainingFeedback}:</span>
+                    <p className="text-[13px] mt-1 text-white/70">{a.feedback}</p>
                   </div>
                 )}
                 {!a.rating && !a.feedback && (
-                  <p className="text-gray-400 text-sm">{t.noRecord}</p>
+                  <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.noRecord}</p>
                 )}
               </div>
             ))}
@@ -634,26 +563,20 @@ export default function TrainingDetailPage() {
 
       {/* Attendee Picker Modal */}
       {showAttendeePicker && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center safe-bottom">
-          <div className="bg-white rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[70vh] flex flex-col">
-            <div className="p-4 border-b flex items-center justify-between">
-              <h3 className="font-bold">{t.trainingAttendees}</h3>
-              <button onClick={() => setShowAttendeePicker(false)} className="p-1 hover:bg-gray-100 rounded-lg">
-                <X className="w-5 h-5" />
-              </button>
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-end sm:items-center justify-center safe-bottom">
+          <div className="rounded-t-2xl sm:rounded-2xl w-full sm:max-w-md max-h-[70vh] flex flex-col" style={cardStyle}>
+            <div className="p-4 flex items-center justify-between" style={{ borderBottom: '1px solid var(--line)' }}>
+              <h3 className="font-bold text-white">{t.trainingAttendees}</h3>
+              <button onClick={() => setShowAttendeePicker(false)} className="p-1 text-white/40 hover:text-white rounded-lg"><X className="w-5 h-5" /></button>
             </div>
 
-            {/* Select all */}
-            <div className="px-4 py-2 border-b">
+            <div className="px-4 py-2" style={{ borderBottom: '1px solid var(--line)' }}>
               <button
                 onClick={() => {
-                  if (selectedAttendees.size === allPlayers.length) {
-                    setSelectedAttendees(new Set())
-                  } else {
-                    setSelectedAttendees(new Set(allPlayers.map(p => p.id)))
-                  }
+                  if (selectedAttendees.size === allPlayers.length) setSelectedAttendees(new Set())
+                  else setSelectedAttendees(new Set(allPlayers.map(p => p.id)))
                 }}
-                className="text-sm text-primary-600 font-medium"
+                className="text-sm font-bold" style={{ color: 'var(--accent)' }}
               >
                 {selectedAttendees.size === allPlayers.length ? t.cancel : `${t.selectAttendees} (${allPlayers.length})`}
               </button>
@@ -663,34 +586,25 @@ export default function TrainingDetailPage() {
               {allPlayers.map(player => {
                 const isSelected = selectedAttendees.has(player.id)
                 return (
-                  <button
-                    key={player.id}
-                    onClick={() => toggleAttendee(player.id)}
-                    className={`w-full flex items-center gap-3 p-3 rounded-lg transition ${
-                      isSelected ? 'bg-primary-50' : 'hover:bg-gray-50'
-                    }`}
+                  <button key={player.id} onClick={() => toggleAttendee(player.id)}
+                    className="w-full flex items-center gap-3 p-3 rounded-lg transition"
+                    style={{ background: isSelected ? 'var(--chip)' : 'transparent' }}
                   >
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      isSelected ? 'bg-primary-600 border-primary-600' : 'border-gray-300'
-                    }`}>
-                      {isSelected && <Check className="w-4 h-4 text-white" />}
+                    <div className="w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+                      style={{ borderColor: isSelected ? 'var(--accent)' : '#2a2a2a', background: isSelected ? 'var(--accent)' : 'transparent' }}>
+                      {isSelected && <Check className="w-4 h-4" style={{ color: '#0a0a0a' }} />}
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400 w-6 text-right">
-                        {player.number || '-'}
-                      </span>
-                      <span className="text-sm font-medium">{player.name}</span>
+                      <span className="text-xs w-6 text-right" style={{ color: 'var(--muted2)' }}>{player.number || '-'}</span>
+                      <span className="text-sm font-medium text-white">{player.name}</span>
                     </div>
                   </button>
                 )
               })}
             </div>
 
-            <div className="p-4 border-t">
-              <button
-                onClick={saveAttendees}
-                className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition"
-              >
+            <div className="p-4" style={{ borderTop: '1px solid var(--line)' }}>
+              <button onClick={saveAttendees} className="w-full py-3 rounded-lg font-bold" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                 {t.save} ({selectedAttendees.size}{t.persons})
               </button>
             </div>

@@ -73,54 +73,39 @@ export default function SignupPage() {
     }
   }
 
+  const inputStyle = {
+    background: '#1a1a1a',
+    border: '1px solid #2a2a2a',
+    color: '#ffffff',
+    borderRadius: 12,
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#f0f4f0] safe-top">
-
-      {/* KV Hero */}
-      <div
-        className="relative overflow-hidden flex-shrink-0"
-        style={{ background: 'linear-gradient(135deg, #0a1f0a 0%, #1a3f1a 55%, #2D5A27 100%)', minHeight: '200px' }}
-      >
-        <div className="field-pattern absolute inset-0" />
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 390 200" fill="none" preserveAspectRatio="xMidYMid slice">
-          <line x1="420" y1="50"  x2="190" y2="-10" stroke="rgba(163,230,53,0.4)"  strokeWidth="2"   strokeLinecap="round"/>
-          <line x1="420" y1="90"  x2="220" y2="5"   stroke="rgba(163,230,53,0.25)" strokeWidth="1.5" strokeLinecap="round"/>
-          <line x1="420" y1="130" x2="250" y2="20"  stroke="rgba(163,230,53,0.14)" strokeWidth="1"   strokeLinecap="round"/>
-          <circle cx="360" cy="100" r="140" stroke="rgba(255,255,255,0.04)" strokeWidth="1.5" fill="none"/>
-          <circle cx="30"  cy="170" r="35"  fill="rgba(255,255,255,0.06)"   stroke="rgba(255,255,255,0.2)"  strokeWidth="1"/>
-          <circle cx="300" cy="35" r="3"    fill="rgba(163,230,53,0.5)"/>
-          <circle cx="260" cy="60" r="2"    fill="rgba(163,230,53,0.3)"/>
-        </svg>
-
-        <div className="relative z-10 px-6 pt-10 pb-10">
-          <div className="flex items-center gap-2 mb-5">
-            <div className="w-9 h-9 rounded-xl bg-lime-400/20 border border-lime-400/30 flex items-center justify-center">
-              <span className="text-lg">⚽</span>
-            </div>
-            <span className="text-white font-black text-lg tracking-tight">SoccerNote</span>
-          </div>
-          <h1 className="font-display text-3xl font-black text-white leading-tight">새 계정 만들기</h1>
-          <p className="text-white/50 text-sm mt-1">팀을 만들고 기록을 시작해요</p>
-        </div>
+    <div className="min-h-screen flex flex-col safe-top safe-bottom" style={{ background: '#0a0a0a' }}>
+      {/* Header */}
+      <div className="px-6 pt-6 pb-2">
+        <p className="font-display text-[11px] tracking-[0.18em] uppercase" style={{ color: 'var(--accent)' }}>SOCCERNOTE</p>
+        <h1 className="font-display text-[28px] text-white leading-tight mt-1">새 계정 만들기</h1>
+        <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>팀을 만들고 기록을 시작해요</p>
       </div>
 
-      {/* Form card */}
-      <div className="flex-1 -mt-5 bg-white rounded-t-3xl px-6 pt-7 pb-10 shadow-xl overflow-y-auto">
-
+      {/* Form */}
+      <div className="flex-1 overflow-y-auto px-6 pt-5 pb-10">
         {/* Google */}
         <button
           onClick={handleGoogleSignup}
           disabled={googleLoading}
-          className="w-full flex items-center justify-center gap-2.5 py-3.5 bg-white border-2 border-gray-100 rounded-2xl font-semibold text-gray-700 hover:border-gray-200 active:bg-gray-50 disabled:opacity-50 transition shadow-sm mb-5"
+          className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-[12px] font-semibold text-[14px] disabled:opacity-50 transition active:scale-[0.98] mb-4"
+          style={{ background: '#ffffff', color: '#111' }}
         >
           <GoogleIcon />
           {googleLoading ? '연결 중…' : 'Google로 계속하기'}
         </button>
 
-        <div className="flex items-center gap-3 mb-5">
-          <div className="flex-1 h-px bg-gray-100" />
-          <span className="text-xs text-gray-400 font-medium">또는 이메일</span>
-          <div className="flex-1 h-px bg-gray-100" />
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
+          <span className="text-[11px] font-medium" style={{ color: 'var(--muted2)' }}>또는 이메일</span>
+          <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
         </div>
 
         <form onSubmit={handleSignup} className="space-y-3.5">
@@ -130,7 +115,7 @@ export default function SignupPage() {
             { id: 'password', label: '비밀번호', type: 'password', value: password, onChange: setPassword, placeholder: '6자 이상 입력', autoComplete: 'new-password' },
           ].map(field => (
             <div key={field.id}>
-              <label htmlFor={field.id} className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">{field.label}</label>
+              <label htmlFor={field.id} className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{field.label}</label>
               <input
                 id={field.id}
                 type={field.type}
@@ -138,14 +123,15 @@ export default function SignupPage() {
                 onChange={e => field.onChange(e.target.value)}
                 required
                 autoComplete={field.autoComplete}
-                className="w-full px-4 py-3.5 rounded-2xl border-2 border-gray-100 bg-gray-50 focus:border-[#0f2d0f] focus:bg-white outline-none transition text-base font-medium"
+                className="w-full px-4 py-3.5 outline-none transition text-[15px] font-medium"
+                style={inputStyle}
                 placeholder={field.placeholder}
               />
             </div>
           ))}
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">비밀번호 확인</label>
+            <label htmlFor="confirmPassword" className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>비밀번호 확인</label>
             <input
               id="confirmPassword"
               type="password"
@@ -153,32 +139,32 @@ export default function SignupPage() {
               onChange={e => setConfirmPassword(e.target.value)}
               required
               autoComplete="new-password"
-              className={`w-full px-4 py-3.5 rounded-2xl border-2 bg-gray-50 outline-none transition text-base font-medium ${
-                confirmPassword && password !== confirmPassword
-                  ? 'border-red-400 bg-red-50 focus:border-red-500'
-                  : 'border-gray-100 focus:border-[#0f2d0f] focus:bg-white'
-              }`}
+              className="w-full px-4 py-3.5 outline-none transition text-[15px] font-medium"
+              style={{
+                ...inputStyle,
+                ...(confirmPassword && password !== confirmPassword ? { border: '1px solid #ef4444' } : {}),
+              }}
               placeholder="비밀번호 재입력"
             />
             {confirmPassword && password !== confirmPassword && (
-              <p className="text-xs text-red-500 mt-1 font-medium">비밀번호가 일치하지 않습니다</p>
+              <p className="text-[12px] text-red-400 mt-1 font-medium">비밀번호가 일치하지 않습니다</p>
             )}
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-4 rounded-2xl font-black text-base disabled:opacity-50 active:scale-[0.98] transition mt-1"
-            style={{ background: '#0f2d0f', color: '#a3e635' }}
+            className="w-full py-4 rounded-[14px] font-black text-[16px] disabled:opacity-50 active:scale-[0.98] transition"
+            style={{ background: 'var(--accent)', color: '#0a0a0a' }}
           >
-            {loading ? '가입 중…' : '시작하기 🎉'}
+            {loading ? '가입 중…' : '시작하기'}
           </button>
-        </form>
 
-        <p className="text-center mt-6 text-gray-500 text-sm">
-          이미 계정이 있으신가요?{' '}
-          <Link href="/login" className="font-black text-[#0f2d0f]">로그인</Link>
-        </p>
+          <p className="text-center text-[13px]" style={{ color: 'var(--muted2)' }}>
+            이미 계정이 있으신가요?{' '}
+            <Link href="/login" className="font-black text-white">로그인</Link>
+          </p>
+        </form>
       </div>
     </div>
   )

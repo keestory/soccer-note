@@ -745,13 +745,17 @@ export default function QuarterEditPage() {
     return <QuarterEditSkeleton />
   }
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const inputStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 12 }
+  const textareaStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 10 }
+
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-32">
+    <div className="min-h-screen pb-32" style={{ background: '#0a0a0a' }}>
       {/* Header */}
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Link href={`/match/${matchId}`} className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+            <Link href={`/match/${matchId}`} className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <h1 className="text-base font-black text-white">{quarterNumber}쿼터 편집</h1>
@@ -759,7 +763,8 @@ export default function QuarterEditPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 bg-lime-400 text-[#0f2d0f] rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50"
+            style={{ background: 'var(--accent)', color: '#0a0a0a' }}
           >
             <Save className="w-4 h-4" />
             {saving ? '저장 중...' : '저장'}
@@ -771,7 +776,7 @@ export default function QuarterEditPage() {
         {/* Soccer Field */}
         <section>
           <div className="flex justify-between items-center mb-3">
-            <h2 className="font-semibold">포메이션 배치</h2>
+            <h2 className="font-bold text-white text-sm">포메이션 배치</h2>
             <div className="flex items-center gap-2">
               <select
                 onChange={(e) => {
@@ -781,7 +786,8 @@ export default function QuarterEditPage() {
                   }
                 }}
                 defaultValue=""
-                className="px-2 py-1.5 border rounded-lg text-sm text-gray-700 bg-white focus:ring-2 focus:ring-primary-500 outline-none"
+                className="px-2 py-1.5 rounded-lg text-sm outline-none"
+                style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff' }}
               >
                 <option value="" disabled>포메이션</option>
                 {Object.entries(FORMATIONS).map(([key, f]) => (
@@ -791,7 +797,8 @@ export default function QuarterEditPage() {
               {availablePlayers.length > 0 && (
                 <button
                   onClick={() => setShowPlayerPicker(!showPlayerPicker)}
-                  className="flex items-center gap-1 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg text-sm font-medium"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
+                  style={{ background: 'var(--chip)', color: 'var(--accent)' }}
                 >
                   <Plus className="w-4 h-4" />
                   선수 추가
@@ -802,18 +809,18 @@ export default function QuarterEditPage() {
 
           {/* Player Picker */}
           {showPlayerPicker && (
-            <div className="bg-white rounded-xl p-4 mb-4 shadow-sm">
+            <div className="mb-4 p-4 rounded-xl" style={cardStyle}>
               <div className="flex justify-between items-center mb-3">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-white/60">
                   추가할 선수를 선택하세요
                   {selectedPickerPlayers.size > 0 && (
-                    <span className="ml-2 px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full text-xs font-medium">
+                    <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
                       {selectedPickerPlayers.size}명 선택
                     </span>
                   )}
                 </p>
                 <button onClick={() => { setShowPlayerPicker(false); setSelectedPickerPlayers(new Set()); }} className="p-1">
-                  <X className="w-5 h-5 text-gray-400" />
+                  <X className="w-5 h-5 text-white/40" />
                 </button>
               </div>
               <div className="space-y-3 mb-3">
@@ -823,11 +830,8 @@ export default function QuarterEditPage() {
                   return (
                     <div key={posType}>
                       <div className="flex items-center gap-2 mb-1.5">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: POSITION_COLORS[posType] }}
-                        />
-                        <span className="text-xs font-semibold text-gray-500">{POSITION_LABELS[posType]}</span>
+                        <div className="w-3 h-3 rounded-full" style={{ backgroundColor: POSITION_COLORS[posType] }} />
+                        <span className="text-xs font-semibold" style={{ color: 'var(--muted2)' }}>{POSITION_LABELS[posType]}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2">
                         {posPlayers.map(player => {
@@ -836,11 +840,11 @@ export default function QuarterEditPage() {
                             <button
                               key={player.id}
                               onClick={() => togglePickerPlayer(player.id)}
-                              className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-all ${
-                                isSelected
-                                  ? 'border-primary-500 bg-primary-50 ring-2 ring-primary-200'
-                                  : 'hover:bg-gray-50'
-                              }`}
+                              className="flex items-center gap-2 p-2 rounded-lg text-left transition-all"
+                              style={{
+                                background: isSelected ? 'var(--chip)' : '#1a1a1a',
+                                border: isSelected ? '1px solid var(--accent)' : '1px solid #2a2a2a',
+                              }}
                             >
                               <div className="relative">
                                 <div
@@ -850,13 +854,13 @@ export default function QuarterEditPage() {
                                   {player.number || '-'}
                                 </div>
                                 {isSelected && (
-                                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center">
-                                    <Check className="w-3 h-3 text-white" />
+                                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: 'var(--accent)' }}>
+                                    <Check className="w-3 h-3" style={{ color: '#0a0a0a' }} />
                                   </div>
                                 )}
                               </div>
                               <div className="min-w-0">
-                                <p className="text-sm font-medium truncate">{player.name}</p>
+                                <p className="text-sm font-medium text-white truncate">{player.name}</p>
                               </div>
                             </button>
                           )
@@ -869,7 +873,8 @@ export default function QuarterEditPage() {
               {selectedPickerPlayers.size > 0 && (
                 <button
                   onClick={addSelectedPlayersToField}
-                  className="w-full py-2.5 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 transition-colors"
+                  className="w-full py-2.5 rounded-lg font-medium transition-colors"
+                  style={{ background: 'var(--accent)', color: '#0a0a0a' }}
                 >
                   {selectedPickerPlayers.size}명 추가하기
                 </button>
@@ -880,46 +885,36 @@ export default function QuarterEditPage() {
           {/* Field */}
           <div
             ref={fieldRef}
-            className="relative w-full aspect-[3/2] bg-gradient-to-b from-green-700 via-green-600 to-green-700 rounded-xl overflow-hidden touch-none select-none shadow-lg"
+            className="relative w-full aspect-[3/2] rounded-xl overflow-hidden touch-none select-none"
+            style={{ background: 'linear-gradient(180deg,#0e2018,#0a1a13)', border: '1px solid #143325' }}
           >
-            {/* Grass pattern */}
+            {/* Grass stripe pattern */}
             <div className="absolute inset-0" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px)',
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.015) 20px, rgba(255,255,255,0.015) 40px)',
             }} />
 
             {/* Field outline */}
-            <div className="absolute inset-3 border-2 border-white/70 rounded" />
-
+            <div className="absolute inset-3 border border-white/20 rounded" />
             {/* Center line */}
-            <div className="absolute left-1/2 top-3 bottom-3 w-0.5 bg-white/70" />
-
+            <div className="absolute left-1/2 top-3 bottom-3 w-px bg-white/20" />
             {/* Center circle */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border-2 border-white/70" />
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white/70" />
-
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border border-white/20" />
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white/20" />
             {/* Left penalty area */}
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border-2 border-white/70 border-l-0" />
-            {/* Left goal area */}
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border-2 border-white/70 border-l-0" />
-            {/* Left penalty spot */}
-            <div className="absolute left-[14%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/70" />
-            {/* Left goal */}
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-[18%] bg-white/30 border-2 border-white/70 border-l-0 rounded-r" />
-
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border border-white/20 border-l-0" />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border border-white/20 border-l-0" />
+            <div className="absolute left-[14%] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-[18%] border border-white/20 border-l-0 rounded-r" style={{ background: 'rgba(255,255,255,0.04)' }} />
             {/* Right penalty area */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border-2 border-white/70 border-r-0" />
-            {/* Right goal area */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border-2 border-white/70 border-r-0" />
-            {/* Right penalty spot */}
-            <div className="absolute right-[14%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/70" />
-            {/* Right goal */}
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-[18%] bg-white/30 border-2 border-white/70 border-r-0 rounded-l" />
-
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border border-white/20 border-r-0" />
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border border-white/20 border-r-0" />
+            <div className="absolute right-[14%] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-[18%] border border-white/20 border-r-0 rounded-l" style={{ background: 'rgba(255,255,255,0.04)' }} />
             {/* Corner arcs */}
-            <div className="absolute left-3 top-3 w-6 h-6 border-b-2 border-r-2 border-white/70 rounded-br-full" />
-            <div className="absolute right-3 top-3 w-6 h-6 border-b-2 border-l-2 border-white/70 rounded-bl-full" />
-            <div className="absolute left-3 bottom-3 w-6 h-6 border-t-2 border-r-2 border-white/70 rounded-tr-full" />
-            <div className="absolute right-3 bottom-3 w-6 h-6 border-t-2 border-l-2 border-white/70 rounded-tl-full" />
+            <div className="absolute left-3 top-3 w-6 h-6 border-b border-r border-white/20 rounded-br-full" />
+            <div className="absolute right-3 top-3 w-6 h-6 border-b border-l border-white/20 rounded-bl-full" />
+            <div className="absolute left-3 bottom-3 w-6 h-6 border-t border-r border-white/20 rounded-tr-full" />
+            <div className="absolute right-3 bottom-3 w-6 h-6 border-t border-l border-white/20 rounded-tl-full" />
 
             {/* Players */}
             {fieldPlayers.map(fp => {
@@ -928,13 +923,10 @@ export default function QuarterEditPage() {
               return (
                 <div
                   key={fp.id}
-                  className={`absolute flex flex-col items-center cursor-grab active:cursor-grabbing touch-none transition-transform ${
-                    draggingId === fp.id ? 'z-20' : ''
-                  }`}
+                  className={`absolute flex flex-col items-center cursor-grab active:cursor-grabbing touch-none transition-transform ${draggingId === fp.id ? 'z-20' : ''}`}
                   style={{
                     left: `${fp.positionX}%`,
                     top: `${fp.positionY}%`,
-                    // Lift the marker above the finger while dragging so it isn't hidden underneath
                     transform: draggingId === fp.id
                       ? 'translate(-50%, calc(-50% - 28px)) scale(1.15)'
                       : 'translate(-50%, -50%)',
@@ -943,13 +935,11 @@ export default function QuarterEditPage() {
                   onTouchStart={(e) => handlePlayerDrag(fp.id, e)}
                   onClick={() => setSelectedPlayer(fp)}
                 >
-                  {/* IN badge */}
                   {subIn && (
-                    <span className="absolute -top-1.5 -left-2 px-1 py-0.5 bg-primary-500 text-[7px] font-bold text-white rounded shadow z-10">
+                    <span className="absolute -top-1.5 -left-2 px-1 py-0.5 text-[7px] font-bold text-black rounded shadow z-10" style={{ background: 'var(--accent)' }}>
                       IN {subIn.minute}&apos;
                     </span>
                   )}
-                  {/* OUT badge */}
                   {subOut && (
                     <span className="absolute -top-1.5 -right-2 px-1 py-0.5 bg-red-500 text-[7px] font-bold text-white rounded shadow z-10">
                       OUT {subOut.minute}&apos;
@@ -957,15 +947,17 @@ export default function QuarterEditPage() {
                   )}
                   <div
                     className={`w-11 h-11 rounded-full flex items-center justify-center text-white font-bold shadow-lg transition-transform ${
-                      draggingId === fp.id
-                        ? 'ring-4 ring-white shadow-2xl'
-                        : selectedPlayer?.id === fp.id ? 'ring-4 ring-yellow-400 scale-110' : 'hover:scale-105'
+                      draggingId === fp.id ? 'shadow-2xl' : ''
                     } ${subOut ? 'opacity-60' : ''}`}
-                    style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}
+                    style={{
+                      backgroundColor: POSITION_COLORS[fp.positionType],
+                      outline: draggingId === fp.id ? '3px solid rgba(255,255,255,0.8)' : selectedPlayer?.id === fp.id ? '3px solid var(--accent)' : 'none',
+                      transform: selectedPlayer?.id === fp.id ? 'scale(1.1)' : 'scale(1)',
+                    }}
                   >
                     {fp.player.number || '?'}
                   </div>
-                  <span className={`mt-1 px-1.5 py-0.5 bg-black/60 text-white text-xs rounded font-medium whitespace-nowrap ${subOut ? 'line-through opacity-70' : ''}`}>
+                  <span className={`mt-1 px-1.5 py-0.5 bg-black/70 text-white text-xs rounded font-medium whitespace-nowrap ${subOut ? 'line-through opacity-70' : ''}`}>
                     {fp.player.name}
                   </span>
                 </div>
@@ -973,26 +965,27 @@ export default function QuarterEditPage() {
             })}
 
             {fieldPlayers.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center text-white/60">
-                <p className="bg-black/30 px-4 py-2 rounded-lg">선수를 추가하고 드래그하여 배치하세요</p>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="px-4 py-2 rounded-lg text-sm" style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.5)' }}>선수를 추가하고 드래그하여 배치하세요</p>
               </div>
             )}
           </div>
-          <p className="text-center text-gray-400 text-sm mt-2">
+          <p className="text-center text-sm mt-2" style={{ color: 'var(--muted2)' }}>
             선수를 드래그하여 위치를 조정하세요
           </p>
         </section>
 
         {/* Substitutions Section */}
-        <section className="bg-white rounded-xl p-4 shadow-sm">
+        <section style={cardStyle} className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold flex items-center gap-2">
-              <ArrowRightLeft className="w-4 h-4 text-gray-500" />
+            <h2 className="font-bold text-white text-sm flex items-center gap-2">
+              <ArrowRightLeft className="w-4 h-4 text-white/40" />
               교체 기록 ({substitutions.length}건)
             </h2>
             <button
               onClick={openSubModal}
-              className="flex items-center gap-1 px-3 py-1.5 bg-orange-100 text-orange-700 rounded-lg text-sm font-medium hover:bg-orange-200"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
+              style={{ background: '#1a1200', color: '#f59e0b' }}
             >
               <Plus className="w-4 h-4" />
               교체 추가
@@ -1002,9 +995,9 @@ export default function QuarterEditPage() {
           {substitutions.length > 0 ? (
             <div className="space-y-2">
               {substitutions.map(sub => (
-                <div key={sub.id} className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-lg">
+                <div key={sub.id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: '#1a1a1a' }}>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="px-2 py-0.5 bg-gray-200 text-gray-700 rounded text-xs font-bold">
+                    <span className="px-2 py-0.5 rounded text-xs font-bold text-white/60" style={{ background: '#2a2a2a' }}>
                       {sub.minute}&apos;
                     </span>
                     <div className="flex items-center gap-1.5">
@@ -1014,9 +1007,9 @@ export default function QuarterEditPage() {
                       >
                         {sub.player_out?.number || '?'}
                       </div>
-                      <span className="text-red-600 font-medium">{sub.player_out?.name}</span>
+                      <span className="text-red-400 font-medium">{sub.player_out?.name}</span>
                     </div>
-                    <span className="text-gray-400">→</span>
+                    <span className="text-white/20">→</span>
                     <div className="flex items-center gap-1.5">
                       <div
                         className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
@@ -1024,12 +1017,12 @@ export default function QuarterEditPage() {
                       >
                         {sub.player_in?.number || '?'}
                       </div>
-                      <span className="text-primary-600 font-medium">{sub.player_in?.name}</span>
+                      <span className="font-medium" style={{ color: 'var(--accent)' }}>{sub.player_in?.name}</span>
                     </div>
                   </div>
                   <button
                     onClick={() => handleDeleteSubstitution(sub.id)}
-                    className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded"
+                    className="p-1 text-white/20 hover:text-red-400 rounded"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -1037,31 +1030,31 @@ export default function QuarterEditPage() {
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400">교체 기록이 없습니다</p>
+            <p className="text-sm" style={{ color: 'var(--muted2)' }}>교체 기록이 없습니다</p>
           )}
         </section>
 
         {/* Substitution Modal */}
         {showSubModal && (
           <div className="fixed inset-0 z-50 flex items-end" onClick={() => { setShowSubModal(false); setSubPickerMode(null) }}>
-            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-0 bg-black/70" />
             <div
-              className="relative w-full bg-white rounded-t-3xl px-5 pt-4 pb-8 safe-bottom max-h-[90vh] flex flex-col"
+              className="relative w-full rounded-t-3xl px-5 pt-4 pb-8 safe-bottom max-h-[90vh] flex flex-col"
+              style={{ background: '#111010', border: '1px solid var(--line)' }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+              <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: '#2a2a2a' }} />
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-lg">교체 추가</h3>
-                <button onClick={() => { setShowSubModal(false); setSubPickerMode(null) }} className="p-1 hover:bg-gray-100 rounded">
+                <h3 className="font-bold text-white text-lg">교체 추가</h3>
+                <button onClick={() => { setShowSubModal(false); setSubPickerMode(null) }} className="p-1 text-white/40 hover:text-white rounded">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              {/* Player picker mode */}
               {subPickerMode ? (
                 <div className="flex flex-col flex-1 min-h-0">
-                  <p className="text-sm font-medium mb-3 flex items-center gap-2">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${subPickerMode === 'out' ? 'bg-red-100 text-red-700' : 'bg-primary-100 text-primary-700'}`}>
+                  <p className="text-sm font-medium mb-3 flex items-center gap-2 text-white/70">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold`} style={subPickerMode === 'out' ? { background: '#2a0a0a', color: '#ef4444' } : { background: 'var(--chip)', color: 'var(--accent)' }}>
                       {subPickerMode === 'out' ? 'OUT' : 'IN'}
                     </span>
                     선수를 선택하세요
@@ -1081,9 +1074,11 @@ export default function QuarterEditPage() {
                             else setSubInId(id)
                             setSubPickerMode(null)
                           }}
-                          className={`w-full flex items-center gap-3 p-3 rounded-xl border-2 transition ${
-                            isSelected ? 'border-orange-400 bg-orange-50' : 'border-gray-100 hover:border-gray-200 hover:bg-gray-50'
-                          }`}
+                          className="w-full flex items-center gap-3 p-3 rounded-xl transition"
+                          style={{
+                            border: isSelected ? '2px solid var(--accent)' : '2px solid #2a2a2a',
+                            background: isSelected ? 'var(--chip)' : '#1a1a1a',
+                          }}
                         >
                           <div
                             className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
@@ -1092,8 +1087,8 @@ export default function QuarterEditPage() {
                             {fp.player.number || '?'}
                           </div>
                           <div className="text-left">
-                            <p className="font-medium">{fp.player.name}</p>
-                            <p className="text-xs text-gray-500">{POSITION_LABELS[fp.positionType]}</p>
+                            <p className="font-medium text-white">{fp.player.name}</p>
+                            <p className="text-xs" style={{ color: 'var(--muted2)' }}>{POSITION_LABELS[fp.positionType]}</p>
                           </div>
                         </button>
                       )
@@ -1103,23 +1098,26 @@ export default function QuarterEditPage() {
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">교체 시간 (분)</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>교체 시간 (분)</label>
                     <input
                       type="number"
                       min={0}
                       value={subMinute}
                       onChange={(e) => setSubMinute(parseInt(e.target.value) || 0)}
-                      className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-orange-500 outline-none text-base"
+                      className="w-full px-4 py-3 outline-none text-base"
+                      style={inputStyle}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-red-600 mb-1">OUT 선수</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-red-400">OUT 선수</label>
                     <button
                       onClick={() => setSubPickerMode('out')}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition ${
-                        subOutId ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition"
+                      style={{
+                        border: subOutId ? '2px solid #ef4444' : '2px solid #2a2a2a',
+                        background: subOutId ? '#2a0a0a' : '#1a1a1a',
+                      }}
                     >
                       {subOutId ? (() => {
                         const fp = fieldPlayers.find(p => p.playerId === subOutId)
@@ -1128,20 +1126,22 @@ export default function QuarterEditPage() {
                             <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}>
                               {fp.player.number || '?'}
                             </div>
-                            <span className="font-medium">{fp.player.name}</span>
+                            <span className="font-medium text-white">{fp.player.name}</span>
                           </>
-                        ) : <span className="text-gray-400">선택하세요</span>
-                      })() : <span className="text-gray-400">선수를 선택하세요</span>}
+                        ) : <span style={{ color: 'var(--muted2)' }}>선택하세요</span>
+                      })() : <span style={{ color: 'var(--muted2)' }}>선수를 선택하세요</span>}
                     </button>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-primary-600 mb-1">IN 선수</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>IN 선수</label>
                     <button
                       onClick={() => setSubPickerMode('in')}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-left transition ${
-                        subInId ? 'border-primary-300 bg-primary-50' : 'border-gray-200 hover:border-gray-300'
-                      }`}
+                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition"
+                      style={{
+                        border: subInId ? '2px solid var(--accent)' : '2px solid #2a2a2a',
+                        background: subInId ? 'var(--chip)' : '#1a1a1a',
+                      }}
                     >
                       {subInId ? (() => {
                         const p = getSubInCandidates().find(p => p.id === subInId)
@@ -1150,17 +1150,18 @@ export default function QuarterEditPage() {
                             <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: POSITION_COLORS[p.default_position] }}>
                               {p.number || '?'}
                             </div>
-                            <span className="font-medium">{p.name}</span>
+                            <span className="font-medium text-white">{p.name}</span>
                           </>
-                        ) : <span className="text-gray-400">선택하세요</span>
-                      })() : <span className="text-gray-400">선수를 선택하세요</span>}
+                        ) : <span style={{ color: 'var(--muted2)' }}>선택하세요</span>
+                      })() : <span style={{ color: 'var(--muted2)' }}>선수를 선택하세요</span>}
                     </button>
                   </div>
 
                   <button
                     onClick={handleAddSubstitution}
                     disabled={!subOutId || !subInId || savingSub}
-                    className="w-full py-4 bg-orange-600 text-white rounded-2xl font-semibold hover:bg-orange-700 disabled:opacity-50 text-base"
+                    className="w-full py-4 rounded-2xl font-bold disabled:opacity-40 text-base"
+                    style={{ background: 'var(--accent)', color: '#0a0a0a' }}
                   >
                     {savingSub ? '저장 중...' : '교체 추가'}
                   </button>
@@ -1172,7 +1173,7 @@ export default function QuarterEditPage() {
 
         {/* Selected Player Stats */}
         {selectedPlayer && (
-          <section className="bg-white rounded-xl p-4 shadow-sm">
+          <section style={cardStyle} className="p-4">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div
@@ -1182,7 +1183,7 @@ export default function QuarterEditPage() {
                   {selectedPlayer.player.number || '?'}
                 </div>
                 <div>
-                  <p className="font-semibold">{selectedPlayer.player.name}</p>
+                  <p className="font-bold text-white">{selectedPlayer.player.name}</p>
                   <select
                     value={selectedPlayer.positionType}
                     onChange={(e) =>
@@ -1190,7 +1191,8 @@ export default function QuarterEditPage() {
                         positionType: e.target.value as PositionType,
                       })
                     }
-                    className="text-sm text-gray-500 border-none p-0 focus:ring-0"
+                    className="text-sm outline-none p-0"
+                    style={{ background: 'transparent', color: 'var(--muted2)', border: 'none' }}
                   >
                     {(['GK', 'DF', 'MF', 'FW'] as PositionType[]).map(pos => (
                       <option key={pos} value={pos}>{POSITION_LABELS[pos]}</option>
@@ -1200,99 +1202,97 @@ export default function QuarterEditPage() {
               </div>
               <button
                 onClick={() => removePlayerFromField(selectedPlayer)}
-                className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                className="p-2 text-red-400 hover:text-red-300 rounded-lg"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Rating Slider */}
-            {(() => {
-              const { textClass, accentClass } = getRatingStyle(selectedPlayer.rating)
-              return (
-                <div className="mb-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-medium text-gray-700">평점</label>
-                    <span className={`text-3xl font-bold font-mono tabular-nums ${textClass}`}>
-                      {selectedPlayer.rating !== null ? selectedPlayer.rating.toFixed(1) : '−'}
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min={0}
-                    max={10}
-                    step={0.5}
-                    value={selectedPlayer.rating ?? 0}
-                    onChange={(e) =>
-                      updateFieldPlayer(selectedPlayer.id, {
-                        rating: parseFloat(e.target.value),
-                      })
-                    }
-                    className={`w-full h-3 bg-gray-200 rounded-full appearance-none cursor-pointer ${accentClass}`}
-                  />
-                  <div className="flex justify-between text-xs mt-1.5">
-                    <span className="text-red-400">0</span>
-                    <span className="text-amber-400">5</span>
-                    <span className="text-primary-500">10</span>
-                  </div>
-                </div>
-              )
-            })()}
+            <div className="mb-5">
+              <div className="flex items-center justify-between mb-3">
+                <label className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>평점</label>
+                <span className="font-display text-3xl tabular-nums" style={{ color: 'var(--accent)' }}>
+                  {selectedPlayer.rating !== null ? selectedPlayer.rating.toFixed(1) : '−'}
+                </span>
+              </div>
+              <input
+                type="range"
+                min={0}
+                max={10}
+                step={0.5}
+                value={selectedPlayer.rating ?? 0}
+                onChange={(e) =>
+                  updateFieldPlayer(selectedPlayer.id, {
+                    rating: parseFloat(e.target.value),
+                  })
+                }
+                className="w-full h-2 rounded-full appearance-none cursor-pointer"
+                style={{ accentColor: 'var(--accent)', background: '#2a2a2a' }}
+              />
+              <div className="flex justify-between text-xs mt-1.5">
+                <span className="text-red-400">0</span>
+                <span className="text-amber-400">5</span>
+                <span style={{ color: 'var(--accent)' }}>10</span>
+              </div>
+            </div>
 
-            {/* Stats Grid — tap-friendly steppers */}
+            {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-3 mb-3">
-              {/* 골 */}
               <div>
-                <label className="block text-xs text-gray-500 mb-1.5">골</label>
-                <div className="flex items-center border rounded-xl overflow-hidden h-12">
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>골</label>
+                <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { goals: Math.max(0, selectedPlayer.goals - 1) })}
-                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-gray-500 active:bg-gray-100 flex-shrink-0"
+                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-white/40 active:bg-white/5 flex-shrink-0"
                   >−</button>
-                  <span className="flex-1 text-center text-xl font-bold">{selectedPlayer.goals}</span>
+                  <span className="flex-1 text-center text-xl font-bold text-white">{selectedPlayer.goals}</span>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { goals: selectedPlayer.goals + 1 })}
-                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-primary-600 active:bg-primary-50 flex-shrink-0"
+                    className="w-12 h-full flex items-center justify-center text-xl font-bold flex-shrink-0"
+                    style={{ color: 'var(--accent)' }}
                   >+</button>
                 </div>
               </div>
-              {/* 어시스트 */}
               <div>
-                <label className="block text-xs text-gray-500 mb-1.5">어시스트</label>
-                <div className="flex items-center border rounded-xl overflow-hidden h-12">
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>어시스트</label>
+                <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { assists: Math.max(0, selectedPlayer.assists - 1) })}
-                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-gray-500 active:bg-gray-100 flex-shrink-0"
+                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-white/40 active:bg-white/5 flex-shrink-0"
                   >−</button>
-                  <span className="flex-1 text-center text-xl font-bold">{selectedPlayer.assists}</span>
+                  <span className="flex-1 text-center text-xl font-bold text-white">{selectedPlayer.assists}</span>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { assists: selectedPlayer.assists + 1 })}
-                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-primary-600 active:bg-primary-50 flex-shrink-0"
+                    className="w-12 h-full flex items-center justify-center text-xl font-bold flex-shrink-0"
+                    style={{ color: 'var(--accent)' }}
                   >+</button>
                 </div>
               </div>
             </div>
 
-            {/* 클린시트 / 기여도 토글 */}
+            {/* 클린시트 / 기여도 */}
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => updateFieldPlayer(selectedPlayer.id, { cleanSheet: !selectedPlayer.cleanSheet })}
-                className={`h-12 border rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition ${
-                  selectedPlayer.cleanSheet
-                    ? 'bg-primary-100 border-primary-500 text-primary-700'
-                    : 'bg-gray-50 text-gray-400 border-gray-200'
-                }`}
+                className="h-12 rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition"
+                style={{
+                  background: selectedPlayer.cleanSheet ? 'var(--chip)' : '#1a1a1a',
+                  border: selectedPlayer.cleanSheet ? '1px solid var(--accent)' : '1px solid #2a2a2a',
+                  color: selectedPlayer.cleanSheet ? 'var(--accent)' : 'rgba(255,255,255,0.3)',
+                }}
               >
                 <Check className="w-4 h-4" />
                 클린시트
               </button>
               <button
                 onClick={() => updateFieldPlayer(selectedPlayer.id, { contribution: selectedPlayer.contribution > 0 ? 0 : 1 })}
-                className={`h-12 border rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition ${
-                  selectedPlayer.contribution > 0
-                    ? 'bg-amber-100 border-amber-400 text-amber-700'
-                    : 'bg-gray-50 text-gray-400 border-gray-200'
-                }`}
+                className="h-12 rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition"
+                style={{
+                  background: selectedPlayer.contribution > 0 ? '#1a1200' : '#1a1a1a',
+                  border: selectedPlayer.contribution > 0 ? '1px solid #f59e0b' : '1px solid #2a2a2a',
+                  color: selectedPlayer.contribution > 0 ? '#f59e0b' : 'rgba(255,255,255,0.3)',
+                }}
               >
                 <Check className="w-4 h-4" />
                 기여도
@@ -1300,18 +1300,19 @@ export default function QuarterEditPage() {
             </div>
 
             {/* Review Section */}
-            <div className="mt-5 pt-5 border-t">
-              <h3 className="font-semibold text-gray-900 mb-3">선수 총평</h3>
+            <div className="mt-5 pt-5" style={{ borderTop: '1px solid var(--line)' }}>
+              <h3 className="font-bold text-white mb-3">선수 총평</h3>
 
               {/* Media Upload */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">사진/동영상</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted2)' }}>사진/동영상</label>
                 <div className="flex gap-2 mb-2">
                   <button
                     type="button"
                     onClick={() => mediaInputRef.current?.click()}
                     disabled={uploadingMedia}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
+                    style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}
                   >
                     <ImageIcon className="w-4 h-4" />
                     갤러리
@@ -1320,34 +1321,20 @@ export default function QuarterEditPage() {
                     type="button"
                     onClick={() => cameraInputRef.current?.click()}
                     disabled={uploadingMedia}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm font-medium disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
+                    style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}
                   >
                     <Camera className="w-4 h-4" />
                     촬영하기
                   </button>
-                  {uploadingMedia && <Spinner className="w-5 h-5 text-primary-600 animate-spin self-center" />}
+                  {uploadingMedia && <Spinner className="w-5 h-5 animate-spin self-center" style={{ color: 'var(--accent)' }} />}
                 </div>
-                <input
-                  ref={mediaInputRef}
-                  type="file"
-                  accept="image/*,video/*"
-                  multiple
-                  className="hidden"
-                  onChange={(e) => handleMediaUpload(e.target.files)}
-                />
-                <input
-                  ref={cameraInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  className="hidden"
-                  onChange={(e) => handleMediaUpload(e.target.files)}
-                />
-                {/* Media Preview */}
+                <input ref={mediaInputRef} type="file" accept="image/*,video/*" multiple className="hidden" onChange={(e) => handleMediaUpload(e.target.files)} />
+                <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleMediaUpload(e.target.files)} />
                 {selectedPlayer.mediaUrls.length > 0 && (
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     {selectedPlayer.mediaUrls.map((url, idx) => (
-                      <div key={idx} className="relative group rounded-lg overflow-hidden aspect-square bg-gray-100">
+                      <div key={idx} className="relative group rounded-lg overflow-hidden aspect-square" style={{ background: '#1a1a1a' }}>
                         {url.match(/\.(mp4|mov|webm)/i) ? (
                           <video src={url} className="w-full h-full object-cover" />
                         ) : (
@@ -1365,49 +1352,43 @@ export default function QuarterEditPage() {
                 )}
               </div>
 
-              {/* Praise Text */}
               <div className="mb-3">
-                <label className="block text-sm font-medium text-primary-700 mb-1">
-                  참 잘했어요
-                </label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>참 잘했어요</label>
                 <textarea
                   value={selectedPlayer.praiseText}
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { praiseText: e.target.value })}
                   placeholder="잘한 점을 적어주세요"
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none"
+                  className="w-full px-3 py-2 text-sm outline-none resize-none"
+                  style={textareaStyle}
                 />
               </div>
 
-              {/* Improvement Text */}
               <div className="mb-3">
-                <label className="block text-sm font-medium text-amber-700 mb-1">
-                  조금 더 연습해볼까요?
-                </label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-amber-400">조금 더 연습해볼까요?</label>
                 <textarea
                   value={selectedPlayer.improvementText}
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { improvementText: e.target.value })}
                   placeholder="개선할 점을 적어주세요"
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none resize-none"
+                  className="w-full px-3 py-2 text-sm outline-none resize-none"
+                  style={textareaStyle}
                 />
               </div>
 
-              {/* Highlight Text */}
               <div>
-                <label className="block text-sm font-medium text-primary-700 mb-1">
-                  이 부분을 칭찬해주세요!
-                </label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>이 부분을 칭찬해주세요!</label>
                 <textarea
                   value={selectedPlayer.highlightText}
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { highlightText: e.target.value })}
                   placeholder="특별히 칭찬할 부분을 적어주세요"
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none"
+                  className="w-full px-3 py-2 text-sm outline-none resize-none"
+                  style={textareaStyle}
                 />
               </div>
 
-              <p className="text-xs text-gray-400 mt-4 text-center">상단 저장 버튼으로 전체 한 번에 저장됩니다</p>
+              <p className="text-xs mt-4 text-center" style={{ color: 'var(--muted2)' }}>상단 저장 버튼으로 전체 한 번에 저장됩니다</p>
             </div>
           </section>
         )}
@@ -1415,15 +1396,17 @@ export default function QuarterEditPage() {
         {/* All Players List */}
         {fieldPlayers.length > 0 && (
           <section>
-            <h2 className="font-semibold mb-3">배치된 선수 ({fieldPlayers.length}명)</h2>
-            <div className="bg-white rounded-xl divide-y">
-              {fieldPlayers.map(fp => (
+            <h2 className="font-bold text-white text-sm mb-3">배치된 선수 ({fieldPlayers.length}명)</h2>
+            <div style={{ ...cardStyle, overflow: 'hidden' }}>
+              {fieldPlayers.map((fp, i) => (
                 <button
                   key={fp.id}
                   onClick={() => setSelectedPlayer(fp)}
-                  className={`w-full p-4 flex items-center justify-between text-left hover:bg-gray-50 ${
-                    selectedPlayer?.id === fp.id ? 'bg-primary-50' : ''
-                  }`}
+                  className="w-full p-4 flex items-center justify-between text-left transition"
+                  style={{
+                    borderBottom: i < fieldPlayers.length - 1 ? '1px solid var(--line)' : 'none',
+                    background: selectedPlayer?.id === fp.id ? 'var(--chip)' : 'transparent',
+                  }}
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -1433,15 +1416,15 @@ export default function QuarterEditPage() {
                       {fp.player.number || '?'}
                     </div>
                     <div>
-                      <p className="font-medium">{fp.player.name}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="font-medium text-white">{fp.player.name}</p>
+                      <p className="text-sm" style={{ color: 'var(--muted2)' }}>
                         {POSITION_LABELS[fp.positionType]}
                         {fp.goals > 0 && ` | ${fp.goals}골`}
                         {fp.assists > 0 && ` ${fp.assists}어시`}
                       </p>
                     </div>
                   </div>
-                  <div className="text-xl font-bold font-mono text-primary-600">
+                  <div className="font-display text-xl tabular-nums" style={{ color: 'var(--accent)' }}>
                     {fp.rating?.toFixed(1) || '-'}
                   </div>
                 </button>

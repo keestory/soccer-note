@@ -58,11 +58,13 @@ export default function NewMatchPage() {
     }
   }
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-20">
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+    <div className="min-h-screen pb-20" style={{ background: '#0a0a0a' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-base font-black text-white">새 경기</h1>
@@ -70,89 +72,59 @@ export default function NewMatchPage() {
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-4">
-        {/* vs visual */}
-        <div className="bg-white rounded-2xl p-5 shadow-sm">
+        {/* VS visual */}
+        <div style={cardStyle} className="p-5">
           <div className="flex items-center gap-3">
-            <div className="flex-1 bg-[#0f2d0f]/10 rounded-xl px-4 py-3 text-center">
-              <p className="text-xs text-gray-400 mb-1">우리 팀</p>
-              <p className="font-bold text-primary-700 truncate">{teamName || '…'}</p>
+            <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: 'var(--chip)' }}>
+              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>우리 팀</p>
+              <p className="font-bold text-[15px] truncate" style={{ color: 'var(--accent)' }}>{teamName || '…'}</p>
             </div>
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-              <Swords className="w-5 h-5 text-gray-400" />
+            <div className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
+              <Swords className="w-4 h-4 text-white/30" />
             </div>
-            <div className="flex-1 bg-gray-50 rounded-xl px-4 py-3 text-center">
-              <p className="text-xs text-gray-400 mb-1">상대 팀</p>
-              <p className="font-bold text-gray-500 truncate">{opponent || '?'}</p>
+            <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: '#1a1a1a' }}>
+              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>상대 팀</p>
+              <p className="font-bold text-[15px] text-white/60 truncate">{opponent || '?'}</p>
             </div>
           </div>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm overflow-hidden">
-          <div className="divide-y divide-gray-100">
-            {/* 상대팀 */}
-            <div className="flex items-center gap-3 px-5 py-4">
-              <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                <Swords className="w-4 h-4 text-gray-500" />
+        <form onSubmit={handleSubmit} style={cardStyle} className="overflow-hidden">
+          {[
+            { icon: <Swords className="w-4 h-4 text-white/40" />, label: '상대팀 이름 *', type: 'text', value: opponent, onChange: setOpponent, placeholder: '예: FC 서울', required: true, autoFocus: true },
+            { icon: <Calendar className="w-4 h-4 text-white/40" />, label: '경기 날짜 *', type: 'date', value: matchDate, onChange: setMatchDate, placeholder: '', required: true, autoFocus: false },
+            { icon: <MapPin className="w-4 h-4 text-white/40" />, label: '장소 (선택)', type: 'text', value: location, onChange: setLocation, placeholder: '예: 잠실 운동장', required: false, autoFocus: false },
+          ].map((field, i) => (
+            <div key={i} className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: i < 2 ? '1px solid var(--line)' : 'none' }}>
+              <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#1a1a1a' }}>
+                {field.icon}
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-gray-400 mb-0.5">상대팀 이름 *</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--muted2)' }}>{field.label}</label>
                 <input
-                  type="text"
-                  value={opponent}
-                  onChange={(e) => setOpponent(e.target.value)}
-                  required
-                  autoFocus
-                  className="w-full text-base font-medium text-gray-900 outline-none bg-transparent placeholder:text-gray-300"
-                  placeholder="예: FC 서울"
+                  type={field.type}
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  required={field.required}
+                  autoFocus={field.autoFocus}
+                  className="w-full text-[15px] font-medium text-white outline-none bg-transparent placeholder:text-white/20"
+                  placeholder={field.placeholder}
                 />
               </div>
             </div>
-
-            {/* 날짜 */}
-            <div className="flex items-center gap-3 px-5 py-4">
-              <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                <Calendar className="w-4 h-4 text-gray-500" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs text-gray-400 mb-0.5">경기 날짜 *</label>
-                <input
-                  type="date"
-                  value={matchDate}
-                  onChange={(e) => setMatchDate(e.target.value)}
-                  required
-                  className="w-full text-base font-medium text-gray-900 outline-none bg-transparent"
-                />
-              </div>
-            </div>
-
-            {/* 장소 */}
-            <div className="flex items-center gap-3 px-5 py-4">
-              <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                <MapPin className="w-4 h-4 text-gray-500" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-xs text-gray-400 mb-0.5">장소 (선택)</label>
-                <input
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="w-full text-base font-medium text-gray-900 outline-none bg-transparent placeholder:text-gray-300"
-                  placeholder="예: 잠실 운동장"
-                />
-              </div>
-            </div>
-          </div>
+          ))}
 
           <div className="px-5 py-4">
             <button
               type="submit"
               disabled={loading || !opponent.trim()}
-              className="w-full py-4 bg-[#0f2d0f] text-lime-400 rounded-xl font-black text-base active:scale-[0.99] disabled:opacity-40 transition shadow-lg"
+              className="w-full py-4 rounded-xl font-black text-[15px] active:scale-[0.99] disabled:opacity-40 transition"
+              style={{ background: 'var(--accent)', color: '#0a0a0a' }}
             >
               {loading ? '생성 중…' : '경기 생성하기'}
             </button>
-            <p className="text-center text-xs text-gray-400 mt-3">
+            <p className="text-center text-[11px] mt-3" style={{ color: 'var(--muted2)' }}>
               생성하면 4쿼터가 자동으로 만들어집니다
             </p>
           </div>

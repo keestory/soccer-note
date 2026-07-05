@@ -90,12 +90,14 @@ function JoinTeamContent() {
     setJoining(false)
   }
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+
   return (
-    <div className="min-h-screen bg-[#f0f4f0]">
+    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
       {/* Header */}
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-base font-black text-white">팀 가입</h1>
@@ -104,8 +106,8 @@ function JoinTeamContent() {
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
         {/* Code input */}
-        <div className="bg-white rounded-2xl shadow-sm p-5">
-          <p className="text-sm text-gray-500 mb-3">초대 코드를 입력하여 팀에 가입 요청하세요</p>
+        <div style={cardStyle} className="p-5">
+          <p className="text-[13px] mb-3" style={{ color: 'var(--muted2)' }}>초대 코드를 입력하여 팀에 가입 요청하세요</p>
           <form onSubmit={handleSearch} className="space-y-3">
             <input
               type="text"
@@ -113,12 +115,14 @@ function JoinTeamContent() {
               onChange={(e) => setInputCode(e.target.value.toUpperCase())}
               placeholder="초대 코드 입력"
               maxLength={8}
-              className="w-full px-5 py-4 border-2 border-gray-200 rounded-xl text-center text-2xl font-mono tracking-[0.3em] uppercase focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition bg-gray-50 focus:bg-white"
+              className="w-full px-5 py-4 rounded-xl text-center font-display text-[28px] tracking-[0.3em] uppercase outline-none transition"
+              style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'var(--accent)' }}
             />
             <button
               type="submit"
               disabled={loading || !inputCode.trim()}
-              className="w-full py-3.5 bg-primary-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 transition"
+              className="w-full py-3.5 rounded-xl font-bold text-[14px] flex items-center justify-center gap-2 disabled:opacity-40 transition"
+              style={{ background: 'var(--accent)', color: '#0a0a0a' }}
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
               {loading ? '검색 중…' : '팀 찾기'}
@@ -128,78 +132,77 @@ function JoinTeamContent() {
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-5 py-4 rounded-2xl text-sm font-medium">
+          <div className="px-5 py-4 rounded-2xl text-[13px] font-medium text-red-400" style={{ background: '#2a1010', border: '1px solid #4a1a1a' }}>
             {error}
           </div>
         )}
 
         {/* Status cards */}
         {existingStatus === 'pending' && team && (
-          <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-5">
+          <div className="p-5 rounded-2xl" style={{ background: '#1a1500', border: '1px solid #3a3000' }}>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-11 h-11 bg-amber-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <Clock className="w-5 h-5 text-amber-600" />
+              <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#2a2000' }}>
+                <Clock className="w-5 h-5 text-amber-400" />
               </div>
               <div>
-                <p className="font-bold text-gray-900">승인 대기 중</p>
-                <p className="text-sm text-gray-500">{team.name}</p>
+                <p className="font-bold text-white">승인 대기 중</p>
+                <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <p className="text-sm text-amber-700">관리자가 가입 요청을 검토 중입니다. 승인되면 팀에 참여할 수 있습니다.</p>
+            <p className="text-[13px] text-amber-400/80">관리자가 가입 요청을 검토 중입니다.</p>
           </div>
         )}
 
         {existingStatus === 'approved' && team && (
-          <div className="bg-primary-50 border-2 border-primary-200 rounded-2xl p-5 space-y-3">
+          <div className="p-5 rounded-2xl space-y-3" style={{ background: 'var(--chip)', border: '1px solid var(--line)' }}>
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 bg-primary-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <CheckCircle className="w-5 h-5 text-primary-600" />
+              <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--line)' }}>
+                <CheckCircle className="w-5 h-5" style={{ color: 'var(--accent)' }} />
               </div>
               <div>
-                <p className="font-bold text-gray-900">이미 가입된 팀입니다</p>
-                <p className="text-sm text-gray-500">{team.name}</p>
+                <p className="font-bold text-white">이미 가입된 팀입니다</p>
+                <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <button onClick={() => router.push('/dashboard')} className="w-full py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition">
+            <button onClick={() => router.push('/dashboard')} className="w-full py-3 rounded-xl font-bold text-[14px] transition" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
               대시보드로 이동
             </button>
           </div>
         )}
 
         {existingStatus === 'rejected' && team && (
-          <div className="bg-red-50 border-2 border-red-200 rounded-2xl p-5">
+          <div className="p-5 rounded-2xl" style={{ background: '#2a1010', border: '1px solid #4a1a1a' }}>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-11 h-11 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
-                <XCircle className="w-5 h-5 text-red-600" />
+              <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#3a1515' }}>
+                <XCircle className="w-5 h-5 text-red-400" />
               </div>
               <div>
-                <p className="font-bold text-gray-900">가입 요청이 거절되었습니다</p>
-                <p className="text-sm text-gray-500">{team.name}</p>
+                <p className="font-bold text-white">가입 요청이 거절되었습니다</p>
+                <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <p className="text-sm text-red-700">관리자가 가입 요청을 거절했습니다. 필요시 관리자에게 문의해주세요.</p>
+            <p className="text-[13px] text-red-400/80">관리자에게 문의해주세요.</p>
           </div>
         )}
 
         {/* Team found, no existing status */}
         {team && !loading && !existingStatus && (
-          <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-            <div className="px-5 py-4 border-b border-gray-100">
-              <p className="text-xs text-gray-400 mb-0.5">팀 이름</p>
-              <p className="text-lg font-bold text-gray-900">{team.name}</p>
-              {team.description && <p className="text-sm text-gray-500 mt-1">{team.description}</p>}
+          <div style={cardStyle} className="overflow-hidden">
+            <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--line)' }}>
+              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>팀 이름</p>
+              <p className="text-[17px] font-bold text-white">{team.name}</p>
+              {team.description && <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{team.description}</p>}
             </div>
 
-            {/* My name info */}
             {!loadingProfile && (
-              <div className="px-5 py-4 border-b border-gray-100">
-                <p className="text-xs text-gray-400 mb-1">가입 이름</p>
+              <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--line)' }}>
+                <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>가입 이름</p>
                 {displayName ? (
-                  <p className="font-semibold text-gray-900">{displayName}</p>
+                  <p className="font-semibold text-white">{displayName}</p>
                 ) : (
                   <div>
-                    <p className="text-sm text-red-500 mb-2">이름이 설정되지 않았습니다.</p>
-                    <Link href="/profile" className="text-sm text-primary-600 font-semibold">프로필에서 이름 설정하기 →</Link>
+                    <p className="text-[13px] text-red-400 mb-1">이름이 설정되지 않았습니다.</p>
+                    <Link href="/profile" className="text-[13px] font-bold" style={{ color: 'var(--accent)' }}>프로필에서 이름 설정하기 →</Link>
                   </div>
                 )}
               </div>
@@ -209,12 +212,13 @@ function JoinTeamContent() {
               <button
                 onClick={handleJoinRequest}
                 disabled={joining || !displayName}
-                className="w-full py-4 bg-primary-600 text-white rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-primary-700 disabled:opacity-50 transition"
+                className="w-full py-4 rounded-xl font-bold text-[15px] flex items-center justify-center gap-2 disabled:opacity-40 transition active:scale-[0.98]"
+                style={{ background: 'var(--accent)', color: '#0a0a0a' }}
               >
                 {joining ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
                 {joining ? '요청 중…' : '가입 요청하기'}
               </button>
-              <p className="text-xs text-gray-400 text-center mt-2">관리자 승인 후 팀에 참여할 수 있습니다</p>
+              <p className="text-[11px] text-center mt-2" style={{ color: 'var(--muted2)' }}>관리자 승인 후 팀에 참여할 수 있습니다</p>
             </div>
           </div>
         )}
@@ -226,8 +230,8 @@ function JoinTeamContent() {
 export default function JoinTeamPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#f0f4f0]">
-        <header className="bg-[#0f2d0f] safe-top">
+      <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
+        <header className="safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
             <Skeleton className="w-8 h-8 rounded-xl" />
             <Skeleton className="h-5 w-20" />

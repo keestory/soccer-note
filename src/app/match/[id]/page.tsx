@@ -317,7 +317,7 @@ export default function MatchDetailPage() {
               <span>1쿼터 라인업 바로 편집할까요?</span>
               <Link
                 href={`/match/${matchId}/quarter/1`}
-                className="px-2 py-1 bg-primary-600 text-white text-xs rounded-lg font-medium"
+                className="px-2 py-1 text-xs rounded-lg font-medium" style={{ background: 'var(--accent)', color: '#0a0a0a' }}
                 onClick={() => toast.dismiss(t.id)}
               >
                 바로가기
@@ -402,18 +402,20 @@ export default function MatchDetailPage() {
   const playerStats = getPlayerStatsFromMatch(match)
   const currentQuarter = match.quarters?.find(q => q.quarter_number === activeQuarter)
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-20">
+    <div className="min-h-screen pb-20" style={{ background: '#0a0a0a' }}>
       {/* Header */}
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+            <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
               <h1 className="text-base font-black text-white">vs {match.opponent}</h1>
-              <div className="flex items-center gap-2 text-xs text-white/50">
+              <div className="flex items-center gap-2 text-xs text-white/40">
                 <span>{formatDate(match.match_date)}</span>
                 {match.location && (
                   <>
@@ -429,16 +431,10 @@ export default function MatchDetailPage() {
           </div>
           {canEditMatches && (
             <div className="flex items-center gap-1">
-              <button
-                onClick={startEditMatchInfo}
-                className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl"
-              >
+              <button onClick={startEditMatchInfo} className="p-2 text-white/40 hover:text-white rounded-xl">
                 <Edit2 className="w-5 h-5" />
               </button>
-              <button
-                onClick={() => setShowDeleteConfirm(true)}
-                className="p-2 text-white/50 hover:text-red-300 hover:bg-white/10 rounded-xl"
-              >
+              <button onClick={() => setShowDeleteConfirm(true)} className="p-2 text-white/40 hover:text-red-400 rounded-xl">
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
@@ -449,48 +445,35 @@ export default function MatchDetailPage() {
       {/* Match Info Edit Form */}
       {editingMatchInfo && (
         <div className="max-w-4xl mx-auto px-4 pt-4">
-          <div className="bg-white rounded-xl p-4 shadow-sm">
+          <div className="p-4 rounded-xl" style={cardStyle}>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold">경기 정보 수정</h3>
-              <button onClick={() => setEditingMatchInfo(false)} className="p-1 hover:bg-gray-100 rounded">
+              <h3 className="font-bold text-white">경기 정보 수정</h3>
+              <button onClick={() => setEditingMatchInfo(false)} className="p-1 text-white/40 hover:text-white rounded">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">상대팀</label>
-                <input
-                  type="text"
-                  value={editOpponent}
-                  onChange={(e) => setEditOpponent(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                  placeholder="상대팀 이름"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">경기 날짜</label>
-                <input
-                  type="date"
-                  value={editDate}
-                  onChange={(e) => setEditDate(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">경기장</label>
-                <input
-                  type="text"
-                  value={editLocation}
-                  onChange={(e) => setEditLocation(e.target.value)}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                  placeholder="경기장 이름 (선택사항)"
-                />
-              </div>
+              {[
+                { label: '상대팀', type: 'text', value: editOpponent, onChange: setEditOpponent, placeholder: '상대팀 이름' },
+                { label: '경기 날짜', type: 'date', value: editDate, onChange: setEditDate, placeholder: '' },
+                { label: '경기장', type: 'text', value: editLocation, onChange: setEditLocation, placeholder: '경기장 이름 (선택사항)' },
+              ].map(f => (
+                <div key={f.label}>
+                  <label className="block text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{f.label}</label>
+                  <input
+                    type={f.type}
+                    value={f.value}
+                    onChange={(e) => f.onChange(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg text-white outline-none text-sm"
+                    style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
+                    placeholder={f.placeholder}
+                  />
+                </div>
+              ))}
               <button
                 onClick={handleSaveMatchInfo}
-                className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
+                className="w-full py-3 rounded-lg font-bold text-sm"
+                style={{ background: 'var(--accent)', color: '#0a0a0a' }}
               >
                 수정 완료
               </button>
@@ -501,42 +484,49 @@ export default function MatchDetailPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Score Section */}
-        <section className="bg-white rounded-xl p-6 text-center">
+        <section className="p-6 text-center" style={cardStyle}>
           {(() => {
             const total = getTotalScore()
+            const isWin = total.home > total.away
+            const isDraw = total.home === total.away
             return (
-              <div className="text-4xl font-bold mb-2">
-                <span className="text-primary-600">{total.home}</span>
-                <span className="text-gray-400 mx-3">:</span>
-                <span className="text-gray-700">{total.away}</span>
-              </div>
+              <>
+                <div className="font-display text-[56px] leading-none mb-2 flex items-center justify-center gap-4">
+                  <span style={{ color: 'var(--accent)' }}>{total.home}</span>
+                  <span className="text-white/20 text-[32px]">:</span>
+                  <span className="text-white/60">{total.away}</span>
+                </div>
+                {!isDraw && (
+                  <span className="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest mb-2"
+                    style={{ background: isWin ? 'var(--chip)' : '#2a1010', color: isWin ? 'var(--accent)' : '#ef4444' }}>
+                    {isWin ? 'WIN' : 'LOSS'}
+                  </span>
+                )}
+              </>
             )
           })()}
-          <div className="flex justify-center gap-4 text-sm text-gray-500 mb-3">
+          <div className="flex justify-center gap-6 text-[12px] mb-3" style={{ color: 'var(--muted2)' }}>
             <span>우리팀</span>
             <span>{match.opponent}</span>
           </div>
-          {/* Quarter score breakdown */}
-          <div className="flex justify-center gap-3 text-xs text-gray-400">
+          <div className="flex justify-center gap-3 text-[11px]" style={{ color: 'var(--muted2)' }}>
             {match.quarters?.sort((a, b) => a.quarter_number - b.quarter_number).map(q => (
-              <span key={q.id}>
-                {q.quarter_number}Q {q.home_score || 0}:{q.away_score || 0}
-              </span>
+              <span key={q.id}>{q.quarter_number}Q {q.home_score || 0}:{q.away_score || 0}</span>
             ))}
           </div>
         </section>
 
         {/* MVP Section */}
         {mvp && (
-          <section className="bg-gradient-to-r from-amber-100 to-amber-50 rounded-2xl p-4 flex items-center gap-4">
-            <div className="w-12 h-12 bg-amber-400 rounded-2xl flex items-center justify-center">
-              <Star className="w-6 h-6 text-white fill-white" />
+          <section className="p-4 rounded-2xl flex items-center gap-4" style={{ background: 'var(--chip)', border: '1px solid var(--line)' }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--accent)' }}>
+              <Star className="w-6 h-6 fill-current" style={{ color: '#0a0a0a' }} />
             </div>
             <div>
-              <p className="text-xs text-amber-600 font-black uppercase tracking-widest">코치 MVP</p>
-              <p className="text-lg font-black text-amber-900">
+              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--accent)' }}>코치 MVP</p>
+              <p className="text-[17px] font-black text-white">
                 {mvp.playerName}
-                <span className="font-normal text-amber-700 text-sm ml-2">
+                <span className="font-normal text-[13px] ml-2" style={{ color: 'var(--muted2)' }}>
                   평균 {mvp.averageRating.toFixed(1)}점
                 </span>
               </p>
@@ -546,15 +536,15 @@ export default function MatchDetailPage() {
 
         {/* MOM 투표 */}
         {attendees.length > 0 && (
-          <section className="bg-white rounded-2xl p-4 shadow-sm">
+          <section className="p-4 rounded-2xl" style={cardStyle}>
             <div className="flex items-center gap-2 mb-3">
               <span className="text-lg">🏅</span>
               <div>
-                <h3 className="font-black text-gray-900 text-sm">이 경기의 MOM은?</h3>
-                <p className="text-xs text-gray-400">팀원이 뽑는 Man of the Match</p>
+                <h3 className="font-black text-white text-[14px]">이 경기의 MOM은?</h3>
+                <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>팀원이 뽑는 Man of the Match</p>
               </div>
               {myMomVote && (
-                <span className="ml-auto text-[10px] font-bold bg-lime-100 text-[#0f2d0f] px-2 py-0.5 rounded-full">투표 완료</span>
+                <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>투표 완료</span>
               )}
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -569,32 +559,23 @@ export default function MatchDetailPage() {
                     key={a.id}
                     onClick={() => handleMomVote(pid)}
                     disabled={votingMom}
-                    className={`relative flex items-center gap-2 p-2.5 rounded-xl border-2 transition active:scale-[0.97] overflow-hidden ${
-                      isMyVote
-                        ? 'border-lime-400 bg-lime-50'
-                        : 'border-gray-100 bg-gray-50 hover:border-gray-200'
-                    }`}
+                    className="relative flex items-center gap-2 p-2.5 rounded-xl border-2 transition active:scale-[0.97] overflow-hidden"
+                    style={{ borderColor: isMyVote ? 'var(--accent)' : 'var(--line)', background: isMyVote ? 'var(--chip)' : '#1a1a1a' }}
                   >
-                    {/* vote bar background */}
                     {totalVotes > 0 && (
-                      <div
-                        className="absolute left-0 top-0 bottom-0 bg-lime-400/20 transition-all duration-500"
-                        style={{ width: `${pct}%` }}
-                      />
+                      <div className="absolute left-0 top-0 bottom-0 transition-all duration-500" style={{ width: `${pct}%`, background: 'rgba(204,255,0,0.08)' }} />
                     )}
                     <div className="relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0"
                       style={{ backgroundColor: POSITION_COLORS[a.player?.default_position || 'MF'] }}>
                       {a.player?.number || '?'}
                     </div>
                     <div className="relative flex-1 text-left">
-                      <p className={`text-xs font-black truncate ${isMyVote ? 'text-[#0f2d0f]' : 'text-gray-700'}`}>
-                        {a.player?.name}
-                      </p>
-                      <p className="text-[10px] text-gray-400">
+                      <p className="text-xs font-black truncate text-white">{a.player?.name}</p>
+                      <p className="text-[10px]" style={{ color: 'var(--muted2)' }}>
                         {voteCount > 0 ? `${voteCount}표${totalVotes > 0 ? ` (${pct}%)` : ''}` : '0표'}
                       </p>
                     </div>
-                    {isMyVote && <Check className="relative w-4 h-4 text-lime-600 flex-shrink-0" />}
+                    {isMyVote && <Check className="relative w-4 h-4 flex-shrink-0" style={{ color: 'var(--accent)' }} />}
                   </button>
                 )
               })}
@@ -603,16 +584,17 @@ export default function MatchDetailPage() {
         )}
 
         {/* Attendees Section */}
-        <section className="bg-white rounded-xl p-4">
+        <section className="p-4 rounded-xl" style={cardStyle}>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-semibold flex items-center gap-2">
-              <Users className="w-4 h-4 text-gray-500" />
+            <h3 className="font-bold text-white flex items-center gap-2">
+              <Users className="w-4 h-4" style={{ color: 'var(--muted2)' }} />
               참석 선수 ({attendees.length}명)
             </h3>
             {canEditMatches && (
               <button
                 onClick={openAttendeePicker}
-                className="flex items-center gap-1 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-200"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold"
+                style={{ background: 'var(--chip)', color: 'var(--accent)' }}
               >
                 <Plus className="w-4 h-4" />
                 편집
@@ -627,23 +609,23 @@ export default function MatchDetailPage() {
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-white"
                   style={{ backgroundColor: POSITION_COLORS[a.player?.default_position || 'MF'] }}
                 >
-                  {a.player?.number != null && <span className="text-white/80 text-xs">#{a.player.number}</span>}
+                  {a.player?.number != null && <span className="text-white/70 text-xs">#{a.player.number}</span>}
                   {a.player?.name}
                 </span>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-400">참석한 선수를 추가해주세요</p>
+            <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>참석한 선수를 추가해주세요</p>
           )}
         </section>
 
         {/* Attendee Picker Modal */}
         {showAttendeePicker && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center px-4">
-            <div className="bg-white rounded-xl w-full max-w-md p-4 max-h-[80vh] flex flex-col">
+          <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4">
+            <div className="rounded-xl w-full max-w-md p-4 max-h-[80vh] flex flex-col" style={cardStyle}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-lg">참석 선수 선택</h3>
-                <button onClick={() => setShowAttendeePicker(false)} className="p-1 hover:bg-gray-100 rounded">
+                <h3 className="font-bold text-white text-lg">참석 선수 선택</h3>
+                <button onClick={() => setShowAttendeePicker(false)} className="p-1 text-white/40 hover:text-white rounded">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -654,7 +636,7 @@ export default function MatchDetailPage() {
                   if (posPlayers.length === 0) return null
                   return (
                     <div key={pos}>
-                      <p className="text-xs font-semibold text-gray-500 mb-2">{POSITION_LABELS[pos]}</p>
+                      <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted2)' }}>{POSITION_LABELS[pos]}</p>
                       <div className="grid grid-cols-3 gap-2">
                         {posPlayers.map(p => {
                           const isSelected = selectedAttendees.has(p.id)
@@ -662,19 +644,13 @@ export default function MatchDetailPage() {
                             <button
                               key={p.id}
                               onClick={() => toggleAttendee(p.id)}
-                              className={`flex flex-col items-center p-2 rounded-lg border-2 transition ${
-                                isSelected
-                                  ? 'border-primary-500 bg-primary-50'
-                                  : 'border-gray-200 hover:border-gray-300'
-                              }`}
+                              className="flex flex-col items-center p-2 rounded-lg border-2 transition"
+                              style={{ borderColor: isSelected ? 'var(--accent)' : 'var(--line)', background: isSelected ? 'var(--chip)' : '#1a1a1a' }}
                             >
-                              <div
-                                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                                style={{ backgroundColor: POSITION_COLORS[pos] }}
-                              >
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: POSITION_COLORS[pos] }}>
                                 {p.number || '?'}
                               </div>
-                              <span className="text-xs mt-1 text-gray-700 truncate w-full text-center">{p.name}</span>
+                              <span className="text-xs mt-1 text-white/70 truncate w-full text-center">{p.name}</span>
                             </button>
                           )
                         })}
@@ -686,7 +662,8 @@ export default function MatchDetailPage() {
 
               <button
                 onClick={saveAttendees}
-                className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
+                className="w-full py-3 rounded-lg font-bold"
+                style={{ background: 'var(--accent)', color: '#0a0a0a' }}
               >
                 {selectedAttendees.size}명 저장
               </button>
@@ -701,11 +678,12 @@ export default function MatchDetailPage() {
               <button
                 key={q}
                 onClick={() => setActiveQuarter(q)}
-                className={`flex-1 py-3 rounded-lg font-medium transition ${
-                  activeQuarter === q
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-white text-gray-600 hover:bg-gray-50'
-                }`}
+                className="flex-1 py-3 rounded-lg font-bold text-sm transition"
+                style={{
+                  background: activeQuarter === q ? 'var(--accent)' : '#111010',
+                  color: activeQuarter === q ? '#0a0a0a' : 'var(--muted2)',
+                  border: activeQuarter === q ? 'none' : '1px solid var(--line)',
+                }}
               >
                 {q}쿼터
               </button>
@@ -714,68 +692,62 @@ export default function MatchDetailPage() {
 
           {/* Quarter Content */}
           {currentQuarter && (
-            <div className="bg-white rounded-xl overflow-hidden">
-              <div className="p-4 border-b flex justify-between items-center">
+            <div className="rounded-xl overflow-hidden" style={{ background: '#111010', border: '1px solid var(--line)' }}>
+              <div className="p-4 flex justify-between items-center" style={{ borderBottom: '1px solid var(--line)' }}>
                 <div className="flex items-center gap-3">
-                  <h3 className="font-semibold">{activeQuarter}쿼터 기록</h3>
+                  <h3 className="font-bold text-white">{activeQuarter}쿼터 기록</h3>
                   {canEditQuarters && editingQuarterScore === activeQuarter ? (
                     <div className="flex items-center gap-2">
                       <div className="flex flex-col items-center">
-                        <span className="text-[10px] text-gray-400 mb-0.5">우리팀</span>
+                        <span className="text-[10px] mb-0.5" style={{ color: 'var(--muted2)' }}>우리팀</span>
                         <input
                           type="number"
                           min={0}
                           value={qHome}
                           onChange={(e) => setQHome(parseInt(e.target.value) || 0)}
-                          className="w-12 text-center border rounded py-1 text-sm"
+                          className="w-12 text-center rounded py-1 text-sm text-white outline-none"
+                          style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
                         />
                       </div>
-                      <span className="text-gray-400 mt-3">:</span>
+                      <span className="text-white/30 mt-3">:</span>
                       <div className="flex flex-col items-center">
-                        <span className="text-[10px] text-gray-400 mb-0.5">{match.opponent}</span>
+                        <span className="text-[10px] mb-0.5" style={{ color: 'var(--muted2)' }}>{match.opponent}</span>
                         <input
                           type="number"
                           min={0}
                           value={qAway}
                           onChange={(e) => setQAway(parseInt(e.target.value) || 0)}
-                          className="w-12 text-center border rounded py-1 text-sm"
+                          className="w-12 text-center rounded py-1 text-sm text-white outline-none"
+                          style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
                         />
                       </div>
-                      <button
-                        onClick={handleSaveQuarterScore}
-                        className="px-2 py-1 bg-primary-600 text-white rounded text-xs"
-                      >
-                        저장
-                      </button>
-                      <button
-                        onClick={() => setEditingQuarterScore(null)}
-                        className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs"
-                      >
-                        취소
-                      </button>
+                      <button onClick={handleSaveQuarterScore} className="px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>저장</button>
+                      <button onClick={() => setEditingQuarterScore(null)} className="px-2 py-1 rounded text-xs text-white/50" style={{ background: '#1a1a1a' }}>취소</button>
                     </div>
                   ) : canEditQuarters ? (
                     <button
                       onClick={() => startEditQuarterScore(activeQuarter)}
-                      className="flex items-center gap-1.5 text-sm text-gray-500 border rounded-lg px-3 min-h-[44px] hover:text-primary-600 hover:border-primary-300 hover:bg-primary-50 transition"
+                      className="flex items-center gap-1.5 text-sm rounded-lg px-3 min-h-[44px] transition"
+                      style={{ border: '1px solid var(--line)', color: 'var(--muted2)' }}
                     >
-                      <Edit2 className="w-3 h-3 text-gray-400" />
-                      <span className="text-[10px] text-gray-400">우리팀</span> <span className="text-primary-600 font-medium">{currentQuarter.home_score || 0}</span>
+                      <Edit2 className="w-3 h-3" />
+                      <span style={{ color: 'var(--accent)' }}>{currentQuarter.home_score || 0}</span>
                       <span className="mx-1">:</span>
-                      <span className="font-medium">{currentQuarter.away_score || 0}</span> <span className="text-[10px] text-gray-400">{match.opponent}</span>
+                      <span>{currentQuarter.away_score || 0}</span>
                     </button>
                   ) : (
-                    <span className="text-sm text-gray-500 border rounded-lg px-3 py-2">
-                      <span className="text-[10px] text-gray-400">우리팀</span> <span className="text-primary-600 font-medium">{currentQuarter.home_score || 0}</span>
+                    <span className="text-sm rounded-lg px-3 py-2" style={{ border: '1px solid var(--line)', color: 'var(--muted2)' }}>
+                      <span style={{ color: 'var(--accent)' }}>{currentQuarter.home_score || 0}</span>
                       <span className="mx-1">:</span>
-                      <span className="font-medium">{currentQuarter.away_score || 0}</span> <span className="text-[10px] text-gray-400">{match.opponent}</span>
+                      <span>{currentQuarter.away_score || 0}</span>
                     </span>
                   )}
                 </div>
                 {canEditQuarters && (
                   <Link
                     href={`/match/${matchId}/quarter/${activeQuarter}`}
-                    className="flex items-center gap-1 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-200"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold"
+                    style={{ background: 'var(--chip)', color: 'var(--accent)' }}
                   >
                     <Edit2 className="w-4 h-4" />
                     편집
@@ -785,7 +757,7 @@ export default function MatchDetailPage() {
 
               {/* Soccer Field Preview */}
               <div className="p-4">
-                <div className="relative w-full aspect-[3/2] bg-gradient-to-b from-green-700 via-green-600 to-green-700 rounded-lg overflow-hidden shadow-inner">
+                <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden shadow-inner" style={{ background: 'linear-gradient(180deg,#0e2018,#0a1a13)', border: '1px solid #143325' }}>
                   {/* Grass pattern */}
                   <div className="absolute inset-0" style={{
                     backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px)',
@@ -846,7 +818,7 @@ export default function MatchDetailPage() {
                           )}
                           {/* IN badge for substituted-in players */}
                           {subIn && (
-                            <span className="absolute -top-2 -left-3 px-1 py-0.5 bg-primary-500 text-[8px] font-bold text-white rounded shadow z-10">
+                            <span className="absolute -top-2 -left-3 px-1 py-0.5 text-[8px] font-bold rounded shadow z-10" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                               IN {subIn.minute}&apos;
                             </span>
                           )}
@@ -866,7 +838,7 @@ export default function MatchDetailPage() {
                                 OUT {subOut.minute}&apos;
                               </span>
                               {subOut.player_in && (
-                                <span className="mt-0.5 px-1 py-0.5 bg-primary-500/90 text-white text-[8px] font-bold rounded whitespace-nowrap">
+                                <span className="mt-0.5 px-1 py-0.5 text-[8px] font-bold rounded whitespace-nowrap" style={{ background: 'rgba(204,255,0,0.8)', color: '#0a0a0a' }}>
                                   ↑ {subOut.player_in.name}
                                 </span>
                               )}
@@ -876,12 +848,12 @@ export default function MatchDetailPage() {
                           {hasStats && !subOut && (
                             <div className="flex gap-0.5 mt-0.5">
                               {record.goals > 0 && (
-                                <span className="px-1 bg-primary-500 text-white text-[8px] font-bold rounded">
+                                <span className="px-1 text-[8px] font-bold rounded" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                                   G{record.goals}
                                 </span>
                               )}
                               {record.assists > 0 && (
-                                <span className="px-1 bg-primary-500 text-white text-[8px] font-bold rounded">
+                                <span className="px-1 text-[8px] font-bold rounded" style={{ background: 'rgba(204,255,0,0.6)', color: '#0a0a0a' }}>
                                   A{record.assists}
                                 </span>
                               )}
@@ -912,8 +884,8 @@ export default function MatchDetailPage() {
 
               {/* Substitutions */}
               {currentQuarter.quarter_substitutions && currentQuarter.quarter_substitutions.length > 0 && (
-                <div className="px-4 py-3 bg-orange-50 border-b">
-                  <p className="text-xs font-semibold text-orange-700 mb-2 flex items-center gap-1">
+                <div className="px-4 py-3" style={{ background: '#0d1a10', borderTop: '1px solid var(--line)' }}>
+                  <p className="text-xs font-bold mb-2 flex items-center gap-1" style={{ color: 'var(--accent)' }}>
                     <ArrowRightLeft className="w-3.5 h-3.5" />
                     교체 ({currentQuarter.quarter_substitutions.length}건)
                   </p>
@@ -921,11 +893,11 @@ export default function MatchDetailPage() {
                     {currentQuarter.quarter_substitutions
                       .sort((a: { minute: number }, b: { minute: number }) => a.minute - b.minute)
                       .map((sub: { id: string; minute: number; player_out?: { name: string; number: number | null }; player_in?: { name: string; number: number | null } }) => (
-                        <div key={sub.id} className="flex items-center gap-2 text-sm">
-                          <span className="text-xs font-bold text-gray-500 w-8">{sub.minute}&apos;</span>
-                          <span className="text-red-600">{sub.player_out?.number ? `#${sub.player_out.number} ` : ''}{sub.player_out?.name}</span>
-                          <span className="text-gray-400">→</span>
-                          <span className="text-primary-600">{sub.player_in?.number ? `#${sub.player_in.number} ` : ''}{sub.player_in?.name}</span>
+                        <div key={sub.id} className="flex items-center gap-2 text-[13px]">
+                          <span className="text-[11px] font-bold w-8" style={{ color: 'var(--muted2)' }}>{sub.minute}&apos;</span>
+                          <span className="text-red-400">{sub.player_out?.number ? `#${sub.player_out.number} ` : ''}{sub.player_out?.name}</span>
+                          <span className="text-white/20">→</span>
+                          <span style={{ color: 'var(--accent)' }}>{sub.player_in?.number ? `#${sub.player_in.number} ` : ''}{sub.player_in?.name}</span>
                         </div>
                       ))}
                   </div>
@@ -933,89 +905,60 @@ export default function MatchDetailPage() {
               )}
 
               {/* Quarter Players List */}
-              <div className="divide-y">
-                {currentQuarter.quarter_records?.map((record) => {
+              <div>
+                {currentQuarter.quarter_records?.map((record, idx) => {
                   const hasReview = record.praise_text || record.improvement_text || record.highlight_text || (record.media_urls && record.media_urls.length > 0)
                   return (
-                    <div key={record.id} className="p-4">
+                    <div key={record.id} className="p-4" style={{ borderTop: idx > 0 ? '1px solid var(--line)' : '1px solid var(--line)' }}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div
-                            className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                            style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
-                          >
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: POSITION_COLORS[record.position_type] }}>
                             {record.player?.number || '?'}
                           </div>
                           <div>
-                            <p className="font-medium">{record.player?.name}</p>
-                            <p className="text-sm text-gray-500">
-                              {POSITION_LABELS[record.position_type]}
-                            </p>
+                            <p className="font-bold text-white">{record.player?.name}</p>
+                            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{POSITION_LABELS[record.position_type]}</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xl font-bold font-mono">
-                            {formatRating(record.rating)}
-                          </p>
+                          <p className="text-xl font-bold font-display" style={{ color: 'var(--accent)' }}>{formatRating(record.rating)}</p>
                         </div>
                       </div>
 
-                      {/* Stats */}
-                      <div className="mt-2 ml-11 flex flex-wrap gap-2">
-                        {record.goals > 0 && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                            골 {record.goals}
-                          </span>
-                        )}
-                        {record.assists > 0 && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                            어시스트 {record.assists}
-                          </span>
-                        )}
-                        {record.clean_sheet && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                            클린시트
-                          </span>
-                        )}
-                        {record.contribution > 0 && (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                            기여도
-                          </span>
-                        )}
+                      <div className="mt-2 ml-11 flex flex-wrap gap-1.5">
+                        {record.goals > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>골 {record.goals}</span>}
+                        {record.assists > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>어시스트 {record.assists}</span>}
+                        {record.clean_sheet && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">클린시트</span>}
+                        {record.contribution > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">기여도</span>}
                       </div>
 
-                      {/* Review Display */}
                       {hasReview && (
                         <div className="mt-3 ml-11 space-y-2">
                           {record.media_urls && record.media_urls.length > 0 && (
                             <div className="grid grid-cols-4 gap-1.5">
-                              {record.media_urls.map((url: string, idx: number) => (
-                                <div key={idx} className="rounded-lg overflow-hidden aspect-square bg-gray-100">
-                                  {url.match(/\.(mp4|mov|webm)/i) ? (
-                                    <video src={url} className="w-full h-full object-cover" controls />
-                                  ) : (
-                                    <img src={url} alt="" className="w-full h-full object-cover" />
-                                  )}
+                              {record.media_urls.map((url: string, i: number) => (
+                                <div key={i} className="rounded-lg overflow-hidden aspect-square bg-white/5">
+                                  {url.match(/\.(mp4|mov|webm)/i) ? <video src={url} className="w-full h-full object-cover" controls /> : <img src={url} alt="" className="w-full h-full object-cover" />}
                                 </div>
                               ))}
                             </div>
                           )}
                           {record.praise_text && (
-                            <div className="bg-primary-50 rounded-lg px-3 py-2">
-                              <p className="text-xs font-semibold text-primary-700 mb-0.5">참 잘했어요</p>
-                              <p className="text-sm text-primary-900">{record.praise_text}</p>
+                            <div className="rounded-lg px-3 py-2" style={{ background: 'var(--chip)' }}>
+                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--accent)' }}>참 잘했어요</p>
+                              <p className="text-[13px] text-white/80">{record.praise_text}</p>
                             </div>
                           )}
                           {record.improvement_text && (
-                            <div className="bg-amber-50 rounded-lg px-3 py-2">
-                              <p className="text-xs font-semibold text-amber-700 mb-0.5">조금 더 연습해볼까요?</p>
-                              <p className="text-sm text-amber-900">{record.improvement_text}</p>
+                            <div className="rounded-lg px-3 py-2 bg-amber-900/20">
+                              <p className="text-[10px] font-bold text-amber-400 mb-0.5">조금 더 연습해볼까요?</p>
+                              <p className="text-[13px] text-white/80">{record.improvement_text}</p>
                             </div>
                           )}
                           {record.highlight_text && (
-                            <div className="bg-primary-50 rounded-lg px-3 py-2">
-                              <p className="text-xs font-semibold text-primary-700 mb-0.5">이 부분을 칭찬해주세요!</p>
-                              <p className="text-sm text-primary-900">{record.highlight_text}</p>
+                            <div className="rounded-lg px-3 py-2" style={{ background: 'var(--chip)' }}>
+                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--chipText)' }}>이 부분을 칭찬해주세요!</p>
+                              <p className="text-[13px] text-white/80">{record.highlight_text}</p>
                             </div>
                           )}
                         </div>
@@ -1030,17 +973,14 @@ export default function MatchDetailPage() {
 
         {/* Match Notes */}
         {(canEditMatches || match.notes) && (
-          <section className="bg-white rounded-xl p-4 shadow-sm">
+          <section className="p-4 rounded-xl" style={cardStyle}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold flex items-center gap-2">
-                <FileText className="w-4 h-4 text-gray-500" />
+              <h3 className="font-bold text-white flex items-center gap-2">
+                <FileText className="w-4 h-4" style={{ color: 'var(--muted2)' }} />
                 경기 메모
               </h3>
               {canEditMatches && !editingNotes && (
-                <button
-                  onClick={() => setEditingNotes(true)}
-                  className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
-                >
+                <button onClick={() => setEditingNotes(true)} className="p-1.5 text-white/40 hover:text-white rounded-lg">
                   <Edit2 className="w-4 h-4" />
                 </button>
               )}
@@ -1052,32 +992,23 @@ export default function MatchDetailPage() {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={4}
                   placeholder="경기에 대한 메모를 남겨보세요"
-                  className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none resize-none"
+                  className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none text-white"
+                  style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
                   autoFocus
                 />
                 <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={handleSaveNotes}
-                    disabled={savingNotes}
-                    className="flex-1 py-2.5 bg-primary-600 text-white rounded-xl font-medium text-sm hover:bg-primary-700 disabled:opacity-50"
-                  >
+                  <button onClick={handleSaveNotes} disabled={savingNotes} className="flex-1 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                     {savingNotes ? '저장 중...' : '저장'}
                   </button>
-                  <button
-                    onClick={() => { setNotes(match.notes || ''); setEditingNotes(false) }}
-                    className="px-4 py-2.5 bg-gray-100 text-gray-600 rounded-xl font-medium text-sm"
-                  >
+                  <button onClick={() => { setNotes(match.notes || ''); setEditingNotes(false) }} className="px-4 py-2.5 rounded-xl font-bold text-sm text-white/60" style={{ background: '#1a1a1a' }}>
                     취소
                   </button>
                 </div>
               </div>
             ) : match.notes ? (
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{match.notes}</p>
+              <p className="text-[13px] text-white/70 whitespace-pre-wrap">{match.notes}</p>
             ) : (
-              <button
-                onClick={() => setEditingNotes(true)}
-                className="w-full py-4 border-2 border-dashed border-gray-200 rounded-xl text-sm text-gray-400 hover:border-primary-300 hover:text-primary-500 transition"
-              >
+              <button onClick={() => setEditingNotes(true)} className="w-full py-4 border-2 border-dashed rounded-xl text-[13px] transition" style={{ borderColor: 'var(--line)', color: 'var(--muted2)' }}>
                 메모 추가하기
               </button>
             )}
@@ -1087,50 +1018,28 @@ export default function MatchDetailPage() {
         {/* Overall Player Stats */}
         {playerStats.length > 0 && (
           <section>
-            <h3 className="font-semibold text-gray-900 mb-3">전체 선수 통계</h3>
-            <div className="bg-white rounded-xl divide-y">
+            <h3 className="font-bold text-white mb-3">전체 선수 통계</h3>
+            <div className="rounded-xl overflow-hidden" style={{ background: '#111010', border: '1px solid var(--line)' }}>
               {playerStats.map((stats, index) => (
-                <div key={stats.playerId} className="p-4 flex items-center justify-between">
+                <div key={stats.playerId} className="p-4 flex items-center justify-between" style={{ borderTop: index > 0 ? '1px solid var(--line)' : 'none' }}>
                   <div className="flex items-center gap-3">
-                    <span className="w-6 text-center text-gray-400 font-medium">
-                      {index + 1}
-                    </span>
+                    <span className="w-6 text-center font-bold text-[13px]" style={{ color: 'var(--muted2)' }}>{index + 1}</span>
                     <div>
-                      <p className="font-medium flex items-center gap-2">
+                      <p className="font-bold text-white flex items-center gap-2">
                         {stats.playerName}
-                        {index === 0 && mvp && (
-                          <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                        )}
+                        {index === 0 && mvp && <Star className="w-4 h-4 fill-current" style={{ color: 'var(--accent)' }} />}
                       </p>
                       <div className="flex flex-wrap gap-1.5 mt-0.5">
-                        {stats.totalGoals > 0 && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                            골 {stats.totalGoals}
-                          </span>
-                        )}
-                        {stats.totalAssists > 0 && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                            어시스트 {stats.totalAssists}
-                          </span>
-                        )}
-                        {stats.cleanSheets > 0 && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                            클린시트 {stats.cleanSheets}
-                          </span>
-                        )}
-                        {stats.avgContribution > 0 && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                            기여도
-                          </span>
-                        )}
+                        {stats.totalGoals > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>골 {stats.totalGoals}</span>}
+                        {stats.totalAssists > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>어시스트 {stats.totalAssists}</span>}
+                        {stats.cleanSheets > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">클린시트 {stats.cleanSheets}</span>}
+                        {stats.avgContribution > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">기여도</span>}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold font-mono text-primary-600">
-                      {stats.averageRating.toFixed(1)}
-                    </p>
-                    <p className="text-xs text-gray-400">평균</p>
+                    <p className="text-xl font-bold font-display" style={{ color: 'var(--accent)' }}>{stats.averageRating.toFixed(1)}</p>
+                    <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>평균</p>
                   </div>
                 </div>
               ))}

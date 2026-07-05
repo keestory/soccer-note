@@ -360,313 +360,282 @@ function NotificationsContent() {
     return <NotificationsPageSkeleton />
   }
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const inputStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 10 }
+
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-20">
+    <div className="min-h-screen pb-20" style={{ background: '#0a0a0a' }}>
       {/* Header */}
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
             <h1 className="text-base font-black text-white">{t.notifications}</h1>
-            {team && <p className="text-xs text-white/50">{team.name}</p>}
+            {team && <p className="text-xs" style={{ color: 'var(--muted2)' }}>{team.name}</p>}
           </div>
         </div>
       </header>
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Send Notification Form */}
-        <section className="bg-white rounded-xl shadow-toss p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Send className="w-5 h-5 text-primary-600" />
+        <section className="p-5 space-y-4" style={cardStyle}>
+          <h2 className="font-bold text-white flex items-center gap-2">
+            <Send className="w-4 h-4" style={{ color: 'var(--accent)' }} />
             {t.sendNotification}
           </h2>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.notificationTitle}
-              </label>
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.notificationTitle}</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder={t.notificationTitlePlaceholder}
+              className="w-full px-4 py-2.5 outline-none text-sm"
+              style={inputStyle}
+              maxLength={100}
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.notificationBody}</label>
+            <textarea
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder={t.notificationBodyPlaceholder}
+              className="w-full px-4 py-2.5 outline-none resize-none text-sm"
+              style={inputStyle}
+              rows={4}
+              maxLength={500}
+            />
+          </div>
+
+          {/* 발송 대상 선택 */}
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted2)' }}>발송 대상</label>
+
+            {/* 검색창 */}
+            <div className="relative mb-3">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
               <input
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder={t.notificationTitlePlaceholder}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                maxLength={100}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="이름으로 검색..."
+                className="w-full pl-10 pr-4 py-2 outline-none text-sm"
+                style={inputStyle}
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t.notificationBody}
+            {/* 전체 선택 & 나에게도 보내기 */}
+            <div className="flex items-center justify-between mb-2 pb-2" style={{ borderBottom: '1px solid var(--line)' }}>
+              <button type="button" onClick={toggleSelectAll} className="flex items-center gap-2 text-sm" style={{ color: 'var(--accent)' }}>
+                <div className="w-5 h-5 rounded flex items-center justify-center" style={{
+                  background: selectedUserIds.length === members.length && members.length > 0 ? 'var(--accent)' : 'transparent',
+                  border: `2px solid ${selectedUserIds.length === members.length && members.length > 0 ? 'var(--accent)' : '#3a3a3a'}`,
+                }}>
+                  {selectedUserIds.length === members.length && members.length > 0 && (
+                    <Check className="w-3 h-3" style={{ color: '#0a0a0a' }} />
+                  )}
+                </div>
+                전체 선택 ({selectedUserIds.length}/{members.length})
+              </button>
+
+              <label className="flex items-center gap-2 cursor-pointer">
+                <div className="w-5 h-5 rounded flex items-center justify-center" style={{
+                  background: includeSelf ? '#2dd4bf' : 'transparent',
+                  border: `2px solid ${includeSelf ? '#2dd4bf' : '#3a3a3a'}`,
+                }}>
+                  {includeSelf && <Check className="w-3 h-3 text-black" />}
+                </div>
+                <span className="text-sm text-white/60">나에게도 보내기</span>
+                <input type="checkbox" checked={includeSelf} onChange={(e) => setIncludeSelf(e.target.checked)} className="sr-only" />
               </label>
-              <textarea
-                value={body}
-                onChange={(e) => setBody(e.target.value)}
-                placeholder={t.notificationBodyPlaceholder}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none resize-none"
-                rows={4}
-                maxLength={500}
-              />
             </div>
 
-            {/* 발송 대상 선택 */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                발송 대상
-              </label>
-
-              {/* 검색창 */}
-              <div className="relative mb-3">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="이름으로 검색..."
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none text-sm"
-                />
-              </div>
-
-              {/* 전체 선택 & 나에게도 보내기 */}
-              <div className="flex items-center justify-between mb-2 pb-2 border-b">
-                <button
-                  type="button"
-                  onClick={toggleSelectAll}
-                  className="flex items-center gap-2 text-sm text-primary-600 hover:text-primary-700"
-                >
-                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                    selectedUserIds.length === members.length && members.length > 0
-                      ? 'bg-primary-600 border-primary-600'
-                      : 'border-gray-300'
-                  }`}>
-                    {selectedUserIds.length === members.length && members.length > 0 && (
-                      <Check className="w-3 h-3 text-white" />
-                    )}
-                  </div>
-                  전체 선택 ({selectedUserIds.length}/{members.length})
-                </button>
-
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
-                    includeSelf ? 'bg-green-600 border-green-600' : 'border-gray-300'
-                  }`}>
-                    {includeSelf && <Check className="w-3 h-3 text-white" />}
-                  </div>
-                  <span className="text-sm text-gray-700">나에게도 보내기</span>
-                  <input
-                    type="checkbox"
-                    checked={includeSelf}
-                    onChange={(e) => setIncludeSelf(e.target.checked)}
-                    className="sr-only"
-                  />
-                </label>
-              </div>
-
-              {/* 멤버 목록 */}
-              <div className="max-h-48 overflow-y-auto space-y-1 border rounded-lg p-2">
-                {filteredMembers.length === 0 ? (
-                  <p className="text-center text-gray-500 text-sm py-4">
-                    {searchQuery ? '검색 결과가 없습니다' : '멤버가 없습니다'}
-                  </p>
-                ) : (
-                  filteredMembers.map((member) => {
-                    const isSelected = selectedUserIds.includes(member.user_id)
-                    const isSelf = member.user_id === currentUserId
-                    return (
-                      <button
-                        key={member.id}
-                        type="button"
-                        onClick={() => toggleMember(member.user_id)}
-                        className={`w-full flex items-center gap-3 p-2 rounded-lg transition-colors ${
-                          isSelected ? 'bg-primary-50' : 'hover:bg-gray-50'
-                        }`}
-                      >
-                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
-                          isSelected ? 'bg-primary-600 border-primary-600' : 'border-gray-300'
-                        }`}>
-                          {isSelected && <Check className="w-3 h-3 text-white" />}
-                        </div>
-                        <div className="flex-1 text-left">
-                          <span className="text-sm font-medium text-gray-900">
-                            {member.profile?.display_name || '이름 없음'}
-                          </span>
-                          {isSelf && (
-                            <span className="ml-2 text-xs text-primary-600">(나)</span>
-                          )}
-                        </div>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          member.role === 'coach' ? 'bg-primary-100 text-primary-700' :
-                          member.role === 'parent' ? 'bg-green-100 text-green-700' :
-                          'bg-gray-100 text-gray-600'
-                        }`}>
-                          {member.role === 'coach' ? '코치' : member.role === 'parent' ? '학부모' : '멤버'}
+            {/* 멤버 목록 */}
+            <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg p-2" style={{ background: '#1a1a1a' }}>
+              {filteredMembers.length === 0 ? (
+                <p className="text-center text-sm py-4" style={{ color: 'var(--muted2)' }}>
+                  {searchQuery ? '검색 결과가 없습니다' : '멤버가 없습니다'}
+                </p>
+              ) : (
+                filteredMembers.map((member) => {
+                  const isSelected = selectedUserIds.includes(member.user_id)
+                  const isSelf = member.user_id === currentUserId
+                  return (
+                    <button
+                      key={member.id}
+                      type="button"
+                      onClick={() => toggleMember(member.user_id)}
+                      className="w-full flex items-center gap-3 p-2 rounded-lg transition-colors"
+                      style={{ background: isSelected ? 'var(--chip)' : 'transparent' }}
+                    >
+                      <div className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0" style={{
+                        background: isSelected ? 'var(--accent)' : 'transparent',
+                        border: `2px solid ${isSelected ? 'var(--accent)' : '#3a3a3a'}`,
+                      }}>
+                        {isSelected && <Check className="w-3 h-3" style={{ color: '#0a0a0a' }} />}
+                      </div>
+                      <div className="flex-1 text-left">
+                        <span className="text-sm font-medium text-white">
+                          {member.profile?.display_name || '이름 없음'}
                         </span>
-                      </button>
-                    )
-                  })
-                )}
-              </div>
-
-              {/* 선택된 멤버 수 표시 */}
-              <p className="text-xs text-gray-500 mt-2">
-                {selectedUserIds.length > 0 || includeSelf ? (
-                  <>
-                    <UserCheck className="w-3 h-3 inline mr-1" />
-                    {selectedUserIds.length}명 선택됨
-                    {includeSelf && selectedUserIds.length > 0 ? ' + 나' : includeSelf ? '나에게만 발송' : ''}
-                  </>
-                ) : (
-                  '발송 대상을 선택해주세요 (선택하지 않으면 전체 발송)'
-                )}
-              </p>
+                        {isSelf && (
+                          <span className="ml-2 text-xs" style={{ color: 'var(--accent)' }}>(나)</span>
+                        )}
+                      </div>
+                      <span className="text-xs px-2 py-0.5 rounded-full" style={{
+                        background: member.role === 'coach' ? 'var(--chip)' : member.role === 'parent' ? '#002a1a' : '#2a2a2a',
+                        color: member.role === 'coach' ? 'var(--accent)' : member.role === 'parent' ? '#2dd4bf' : 'rgba(255,255,255,0.4)',
+                      }}>
+                        {member.role === 'coach' ? '코치' : member.role === 'parent' ? '학부모' : '멤버'}
+                      </span>
+                    </button>
+                  )
+                })
+              )}
             </div>
 
-            <button
-              onClick={handleSend}
-              disabled={sending || !title.trim() || !body.trim()}
-              className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              {sending ? (
+            <p className="text-xs mt-2" style={{ color: 'var(--muted2)' }}>
+              {selectedUserIds.length > 0 || includeSelf ? (
                 <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  {t.sending}
+                  <UserCheck className="w-3 h-3 inline mr-1" />
+                  {selectedUserIds.length}명 선택됨
+                  {includeSelf && selectedUserIds.length > 0 ? ' + 나' : includeSelf ? '나에게만 발송' : ''}
                 </>
               ) : (
-                <>
-                  <Send className="w-5 h-5" />
-                  {t.send}
-                </>
+                '발송 대상을 선택해주세요'
               )}
-            </button>
+            </p>
           </div>
+
+          <button
+            onClick={handleSend}
+            disabled={sending || !title.trim() || !body.trim()}
+            className="w-full py-3 rounded-xl font-bold disabled:opacity-40 flex items-center justify-center gap-2"
+            style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+          >
+            {sending ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                {t.sending}
+              </>
+            ) : (
+              <>
+                <Send className="w-5 h-5" />
+                {t.send}
+              </>
+            )}
+          </button>
         </section>
 
         {/* Notification History */}
-        <section className="bg-white rounded-xl shadow-toss p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-primary-600" />
+        <section className="p-5" style={cardStyle}>
+          <h2 className="font-bold text-white mb-4 flex items-center gap-2">
+            <MessageSquare className="w-4 h-4" style={{ color: 'var(--accent)' }} />
             {t.notificationHistory}
           </h2>
 
           {notifications.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <Bell className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+            <div className="text-center py-12" style={{ color: 'var(--muted2)' }}>
+              <Bell className="w-12 h-12 mx-auto mb-3 text-white/10" />
               <p className="font-medium">{t.noNotifications}</p>
               <p className="text-sm mt-1">{t.noNotificationsDescription}</p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {notifications.map((notification) => {
                 const isExpanded = expandedNotificationId === notification.id
                 const stats = notificationStats[notification.id]
                 const isLoadingStats = loadingStatsId === notification.id
 
                 return (
-                  <div
-                    key={notification.id}
-                    className="border rounded-lg overflow-hidden transition-colors"
-                  >
+                  <div key={notification.id} className="rounded-xl overflow-hidden" style={{ border: '1px solid var(--line)' }}>
                     <button
                       onClick={() => toggleNotificationExpand(notification.id)}
-                      className="w-full p-4 hover:bg-gray-50 text-left"
+                      className="w-full p-4 text-left"
+                      style={{ background: '#1a1a1a' }}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs px-2 py-0.5 bg-gray-100 rounded-full text-gray-600">
+                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
                               {getNotificationTypeLabel(notification.notification_type)}
                             </span>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs" style={{ color: 'var(--muted2)' }}>
                               {formatDate(notification.created_at)}
                             </span>
                           </div>
-                          <h3 className="font-medium text-gray-900 truncate">
-                            {notification.title}
-                          </h3>
-                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                            {notification.body}
-                          </p>
+                          <h3 className="font-medium text-white truncate">{notification.title}</h3>
+                          <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--muted2)' }}>{notification.body}</p>
                         </div>
 
                         <div className="flex items-center gap-3">
                           <div className="flex flex-col items-end gap-1 text-sm">
-                            <div className="flex items-center gap-1 text-gray-500">
+                            <div className="flex items-center gap-1 text-white/40">
                               <Users className="w-4 h-4" />
                               <span>{notification.recipients_count}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="flex items-center gap-0.5 text-green-600">
+                              <span className="flex items-center gap-0.5 text-teal-400">
                                 <CheckCircle className="w-3 h-3" />
                                 {notification.success_count}
                               </span>
                               {notification.failure_count > 0 && (
-                                <span className="flex items-center gap-0.5 text-red-500">
+                                <span className="flex items-center gap-0.5 text-red-400">
                                   <XCircle className="w-3 h-3" />
                                   {notification.failure_count}
                                 </span>
                               )}
                             </div>
                           </div>
-                          <div className="text-gray-400">
-                            {isExpanded ? (
-                              <ChevronUp className="w-5 h-5" />
-                            ) : (
-                              <ChevronDown className="w-5 h-5" />
-                            )}
+                          <div className="text-white/30">
+                            {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                           </div>
                         </div>
                       </div>
                     </button>
 
-                    {/* 확장된 통계 패널 */}
                     {isExpanded && (
-                      <div className="border-t bg-gray-50 p-4">
+                      <div className="p-4" style={{ borderTop: '1px solid var(--line)', background: '#111010' }}>
                         {isLoadingStats ? (
                           <div className="flex items-center justify-center py-4">
-                            <Loader2 className="w-5 h-5 animate-spin text-primary-600" />
+                            <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--accent)' }} />
                           </div>
                         ) : stats ? (
                           <div className="space-y-4">
-                            {/* 통계 요약 */}
-                            <div className="flex items-center gap-4 text-sm">
-                              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-full">
+                            <div className="flex items-center gap-3 text-sm">
+                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
                                 <Eye className="w-4 h-4" />
                                 <span>읽음 {stats.read_count}/{stats.total_sent}</span>
                               </div>
-                              <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-700 rounded-full">
+                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#002a1a', color: '#2dd4bf' }}>
                                 <CheckCircle2 className="w-4 h-4" />
                                 <span>확인 {stats.confirmed_count}/{stats.total_sent}</span>
                               </div>
                             </div>
-
-                            {/* 수신자 목록 */}
                             <div>
-                              <h4 className="text-sm font-medium text-gray-700 mb-2">수신자 현황</h4>
+                              <h4 className="text-sm font-medium text-white/60 mb-2">수신자 현황</h4>
                               <div className="space-y-2 max-h-48 overflow-y-auto">
                                 {stats.recipients.map((recipient) => (
-                                  <div
-                                    key={recipient.user_id}
-                                    className="flex items-center justify-between bg-white rounded-lg p-2 text-sm"
-                                  >
-                                    <span className="font-medium text-gray-900">
-                                      {recipient.display_name || '이름 없음'}
-                                    </span>
+                                  <div key={recipient.user_id} className="flex items-center justify-between rounded-lg p-2 text-sm" style={{ background: '#1a1a1a' }}>
+                                    <span className="font-medium text-white">{recipient.display_name || '이름 없음'}</span>
                                     <div className="flex items-center gap-2">
                                       {recipient.confirmed_at ? (
-                                        <span className="flex items-center gap-1 text-green-600">
+                                        <span className="flex items-center gap-1 text-teal-400">
                                           <CheckCircle2 className="w-4 h-4" />
                                           <span className="text-xs">{formatShortDate(recipient.confirmed_at)}</span>
                                         </span>
                                       ) : recipient.read_at ? (
-                                        <span className="flex items-center gap-1 text-primary-600">
+                                        <span className="flex items-center gap-1" style={{ color: 'var(--accent)' }}>
                                           <Eye className="w-4 h-4" />
                                           <span className="text-xs">{formatShortDate(recipient.read_at)}</span>
                                         </span>
                                       ) : (
-                                        <span className="text-xs text-gray-400">미확인</span>
+                                        <span className="text-xs text-white/30">미확인</span>
                                       )}
                                     </div>
                                   </div>
@@ -675,9 +644,7 @@ function NotificationsContent() {
                             </div>
                           </div>
                         ) : (
-                          <p className="text-sm text-gray-500 text-center py-4">
-                            통계를 불러올 수 없습니다
-                          </p>
+                          <p className="text-sm text-center py-4" style={{ color: 'var(--muted2)' }}>통계를 불러올 수 없습니다</p>
                         )}
                       </div>
                     )}
@@ -696,8 +663,8 @@ function NotificationsContent() {
 export default function NotificationsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent)' }} />
       </div>
     }>
       <NotificationsContent />

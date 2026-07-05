@@ -120,11 +120,13 @@ export default function AdminPage() {
     return owner?.email || owner?.display_name || userId.slice(0, 8) + '...'
   }
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+
   // Checking auth
   if (authState === 'checking') {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
+        <div className="animate-spin rounded-full h-8 w-8" style={{ borderBottom: '2px solid var(--accent)' }} />
       </div>
     )
   }
@@ -132,31 +134,32 @@ export default function AdminPage() {
   // Not logged in → show inline login form
   if (authState === 'not-logged-in') {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: '#0a0a0a' }}>
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-100 rounded-full mb-4">
-              <Shield className="w-7 h-7 text-primary-600" />
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4" style={{ background: 'var(--chip)' }}>
+              <Shield className="w-7 h-7" style={{ color: 'var(--accent)' }} />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">어드민 로그인</h1>
-            <p className="text-gray-500 text-sm mt-1">관리자 계정으로 로그인하세요</p>
+            <h1 className="text-2xl font-bold text-white">어드민 로그인</h1>
+            <p className="text-sm mt-1" style={{ color: 'var(--muted2)' }}>관리자 계정으로 로그인하세요</p>
           </div>
 
-          <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border p-6 space-y-4">
+          <form onSubmit={handleLogin} className="p-6 space-y-4 rounded-2xl" style={cardStyle}>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">이메일</label>
+              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>이메일</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoComplete="email"
-                className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-sm"
+                className="w-full px-4 py-3 rounded-xl outline-none text-sm text-white"
+                style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
                 placeholder="admin@example.com"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1.5">비밀번호</label>
+              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>비밀번호</label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
@@ -164,13 +167,14 @@ export default function AdminPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   autoComplete="current-password"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-sm pr-10"
+                  className="w-full px-4 py-3 rounded-xl outline-none text-sm text-white pr-10"
+                  style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -178,16 +182,17 @@ export default function AdminPage() {
             </div>
 
             {loginError && (
-              <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{loginError}</p>
+              <p className="text-sm text-red-400 rounded-lg px-3 py-2" style={{ background: '#2a0a0a' }}>{loginError}</p>
             )}
 
             <button
               type="submit"
               disabled={loginLoading}
-              className="w-full py-3 bg-primary-600 text-white rounded-xl font-semibold hover:bg-primary-700 transition disabled:opacity-60 flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-xl font-bold disabled:opacity-50 flex items-center justify-center gap-2"
+              style={{ background: 'var(--accent)', color: '#0a0a0a' }}
             >
               {loginLoading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
               ) : (
                 <LogIn className="w-4 h-4" />
               )}
@@ -202,10 +207,10 @@ export default function AdminPage() {
   // Forbidden
   if (authState === 'forbidden') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4" style={{ background: '#0a0a0a' }}>
         <Shield className="w-16 h-16 text-red-400" />
-        <p className="text-xl font-semibold text-gray-800">접근 권한이 없습니다.</p>
-        <Link href="/dashboard" className="text-primary-600 hover:underline flex items-center gap-1">
+        <p className="text-xl font-bold text-white">접근 권한이 없습니다.</p>
+        <Link href="/dashboard" className="flex items-center gap-1" style={{ color: 'var(--accent)' }}>
           <ArrowLeft className="w-4 h-4" /> 대시보드로 돌아가기
         </Link>
       </div>
@@ -214,22 +219,23 @@ export default function AdminPage() {
 
   // Admin dashboard
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b sticky top-0 z-10 safe-top">
+    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="p-2 hover:bg-gray-100 rounded-lg transition">
-              <ArrowLeft className="w-5 h-5 text-gray-600" />
+            <Link href="/dashboard" className="p-2 rounded-lg text-white/50 hover:text-white transition">
+              <ArrowLeft className="w-5 h-5" />
             </Link>
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-primary-600" />
-              <h1 className="text-xl font-bold text-gray-900">어드민</h1>
+              <Shield className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+              <h1 className="text-xl font-bold text-white">어드민</h1>
             </div>
           </div>
           <button
             onClick={fetchData}
             disabled={dataLoading}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg transition disabled:opacity-50"
+            style={{ color: 'var(--muted2)', background: '#1a1a1a' }}
           >
             <RefreshCw className={`w-4 h-4 ${dataLoading ? 'animate-spin' : ''}`} />
             새로고침
@@ -241,17 +247,17 @@ export default function AdminPage() {
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="bg-white rounded-xl p-5 shadow-sm border">
-              <p className="text-sm text-gray-500 mb-1">총 사용자</p>
-              <p className="text-3xl font-bold text-primary-600">{stats.totalUsers}</p>
+            <div className="rounded-xl p-5" style={cardStyle}>
+              <p className="text-sm mb-1" style={{ color: 'var(--muted2)' }}>총 사용자</p>
+              <p className="font-display text-3xl" style={{ color: 'var(--accent)' }}>{stats.totalUsers}</p>
             </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border">
-              <p className="text-sm text-gray-500 mb-1">총 팀</p>
-              <p className="text-3xl font-bold text-green-600">{stats.totalTeams}</p>
+            <div className="rounded-xl p-5" style={cardStyle}>
+              <p className="text-sm mb-1" style={{ color: 'var(--muted2)' }}>총 팀</p>
+              <p className="font-display text-3xl text-teal-400">{stats.totalTeams}</p>
             </div>
-            <div className="bg-white rounded-xl p-5 shadow-sm border">
-              <p className="text-sm text-gray-500 mb-1">총 경기</p>
-              <p className="text-3xl font-bold text-purple-600">{stats.totalMatches}</p>
+            <div className="rounded-xl p-5" style={cardStyle}>
+              <p className="text-sm mb-1" style={{ color: 'var(--muted2)' }}>총 경기</p>
+              <p className="font-display text-3xl text-purple-400">{stats.totalMatches}</p>
             </div>
           </div>
         )}
@@ -260,22 +266,22 @@ export default function AdminPage() {
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setActiveTab('users')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition ${
-              activeTab === 'users'
-                ? 'bg-primary-600 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border'
-            }`}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition"
+            style={{
+              background: activeTab === 'users' ? 'var(--accent)' : '#1a1a1a',
+              color: activeTab === 'users' ? '#0a0a0a' : 'rgba(255,255,255,0.5)',
+            }}
           >
             <Users className="w-4 h-4" />
             사용자 ({users.length})
           </button>
           <button
             onClick={() => setActiveTab('teams')}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition ${
-              activeTab === 'teams'
-                ? 'bg-primary-600 text-white'
-                : 'bg-white text-gray-600 hover:bg-gray-100 border'
-            }`}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition"
+            style={{
+              background: activeTab === 'teams' ? 'var(--accent)' : '#1a1a1a',
+              color: activeTab === 'teams' ? '#0a0a0a' : 'rgba(255,255,255,0.5)',
+            }}
           >
             <Trophy className="w-4 h-4" />
             팀 ({teams.length})
@@ -284,37 +290,37 @@ export default function AdminPage() {
 
         {/* Users Table */}
         {activeTab === 'users' && (
-          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+          <div className="rounded-xl overflow-hidden" style={cardStyle}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b">
+                <thead style={{ background: '#1a1a1a', borderBottom: '1px solid var(--line)' }}>
                   <tr>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">#</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">이메일</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">이름</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">가입일</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">마지막 로그인</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>#</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>이메일</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>이름</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>가입일</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>마지막 로그인</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody>
                   {users.map((user, idx) => (
-                    <tr key={user.id} className="hover:bg-gray-50 transition">
-                      <td className="px-4 py-3 text-gray-400">{idx + 1}</td>
-                      <td className="px-4 py-3 font-medium text-gray-900">{user.email || '-'}</td>
-                      <td className="px-4 py-3 text-gray-600">{user.display_name || '-'}</td>
-                      <td className="px-4 py-3 text-gray-500">
+                    <tr key={user.id} className="transition" style={{ borderBottom: '1px solid var(--line)' }}>
+                      <td className="px-4 py-3 text-white/30">{idx + 1}</td>
+                      <td className="px-4 py-3 font-medium text-white">{user.email || '-'}</td>
+                      <td className="px-4 py-3 text-white/60">{user.display_name || '-'}</td>
+                      <td className="px-4 py-3 text-white/40">
                         <span className="flex items-center gap-1">
                           <Clock className="w-3.5 h-3.5" />
                           {formatDate(user.created_at)}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-400">{formatDate(user.last_sign_in_at)}</td>
+                      <td className="px-4 py-3 text-white/30">{formatDate(user.last_sign_in_at)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
               {users.length === 0 && (
-                <div className="text-center py-12 text-gray-400">사용자가 없습니다.</div>
+                <div className="text-center py-12 text-white/30">사용자가 없습니다.</div>
               )}
             </div>
           </div>
@@ -322,52 +328,52 @@ export default function AdminPage() {
 
         {/* Teams Table */}
         {activeTab === 'teams' && (
-          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
+          <div className="rounded-xl overflow-hidden" style={cardStyle}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b">
+                <thead style={{ background: '#1a1a1a', borderBottom: '1px solid var(--line)' }}>
                   <tr>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">#</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">팀명</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">오너</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">멤버 수</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">초대코드</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">상태</th>
-                    <th className="text-left px-4 py-3 font-semibold text-gray-600">생성일</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>#</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>팀명</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>오너</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>멤버 수</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>초대코드</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>상태</th>
+                    <th className="text-left px-4 py-3 font-semibold" style={{ color: 'var(--muted2)' }}>생성일</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody>
                   {teams.map((team, idx) => (
-                    <tr key={team.id} className={`hover:bg-gray-50 transition ${team.is_removed ? 'opacity-50' : ''}`}>
-                      <td className="px-4 py-3 text-gray-400">{idx + 1}</td>
+                    <tr key={team.id} className={`transition ${team.is_removed ? 'opacity-40' : ''}`} style={{ borderBottom: '1px solid var(--line)' }}>
+                      <td className="px-4 py-3 text-white/30">{idx + 1}</td>
                       <td className="px-4 py-3">
-                        <span className="font-medium text-gray-900">{team.name}</span>
+                        <span className="font-medium text-white">{team.name}</span>
                         {team.description && (
-                          <p className="text-xs text-gray-400 mt-0.5">{team.description}</p>
+                          <p className="text-xs mt-0.5 text-white/30">{team.description}</p>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-gray-600 text-xs">{getOwnerEmail(team.user_id)}</td>
+                      <td className="px-4 py-3 text-white/40 text-xs">{getOwnerEmail(team.user_id)}</td>
                       <td className="px-4 py-3">
-                        <span className="inline-flex items-center gap-1 bg-primary-50 text-primary-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
                           <Users className="w-3 h-3" />
                           {team.member_count}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-gray-500 font-mono text-xs">{team.invite_code || '-'}</td>
+                      <td className="px-4 py-3 text-white/40 font-mono text-xs">{team.invite_code || '-'}</td>
                       <td className="px-4 py-3">
                         {team.is_removed ? (
-                          <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">삭제됨</span>
+                          <span className="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full">삭제됨</span>
                         ) : (
-                          <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">활성</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>활성</span>
                         )}
                       </td>
-                      <td className="px-4 py-3 text-gray-400 text-xs">{formatDate(team.created_at)}</td>
+                      <td className="px-4 py-3 text-white/30 text-xs">{formatDate(team.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
               {teams.length === 0 && (
-                <div className="text-center py-12 text-gray-400">팀이 없습니다.</div>
+                <div className="text-center py-12 text-white/30">팀이 없습니다.</div>
               )}
             </div>
           </div>

@@ -34,19 +34,20 @@ export default function LanguageSelector() {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-toss border py-1 z-50 min-w-[180px]">
+        <div className="absolute right-0 top-full mt-1 rounded-xl py-1 z-50 min-w-[180px]"
+          style={{ background: '#1a1a1a', border: '1px solid var(--line)' }}>
           {LOCALES.map((l) => (
             <button
               key={l.code}
               onClick={() => { setLocale(l.code); setOpen(false) }}
-              className={`w-full px-4 py-2.5 text-left flex items-center gap-3 hover:bg-gray-50 transition ${
-                locale === l.code ? 'bg-primary-50 text-primary-700' : 'text-gray-700'
-              }`}
-            >
+              className="w-full px-4 py-2.5 text-left flex items-center gap-3 transition"
+              style={locale === l.code
+                ? { background: 'var(--chip)', color: 'var(--accent)' }
+                : { color: 'rgba(255,255,255,0.7)' }}>
               <span className="text-lg">{l.flag}</span>
               <span className="text-sm font-medium">{l.label}</span>
               {locale === l.code && (
-                <span className="ml-auto w-2 h-2 bg-primary-500 rounded-full" />
+                <span className="ml-auto w-2 h-2 rounded-full" style={{ background: 'var(--accent)' }} />
               )}
             </button>
           ))}

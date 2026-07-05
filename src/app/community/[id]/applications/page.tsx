@@ -95,25 +95,25 @@ export default function ApplicationsPage() {
   const decided = applications.filter(a => a.status !== 'pending')
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-12">
+    <div className="min-h-screen pb-12" style={{ background: '#0a0a0a' }}>
 
       {/* Hero */}
-      <div className="relative bg-[#0f2d0f] overflow-hidden safe-top">
-        <div className="absolute inset-0 field-pattern opacity-60" />
+      <div className="relative overflow-hidden safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+        <div className="absolute inset-0 field-pattern opacity-20" />
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="xMidYMid slice">
-          <line x1="340" y1="-10" x2="220" y2="110" stroke="rgba(163,230,53,0.12)" strokeWidth="1.5" />
-          <line x1="380" y1="-10" x2="260" y2="110" stroke="rgba(163,230,53,0.07)" strokeWidth="1" />
+          <line x1="340" y1="-10" x2="220" y2="110" stroke="rgba(204,255,0,0.08)" strokeWidth="1.5" />
+          <line x1="380" y1="-10" x2="260" y2="110" stroke="rgba(204,255,0,0.04)" strokeWidth="1" />
         </svg>
         <div className="relative px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <p className="text-[11px] font-bold text-white/40 uppercase tracking-widest">받은 신청</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>받은 신청</p>
             {post && <p className="text-sm font-black text-white truncate">{post.title}</p>}
           </div>
           {pending.length > 0 && (
-            <div className="bg-lime-400 text-[#0f2d0f] text-sm font-black px-3 py-1.5 rounded-xl">
+            <div className="text-sm font-black px-3 py-1.5 rounded-xl" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
               {pending.length}건 대기
             </div>
           )}
@@ -123,21 +123,22 @@ export default function ApplicationsPage() {
       <main className="max-w-4xl mx-auto px-4 pt-4 space-y-4">
         {loading ? (
           <div className="space-y-3">
-            {[1,2].map(i => <div key={i} className="bg-white rounded-2xl h-28 animate-pulse" />)}
+            {[1,2].map(i => <div key={i} className="rounded-2xl h-28 animate-pulse" style={{ background: '#111010' }} />)}
           </div>
         ) : applications.length === 0 ? (
           <div className="text-center py-16">
-            <div className="w-16 h-16 rounded-3xl bg-[#0f2d0f]/10 flex items-center justify-center text-3xl mx-auto mb-3">📭</div>
-            <p className="text-gray-700 font-bold">아직 신청이 없어요</p>
-            <p className="text-gray-400 text-sm mt-1">게시글이 노출되면 신청이 들어올 거예요</p>
+            <div className="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-3" style={{ background: '#1a1a1a' }}>📭</div>
+            <p className="font-bold text-white">아직 신청이 없어요</p>
+            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>게시글이 노출되면 신청이 들어올 거예요</p>
           </div>
         ) : (
           <>
             {pending.length > 0 && (
               <section>
                 <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className="text-xs font-black text-[#0f2d0f] uppercase tracking-wider">대기 중</span>
-                  <span className="w-5 h-5 bg-[#0f2d0f] text-lime-400 text-[10px] font-black rounded-full flex items-center justify-center">{pending.length}</span>
+                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--accent)' }}>대기 중</span>
+                  <span className="w-5 h-5 text-[10px] font-black rounded-full flex items-center justify-center"
+                    style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{pending.length}</span>
                 </div>
                 <div className="space-y-3">
                   {pending.map(app => (
@@ -157,7 +158,7 @@ export default function ApplicationsPage() {
             {decided.length > 0 && (
               <section>
                 <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className="text-xs font-black text-gray-400 uppercase tracking-wider">처리 완료</span>
+                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>처리 완료</span>
                 </div>
                 <div className="space-y-3">
                   {decided.map(app => (
@@ -199,52 +200,64 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
   const team = (app as any).applying_team
 
   const statusConfig = {
-    accepted: { label: '수락됨', bg: 'bg-emerald-100', text: 'text-emerald-700' },
-    rejected: { label: '거절됨', bg: 'bg-red-50', text: 'text-red-600' },
-    pending: { label: '대기 중', bg: 'bg-amber-50', text: 'text-amber-600' },
+    accepted: { label: '수락됨', bg: '#052e16', color: '#4ade80' },
+    rejected: { label: '거절됨', bg: '#1a1a1a', color: 'rgba(255,255,255,0.4)' },
+    pending: { label: '대기 중', bg: '#451a03', color: '#fbbf24' },
   }[app.status]
 
+  const accentLine = app.status === 'accepted' ? '#166534' : app.status === 'rejected' ? '#2a2a2a' : 'var(--accent)'
+
   return (
-    <div className={`bg-white rounded-2xl overflow-hidden ${app.status === 'accepted' ? 'ring-2 ring-emerald-400' : ''}`}>
-      {/* Top accent */}
-      <div className={`h-1 ${app.status === 'accepted' ? 'bg-emerald-400' : app.status === 'rejected' ? 'bg-gray-200' : 'bg-lime-400'}`} />
+    <div className="rounded-2xl overflow-hidden"
+      style={{
+        background: '#111010',
+        border: `1px solid ${app.status === 'accepted' ? '#166534' : 'var(--line)'}`,
+      }}>
+      {/* Top accent line */}
+      <div className="h-0.5" style={{ background: accentLine }} />
 
       <div className="p-4">
         <div className="flex items-start gap-3 mb-3">
-          <div className="w-11 h-11 rounded-2xl bg-[#0f2d0f] flex items-center justify-center text-xl flex-shrink-0">
+          <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl flex-shrink-0"
+            style={{ background: 'var(--chip)' }}>
             {profile?.emoji || '⚽'}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <p className="font-black text-gray-900">{team?.name}</p>
-              <span className={`text-[10px] font-black px-2 py-0.5 rounded-lg ${statusConfig.bg} ${statusConfig.text}`}>
+              <p className="font-black text-white">{team?.name}</p>
+              <span className="text-[10px] font-black px-2 py-0.5 rounded-lg"
+                style={{ background: statusConfig.bg, color: statusConfig.color }}>
                 {statusConfig.label}
               </span>
             </div>
             {profile?.level && (
-              <p className="text-xs text-gray-500 mt-0.5">{profile.level}{profile.region ? ` · ${profile.region}` : ''}</p>
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                {profile.level}{profile.region ? ` · ${profile.region}` : ''}
+              </p>
             )}
           </div>
-          <span className="text-[11px] text-gray-400 flex-shrink-0">
+          <span className="text-[11px] flex-shrink-0" style={{ color: 'rgba(255,255,255,0.3)' }}>
             {format(parseISO(app.created_at), 'M/d HH:mm', { locale: ko })}
           </span>
         </div>
 
         {app.message && (
-          <div className="bg-gray-50 rounded-xl p-3 mb-3 flex gap-2">
-            <MessageCircle className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-gray-700 leading-relaxed">{app.message}</p>
+          <div className="rounded-xl p-3 mb-3 flex gap-2" style={{ background: '#1a1a1a' }}>
+            <MessageCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }} />
+            <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>{app.message}</p>
           </div>
         )}
 
         {app.status === 'pending' && !postMatched && (
           <div className="flex gap-2">
             <button onClick={onReject} disabled={loading}
-              className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-600 active:scale-95 transition disabled:opacity-50">
+              className="flex-1 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition disabled:opacity-50"
+              style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}>
               거절
             </button>
             <button onClick={onAccept} disabled={loading}
-              className="flex-[2] py-2.5 rounded-xl text-sm font-black bg-[#0f2d0f] text-lime-400 active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-1.5">
+              className="flex-[2] py-2.5 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
+              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
               <Swords className="w-4 h-4" />
               {loading ? '처리 중...' : '수락하기'}
             </button>
@@ -252,9 +265,9 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
         )}
 
         {app.status === 'accepted' && (
-          <div className="flex items-center gap-2 bg-emerald-50 rounded-xl p-2.5">
-            <CheckCircle className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-            <p className="text-xs font-bold text-emerald-700">매칭 성사 — 경기가 자동으로 생성됐어요</p>
+          <div className="flex items-center gap-2 rounded-xl p-2.5" style={{ background: '#052e16' }}>
+            <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: '#4ade80' }} />
+            <p className="text-xs font-bold" style={{ color: '#4ade80' }}>매칭 성사 — 경기가 자동으로 생성됐어요</p>
           </div>
         )}
       </div>

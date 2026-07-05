@@ -166,28 +166,28 @@ export default function InboxPage() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'new_match':
-        return <Calendar className="w-5 h-5 text-primary-500" />
+        return <Calendar className="w-5 h-5" style={{ color: 'var(--accent)' }} />
       case 'match_update':
-        return <Calendar className="w-5 h-5 text-orange-500" />
+        return <Calendar className="w-5 h-5 text-amber-400" />
       default:
-        return <Bell className="w-5 h-5 text-gray-500" />
+        return <Bell className="w-5 h-5 text-white/40" />
     }
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-primary-600" />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent)' }} />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0]">
+    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
       {/* Header */}
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex-1 flex items-center gap-2">
@@ -202,13 +202,10 @@ export default function InboxPage() {
             <button
               onClick={markAllAsRead}
               disabled={markingAll}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-xl transition disabled:opacity-50"
+              style={{ color: 'var(--muted2)' }}
             >
-              {markingAll ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <CheckCheck className="w-4 h-4" />
-              )}
+              {markingAll ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCheck className="w-4 h-4" />}
               전체 읽음
             </button>
           )}
@@ -216,120 +213,95 @@ export default function InboxPage() {
       </header>
 
       {/* Filter Tabs */}
-      <div className="bg-white border-b">
+      <div style={{ borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 flex gap-4">
-          <button
-            onClick={() => setFilter('all')}
-            className={`py-3 px-1 border-b-2 text-sm font-medium transition-colors ${
-              filter === 'all'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            전체
-          </button>
-          <button
-            onClick={() => setFilter('unread')}
-            className={`py-3 px-1 border-b-2 text-sm font-medium transition-colors ${
-              filter === 'unread'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            안읽음 {unreadCount > 0 && `(${unreadCount})`}
-          </button>
+          {(['all', 'unread'] as const).map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              className="py-3 px-1 border-b-2 text-sm font-medium transition-colors"
+              style={{
+                borderColor: filter === f ? 'var(--accent)' : 'transparent',
+                color: filter === f ? 'var(--accent)' : 'var(--muted2)',
+              }}
+            >
+              {f === 'all' ? '전체' : `안읽음${unreadCount > 0 ? ` (${unreadCount})` : ''}`}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Notification List */}
       <main className="max-w-4xl mx-auto">
         {notifications.length === 0 ? (
-          <div className="text-center py-16 text-gray-500">
-            <Inbox className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <p className="font-medium">
+          <div className="text-center py-16" style={{ color: 'var(--muted2)' }}>
+            <Inbox className="w-16 h-16 mx-auto mb-4 opacity-30" />
+            <p className="font-medium text-white">
               {filter === 'unread' ? '읽지 않은 알림이 없습니다' : '알림이 없습니다'}
             </p>
             <p className="text-sm mt-1">새로운 알림이 오면 여기에 표시됩니다</p>
           </div>
         ) : (
-          <div className="divide-y">
+          <div style={{ borderBottom: '1px solid var(--line)' }}>
             {notifications.map((notification) => {
               const isExpanded = expandedId === notification.receipt_id
+              const isUnread = !notification.read_at
               return (
                 <div
                   key={notification.receipt_id}
-                  className={`transition-colors border-l-4 ${
-                    notification.read_at
-                      ? 'bg-white border-transparent'
-                      : 'bg-[#0f2d0f]/[0.04] border-[#0f2d0f]'
-                  }`}
+                  className="border-l-[3px] transition-colors"
+                  style={{
+                    borderLeftColor: isUnread ? 'var(--accent)' : 'transparent',
+                    borderBottom: '1px solid var(--line)',
+                  }}
                 >
                   <button
                     onClick={() => handleNotificationClick(notification)}
-                    className={`w-full px-4 py-4 flex items-start gap-3 text-left ${
-                      notification.read_at
-                        ? 'hover:bg-gray-50'
-                        : 'hover:bg-[#0f2d0f]/[0.07]'
-                    }`}
+                    className="w-full px-4 py-4 flex items-start gap-3 text-left"
+                    style={{ background: isUnread ? 'rgba(204,255,0,0.03)' : 'transparent' }}
                   >
-                    {/* 읽음 상태 표시 */}
-                    <div className="flex-shrink-0 mt-1">
-                      {notification.read_at ? (
-                        <div className="w-2 h-2 rounded-full bg-transparent" />
-                      ) : (
-                        <div className="w-2 h-2 rounded-full bg-[#0f2d0f]" />
-                      )}
+                    <div className="flex-shrink-0 mt-1.5">
+                      <div className="w-2 h-2 rounded-full" style={{ background: isUnread ? 'var(--accent)' : 'transparent' }} />
                     </div>
 
-                    {/* 아이콘 */}
                     <div className="flex-shrink-0 mt-0.5">
                       {getNotificationIcon(notification.notification_type)}
                     </div>
 
-                    {/* 내용 */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>
                           {notification.team_name}
                         </span>
-                        <span className="text-xs text-gray-400">
+                        <span className="text-[11px]" style={{ color: 'var(--muted2)' }}>
                           {formatDate(notification.sent_at)}
                         </span>
                       </div>
-                      <h3 className={`font-medium ${isExpanded ? '' : 'truncate'} ${
-                        notification.read_at ? 'text-gray-700' : 'text-gray-900'
-                      }`}>
+                      <h3 className={`font-medium text-[14px] ${isExpanded ? '' : 'truncate'} ${isUnread ? 'text-white' : 'text-white/60'}`}>
                         {notification.title}
                       </h3>
-                      <p className={`text-sm mt-0.5 ${isExpanded ? 'whitespace-pre-wrap' : 'line-clamp-2'} ${
-                        notification.read_at ? 'text-gray-500' : 'text-gray-600'
-                      }`}>
+                      <p className={`text-[13px] mt-0.5 ${isExpanded ? 'whitespace-pre-wrap' : 'line-clamp-2'}`} style={{ color: 'var(--muted2)' }}>
                         {notification.body}
                       </p>
                     </div>
 
-                    {/* 확장/축소 아이콘 */}
-                    <div className="flex-shrink-0 text-gray-400">
-                      {isExpanded ? (
-                        <ChevronUp className="w-5 h-5" />
-                      ) : (
-                        <ChevronDown className="w-5 h-5" />
-                      )}
+                    <div className="flex-shrink-0" style={{ color: 'var(--muted2)' }}>
+                      {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                     </div>
                   </button>
 
-                  {/* 확장된 경우 확인 완료 버튼 표시 */}
                   {isExpanded && (
                     <div className="px-4 pb-4 pl-14">
                       {notification.confirmed_at ? (
-                        <div className="flex items-center gap-1.5 px-3 py-2 text-sm text-green-600 bg-green-50 rounded-lg">
+                        <div className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
                           <CheckCircle2 className="w-4 h-4" />
                           확인 완료됨
                         </div>
                       ) : (
                         <button
                           onClick={() => confirmNotification(notification.receipt_id)}
-                          className="flex items-center gap-1.5 px-4 py-2 text-sm text-white bg-green-600 hover:bg-green-700 rounded-lg transition-colors font-medium"
+                          className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg font-bold transition"
+                          style={{ background: 'var(--accent)', color: '#0a0a0a' }}
                         >
                           <Check className="w-4 h-4" />
                           확인 완료!
