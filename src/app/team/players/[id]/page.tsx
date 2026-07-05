@@ -47,21 +47,21 @@ function computeBadges(stats: SeasonStats, records: MatchRecord[]): Badge[] {
   const badges: Badge[] = []
 
   if (stats.matchAttendance >= 10)
-    badges.push({ emoji: '🔥', label: '출석왕', desc: `${stats.matchAttendance}경기 출전`, color: 'bg-orange-50 text-orange-700 border-orange-200' })
+    badges.push({ emoji: '🔥', label: '출석왕', desc: `${stats.matchAttendance}경기 출전`, color: 'bg-[#2d1200] text-orange-400 border-orange-900' })
 
   if (stats.goals >= 10)
     badges.push({ emoji: '⚽', label: '득점왕', desc: `${stats.goals}골`, color: 'bg-[#1a2600] text-[#ccff00] border-[#ccff00]/40' })
   else if (stats.goals >= 5)
-    badges.push({ emoji: '🎯', label: '공격수', desc: `${stats.goals}골`, color: 'bg-green-50 text-green-700 border-green-200' })
+    badges.push({ emoji: '🎯', label: '공격수', desc: `${stats.goals}골`, color: 'bg-[#052e16] text-green-400 border-green-900' })
 
   if (stats.assists >= 5)
-    badges.push({ emoji: '🤝', label: '팀플레이어', desc: `${stats.assists}어시스트`, color: 'bg-blue-50 text-blue-700 border-blue-200' })
+    badges.push({ emoji: '🤝', label: '팀플레이어', desc: `${stats.assists}어시스트`, color: 'bg-[#0c3d5e] text-sky-400 border-sky-900' })
 
   if (stats.avgRating !== null && stats.avgRating >= 4.0)
-    badges.push({ emoji: '⭐', label: '에이스', desc: `평균 ${stats.avgRating.toFixed(1)}점`, color: 'bg-amber-50 text-amber-700 border-amber-200' })
+    badges.push({ emoji: '⭐', label: '에이스', desc: `평균 ${stats.avgRating.toFixed(1)}점`, color: 'bg-[#1a1000] text-amber-400 border-amber-900' })
 
   if (stats.cleanSheets >= 3)
-    badges.push({ emoji: '🧤', label: '철벽', desc: `클린시트 ${stats.cleanSheets}회`, color: 'bg-purple-50 text-purple-700 border-purple-200' })
+    badges.push({ emoji: '🧤', label: '철벽', desc: `클린시트 ${stats.cleanSheets}회`, color: 'bg-[#2d1b69] text-violet-400 border-violet-900' })
 
   // 3경기 연속 4.5+ 평점
   let streak = 0
@@ -70,7 +70,7 @@ function computeBadges(stats: SeasonStats, records: MatchRecord[]): Badge[] {
     else streak = 0
   }
   if (streak >= 3)
-    badges.push({ emoji: '💪', label: '무결점', desc: '3연속 4.5+ 평점', color: 'bg-rose-50 text-rose-700 border-rose-200' })
+    badges.push({ emoji: '💪', label: '무결점', desc: '3연속 4.5+ 평점', color: 'bg-[#2d0f1a] text-rose-400 border-rose-900' })
 
   return badges
 }

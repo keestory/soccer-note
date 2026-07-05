@@ -317,7 +317,7 @@ export default function MatchDetailPage() {
               <span>1쿼터 라인업 바로 편집할까요?</span>
               <Link
                 href={`/match/${matchId}/quarter/1`}
-                className="px-2 py-1 bg-primary-600 text-white text-xs rounded-lg font-medium"
+                className="px-2 py-1 text-xs rounded-lg font-medium" style={{ background: 'var(--accent)', color: '#0a0a0a' }}
                 onClick={() => toast.dismiss(t.id)}
               >
                 바로가기
@@ -818,7 +818,7 @@ export default function MatchDetailPage() {
                           )}
                           {/* IN badge for substituted-in players */}
                           {subIn && (
-                            <span className="absolute -top-2 -left-3 px-1 py-0.5 bg-primary-500 text-[8px] font-bold text-white rounded shadow z-10">
+                            <span className="absolute -top-2 -left-3 px-1 py-0.5 text-[8px] font-bold rounded shadow z-10" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                               IN {subIn.minute}&apos;
                             </span>
                           )}
@@ -838,7 +838,7 @@ export default function MatchDetailPage() {
                                 OUT {subOut.minute}&apos;
                               </span>
                               {subOut.player_in && (
-                                <span className="mt-0.5 px-1 py-0.5 bg-primary-500/90 text-white text-[8px] font-bold rounded whitespace-nowrap">
+                                <span className="mt-0.5 px-1 py-0.5 text-[8px] font-bold rounded whitespace-nowrap" style={{ background: 'rgba(204,255,0,0.8)', color: '#0a0a0a' }}>
                                   ↑ {subOut.player_in.name}
                                 </span>
                               )}
@@ -848,12 +848,12 @@ export default function MatchDetailPage() {
                           {hasStats && !subOut && (
                             <div className="flex gap-0.5 mt-0.5">
                               {record.goals > 0 && (
-                                <span className="px-1 bg-primary-500 text-white text-[8px] font-bold rounded">
+                                <span className="px-1 text-[8px] font-bold rounded" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                                   G{record.goals}
                                 </span>
                               )}
                               {record.assists > 0 && (
-                                <span className="px-1 bg-primary-500 text-white text-[8px] font-bold rounded">
+                                <span className="px-1 text-[8px] font-bold rounded" style={{ background: 'rgba(204,255,0,0.6)', color: '#0a0a0a' }}>
                                   A{record.assists}
                                 </span>
                               )}
