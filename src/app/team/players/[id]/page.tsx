@@ -180,14 +180,14 @@ export default function PlayerStatsPage() {
   const posLabel = POSITION_LABELS[player.default_position as PositionType]
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-[#f0f4f0] pb-20">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10 safe-top">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/team/players" className="p-1 hover:bg-gray-100 rounded-lg">
-            <ArrowLeft className="w-6 h-6" />
+      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+          <Link href="/team/players" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+            <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-xl font-bold">{t.playerSeasonStats}</h1>
+          <h1 className="text-base font-black text-white">{t.playerSeasonStats}</h1>
         </div>
       </header>
 

@@ -183,29 +183,26 @@ export default function InboxPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f0f4f0]">
       {/* Header */}
-      <header className="bg-white shadow-toss sticky top-0 z-10 safe-top">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/dashboard" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+            <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="flex-1">
-            <h1 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <Inbox className="w-5 h-5 text-primary-600" />
-              알림함
-              {unreadCount > 0 && (
-                <span className="px-2 py-0.5 bg-red-500 text-white text-xs rounded-full">
-                  {unreadCount}
-                </span>
-              )}
-            </h1>
+          <div className="flex-1 flex items-center gap-2">
+            <h1 className="text-base font-black text-white">알림함</h1>
+            {unreadCount > 0 && (
+              <span className="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">
+                {unreadCount}
+              </span>
+            )}
           </div>
           {unreadCount > 0 && (
             <button
               onClick={markAllAsRead}
               disabled={markingAll}
-              className="flex items-center gap-1 px-3 py-1.5 text-sm text-primary-600 hover:bg-primary-50 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 px-3 py-1.5 text-sm text-white/70 hover:text-white hover:bg-white/10 rounded-xl transition-colors disabled:opacity-50"
             >
               {markingAll ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

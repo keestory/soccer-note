@@ -348,21 +348,21 @@ export default function MatchDetailPage() {
   const currentQuarter = match.quarters?.find(q => q.quarter_number === activeQuarter)
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-[#f0f4f0] pb-20">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10 safe-top">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="p-1 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-6 h-6" />
+            <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+              <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-lg font-bold">vs {match.opponent}</h1>
-              <div className="flex items-center gap-2 text-sm text-gray-500">
+              <h1 className="text-base font-black text-white">vs {match.opponent}</h1>
+              <div className="flex items-center gap-2 text-xs text-white/50">
                 <span>{formatDate(match.match_date)}</span>
                 {match.location && (
                   <>
-                    <span className="text-gray-300">|</span>
+                    <span className="text-white/20">|</span>
                     <span className="flex items-center gap-0.5">
                       <MapPin className="w-3 h-3" />
                       {match.location}
@@ -376,13 +376,13 @@ export default function MatchDetailPage() {
             <div className="flex items-center gap-1">
               <button
                 onClick={startEditMatchInfo}
-                className="p-2 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg"
+                className="p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-xl"
               >
                 <Edit2 className="w-5 h-5" />
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
+                className="p-2 text-white/50 hover:text-red-300 hover:bg-white/10 rounded-xl"
               >
                 <Trash2 className="w-5 h-5" />
               </button>
