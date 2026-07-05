@@ -79,7 +79,7 @@ function computeBadges(stats: SeasonStats, records: MatchRecord[]): Badge[] {
 function RatingSparkline({ records }: { records: MatchRecord[] }) {
   const ratedRecords = [...records].reverse().filter(r => r.rating !== null)
   if (ratedRecords.length < 2) return (
-    <div className="flex items-center justify-center h-20 text-xs text-gray-400">경기 기록이 쌓이면 그래프가 표시됩니다</div>
+    <div className="flex items-center justify-center h-20 text-xs" style={{ color: 'var(--muted2)' }}>경기 기록이 쌓이면 그래프가 표시됩니다</div>
   )
 
   const W = 300, H = 80, PAD = 12
@@ -103,34 +103,33 @@ function RatingSparkline({ records }: { records: MatchRecord[] }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">평점 추이</span>
+        <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>평점 추이</span>
         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-          trend > 0 ? 'bg-green-100 text-green-700' : trend < 0 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-500'
-        }`}>
+          trend > 0 ? 'bg-lime-900/40 text-lime-300' : trend < 0 ? 'bg-red-900/40 text-red-300' : 'text-white/30'
+        }`} style={{ background: trend === 0 ? '#1a1a1a' : undefined }}>
           {trend > 0 ? `▲ +${trend.toFixed(1)}` : trend < 0 ? `▼ ${trend.toFixed(1)}` : '→ 유지'}
         </span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 80 }}>
         <defs>
           <linearGradient id="ratingGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#a3e635" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#a3e635" stopOpacity="0.0" />
+            <stop offset="0%" stopColor="#ccff00" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#ccff00" stopOpacity="0.0" />
           </linearGradient>
         </defs>
         <path d={areaD} fill="url(#ratingGrad)" />
-        <path d={pathD} fill="none" stroke="#0f2d0f" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={pathD} fill="none" stroke="#ccff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         {pts.map((p, i) => (
           <circle key={i} cx={p.x} cy={p.y} r={i === pts.length - 1 ? 5 : 3}
-            fill={i === pts.length - 1 ? '#0f2d0f' : '#a3e635'}
-            stroke="white" strokeWidth="1.5"
+            fill={i === pts.length - 1 ? '#ccff00' : '#1a2a00'}
+            stroke="#ccff00" strokeWidth="1.5"
           />
         ))}
-        {/* 마지막 값 라벨 */}
-        <text x={last.x} y={last.y - 8} textAnchor="middle" fontSize="10" fontWeight="bold" fill="#0f2d0f">
+        <text x={last.x} y={last.y - 8} textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ccff00">
           {last.v.toFixed(1)}
         </text>
       </svg>
-      <div className="flex justify-between text-[10px] text-gray-400 mt-1 px-1">
+      <div className="flex justify-between text-[10px] mt-1 px-1" style={{ color: 'var(--muted2)' }}>
         <span>{formatDate(ratedRecords[0].matchDate)}</span>
         <span>{formatDate(ratedRecords[ratedRecords.length - 1].matchDate)}</span>
       </div>
@@ -227,11 +226,13 @@ export default function PlayerStatsPage() {
   const posColor = POSITION_COLORS[player.default_position as PositionType]
   const posLabel = POSITION_LABELS[player.default_position as PositionType]
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-20">
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+    <div className="min-h-screen pb-20" style={{ background: '#0a0a0a' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/team/players" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+          <Link href="/team/players" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-base font-black text-white">{t.playerSeasonStats}</h1>
@@ -241,40 +242,37 @@ export default function PlayerStatsPage() {
       <main className="max-w-4xl mx-auto px-4 py-4 space-y-4">
 
         {/* 선수 프로필 */}
-        <section className="bg-white rounded-2xl p-5 flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-black flex-shrink-0"
-            style={{ backgroundColor: posColor }}>
+        <section className="p-5 flex items-center gap-4" style={cardStyle}>
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-black flex-shrink-0" style={{ backgroundColor: posColor }}>
             {player.number || '-'}
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-black text-gray-900">{player.name}</h2>
+            <h2 className="text-xl font-black text-white">{player.name}</h2>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: posColor }}>
-                {posLabel}
-              </span>
-              {player.number && <span className="text-sm text-gray-400">#{player.number}</span>}
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: posColor }}>{posLabel}</span>
+              {player.number && <span className="text-sm" style={{ color: 'var(--muted2)' }}>#{player.number}</span>}
             </div>
           </div>
           {seasonStats?.avgRating !== null && seasonStats?.avgRating !== undefined && (
-            <div className="flex flex-col items-center bg-amber-50 rounded-2xl px-4 py-3">
-              <Star className="w-4 h-4 text-amber-400 fill-amber-400 mb-0.5" />
-              <span className="text-xl font-black text-amber-700">{seasonStats.avgRating.toFixed(1)}</span>
-              <span className="text-[10px] text-amber-500">평균 평점</span>
+            <div className="flex flex-col items-center rounded-2xl px-4 py-3" style={{ background: 'var(--chip)' }}>
+              <Star className="w-4 h-4 mb-0.5 fill-current" style={{ color: 'var(--accent)' }} />
+              <span className="text-xl font-black" style={{ color: 'var(--accent)' }}>{seasonStats.avgRating.toFixed(1)}</span>
+              <span className="text-[10px]" style={{ color: 'var(--muted2)' }}>평균 평점</span>
             </div>
           )}
         </section>
 
         {/* 뱃지 */}
         {badges.length > 0 && (
-          <section className="bg-white rounded-2xl p-4">
-            <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">업적 뱃지</p>
+          <section className="p-4" style={cardStyle}>
+            <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>업적 뱃지</p>
             <div className="flex flex-wrap gap-2">
               {badges.map((b, i) => (
-                <div key={i} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold ${b.color}`}>
+                <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'var(--chipText)' }}>
                   <span>{b.emoji}</span>
                   <div>
-                    <div className="font-black">{b.label}</div>
-                    <div className="text-[10px] opacity-70">{b.desc}</div>
+                    <div className="font-black text-white">{b.label}</div>
+                    <div className="text-[10px] opacity-60">{b.desc}</div>
                   </div>
                 </div>
               ))}
@@ -284,20 +282,20 @@ export default function PlayerStatsPage() {
 
         {/* 시즌 스탯 */}
         {seasonStats && (
-          <section className="bg-white rounded-2xl p-4">
-            <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest mb-3">시즌 스탯</p>
+          <section className="p-4" style={cardStyle}>
+            <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>시즌 스탯</p>
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { label: '출전', value: seasonStats.matchAttendance, color: 'text-[#0f2d0f]', bg: 'bg-[#0f2d0f]/[0.06]' },
-                { label: '골', value: seasonStats.goals, color: 'text-lime-700', bg: 'bg-lime-50' },
-                { label: '어시스트', value: seasonStats.assists, color: 'text-blue-700', bg: 'bg-blue-50' },
-                { label: '클린시트', value: seasonStats.cleanSheets, color: 'text-purple-700', bg: 'bg-purple-50' },
-                { label: '훈련', value: seasonStats.trainingAttendance, color: 'text-orange-700', bg: 'bg-orange-50' },
-                { label: '기록 경기', value: seasonStats.games, color: 'text-gray-600', bg: 'bg-gray-50' },
+                { label: '출전', value: seasonStats.matchAttendance, color: 'var(--accent)' },
+                { label: '골', value: seasonStats.goals, color: '#a3e635' },
+                { label: '어시스트', value: seasonStats.assists, color: '#38bdf8' },
+                { label: '클린시트', value: seasonStats.cleanSheets, color: '#a78bfa' },
+                { label: '훈련', value: seasonStats.trainingAttendance, color: '#fb923c' },
+                { label: '기록 경기', value: seasonStats.games, color: 'var(--muted2)' },
               ].map(s => (
-                <div key={s.label} className={`${s.bg} rounded-xl p-3 text-center`}>
-                  <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
-                  <p className="text-[11px] text-gray-500 mt-0.5">{s.label}</p>
+                <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: '#1a1a1a' }}>
+                  <p className="text-2xl font-black" style={{ color: s.color }}>{s.value}</p>
+                  <p className="text-[11px] mt-0.5" style={{ color: 'var(--muted2)' }}>{s.label}</p>
                 </div>
               ))}
             </div>
@@ -306,10 +304,10 @@ export default function PlayerStatsPage() {
 
         {/* 성장 그래프 */}
         {matchRecords.length >= 2 && (
-          <section className="bg-white rounded-2xl p-4">
+          <section className="p-4" style={cardStyle}>
             <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="w-4 h-4 text-[#0f2d0f]" />
-              <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">성장 그래프</p>
+              <TrendingUp className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+              <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>성장 그래프</p>
             </div>
             <RatingSparkline records={matchRecords} />
           </section>
@@ -318,52 +316,51 @@ export default function PlayerStatsPage() {
         {/* 경기 기록 */}
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <Calendar className="w-4 h-4 text-[#0f2d0f]" />
-            <p className="text-[11px] font-black text-gray-400 uppercase tracking-widest">{t.matchHistory}</p>
+            <Calendar className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+            <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.matchHistory}</p>
           </div>
 
           {matchRecords.length === 0 ? (
-            <div className="bg-white rounded-2xl p-10 text-center">
-              <Trophy className="w-12 h-12 text-gray-200 mx-auto mb-3" />
-              <p className="text-gray-400 text-sm">{t.noMatchRecord}</p>
+            <div className="p-10 text-center" style={cardStyle}>
+              <Trophy className="w-12 h-12 mx-auto mb-3 opacity-20 text-white" />
+              <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.noMatchRecord}</p>
             </div>
           ) : (
             <div className="space-y-2.5">
               {matchRecords.map((record) => (
-                <Link key={record.matchId} href={`/match/${record.matchId}`}
-                  className="block bg-white rounded-2xl p-4 active:scale-[0.99] transition">
+                <Link key={record.matchId} href={`/match/${record.matchId}`} className="block p-4 active:scale-[0.99] transition" style={cardStyle}>
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <p className="font-black text-gray-900">{t.vs} {record.opponent}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{formatDate(record.matchDate)}</p>
+                      <p className="font-black text-white">{t.vs} {record.opponent}</p>
+                      <p className="text-xs mt-0.5" style={{ color: 'var(--muted2)' }}>{formatDate(record.matchDate)}</p>
                     </div>
                     {record.rating !== null && (
-                      <div className="flex items-center gap-1 bg-amber-50 px-2.5 py-1.5 rounded-xl">
-                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-                        <span className="font-black text-sm text-amber-700">{record.rating.toFixed(1)}</span>
+                      <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl" style={{ background: 'var(--chip)' }}>
+                        <Star className="w-3.5 h-3.5 fill-current" style={{ color: 'var(--accent)' }} />
+                        <span className="font-black text-sm" style={{ color: 'var(--accent)' }}>{record.rating.toFixed(1)}</span>
                       </div>
                     )}
                   </div>
 
                   <div className="grid grid-cols-4 gap-2">
                     {[
-                      { label: t.goal, value: record.goals, active: record.goals > 0, color: 'text-[#0f2d0f]' },
-                      { label: t.assist, value: record.assists, active: record.assists > 0, color: 'text-blue-600' },
-                      { label: t.cleanSheet, value: record.cleanSheet ? '✓' : '-', active: record.cleanSheet, color: 'text-purple-600' },
-                      { label: t.contribution, value: record.contribution > 0 ? record.contribution : '-', active: record.contribution > 0, color: 'text-green-600' },
+                      { label: t.goal, value: record.goals, active: record.goals > 0, color: 'var(--accent)' },
+                      { label: t.assist, value: record.assists, active: record.assists > 0, color: '#38bdf8' },
+                      { label: t.cleanSheet, value: record.cleanSheet ? '✓' : '-', active: record.cleanSheet, color: '#a78bfa' },
+                      { label: t.contribution, value: record.contribution > 0 ? record.contribution : '-', active: record.contribution > 0, color: '#2dd4bf' },
                     ].map(s => (
                       <div key={s.label} className="text-center">
-                        <p className="text-[10px] text-gray-400 mb-0.5">{s.label}</p>
-                        <p className={`font-black text-lg ${s.active ? s.color : 'text-gray-200'}`}>{s.value}</p>
+                        <p className="text-[10px] mb-0.5" style={{ color: 'var(--muted2)' }}>{s.label}</p>
+                        <p className="font-black text-lg" style={{ color: s.active ? s.color : '#2a2a2a' }}>{s.value}</p>
                       </div>
                     ))}
                   </div>
 
                   {(record.highlight || record.praise || record.improvement) && (
-                    <div className="mt-3 pt-3 border-t space-y-1">
-                      {record.highlight && <p className="text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded-lg">⭐ {record.highlight}</p>}
-                      {record.praise && <p className="text-xs text-green-700 bg-green-50 px-2 py-1 rounded-lg">👍 {record.praise}</p>}
-                      {record.improvement && <p className="text-xs text-[#0f2d0f] bg-[#0f2d0f]/[0.06] px-2 py-1 rounded-lg">💡 {record.improvement}</p>}
+                    <div className="mt-3 pt-3 space-y-1" style={{ borderTop: '1px solid var(--line)' }}>
+                      {record.highlight && <p className="text-xs px-2 py-1 rounded-lg text-amber-300 bg-amber-900/30">⭐ {record.highlight}</p>}
+                      {record.praise && <p className="text-xs px-2 py-1 rounded-lg" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>👍 {record.praise}</p>}
+                      {record.improvement && <p className="text-xs px-2 py-1 rounded-lg text-white/60" style={{ background: '#1a1a1a' }}>💡 {record.improvement}</p>}
                     </div>
                   )}
                 </Link>

@@ -51,10 +51,13 @@ export default function ProfilePage() {
 
   const avatarInitial = displayName.trim().charAt(0).toUpperCase() || '?'
 
+  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const inputStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 12 }
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f0f4f0] safe-top pb-20">
-        <header className="bg-[#0f2d0f] safe-top">
+      <div className="min-h-screen safe-top pb-20" style={{ background: '#0a0a0a' }}>
+        <header className="safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
             <Skeleton className="w-8 h-8 rounded-xl" />
             <Skeleton className="h-5 w-20" />
@@ -75,10 +78,10 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0] safe-top pb-20">
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+    <div className="min-h-screen safe-top pb-20" style={{ background: '#0a0a0a' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-base font-black text-white">내 프로필</h1>
@@ -88,33 +91,35 @@ export default function ProfilePage() {
       <main className="max-w-lg mx-auto px-4 py-6 space-y-5">
         {/* Avatar hero */}
         <div className="flex flex-col items-center pt-2 pb-4">
-          <div className="w-20 h-20 rounded-full bg-primary-600 flex items-center justify-center text-white text-3xl font-bold shadow-md mb-3">
+          <div className="w-20 h-20 rounded-full flex items-center justify-center text-[#0a0a0a] text-3xl font-bold mb-3" style={{ background: 'var(--accent)' }}>
             {avatarInitial}
           </div>
-          <p className="font-semibold text-gray-900 text-lg">{displayName || '이름 없음'}</p>
-          <p className="text-sm text-gray-400 mt-0.5">{email}</p>
+          <p className="font-bold text-white text-lg">{displayName || '이름 없음'}</p>
+          <p className="text-[13px] mt-0.5" style={{ color: 'var(--muted2)' }}>{email}</p>
         </div>
 
         {/* Edit form */}
-        <form onSubmit={handleSave} className="bg-white rounded-2xl shadow-sm overflow-hidden">
+        <form onSubmit={handleSave} style={cardStyle} className="overflow-hidden">
           <div className="px-5 pt-5 pb-4 space-y-4">
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">이름 / 닉네임</label>
+              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>이름 / 닉네임</label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full px-4 py-3.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base"
+                className="w-full px-4 py-3.5 outline-none transition text-[15px]"
+                style={inputStyle}
                 placeholder="팀원들에게 보여질 이름"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1.5 uppercase tracking-wide">이메일</label>
+              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>이메일</label>
               <input
                 type="email"
                 value={email}
                 disabled
-                className="w-full px-4 py-3.5 rounded-xl border border-gray-100 bg-gray-50 text-gray-400 text-base"
+                className="w-full px-4 py-3.5 text-[15px] opacity-40"
+                style={inputStyle}
               />
             </div>
           </div>
@@ -122,7 +127,8 @@ export default function ProfilePage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full py-3.5 bg-primary-600 text-white rounded-xl font-semibold text-base hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 transition"
+              className="w-full py-3.5 rounded-xl font-bold text-[15px] disabled:opacity-50 transition active:scale-[0.98]"
+              style={{ background: 'var(--accent)', color: '#0a0a0a' }}
             >
               {saving ? '저장 중…' : '저장'}
             </button>
@@ -130,45 +136,46 @@ export default function ProfilePage() {
         </form>
 
         {/* Settings list */}
-        <div className="bg-white rounded-2xl shadow-sm overflow-hidden divide-y divide-gray-100">
+        <div style={cardStyle} className="overflow-hidden">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 active:bg-gray-100 transition"
+            className="w-full flex items-center justify-between px-5 py-4 transition"
+            style={{ borderBottom: '1px solid var(--line)' }}
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center">
-                <LogOut className="w-4 h-4 text-gray-600" />
+              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
+                <LogOut className="w-4 h-4 text-white/60" />
               </div>
-              <span className="font-medium text-gray-900">로그아웃</span>
+              <span className="font-medium text-white">로그아웃</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-gray-300" />
+            <ChevronRight className="w-4 h-4 text-white/20" />
           </button>
 
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="w-full flex items-center justify-between px-5 py-4 hover:bg-red-50 active:bg-red-100 transition"
+            className="w-full flex items-center justify-between px-5 py-4 transition"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-red-50 flex items-center justify-center">
-                <Trash2 className="w-4 h-4 text-red-500" />
+              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#2a1010' }}>
+                <Trash2 className="w-4 h-4 text-red-400" />
               </div>
-              <span className="font-medium text-red-500">계정 삭제</span>
+              <span className="font-medium text-red-400">계정 삭제</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-red-200" />
+            <ChevronRight className="w-4 h-4 text-red-900" />
           </button>
         </div>
       </main>
 
       {/* Delete confirm bottom sheet */}
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
-          <div className="bg-white w-full rounded-t-3xl p-6 safe-bottom">
-            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-6" />
-            <div className="w-14 h-14 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Trash2 className="w-7 h-7 text-red-500" />
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-end">
+          <div className="w-full rounded-t-3xl p-6 safe-bottom" style={{ background: '#111010', border: '1px solid var(--line)' }}>
+            <div className="w-10 h-1 rounded-full mx-auto mb-6" style={{ background: '#2a2a2a' }} />
+            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#2a1010' }}>
+              <Trash2 className="w-7 h-7 text-red-400" />
             </div>
-            <h3 className="text-lg font-bold text-center text-gray-900 mb-2">계정을 삭제할까요?</h3>
-            <p className="text-sm text-gray-500 text-center mb-6">모든 데이터가 영구 삭제되며 복구할 수 없습니다.</p>
+            <h3 className="text-lg font-bold text-center text-white mb-2">계정을 삭제할까요?</h3>
+            <p className="text-[13px] text-center mb-6" style={{ color: 'var(--muted2)' }}>모든 데이터가 영구 삭제되며 복구할 수 없습니다.</p>
             <div className="space-y-3">
               <button
                 onClick={async () => {
@@ -181,13 +188,14 @@ export default function ProfilePage() {
                     setShowDeleteConfirm(false)
                   }
                 }}
-                className="w-full py-3.5 bg-red-500 text-white rounded-xl font-semibold hover:bg-red-600 transition"
+                className="w-full py-3.5 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition"
               >
                 삭제하기
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="w-full py-3.5 bg-gray-100 text-gray-700 rounded-xl font-semibold hover:bg-gray-200 transition"
+                className="w-full py-3.5 rounded-xl font-bold text-white transition"
+                style={{ background: '#1a1a1a' }}
               >
                 취소
               </button>
