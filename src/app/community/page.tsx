@@ -5,22 +5,22 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
-import { Plus, MapPin, Calendar, Filter, Swords } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { BottomNav } from '@/components/BottomNav'
 import type { MatchPost } from '@/types/database'
 import { format, isToday, isTomorrow, parseISO, differenceInDays } from 'date-fns'
 import { ko } from 'date-fns/locale'
-import toast from 'react-hot-toast'
 
 const REGIONS = ['전체', '서울', '경기', '인천', '부산', '대구', '광주', '대전', '강원', '충청', '전라', '경상', '제주']
 const FORMATS = ['전체', '5vs5', '6vs6', '7vs7', '8vs8', '11vs11']
 const LEVELS = ['전체', '입문', '초급', '중급', '고급']
 
-const LEVEL_STYLE: Record<string, { bg: string; text: string; dot: string }> = {
-  '입문': { bg: 'bg-slate-100', text: 'text-slate-600', dot: 'bg-slate-400' },
-  '초급': { bg: 'bg-sky-100', text: 'text-sky-700', dot: 'bg-sky-500' },
-  '중급': { bg: 'bg-emerald-100', text: 'text-emerald-700', dot: 'bg-emerald-500' },
-  '고급': { bg: 'bg-amber-100', text: 'text-amber-700', dot: 'bg-amber-500' },
+// Dark-theme level badge
+const LEVEL_STYLE: Record<string, { color: string }> = {
+  '입문': { color: '#94a3b8' },
+  '초급': { color: '#38bdf8' },
+  '중급': { color: '#2dd4bf' },
+  '고급': { color: '#f59e0b' },
 }
 
 function formatMatchDate(dateStr: string) {
@@ -28,7 +28,7 @@ function formatMatchDate(dateStr: string) {
   if (isToday(d)) return { label: '오늘', urgent: true }
   if (isTomorrow(d)) return { label: '내일', urgent: true }
   const diff = differenceInDays(d, new Date())
-  if (diff <= 7) return { label: `${diff}일 후`, urgent: false }
+  if (diff > 0 && diff <= 7) return { label: `${diff}일 후`, urgent: false }
   return { label: format(d, 'M월 d일(EEE)', { locale: ko }), urgent: false }
 }
 
@@ -88,50 +88,32 @@ export default function CommunityPage() {
   const activeFilters = [filterRegion, filterFormat, filterLevel].filter(f => f !== '전체').length
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-24">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg)' }}>
 
       {/* Hero Header */}
-      <header className="relative overflow-hidden bg-[#0f2d0f] safe-top">
-        {/* Field stripe pattern */}
-        <div className="absolute inset-0 field-pattern opacity-60" />
-        {/* Diagonal speed lines SVG */}
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 120" preserveAspectRatio="xMidYMid slice">
-          <line x1="320" y1="-10" x2="180" y2="130" stroke="rgba(163,230,53,0.15)" strokeWidth="1.5" />
-          <line x1="360" y1="-10" x2="220" y2="130" stroke="rgba(163,230,53,0.10)" strokeWidth="1" />
-          <line x1="395" y1="-10" x2="255" y2="130" stroke="rgba(163,230,53,0.07)" strokeWidth="0.8" />
-          <circle cx="60" cy="85" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-          <circle cx="60" cy="85" r="22" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="0.8" />
-        </svg>
-
-        <div className="relative px-4 pt-5 pb-4">
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#0e0e0e', borderBottom: '1px solid #1a1a1a' }}>
+        <div className="max-w-4xl mx-auto px-5 py-4">
           <div className="flex items-start justify-between">
             <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="text-[10px] font-bold tracking-widest text-lime-400/80 uppercase">Match Community</span>
-              </div>
-              <h1 className="text-2xl font-black text-white tracking-tight leading-none">
-                상대팀 찾기
-              </h1>
-              <p className="text-sm text-white/50 mt-1">함께 뛸 팀을 구해보세요</p>
+              <p className="font-display text-[13px] tracking-widest mb-1" style={{ color: 'var(--accent)' }}>MATCH COMMUNITY</p>
+              <h1 className="font-black text-[23px] text-white leading-none">상대팀 찾기</h1>
+              <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>함께 뛸 팀을 구해보세요</p>
             </div>
             <div className="flex items-center gap-2 mt-1">
               <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`relative p-2.5 rounded-xl border transition ${
-                  showFilters || activeFilters > 0
-                    ? 'bg-lime-400 border-lime-400 text-[#0f2d0f]'
-                    : 'bg-white/10 border-white/20 text-white/70'
-                }`}>
-                <Filter className="w-4 h-4" />
-                {activeFilters > 0 && (
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-white text-[#0f2d0f] text-[10px] font-black rounded-full flex items-center justify-center">
-                    {activeFilters}
-                  </span>
-                )}
+                onClick={() => setShowFilters(v => !v)}
+                className="px-3 py-2 rounded-[9px] text-sm font-medium transition"
+                style={{
+                  border: '1px solid #2a2a2a',
+                  background: showFilters || activeFilters > 0 ? 'var(--chip)' : 'transparent',
+                  color: showFilters || activeFilters > 0 ? 'var(--accent)' : '#aaa',
+                }}>
+                필터{activeFilters > 0 ? ` (${activeFilters})` : ''}
               </button>
               {isCoach && (
                 <Link href="/community/new"
-                  className="flex items-center gap-1.5 bg-lime-400 text-[#0f2d0f] px-3.5 py-2.5 rounded-xl text-sm font-black active:scale-95 transition shadow-lg shadow-lime-400/20">
+                  className="px-3.5 py-2 rounded-[9px] text-sm font-black flex items-center gap-1.5 transition active:scale-95"
+                  style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                   <Plus className="w-4 h-4" />
                   글쓰기
                 </Link>
@@ -140,27 +122,47 @@ export default function CommunityPage() {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Filter chips */}
         {showFilters && (
-          <div className="relative border-t border-white/10 bg-[#0a2208]/80 backdrop-blur-sm px-4 py-3 space-y-2.5">
+          <div className="border-t px-5 py-3 space-y-2.5" style={{ borderColor: '#1a1a1a', background: '#0a0a0a' }}>
             <FilterRow label="지역" options={REGIONS} value={filterRegion} onChange={setFilterRegion} />
             <FilterRow label="방식" options={FORMATS} value={filterFormat} onChange={setFilterFormat} />
             <FilterRow label="수준" options={LEVELS} value={filterLevel} onChange={setFilterLevel} />
           </div>
         )}
+
+        {/* Quick region chips */}
+        {!showFilters && (
+          <div className="flex gap-2 overflow-x-auto px-5 pb-3" style={{ scrollbarWidth: 'none' }}>
+            {['전체', '서울', '경기', '6vs6'].map(chip => (
+              <button key={chip}
+                onClick={() => {
+                  if (chip === '6vs6') setFilterFormat(filterFormat === '6vs6' ? '전체' : '6vs6')
+                  else setFilterRegion(filterRegion === chip ? '전체' : chip)
+                }}
+                className="px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition"
+                style={{
+                  background: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? 'var(--accent)' : '#191919',
+                  color: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? '#0a0a0a' : '#aaa',
+                  border: '1px solid #2a2a2a',
+                }}>
+                {chip}
+              </button>
+            ))}
+          </div>
+        )}
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 pt-4">
+      <main className="max-w-4xl mx-auto px-5 pt-4">
         {loading ? (
           <div className="space-y-3">
             {[1,2,3].map(i => (
-              <div key={i} className="bg-white rounded-2xl p-4 animate-pulse">
+              <div key={i} className="rounded-[16px] p-4 animate-pulse" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
                 <div className="flex gap-3">
-                  <div className="w-11 h-11 rounded-2xl bg-gray-100 flex-shrink-0" />
+                  <div className="w-12 h-12 rounded-[12px] flex-shrink-0" style={{ background: '#1a1a1a' }} />
                   <div className="flex-1 space-y-2">
-                    <div className="h-3.5 bg-gray-100 rounded w-1/3" />
-                    <div className="h-4 bg-gray-100 rounded w-2/3" />
-                    <div className="h-3 bg-gray-100 rounded w-1/2" />
+                    <div className="h-3 rounded w-1/3" style={{ background: '#1a1a1a' }} />
+                    <div className="h-4 rounded w-2/3" style={{ background: '#1a1a1a' }} />
                   </div>
                 </div>
               </div>
@@ -168,12 +170,12 @@ export default function CommunityPage() {
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center py-20">
-            <div className="w-20 h-20 rounded-3xl bg-[#0f2d0f] flex items-center justify-center text-4xl mx-auto mb-4">⚽</div>
-            <p className="text-gray-700 font-bold text-lg">매칭 요청이 없어요</p>
-            <p className="text-gray-400 text-sm mt-1 mb-6">필터를 바꾸거나 먼저 글을 올려보세요</p>
+            <p className="font-black text-[18px] text-white mb-2">매칭 요청이 없어요</p>
+            <p className="text-[13px] mb-6" style={{ color: '#555' }}>필터를 바꾸거나 먼저 글을 올려보세요</p>
             {isCoach && (
               <Link href="/community/new"
-                className="inline-flex items-center gap-2 bg-[#0f2d0f] text-lime-400 px-5 py-3 rounded-2xl font-bold active:scale-95 transition">
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-[12px] font-black text-sm transition active:scale-95"
+                style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                 <Plus className="w-4 h-4" /> 매칭 요청 올리기
               </Link>
             )}
@@ -184,60 +186,49 @@ export default function CommunityPage() {
               const isMyPost = myPostIds.has(post.id)
               const hasApplied = appliedPostIds.has(post.id)
               const dateInfo = formatMatchDate(post.match_date)
-              const levelStyle = LEVEL_STYLE[post.level] || LEVEL_STYLE['입문']
-              const emoji = (post as any).team_profile?.emoji || '⚽'
+              const levelColor = (LEVEL_STYLE[post.level] || LEVEL_STYLE['입문']).color
+              const regionParts = post.region?.split(' ') || []
 
               return (
                 <Link key={post.id} href={`/community/${post.id}`}
-                  className="block bg-white rounded-2xl overflow-hidden shadow-sm active:scale-[0.99] transition">
+                  className="flex items-start gap-3 p-[14px] rounded-[16px] active:opacity-80 transition"
+                  style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
 
-                  {/* Accent bar */}
-                  <div className={`h-1 w-full ${isMyPost ? 'bg-primary-500' : hasApplied ? 'bg-lime-400' : 'bg-gray-100'}`} />
+                  {/* Region tile */}
+                  <div className="w-12 h-12 rounded-[12px] flex-col items-center justify-center flex flex-shrink-0"
+                    style={{ background: '#161616', border: '1px solid #262626' }}>
+                    <p className="text-[10px] leading-none" style={{ color: '#888' }}>{regionParts[0] || '–'}</p>
+                    <p className="text-[13px] font-black leading-tight text-white">{regionParts[1] || regionParts[0] || '–'}</p>
+                  </div>
 
-                  <div className="p-4">
-                    <div className="flex items-start gap-3">
-                      {/* Team emoji avatar */}
-                      <div className="w-11 h-11 rounded-2xl bg-[#0f2d0f] flex items-center justify-center text-xl flex-shrink-0">
-                        {emoji}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        {/* Team name row */}
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <span className="text-xs font-bold text-gray-500 truncate">{post.team?.name}</span>
-                          {isMyPost && <span className="text-[10px] font-black bg-primary-100 text-primary-700 px-1.5 py-0.5 rounded-md">내 글</span>}
-                          {hasApplied && !isMyPost && <span className="text-[10px] font-black bg-lime-100 text-lime-700 px-1.5 py-0.5 rounded-md">신청함</span>}
-                        </div>
-
-                        {/* Title */}
-                        <p className="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-2.5">{post.title}</p>
-
-                        {/* Date + Location chips */}
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-lg ${
-                            dateInfo.urgent ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-600'
-                          }`}>
-                            <Calendar className="w-3 h-3" />
-                            {dateInfo.label}
-                            {post.match_time && <span className="ml-0.5 opacity-70">{post.match_time}</span>}
-                          </span>
-                          <span className="inline-flex items-center gap-1 text-xs text-gray-500">
-                            <MapPin className="w-3 h-3" />
-                            {post.region}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Right badges */}
-                      <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                        <span className={`text-xs font-bold px-2.5 py-1 rounded-xl ${levelStyle.bg} ${levelStyle.text}`}>
-                          {post.level}
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] mb-0.5" style={{ color: '#888' }}>{post.team?.name}</p>
+                    <p className="font-bold text-[13px] text-white leading-snug line-clamp-2 mb-2">{post.title}</p>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-[6px]"
+                        style={{ background: dateInfo.urgent ? 'rgba(192,90,77,.14)' : '#191919', color: dateInfo.urgent ? '#e07a6d' : '#aaa', border: dateInfo.urgent ? '1px solid rgba(192,90,77,.2)' : '1px solid transparent' }}>
+                        {dateInfo.label}{post.match_time ? ` ${post.match_time}` : ''}
+                      </span>
+                      {(isMyPost || hasApplied) && (
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px]"
+                          style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
+                          {isMyPost ? '내 글' : '신청함'}
                         </span>
-                        <span className="text-xs font-semibold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-lg">
-                          {post.format}
-                        </span>
-                      </div>
+                      )}
                     </div>
+                  </div>
+
+                  {/* Right badges */}
+                  <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-[7px]"
+                      style={{ color: levelColor, background: `${levelColor}1f` }}>
+                      {post.level}
+                    </span>
+                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-[7px]"
+                      style={{ background: '#191919', color: '#aaa', border: '1px solid #2a2a2a' }}>
+                      {post.format}
+                    </span>
                   </div>
                 </Link>
               )
@@ -256,15 +247,12 @@ function FilterRow({ label, options, value, onChange }: {
 }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[11px] font-bold text-white/50 w-7 flex-shrink-0">{label}</span>
-      <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+      <span className="text-[11px] font-bold w-7 flex-shrink-0" style={{ color: '#666' }}>{label}</span>
+      <div className="flex gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
         {options.map(opt => (
           <button key={opt} onClick={() => onChange(opt)}
-            className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition ${
-              value === opt
-                ? 'bg-lime-400 text-[#0f2d0f]'
-                : 'bg-white/10 text-white/60 border border-white/10'
-            }`}>
+            className="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition"
+            style={{ background: value === opt ? 'var(--accent)' : '#191919', color: value === opt ? '#0a0a0a' : '#aaa', border: `1px solid ${value === opt ? 'transparent' : '#2a2a2a'}` }}>
             {opt}
           </button>
         ))}
