@@ -5,13 +5,27 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
-import { ArrowLeft, Plus, Trash2, Edit2, X, Users, Trophy } from 'lucide-react'
+import { Plus, Trash2, Edit2, X } from 'lucide-react'
 import type { Player, PositionType } from '@/types/database'
-import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
+import { POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
 import { PlayersListSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
+
+// Dark-theme position colors matching design spec
+const POS_COLOR: Record<PositionType, string> = {
+  GK: '#f5a623',
+  DF: '#3b82f6',
+  MF: '#2dd4bf',
+  FW: '#ef4444',
+}
+const POS_TEXT: Record<PositionType, string> = {
+  GK: '#3a2600',
+  DF: '#fff',
+  MF: '#06231d',
+  FW: '#fff',
+}
 
 interface PlayerStats {
   attendance: number
@@ -26,184 +40,90 @@ interface PlayerWithStats extends Player {
   stats: PlayerStats
 }
 
-type RankStatKey = 'goals' | 'assists' | 'avgRating' | 'attendance' | 'cleanSheets'
-
-const STAT_TABS: { key: RankStatKey; label: string; color: string; suffix: string }[] = [
-  { key: 'goals', label: '골', color: 'text-primary-600', suffix: '골' },
-  { key: 'assists', label: '도움', color: 'text-primary-600', suffix: '도움' },
-  { key: 'avgRating', label: '평점', color: 'text-amber-600', suffix: '' },
-  { key: 'attendance', label: '출석', color: 'text-green-600', suffix: '회' },
-  { key: 'cleanSheets', label: '클린시트', color: 'text-purple-600', suffix: '' },
-]
-
-// Rank badge colors for top 3
-const RANK_BADGE = ['bg-amber-400 text-white', 'bg-gray-300 text-white', 'bg-amber-700 text-white']
-
-function formatStat(v: number | null, key: RankStatKey, suffix: string): string {
-  if (v === null) return '-'
-  if (key === 'avgRating') return v.toFixed(1)
-  return `${v}${suffix}`
-}
-
 export default function PlayersPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [players, setPlayers] = useState<PlayerWithStats[]>([])
   const [teamId, setTeamId] = useState<string | null>(null)
+  const [teamName, setTeamName] = useState('')
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
   const [canEdit, setCanEdit] = useState(false)
-  const [view, setView] = useState<'roster' | 'ranking'>('roster')
-  const [rankStat, setRankStat] = useState<RankStatKey>('goals')
+  const [search, setSearch] = useState('')
 
-  // Form state
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [position, setPosition] = useState<PositionType>('MF')
 
   const supabase = createClient()
 
-  useEffect(() => {
-    loadData()
-  }, [])
+  useEffect(() => { loadData() }, [])
 
   const loadData = async () => {
     const user = await getSessionUser(supabase)
-    if (!user) {
-      router.push('/login')
-      return
-    }
-
-    // Resolve the active team (cached across tabs — skips repeat queries)
+    if (!user) { router.push('/login'); return }
     const team = await resolveTeam(supabase, user.id)
-    if (!team) {
-      router.push('/dashboard')
-      return
-    }
-
+    if (!team) { router.push('/dashboard'); return }
     setTeamId(team.teamId)
     setCanEdit(team.canEditPlayers)
-    if (!localStorage.getItem('selectedTeamId')) {
-      localStorage.setItem('selectedTeamId', team.teamId)
-    }
+    if (!localStorage.getItem('selectedTeamId')) localStorage.setItem('selectedTeamId', team.teamId)
+
+    const { data: teamData } = await supabase.from('teams').select('name').eq('id', team.teamId).single()
+    if (teamData) setTeamName(teamData.name)
+
     await loadPlayers(team.teamId)
     setLoading(false)
   }
 
-  const loadPlayers = async (teamId: string) => {
-    // Get players
-    const { data: playersData } = await supabase
-      .from('players')
-      .select('*')
-      .eq('team_id', teamId)
-      .order('number')
-
+  const loadPlayers = async (tid: string) => {
+    const { data: playersData } = await supabase.from('players').select('*').eq('team_id', tid).order('number')
     if (!playersData) return
-
-    // Fetch stats and attendance in parallel
     const playerIds = playersData.map(p => p.id)
     const [{ data: records }, { data: attendanceData }] = await Promise.all([
-      supabase
-        .from('quarter_records')
-        .select('player_id, goals, assists, clean_sheet, rating')
-        .in('player_id', playerIds),
-      supabase
-        .from('match_attendees')
-        .select('player_id')
-        .in('player_id', playerIds),
+      supabase.from('quarter_records').select('player_id, goals, assists, clean_sheet, rating').in('player_id', playerIds),
+      supabase.from('match_attendees').select('player_id').in('player_id', playerIds),
     ])
-
-    // Calculate stats for each player
-    const playersWithStats: PlayerWithStats[] = playersData.map(player => {
-      const playerRecords = records?.filter(r => r.player_id === player.id) || []
-      const ratingsWithValue = playerRecords.filter(r => r.rating !== null)
-      const attendanceCount = attendanceData?.filter(a => a.player_id === player.id).length || 0
-
-      const stats: PlayerStats = {
-        attendance: attendanceCount,
-        games: playerRecords.length,
-        goals: playerRecords.reduce((sum, r) => sum + (r.goals || 0), 0),
-        assists: playerRecords.reduce((sum, r) => sum + (r.assists || 0), 0),
-        cleanSheets: playerRecords.filter(r => r.clean_sheet).length,
-        avgRating: ratingsWithValue.length > 0
-          ? ratingsWithValue.reduce((sum, r) => sum + (r.rating || 0), 0) / ratingsWithValue.length
-          : null
+    setPlayers(playersData.map(player => {
+      const pr = records?.filter(r => r.player_id === player.id) || []
+      const rated = pr.filter(r => r.rating !== null)
+      return {
+        ...player,
+        stats: {
+          attendance: attendanceData?.filter(a => a.player_id === player.id).length || 0,
+          games: pr.length,
+          goals: pr.reduce((s, r) => s + (r.goals||0), 0),
+          assists: pr.reduce((s, r) => s + (r.assists||0), 0),
+          cleanSheets: pr.filter(r => r.clean_sheet).length,
+          avgRating: rated.length > 0 ? rated.reduce((s, r) => s + (r.rating||0), 0) / rated.length : null,
+        }
       }
-
-      return { ...player, stats }
-    })
-
-    setPlayers(playersWithStats)
+    }))
   }
 
   const handleAddPlayer = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!teamId || !name.trim()) return
-
-    const { data, error } = await supabase
-      .from('players')
-      .insert({
-        team_id: teamId,
-        name: name.trim(),
-        number: number ? parseInt(number) : null,
-        default_position: position,
-      })
-      .select()
-      .single()
-
-    if (error) {
-      toast.error('선수 추가에 실패했습니다')
-      return
-    }
-
+    const { data, error } = await supabase.from('players').insert({ team_id: teamId, name: name.trim(), number: number ? parseInt(number) : null, default_position: position }).select().single()
+    if (error) { toast.error('선수 추가에 실패했습니다'); return }
     toast.success('선수가 추가되었습니다')
-    const newPlayerWithStats: PlayerWithStats = {
-      ...data,
-      stats: { attendance: 0, games: 0, goals: 0, assists: 0, cleanSheets: 0, avgRating: null }
-    }
-    setPlayers([...players, newPlayerWithStats])
+    setPlayers([...players, { ...data, stats: { attendance:0, games:0, goals:0, assists:0, cleanSheets:0, avgRating:null } }])
     resetForm()
   }
 
   const handleUpdatePlayer = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingPlayer || !name.trim()) return
-
-    const { error } = await supabase
-      .from('players')
-      .update({
-        name: name.trim(),
-        number: number ? parseInt(number) : null,
-        default_position: position,
-      })
-      .eq('id', editingPlayer.id)
-
-    if (error) {
-      toast.error('수정에 실패했습니다')
-      return
-    }
-
+    const { error } = await supabase.from('players').update({ name: name.trim(), number: number ? parseInt(number) : null, default_position: position }).eq('id', editingPlayer.id)
+    if (error) { toast.error('수정에 실패했습니다'); return }
     toast.success('선수 정보가 수정되었습니다')
-    setPlayers(players.map(p =>
-      p.id === editingPlayer.id
-        ? { ...p, name: name.trim(), number: number ? parseInt(number) : null, default_position: position, stats: p.stats }
-        : p
-    ))
+    setPlayers(players.map(p => p.id === editingPlayer.id ? { ...p, name: name.trim(), number: number ? parseInt(number) : null, default_position: position } : p))
     resetForm()
   }
 
   const handleDeletePlayer = async (playerId: string) => {
-    const { error } = await supabase
-      .from('players')
-      .delete()
-      .eq('id', playerId)
-
-    if (error) {
-      toast.error('삭제에 실패했습니다')
-      return
-    }
-
+    const { error } = await supabase.from('players').delete().eq('id', playerId)
+    if (error) { toast.error('삭제에 실패했습니다'); return }
     toast.success('선수가 삭제되었습니다')
     setPlayers(players.filter(p => p.id !== playerId))
   }
@@ -216,296 +136,133 @@ export default function PlayersPage() {
     setShowAddForm(false)
   }
 
-  const resetForm = () => {
-    setName('')
-    setNumber('')
-    setPosition('MF')
-    setShowAddForm(false)
-    setEditingPlayer(null)
-  }
+  const resetForm = () => { setName(''); setNumber(''); setPosition('MF'); setShowAddForm(false); setEditingPlayer(null) }
 
-  if (loading) {
-    return <PlayersListSkeleton />
-  }
+  if (loading) return <PlayersListSkeleton />
 
-  const currentTab = STAT_TABS.find((t) => t.key === rankStat)!
-  const rankedPlayers = [...players].sort((a, b) => {
-    const av = a.stats[rankStat]
-    const bv = b.stats[rankStat]
-    if (av === null && bv === null) return 0
-    if (av === null) return 1
-    if (bv === null) return -1
-    return bv - av
-  })
+  const filtered = search.trim()
+    ? players.filter(p => p.name.includes(search.trim()))
+    : players
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0] pb-20">
+    <div className="min-h-screen pb-24" style={{ background: 'var(--bg)' }}>
+
       {/* Header */}
-      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <h1 className="text-base font-black text-white">선수 관리</h1>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
+        <div className="max-w-4xl mx-auto px-5 py-3.5 flex justify-between items-center">
+          <div>
+            <h1 className="font-black text-[20px] text-white">선수</h1>
+            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {players.length}명</p>
           </div>
           {canEdit && (
-            <button
-              onClick={() => {
-                resetForm()
-                setShowAddForm(true)
-              }}
-              className="flex items-center gap-1 px-3 py-2 bg-lime-400 text-[#0f2d0f] rounded-xl text-sm font-black active:scale-95 transition"
-            >
-              <Plus className="w-4 h-4" />
-              선수 추가
+            <button onClick={() => { resetForm(); setShowAddForm(true) }}
+              className="w-9 h-9 flex items-center justify-center rounded-[11px] font-black active:scale-95 transition"
+              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+              <Plus className="w-5 h-5" />
             </button>
           )}
         </div>
       </header>
 
-      {/* View Toggle: Roster / Ranking */}
-      <div className="max-w-4xl mx-auto px-4 pt-4">
-        <div className="flex gap-2 bg-gray-100 rounded-xl p-1">
-          <button
-            onClick={() => setView('roster')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition ${
-              view === 'roster' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500'
-            }`}
-          >
-            <Users className="w-4 h-4" />
-            명단
-          </button>
-          <button
-            onClick={() => setView('ranking')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition ${
-              view === 'ranking' ? 'bg-white text-primary-600 shadow-sm' : 'text-gray-500'
-            }`}
-          >
-            <Trophy className="w-4 h-4" />
-            랭킹
-          </button>
-        </div>
-      </div>
+      <div className="max-w-4xl mx-auto px-5 py-4 space-y-4">
 
-      {/* Add/Edit Form */}
-      {canEdit && view === 'roster' && (showAddForm || editingPlayer) && (
-        <div className="max-w-4xl mx-auto px-4 py-4">
-          <form
-            onSubmit={editingPlayer ? handleUpdatePlayer : handleAddPlayer}
-            className="bg-white rounded-xl p-4 shadow-sm"
-          >
+        {/* Search */}
+        <input
+          type="text"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          placeholder="선수 검색…"
+          className="w-full outline-none text-white placeholder-[#555] text-[14px]"
+          style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 12, padding: '12px 14px' }}
+        />
+
+        {/* Add/Edit form */}
+        {canEdit && (showAddForm || editingPlayer) && (
+          <form onSubmit={editingPlayer ? handleUpdatePlayer : handleAddPlayer}
+            className="rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold">
-                {editingPlayer ? '선수 수정' : '새 선수 추가'}
-              </h3>
-              <button type="button" onClick={resetForm} className="p-1 hover:bg-gray-100 rounded">
-                <X className="w-5 h-5" />
-              </button>
+              <h3 className="font-black text-white">{editingPlayer ? '선수 수정' : '새 선수 추가'}</h3>
+              <button type="button" onClick={resetForm} className="p-1 rounded" style={{ color: '#555' }}><X className="w-5 h-5" /></button>
             </div>
-
-            <div className="grid grid-cols-3 gap-3 mb-4">
-              <div className="col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                  placeholder="선수 이름"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">등번호</label>
-                <input
-                  type="number"
-                  value={number}
-                  onChange={(e) => setNumber(e.target.value)}
-                  min={1}
-                  max={99}
-                  className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
-                  placeholder="#"
-                />
-              </div>
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="이름"
+                className="col-span-2 outline-none text-white placeholder-[#444] text-sm"
+                style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
+              <input type="number" value={number} onChange={e => setNumber(e.target.value)} min={1} max={99} placeholder="#"
+                className="outline-none text-white placeholder-[#444] text-sm"
+                style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
             </div>
-
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">기본 포지션</label>
-              <div className="grid grid-cols-4 gap-2">
-                {(['GK', 'DF', 'MF', 'FW'] as PositionType[]).map((pos) => (
-                  <button
-                    key={pos}
-                    type="button"
-                    onClick={() => setPosition(pos)}
-                    className={`py-2 rounded-lg text-sm font-medium transition ${
-                      position === pos
-                        ? 'text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                    style={{
-                      backgroundColor: position === pos ? POSITION_COLORS[pos] : undefined,
-                    }}
-                  >
-                    {POSITION_LABELS[pos]}
-                  </button>
-                ))}
-              </div>
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              {(['GK','DF','MF','FW'] as PositionType[]).map(pos => (
+                <button key={pos} type="button" onClick={() => setPosition(pos)}
+                  className="py-2 rounded-[9px] text-sm font-bold transition"
+                  style={{ background: position === pos ? POS_COLOR[pos] : '#1a1a1a', color: position === pos ? POS_TEXT[pos] : '#666' }}>
+                  {pos}
+                </button>
+              ))}
             </div>
-
-            <button
-              type="submit"
-              className="w-full py-3 bg-primary-600 text-white rounded-lg font-medium hover:bg-primary-700"
-            >
+            <button type="submit" className="w-full py-3 rounded-xl font-black text-sm active:scale-[0.98] transition"
+              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
               {editingPlayer ? '수정 완료' : '추가하기'}
             </button>
           </form>
-        </div>
-      )}
+        )}
 
-      {/* Players List (Roster) */}
-      {view === 'roster' && (
-      <main className="max-w-4xl mx-auto px-4 py-4">
-        {players.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 text-center">
-            <p className="text-gray-500">등록된 선수가 없습니다</p>
-            <p className="text-gray-400 text-sm">선수를 추가해주세요</p>
+        {/* Players list */}
+        {filtered.length === 0 ? (
+          <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+            <p className="text-[14px]" style={{ color: '#555' }}>
+              {search ? '검색 결과가 없습니다' : '등록된 선수가 없습니다'}
+            </p>
           </div>
         ) : (
-          <div className="space-y-3">
-            {players.map((player) => (
-              <div
-                key={player.id}
-                className="bg-white rounded-xl p-4 shadow-sm"
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
-                      style={{ backgroundColor: POSITION_COLORS[player.default_position] }}
-                    >
-                      {player.number || '-'}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-900">{player.name}</p>
-                      <p className="text-sm text-gray-500">{POSITION_LABELS[player.default_position]}</p>
-                    </div>
-                  </div>
-                  {canEdit && (
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => startEditing(player)}
-                        className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => setDeleteTarget(player.id)}
-                        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  )}
+          <div className="space-y-2">
+            {filtered.map(player => (
+              <Link key={player.id} href={`/team/players/${player.id}`}
+                className="flex items-center gap-3 p-4 rounded-[14px] active:opacity-80 transition"
+                style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+                {/* Position badge */}
+                <div className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center flex-shrink-0 font-black text-[10px]"
+                  style={{ background: POS_COLOR[player.default_position], color: POS_TEXT[player.default_position] }}>
+                  {player.default_position}
                 </div>
-
-                {/* Player Stats — 3×2 grid for comfortable mobile reading */}
-                <div className="grid grid-cols-3 gap-x-2 gap-y-3 pt-3 border-t">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">출석</p>
-                    <p className="font-bold text-gray-900">{player.stats.attendance}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">출전</p>
-                    <p className="font-bold text-gray-900">{player.stats.games}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">평점</p>
-                    <p className="font-bold text-amber-500">
-                      {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '−'}
-                    </p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">골</p>
-                    <p className="font-bold text-primary-600">{player.stats.goals}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">도움</p>
-                    <p className="font-bold text-primary-600">{player.stats.assists}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">클린시트</p>
-                    <p className="font-bold text-purple-600">{player.stats.cleanSheets}</p>
-                  </div>
+                {/* Name + stats */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold text-[14px] text-white">
+                    {player.name} <span style={{ color: '#555' }}>#{player.number || '–'}</span>
+                  </p>
+                  <p className="text-[12px] mt-0.5" style={{ color: 'var(--muted2)' }}>
+                    {player.default_position === 'GK'
+                      ? `클린시트 ${player.stats.cleanSheets}`
+                      : `골${player.stats.goals} 어시${player.stats.assists}`}
+                  </p>
                 </div>
-              </div>
+                {/* Avg rating */}
+                <div className="text-right flex-shrink-0">
+                  <p className="font-display text-[22px] leading-none" style={{ color: 'var(--accent)' }}>
+                    {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '–'}
+                  </p>
+                  <p className="text-[9px] mt-0.5" style={{ color: '#555' }}>평균 평점</p>
+                </div>
+                {/* Edit/Delete (coach only) */}
+                {canEdit && (
+                  <div className="flex gap-1 ml-1" onClick={e => e.preventDefault()}>
+                    <button onClick={e => { e.preventDefault(); startEditing(player) }}
+                      className="p-2 rounded-lg" style={{ color: '#555' }}>
+                      <Edit2 className="w-3.5 h-3.5" />
+                    </button>
+                    <button onClick={e => { e.preventDefault(); setDeleteTarget(player.id) }}
+                      className="p-2 rounded-lg" style={{ color: '#555' }}>
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                )}
+              </Link>
             ))}
           </div>
         )}
+      </div>
 
-        <p className="text-center text-gray-400 text-sm mt-6">
-          총 {players.length}명의 선수
-        </p>
-      </main>
-      )}
-
-      {/* Ranking */}
-      {view === 'ranking' && (
-        <main className="max-w-4xl mx-auto px-4 py-4">
-          {/* Stat tabs */}
-          <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-            {STAT_TABS.map((tab) => (
-              <button
-                key={tab.key}
-                onClick={() => setRankStat(tab.key)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium whitespace-nowrap flex-shrink-0 transition ${
-                  rankStat === tab.key
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-white text-gray-600 border border-gray-200'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {players.length === 0 ? (
-            <div className="bg-white rounded-xl p-8 text-center mt-3">
-              <p className="text-gray-500">등록된 선수가 없습니다</p>
-            </div>
-          ) : (
-            <div className="space-y-2 mt-3">
-              {rankedPlayers.map((player, i) => (
-                <div
-                  key={player.id}
-                  className="bg-white rounded-xl p-3 shadow-sm flex items-center gap-3"
-                >
-                  <div
-                    className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
-                      i < 3 ? RANK_BADGE[i] : 'text-gray-400'
-                    }`}
-                  >
-                    {i + 1}
-                  </div>
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0"
-                    style={{ backgroundColor: POSITION_COLORS[player.default_position] }}
-                  >
-                    {player.number || '-'}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-gray-900 truncate">{player.name}</p>
-                    <p className="text-xs text-gray-500">{POSITION_LABELS[player.default_position]}</p>
-                  </div>
-                  <p className={`text-lg font-bold flex-shrink-0 ${currentTab.color}`}>
-                    {formatStat(player.stats[rankStat], rankStat, currentTab.suffix)}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </main>
-      )}
       <ConfirmSheet
         open={!!deleteTarget}
         title="선수를 삭제하시겠습니까?"

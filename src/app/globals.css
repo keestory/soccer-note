@@ -3,13 +3,24 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 17, 24, 39;
-  --background-rgb: 249, 250, 251;
+  /* Dark theme fixed tokens */
+  --bg: #0a0a0a;
+  --card: #111010;
+  --nav: #050505;
+
+  /* Accent system — overridden at runtime by ThemeProvider */
+  --accent: #e8b341;
+  --muted1: #917b3c;
+  --muted2: #5e5031;
+  --chip: #1a1507;
+  --chipText: #c49831;
+  --line: #1c1a10;
+  --dash: #2a2310;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
+  background: var(--bg);
+  color: #ffffff;
 }
 
 /* Custom scrollbar */

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Noto_Sans_KR, Nunito } from 'next/font/google'
+import { Noto_Sans_KR, Bebas_Neue } from 'next/font/google'
 import { Providers } from '@/components/Providers'
 import './globals.css'
 
@@ -10,9 +10,9 @@ const notoSansKR = Noto_Sans_KR({
   display: 'swap',
 })
 
-const nunito = Nunito({
+const bebasNeue = Bebas_Neue({
   subsets: ['latin'],
-  weight: ['400', '600', '700', '800', '900'],
+  weight: ['400'],
   variable: '--font-display',
   display: 'swap',
 })
@@ -26,7 +26,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#ffffff',
+  themeColor: '#0a0a0a',
 }
 
 export default function RootLayout({
@@ -35,8 +35,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="ko" className={`${notoSansKR.variable} ${nunito.variable}`}>
-      <body className="min-h-screen bg-gray-50 font-sans">
+    <html lang="ko" className={`${notoSansKR.variable} ${bebasNeue.variable}`}>
+      <body className="min-h-screen font-sans" style={{ background: 'var(--bg)', color: '#fff' }}>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -35,9 +35,10 @@ export function NotificationBadge({ className = '' }: NotificationBadgeProps) {
   return (
     <Link
       href="/inbox"
-      className={`relative p-2 hover:bg-gray-100 rounded-lg transition-colors ${className}`}
+      className={`relative w-[35px] h-[35px] flex items-center justify-center rounded-full transition ${className}`}
+      style={{ border: '1px solid #2a2a2a' }}
     >
-      <Bell className="w-6 h-6 text-gray-600" />
+      <Bell className="w-[18px] h-[18px]" style={{ color: '#888' }} />
       {unreadCount > 0 && (
         <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full px-1">
           {unreadCount > 99 ? '99+' : unreadCount}
