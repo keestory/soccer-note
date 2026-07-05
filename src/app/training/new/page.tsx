@@ -10,17 +10,7 @@ import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 import type { TrainingType } from '@/types/database'
 import { BottomNav } from '@/components/BottomNav'
-
-// Training type dot colors (dark theme)
-export const TRAINING_TYPE_COLORS: Record<string, string> = {
-  'shooting': '#ef4444',
-  'fitness':  '#2dd4bf',
-  'passing':  '#38bdf8',
-  'tactics':  '#6366f1',
-  'mini-game':'#f59e0b',
-  'mixed':    '#a3e635',
-  'other':    '#666',
-}
+import { TRAINING_TYPE_COLORS } from '@/lib/training-colors'
 
 const TRAINING_TYPES: { key: TrainingType; label: string }[] = [
   { key: 'mini-game', label: '미니게임' },
