@@ -8,14 +8,14 @@
   --card: #111010;
   --nav: #050505;
 
-  /* Accent system — overridden at runtime by ThemeProvider */
-  --accent: #e8b341;
-  --muted1: #917b3c;
-  --muted2: #5e5031;
-  --chip: #1a1507;
-  --chipText: #c49831;
-  --line: #1c1a10;
-  --dash: #2a2310;
+  /* Accent system — overridden at runtime by ThemeProvider (default: volt #ccff00) */
+  --accent: #ccff00;
+  --muted1: #748f00;
+  --muted2: #445200;
+  --chip: #131a00;
+  --chipText: #a8d400;
+  --line: #1b2400;
+  --dash: #0f1900;
 }
 
 body {
