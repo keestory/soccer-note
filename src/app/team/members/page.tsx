@@ -10,6 +10,7 @@ import type { Team, TeamMember, Profile, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
 import { MembersPageSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
+import { BottomNav } from '@/components/BottomNav'
 
 interface MemberWithProfile extends TeamMember {
   profile: Profile | undefined
@@ -692,6 +693,7 @@ function TeamMembersContent() {
           </div>
         </div>
       )}
+      <BottomNav />
     </div>
   )
 }

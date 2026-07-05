@@ -11,6 +11,7 @@ import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
 import { PlayersListSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
+import { BottomNav } from '@/components/BottomNav'
 
 interface PlayerStats {
   attendance: number
@@ -514,6 +515,7 @@ export default function PlayersPage() {
         onConfirm={() => { const id = deleteTarget!; setDeleteTarget(null); handleDeletePlayer(id) }}
         onCancel={() => setDeleteTarget(null)}
       />
+      <BottomNav />
     </div>
   )
 }

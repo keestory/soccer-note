@@ -10,6 +10,7 @@ import { getStore, MemberWithProfile } from '@/lib/dataStore'
 import type { Team } from '@/types/database'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
+import { BottomNav } from '@/components/BottomNav'
 
 interface Notification {
   id: string
@@ -360,7 +361,7 @@ function NotificationsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0]">
+    <div className="min-h-screen bg-[#f0f4f0] pb-20">
       {/* Header */}
       <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -687,6 +688,7 @@ function NotificationsContent() {
           )}
         </section>
       </main>
+      <BottomNav />
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { createClient, getSessionUser } from '@/lib/supabase'
 import { ArrowLeft, LogOut, Trash2, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Skeleton } from '@/components/Skeleton'
+import { BottomNav } from '@/components/BottomNav'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -52,7 +53,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f0f4f0] safe-top">
+      <div className="min-h-screen bg-[#f0f4f0] safe-top pb-20">
         <header className="bg-[#0f2d0f] safe-top">
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
             <Skeleton className="w-8 h-8 rounded-xl" />
@@ -74,7 +75,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f0f4f0] safe-top">
+    <div className="min-h-screen bg-[#f0f4f0] safe-top pb-20">
       <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
@@ -194,6 +195,7 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+      <BottomNav />
     </div>
   )
 }

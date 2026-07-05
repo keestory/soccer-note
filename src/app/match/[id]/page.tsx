@@ -11,6 +11,7 @@ import { formatDate, calculateMVP, getPlayerStatsFromMatch, formatRating } from 
 import toast from 'react-hot-toast'
 import { MatchDetailSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
+import { BottomNav } from '@/components/BottomNav'
 
 export default function MatchDetailPage() {
   const router = useRouter()
@@ -1147,6 +1148,7 @@ export default function MatchDetailPage() {
         onConfirm={() => { setShowDeleteConfirm(false); handleDeleteMatch() }}
         onCancel={() => setShowDeleteConfirm(false)}
       />
+      <BottomNav />
     </div>
   )
 }
