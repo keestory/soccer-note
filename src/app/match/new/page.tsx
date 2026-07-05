@@ -7,7 +7,6 @@ import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
 import { ArrowLeft, MapPin, Calendar, Swords } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { BottomNav } from '@/components/BottomNav'
 
 export default function NewMatchPage() {
   const router = useRouter()
@@ -61,8 +60,8 @@ export default function NewMatchPage() {
   const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
 
   return (
-    <div className="min-h-screen pb-20" style={{ background: '#0a0a0a' }}>
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+    <div className="flex flex-col safe-top" style={{ background: '#0a0a0a', minHeight: '100dvh' }}>
+      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
@@ -71,7 +70,7 @@ export default function NewMatchPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+      <main className="flex-1 overflow-y-auto max-w-4xl mx-auto w-full px-4 py-6 space-y-4 safe-bottom">
         {/* VS visual */}
         <div style={cardStyle} className="p-5">
           <div className="flex items-center gap-3">
@@ -92,7 +91,7 @@ export default function NewMatchPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} style={cardStyle} className="overflow-hidden">
           {[
-            { icon: <Swords className="w-4 h-4 text-white/40" />, label: '상대팀 이름 *', type: 'text', value: opponent, onChange: setOpponent, placeholder: '예: FC 서울', required: true, autoFocus: true },
+            { icon: <Swords className="w-4 h-4 text-white/40" />, label: '상대팀 이름 *', type: 'text', value: opponent, onChange: setOpponent, placeholder: '예: FC 서울', required: true, autoFocus: false },
             { icon: <Calendar className="w-4 h-4 text-white/40" />, label: '경기 날짜 *', type: 'date', value: matchDate, onChange: setMatchDate, placeholder: '', required: true, autoFocus: false },
             { icon: <MapPin className="w-4 h-4 text-white/40" />, label: '장소 (선택)', type: 'text', value: location, onChange: setLocation, placeholder: '예: 잠실 운동장', required: false, autoFocus: false },
           ].map((field, i) => (
@@ -130,7 +129,6 @@ export default function NewMatchPage() {
           </div>
         </form>
       </main>
-      <BottomNav />
     </div>
   )
 }

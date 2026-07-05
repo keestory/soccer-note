@@ -83,10 +83,10 @@ export default function NewTrainingPage() {
   const selectedTypeLabel = TRAINING_TYPES.find(t => t.key === trainingType)?.label || ''
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg)' }}>
+    <div className="flex flex-col safe-top" style={{ background: 'var(--bg)', minHeight: '100dvh' }}>
 
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
+      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="p-2 -ml-2 rounded-xl" style={{ color: '#555' }}>
@@ -105,7 +105,7 @@ export default function NewTrainingPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-5 py-5">
+      <main className="flex-1 overflow-y-auto max-w-4xl mx-auto w-full px-5 py-5 safe-bottom">
         <form id="training-form" onSubmit={handleSubmit} className="space-y-3">
 
           {/* Training type */}
