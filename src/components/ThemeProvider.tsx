@@ -3,15 +3,15 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
 
 export const ACCENT_PRESETS = [
-  { name: '골드',    hex: '#e8b341' },
   { name: '볼트',    hex: '#ccff00' },
+  { name: '골드',    hex: '#e8b341' },
   { name: '시안',    hex: '#22d3ee' },
   { name: '마젠타', hex: '#f0398b' },
   { name: '오렌지', hex: '#ff6b35' },
   { name: '민트',   hex: '#34e2b0' },
 ]
 
-const DEFAULT_ACCENT = '#e8b341'
+const DEFAULT_ACCENT = '#ccff00'
 
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace('#', '')
