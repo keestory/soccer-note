@@ -37,6 +37,11 @@ export default function MatchDetailPage() {
   const [notes, setNotes] = useState('')
   const [editingNotes, setEditingNotes] = useState(false)
   const [savingNotes, setSavingNotes] = useState(false)
+  // MOM 투표
+  const [momVotes, setMomVotes] = useState<Record<string, number>>({}) // playerId → voteCount
+  const [myMomVote, setMyMomVote] = useState<string | null>(null) // voted playerId
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [votingMom, setVotingMom] = useState(false)
 
   const supabase = createClient()
 
@@ -44,8 +49,45 @@ export default function MatchDetailPage() {
     loadMatch()
   }, [matchId])
 
+  const loadMomVotes = async () => {
+    const { data } = await supabase
+      .from('match_mom_votes')
+      .select('voted_player_id, voter_user_id')
+      .eq('match_id', matchId)
+    if (!data) return
+    const counts: Record<string, number> = {}
+    for (const v of data) counts[v.voted_player_id] = (counts[v.voted_player_id] || 0) + 1
+    setMomVotes(counts)
+  }
+
+  const handleMomVote = async (playerId: string) => {
+    if (votingMom || !currentUserId) return
+    setVotingMom(true)
+    try {
+      if (myMomVote === playerId) {
+        await supabase.from('match_mom_votes')
+          .delete().eq('match_id', matchId).eq('voter_user_id', currentUserId)
+        setMyMomVote(null)
+        setMomVotes(prev => { const n = {...prev}; n[playerId] = Math.max(0, (n[playerId] || 1) - 1); return n })
+      } else {
+        if (myMomVote) {
+          await supabase.from('match_mom_votes')
+            .delete().eq('match_id', matchId).eq('voter_user_id', currentUserId)
+          setMomVotes(prev => { const n = {...prev}; n[myMomVote] = Math.max(0, (n[myMomVote] || 1) - 1); return n })
+        }
+        await supabase.from('match_mom_votes')
+          .upsert({ match_id: matchId, voter_user_id: currentUserId, voted_player_id: playerId })
+        setMyMomVote(playerId)
+        setMomVotes(prev => ({ ...prev, [playerId]: (prev[playerId] || 0) + 1 }))
+        toast.success('MOM 투표 완료! 🏅')
+      }
+    } catch { toast.error('투표에 실패했습니다') }
+    finally { setVotingMom(false) }
+  }
+
   const loadMatch = async () => {
     const user = await getSessionUser(supabase)
+    if (user) setCurrentUserId(user.id)
 
     const { data, error } = await supabase
       .from('matches')
@@ -127,6 +169,18 @@ export default function MatchDetailPage() {
 
     if (playersData) {
       setAllPlayers(playersData)
+    }
+
+    // MOM 투표 로드
+    await loadMomVotes()
+    if (user) {
+      const { data: myVote } = await supabase
+        .from('match_mom_votes')
+        .select('voted_player_id')
+        .eq('match_id', matchId)
+        .eq('voter_user_id', user.id)
+        .maybeSingle()
+      if (myVote) setMyMomVote(myVote.voted_player_id)
     }
 
     setLoading(false)
@@ -473,18 +527,76 @@ export default function MatchDetailPage() {
 
         {/* MVP Section */}
         {mvp && (
-          <section className="bg-gradient-to-r from-amber-100 to-amber-50 rounded-xl p-4 flex items-center gap-4">
-            <div className="w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center">
+          <section className="bg-gradient-to-r from-amber-100 to-amber-50 rounded-2xl p-4 flex items-center gap-4">
+            <div className="w-12 h-12 bg-amber-400 rounded-2xl flex items-center justify-center">
               <Star className="w-6 h-6 text-white fill-white" />
             </div>
             <div>
-              <p className="text-sm text-amber-700 font-medium">MVP</p>
-              <p className="text-lg font-bold text-amber-900">
+              <p className="text-xs text-amber-600 font-black uppercase tracking-widest">코치 MVP</p>
+              <p className="text-lg font-black text-amber-900">
                 {mvp.playerName}
-                <span className="font-normal text-amber-700 ml-2">
+                <span className="font-normal text-amber-700 text-sm ml-2">
                   평균 {mvp.averageRating.toFixed(1)}점
                 </span>
               </p>
+            </div>
+          </section>
+        )}
+
+        {/* MOM 투표 */}
+        {attendees.length > 0 && (
+          <section className="bg-white rounded-2xl p-4 shadow-sm">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-lg">🏅</span>
+              <div>
+                <h3 className="font-black text-gray-900 text-sm">이 경기의 MOM은?</h3>
+                <p className="text-xs text-gray-400">팀원이 뽑는 Man of the Match</p>
+              </div>
+              {myMomVote && (
+                <span className="ml-auto text-[10px] font-bold bg-lime-100 text-[#0f2d0f] px-2 py-0.5 rounded-full">투표 완료</span>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {attendees.map(a => {
+                const pid = a.player?.id || ''
+                const voteCount = momVotes[pid] || 0
+                const isMyVote = myMomVote === pid
+                const totalVotes = Object.values(momVotes).reduce((s, n) => s + n, 0)
+                const pct = totalVotes > 0 ? Math.round((voteCount / totalVotes) * 100) : 0
+                return (
+                  <button
+                    key={a.id}
+                    onClick={() => handleMomVote(pid)}
+                    disabled={votingMom}
+                    className={`relative flex items-center gap-2 p-2.5 rounded-xl border-2 transition active:scale-[0.97] overflow-hidden ${
+                      isMyVote
+                        ? 'border-lime-400 bg-lime-50'
+                        : 'border-gray-100 bg-gray-50 hover:border-gray-200'
+                    }`}
+                  >
+                    {/* vote bar background */}
+                    {totalVotes > 0 && (
+                      <div
+                        className="absolute left-0 top-0 bottom-0 bg-lime-400/20 transition-all duration-500"
+                        style={{ width: `${pct}%` }}
+                      />
+                    )}
+                    <div className="relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0"
+                      style={{ backgroundColor: POSITION_COLORS[a.player?.default_position || 'MF'] }}>
+                      {a.player?.number || '?'}
+                    </div>
+                    <div className="relative flex-1 text-left">
+                      <p className={`text-xs font-black truncate ${isMyVote ? 'text-[#0f2d0f]' : 'text-gray-700'}`}>
+                        {a.player?.name}
+                      </p>
+                      <p className="text-[10px] text-gray-400">
+                        {voteCount > 0 ? `${voteCount}표${totalVotes > 0 ? ` (${pct}%)` : ''}` : '0표'}
+                      </p>
+                    </div>
+                    {isMyVote && <Check className="relative w-4 h-4 text-lime-600 flex-shrink-0" />}
+                  </button>
+                )
+              })}
             </div>
           </section>
         )}
