@@ -58,13 +58,13 @@ export default function NewMatchPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b sticky top-0 z-10 safe-top">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-3">
-          <Link href="/dashboard" className="p-1 hover:bg-gray-100 rounded-lg">
-            <ArrowLeft className="w-6 h-6" />
+    <div className="min-h-screen bg-[#f0f4f0]">
+      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+            <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-xl font-bold">새 경기</h1>
+          <h1 className="text-base font-black text-white">새 경기</h1>
         </div>
       </header>
 
@@ -72,7 +72,7 @@ export default function NewMatchPage() {
         {/* vs visual */}
         <div className="bg-white rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex-1 bg-primary-50 rounded-xl px-4 py-3 text-center">
+            <div className="flex-1 bg-[#0f2d0f]/10 rounded-xl px-4 py-3 text-center">
               <p className="text-xs text-gray-400 mb-1">우리 팀</p>
               <p className="font-bold text-primary-700 truncate">{teamName || '…'}</p>
             </div>
@@ -147,7 +147,7 @@ export default function NewMatchPage() {
             <button
               type="submit"
               disabled={loading || !opponent.trim()}
-              className="w-full py-4 bg-primary-600 text-white rounded-xl font-semibold text-base hover:bg-primary-700 active:bg-primary-800 disabled:opacity-50 transition"
+              className="w-full py-4 bg-[#0f2d0f] text-lime-400 rounded-xl font-black text-base active:scale-[0.99] disabled:opacity-40 transition shadow-lg"
             >
               {loading ? '생성 중…' : '경기 생성하기'}
             </button>

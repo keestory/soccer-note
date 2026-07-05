@@ -238,15 +238,15 @@ export default function PlayersPage() {
   })
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
+    <div className="min-h-screen bg-[#f0f4f0] pb-20">
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10 safe-top">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="p-1 hover:bg-gray-100 rounded-lg">
-              <ArrowLeft className="w-6 h-6" />
+            <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+              <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-xl font-bold">선수 관리</h1>
+            <h1 className="text-base font-black text-white">선수 관리</h1>
           </div>
           {canEdit && (
             <button
@@ -254,7 +254,7 @@ export default function PlayersPage() {
                 resetForm()
                 setShowAddForm(true)
               }}
-              className="flex items-center gap-1 px-3 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
+              className="flex items-center gap-1 px-3 py-2 bg-lime-400 text-[#0f2d0f] rounded-xl text-sm font-black active:scale-95 transition"
             >
               <Plus className="w-4 h-4" />
               선수 추가

@@ -360,21 +360,16 @@ function NotificationsContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#f0f4f0]">
       {/* Header */}
-      <header className="bg-white shadow-toss sticky top-0 z-10 safe-top">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link href="/dashboard" className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <ArrowLeft className="w-5 h-5 text-gray-600" />
+      <header className="bg-[#0f2d0f] sticky top-0 z-10 safe-top">
+        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/70 hover:text-white hover:bg-white/10">
+            <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="flex-1">
-            <h1 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-              <Bell className="w-5 h-5 text-primary-600" />
-              {t.notifications}
-            </h1>
-            {team && (
-              <p className="text-sm text-gray-500">{team.name}</p>
-            )}
+          <div>
+            <h1 className="text-base font-black text-white">{t.notifications}</h1>
+            {team && <p className="text-xs text-white/50">{team.name}</p>}
           </div>
         </div>
       </header>

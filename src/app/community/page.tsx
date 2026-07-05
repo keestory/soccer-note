@@ -66,7 +66,7 @@ export default function CommunityPage() {
       .gte('expires_at', new Date().toISOString())
       .order('match_date', { ascending: true })
 
-    if (filterRegion !== '전체') query = query.eq('region', filterRegion)
+    if (filterRegion !== '전체') query = query.ilike('region', `${filterRegion}%`)
     if (filterFormat !== '전체') query = query.eq('format', filterFormat)
     if (filterLevel !== '전체') query = query.eq('level', filterLevel)
 
