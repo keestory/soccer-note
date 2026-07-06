@@ -16,38 +16,76 @@
   --chipText: #a8d400;
   --line: #1b2400;
   --dash: #0f1900;
+
+  /* BottomNav height token — used for safe pb on scrollable pages */
+  --bottom-nav-h: 64px;
+}
+
+/* ─── Native-feel resets ────────────────────────────────────────────── */
+
+html {
+  height: 100%;
+  /* Prevent pull-to-refresh & over-scroll bounce exposing white */
+  overscroll-behavior: none;
+  background: var(--bg);
 }
 
 body {
+  height: 100%;
   background: var(--bg);
   color: #ffffff;
+  /* Prevent rubber-band bounce */
+  overscroll-behavior: none;
+  /* Disable text selection everywhere (native app feel) */
+  user-select: none;
+  -webkit-user-select: none;
+  /* Remove iOS long-press callout on links/images */
+  -webkit-touch-callout: none;
 }
 
-/* Custom scrollbar */
+/* Remove tap highlight flash on all tappable elements */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Inputs/textareas still need text selection */
+input, textarea, [contenteditable] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Hide scrollbars — native apps don't show them */
 ::-webkit-scrollbar {
-  width: 8px;
+  display: none;
+}
+* {
+  scrollbar-width: none;
 }
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
+/* ─── Page enter animation ──────────────────────────────────────────── */
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
 
-::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
-}
-
-/* iOS safe-area insets (notch / Dynamic Island / home indicator) */
+/* ─── iOS safe-area insets ──────────────────────────────────────────── */
 @layer utilities {
   .safe-top {
     padding-top: env(safe-area-inset-top);
   }
   .safe-bottom {
     padding-bottom: env(safe-area-inset-bottom);
+  }
+  /* Use when a BottomNav is present — nav height + safe area */
+  .pb-nav {
+    padding-bottom: calc(var(--bottom-nav-h) + env(safe-area-inset-bottom));
   }
   .safe-left {
     padding-left: env(safe-area-inset-left);
@@ -57,7 +95,7 @@ body {
   }
 }
 
-/* Soccer field patterns */
+/* ─── Soccer field pattern ──────────────────────────────────────────── */
 .field-pattern {
   background-image:
     repeating-linear-gradient(

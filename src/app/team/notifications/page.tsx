@@ -364,7 +364,7 @@ function NotificationsContent() {
   const inputStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 10 }
 
   return (
-    <div className="min-h-screen pb-20" style={{ background: '#0a0a0a' }}>
+    <div className="min-h-screen pb-nav" style={{ background: '#0a0a0a' }}>
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">

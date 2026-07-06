@@ -143,7 +143,7 @@ export default function PlayersPage() {
     : playersWithStats
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg)' }}>
+    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>

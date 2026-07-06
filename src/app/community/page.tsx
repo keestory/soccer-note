@@ -88,7 +88,7 @@ export default function CommunityPage() {
   const activeFilters = [filterRegion, filterFormat, filterLevel].filter(f => f !== '전체').length
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg)' }}>
+    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
       {/* Hero Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: '#0e0e0e', borderBottom: '1px solid #1a1a1a' }}>
