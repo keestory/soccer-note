@@ -217,6 +217,10 @@ export async function loadTeamData(teamId: string): Promise<void> {
  * 팀 변경
  */
 export async function selectTeam(teamId: string): Promise<void> {
+  // Update selectedTeamId immediately so the header reflects the new team
+  // before DB queries finish loading the team's data
+  updateStore({ selectedTeamId: teamId })
+  if (typeof window !== 'undefined') localStorage.setItem('selectedTeamId', teamId)
   await loadTeamData(teamId)
 }
 
