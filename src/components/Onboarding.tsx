@@ -94,11 +94,17 @@ export default function Onboarding() {
   const handlePrev = () => { if (currentSlide > 0) setCurrentSlide(currentSlide - 1) }
   const handleSkip  = () => router.push('/login')
 
-  const handleTouchStart = (e: React.TouchEvent) => setTouchStart(e.targetTouches[0].clientX)
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX)
+    setTouchEnd(0)
+  }
   const handleTouchMove  = (e: React.TouchEvent) => setTouchEnd(e.targetTouches[0].clientX)
   const handleTouchEnd   = () => {
-    if (touchStart - touchEnd > 75) handleNext()
-    if (touchEnd - touchStart > 75) handlePrev()
+    if (touchEnd === 0) return
+    const diff = touchStart - touchEnd
+    if (diff > 75) handleNext()
+    else if (diff < -75) handlePrev()
+    setTouchEnd(0)
   }
 
   /* ── KV Slide (index 0) ─────────────────────────────────────── */
