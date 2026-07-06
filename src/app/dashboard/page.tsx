@@ -46,15 +46,22 @@ export default function DashboardPage() {
   useEffect(() => {
     if (data.userId && data.selectedTeam) {
       primeTeamCache(data.userId, data.selectedTeam)
-      // Show create-team form only after we know there are no teams
       if (data.teams.length === 0) setShowCreateTeam(true)
     }
   }, [data.userId, data.selectedTeam?.id])
 
+  // Lock body scroll when team picker is open
+  useEffect(() => {
+    document.body.style.overflow = showTeamPicker ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [showTeamPicker])
+
   const handleSelectTeam = async (team: TeamWithRole) => {
+    // Immediately update localStorage + store so header reflects new team at once
+    localStorage.setItem('selectedTeamId', team.id)
+    if (data.userId) primeTeamCache(data.userId, team)
     setShowTeamPicker(false)
     await data.selectTeam(team.id)
-    if (data.userId) primeTeamCache(data.userId, team)
   }
 
   const handleCreateTeam = async (e: React.FormEvent) => {
@@ -162,24 +169,35 @@ export default function DashboardPage() {
 
       {/* Team Picker Modal */}
       {showTeamPicker && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-5">
-          <div className="w-full max-w-md rounded-2xl p-5 max-h-[80vh] flex flex-col" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <h3 className="font-black text-white mb-4">팀 선택</h3>
+        <div
+          className="fixed inset-0 z-50 flex items-start justify-center px-5 pt-[calc(env(safe-area-inset-top)+56px)]"
+          style={{ background: 'rgba(0,0,0,0.75)' }}
+          onClick={() => setShowTeamPicker(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-2xl p-5 flex flex-col"
+            style={{ background: 'var(--card)', border: '1px solid var(--line)', maxHeight: '70dvh' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="font-black text-white mb-3">팀 선택</h3>
             <div className="space-y-2 mb-4 overflow-y-auto flex-1">
-              {teams.map(team => (
-                <button key={team.id} onClick={() => handleSelectTeam(team)}
-                  className="w-full p-4 rounded-xl text-left flex items-center justify-between transition active:opacity-70"
-                  style={{
-                    background: selectedTeam?.id === team.id ? 'var(--chip)' : '#1a1a1a',
-                    border: selectedTeam?.id === team.id ? '1px solid var(--accent)' : '1px solid transparent'
-                  }}>
-                  <div>
-                    <p className="font-bold text-white">{team.name}</p>
-                    <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? '감독' : '팀원'}</p>
-                  </div>
-                  {selectedTeam?.id === team.id && <div className="w-2 h-2 rounded-full" style={{ background: 'var(--accent)' }} />}
-                </button>
-              ))}
+              {teams.map(team => {
+                const active = selectedTeam?.id === team.id
+                return (
+                  <button key={team.id} onClick={() => handleSelectTeam(team)}
+                    className="w-full p-4 rounded-xl text-left flex items-center justify-between transition active:opacity-70"
+                    style={{
+                      background: active ? 'var(--chip)' : '#1a1a1a',
+                      border: `1px solid ${active ? 'var(--accent)' : 'transparent'}`
+                    }}>
+                    <div>
+                      <p className="font-bold text-white">{team.name}</p>
+                      <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? '감독' : '팀원'}</p>
+                    </div>
+                    {active && <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: 'var(--accent)' }} />}
+                  </button>
+                )
+              })}
             </div>
             <div className="flex gap-2">
               <button onClick={() => setShowTeamPicker(false)} className="flex-1 py-3 rounded-xl font-bold" style={{ background: '#1a1a1a', color: '#aaa' }}>닫기</button>
