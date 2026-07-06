@@ -175,6 +175,7 @@ export default function PlayersPage() {
   }
 
   const handleDeletePlayer = async (playerId: string) => {
+    const supabase = createClient()
     const { error } = await supabase.from('players').delete().eq('id', playerId)
     if (error) { toast.error('삭제에 실패했습니다'); return }
     toast.success('선수가 삭제되었습니다')
