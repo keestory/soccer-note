@@ -3,6 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { getStore, subscribe, loadAppData, selectTeam, refreshData, type TeamWithRole } from '@/lib/dataStore'
 import type { Match, Player, TeamVisibilitySettings, TrainingSession } from '@/types/database'
+import type { MemberWithProfile } from '@/lib/dataStore'
 
 /**
  * 앱 데이터를 사용하는 훅
@@ -39,6 +40,7 @@ export function useAppData() {
     matches: store.matches,
     trainings: store.trainings,
     players: store.players,
+    members: store.members,
     visibilitySettings: store.visibilitySettings,
 
     // 액션
