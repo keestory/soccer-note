@@ -4,12 +4,13 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { refreshData } from '@/lib/dataStore'
+import toast from 'react-hot-toast'
 
 /**
  * Handles soccernote:// deep links on iOS (Capacitor).
- * When Google OAuth completes, /auth/callback redirects to
- * soccernote://auth/callback, which triggers appUrlOpen here.
- * We close the in-app browser, refresh the session, and navigate to dashboard.
+ * Google OAuth redirects to soccernote://auth/callback?code=... —
+ * the PKCE code must be exchanged HERE (inside the app WebView) because
+ * the code_verifier lives in this WebView's localStorage, not Safari's.
  */
 export function DeepLinkHandler() {
   const router = useRouter()
@@ -25,20 +26,31 @@ export function DeepLinkHandler() {
       const { Browser } = await import('@capacitor/browser')
 
       const listener = await App.addListener('appUrlOpen', async (event) => {
-        const url = event.url
-        if (!url.startsWith('soccernote://auth/callback')) return
+        if (!event.url.startsWith('soccernote://auth/callback')) return
 
         // Close the SFSafariViewController
-        await Browser.close()
+        try { await Browser.close() } catch {}
 
-        // The session was already exchanged on the /auth/callback page.
-        // Refresh the store and navigate home.
         const supabase = createClient()
+        // Parse code from soccernote://auth/callback?code=...
+        const query = event.url.split('?')[1] ?? ''
+        const code = new URLSearchParams(query).get('code')
+
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code)
+          if (error) {
+            toast.error(`로그인 실패: ${error.message}`)
+            router.push('/login')
+            return
+          }
+        }
+
         const { data: { session } } = await supabase.auth.getSession()
         if (session) {
           await refreshData()
           router.push('/dashboard')
         } else {
+          toast.error('세션을 가져오지 못했습니다')
           router.push('/login')
         }
       })
