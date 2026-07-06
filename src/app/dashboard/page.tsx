@@ -158,7 +158,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen pb-24" style={{ background: 'var(--bg)' }}>
+    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
       {/* Team Picker Modal */}
       {showTeamPicker && (

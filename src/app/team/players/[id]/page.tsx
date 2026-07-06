@@ -229,7 +229,7 @@ export default function PlayerStatsPage() {
   const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
 
   return (
-    <div className="min-h-screen pb-20" style={{ background: '#0a0a0a' }}>
+    <div className="min-h-screen pb-nav" style={{ background: '#0a0a0a' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/team/players" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
