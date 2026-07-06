@@ -29,11 +29,29 @@ export default function LoginPage() {
     setGoogleLoading(true)
     try {
       const supabase = createClient()
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: `${window.location.origin}/dashboard` },
-      })
-      if (error) toast.error(error.message)
+      const isCapacitor = !!(window as any).Capacitor?.isNativePlatform?.()
+
+      if (isCapacitor) {
+        // In Capacitor: open OAuth in SFSafariViewController so it stays in-app.
+        // Redirect back to the app via soccernote:// deep link after auth.
+        const { Browser } = await import('@capacitor/browser')
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: 'https://soccer-note-hazel.vercel.app/auth/callback',
+            skipBrowserRedirect: true,
+          },
+        })
+        if (error) { toast.error(error.message); return }
+        if (data.url) await Browser.open({ url: data.url, presentationStyle: 'popover' })
+      } else {
+        // Web: standard redirect flow
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: { redirectTo: `${window.location.origin}/auth/callback` },
+        })
+        if (error) toast.error(error.message)
+      }
     } catch {
       toast.error('Google 로그인 중 오류가 발생했습니다')
     } finally {
