@@ -33,12 +33,14 @@ export default function LoginPage() {
 
       if (isCapacitor) {
         // In Capacitor: open OAuth in SFSafariViewController so it stays in-app.
-        // Redirect back to the app via soccernote:// deep link after auth.
+        // The callback must come back to the app itself (soccernote://) because
+        // the PKCE code_verifier lives in the app WebView's localStorage —
+        // exchanging the code inside Safari would fail.
         const { Browser } = await import('@capacitor/browser')
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
-            redirectTo: 'https://soccer-note-hazel.vercel.app/auth/callback',
+            redirectTo: 'soccernote://auth/callback',
             skipBrowserRedirect: true,
           },
         })
@@ -52,8 +54,8 @@ export default function LoginPage() {
         })
         if (error) toast.error(error.message)
       }
-    } catch {
-      toast.error('Google 로그인 중 오류가 발생했습니다')
+    } catch (err) {
+      toast.error(`Google 로그인 오류: ${err instanceof Error ? err.message : String(err)}`)
     } finally {
       setGoogleLoading(false)
     }
