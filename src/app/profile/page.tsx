@@ -8,6 +8,7 @@ import { ArrowLeft, LogOut, Trash2, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { Skeleton } from '@/components/Skeleton'
 import { BottomNav } from '@/components/BottomNav'
+import { ConfirmSheet } from '@/components/ConfirmSheet'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -16,6 +17,7 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const supabase = createClient()
 
   useEffect(() => { loadProfile() }, [])
@@ -138,7 +140,7 @@ export default function ProfilePage() {
         {/* Settings list */}
         <div style={cardStyle} className="overflow-hidden">
           <button
-            onClick={handleLogout}
+            onClick={() => setShowLogoutConfirm(true)}
             className="w-full flex items-center justify-between px-5 py-4 transition"
             style={{ borderBottom: '1px solid var(--line)' }}
           >
@@ -203,6 +205,14 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+      <ConfirmSheet
+        open={showLogoutConfirm}
+        title="로그아웃할까요?"
+        description="다시 로그인하면 데이터는 그대로 유지됩니다."
+        confirmLabel="로그아웃"
+        onConfirm={() => { setShowLogoutConfirm(false); handleLogout() }}
+        onCancel={() => setShowLogoutConfirm(false)}
+      />
       <BottomNav />
     </div>
   )

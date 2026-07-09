@@ -94,9 +94,21 @@ function TeamMembersContent() {
     setLoading(false)
   }
 
-  const copyInviteLink = () => {
+  const copyInviteLink = async () => {
     if (!team?.invite_code) return
-    navigator.clipboard.writeText(`${window.location.origin}/team/join?code=${team.invite_code}`)
+    const link = `${window.location.origin}/team/join?code=${team.invite_code}`
+    // Native share sheet (KakaoTalk, Messages, etc.) when available
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${team.name} 팀 초대`,
+          text: `${team.name} 팀에 가입하세요! 초대 코드: ${team.invite_code}`,
+          url: link,
+        })
+        return
+      } catch { /* user cancelled — fall through to copy */ }
+    }
+    navigator.clipboard.writeText(link)
     setCopied(true)
     toast.success('초대 링크가 복사되었습니다')
     setTimeout(() => setCopied(false), 2000)
@@ -216,7 +228,7 @@ function TeamMembersContent() {
                 className="flex items-center gap-1.5 px-4 py-2.5 rounded-[11px] font-black text-sm transition active:scale-95"
                 style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                {copied ? '복사됨' : '복사'}
+                {copied ? '복사됨' : '공유'}
               </button>
             </div>
           </div>

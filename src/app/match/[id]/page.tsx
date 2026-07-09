@@ -50,6 +50,18 @@ export default function MatchDetailPage() {
     loadMatch()
   }, [matchId])
 
+  // Auto-open the attendee picker right after creating a match (?attendees=1)
+  useEffect(() => {
+    if (loading || !canEditMatches) return
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('attendees') === '1' && attendees.length === 0) {
+      setSelectedAttendees(new Set())
+      setShowAttendeePicker(true)
+      // Clean the param so refresh/back doesn't re-open the picker
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+  }, [loading, canEditMatches])
+
   const loadMomVotes = async () => {
     const { data } = await supabase
       .from('match_mom_votes')

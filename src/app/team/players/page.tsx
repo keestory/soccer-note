@@ -13,6 +13,7 @@ import { PlayersListSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
 import { useAppData } from '@/hooks/useAppData'
+import { PullToRefresh } from '@/components/PullToRefresh'
 
 const POS_COLOR: Record<PositionType, string> = {
   GK: '#f5a623', DF: '#3b82f6', MF: '#2dd4bf', FW: '#ef4444',
@@ -72,7 +73,6 @@ export default function PlayersPage() {
     return data.members.filter(m =>
       m.status === 'approved' &&
       !m.is_removed &&
-      m.role !== 'coach' &&
       !linkedIds.has(m.id)
     )
   }, [data.members, localMemberLinks])
@@ -228,6 +228,7 @@ export default function PlayersPage() {
         </div>
       </header>
 
+      <PullToRefresh onRefresh={async () => { setLocalPlayers(null); setLocalMemberLinks({}); await data.refresh() }}>
       <div className="max-w-4xl mx-auto px-5 py-4 space-y-4">
 
         {/* Search */}
@@ -333,6 +334,7 @@ export default function PlayersPage() {
           </div>
         )}
       </div>
+      </PullToRefresh>
 
       {/* Add Player bottom sheet */}
       {showAddSheet && (
@@ -407,7 +409,7 @@ export default function PlayersPage() {
                               </div>
                               <div className="flex-1 text-left">
                                 <p className="font-bold text-[14px] text-white">{displayName}</p>
-                                <p className="text-[11px]" style={{ color: '#555' }}>팀원</p>
+                                <p className="text-[11px]" style={{ color: '#555' }}>{member.role === 'coach' ? '감독' : '팀원'}</p>
                               </div>
                               <span className="text-[12px] font-bold" style={{ color: 'var(--accent)' }}>선택 →</span>
                             </button>
@@ -495,7 +497,7 @@ export default function PlayersPage() {
       <ConfirmSheet
         open={!!deleteTarget}
         title="선수를 삭제하시겠습니까?"
-        description="삭제된 선수 정보는 복구할 수 없습니다."
+        description="이 선수의 경기 기록과 통계도 함께 삭제되며 복구할 수 없습니다."
         confirmLabel="삭제"
         danger
         onConfirm={() => { const id = deleteTarget!; setDeleteTarget(null); handleDeletePlayer(id) }}
