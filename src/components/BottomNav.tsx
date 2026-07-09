@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 const TABS = [
   { href: '/dashboard', label: '경기',    match: (p: string) => p === '/dashboard' || p.startsWith('/match') },
   { href: '/team/players', label: '선수', match: (p: string) => p.startsWith('/team/players') },
-  { href: '/training/new', label: '훈련', match: (p: string) => p.startsWith('/training') },
+  { href: '/training', label: '훈련', match: (p: string) => p.startsWith('/training') },
   { href: '/community',    label: '매칭', match: (p: string) => p.startsWith('/community') },
   { href: '/team/members', label: '팀 관리', match: (p: string) =>
       p.startsWith('/team/members') || p.startsWith('/team/notifications') || p.startsWith('/team/public-profile') },

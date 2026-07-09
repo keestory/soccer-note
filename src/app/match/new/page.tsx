@@ -49,7 +49,7 @@ export default function NewMatchPage() {
         .select().single()
       if (error) throw error
       toast.success('경기가 생성되었습니다')
-      router.push(`/match/${data.id}`)
+      router.push(`/match/${data.id}?attendees=1`)
     } catch {
       toast.error('경기 생성에 실패했습니다')
     } finally {

@@ -8,6 +8,7 @@ import { cacheResolvedTeam } from '@/lib/team-resolver'
 import { ChevronDown, UserPlus, User, LogOut } from 'lucide-react'
 import { NotificationBadge } from '@/components/NotificationBadge'
 import { BottomNav } from '@/components/BottomNav'
+import { PullToRefresh } from '@/components/PullToRefresh'
 import type { TeamMember } from '@/types/database'
 import { formatDate, calculateMVP } from '@/lib/utils'
 import toast from 'react-hot-toast'
@@ -95,6 +96,7 @@ export default function DashboardPage() {
   const { teams, selectedTeam, matches, displayName, userId } = data
   const isCoach = selectedTeam?.role === 'coach' || selectedTeam?.user_id === userId
   const canEditMatches = isCoach || selectedTeam?.membership?.can_edit_matches
+  const pendingCount = isCoach ? data.members.filter(m => m.status === 'pending' && !m.is_removed).length : 0
 
   const wins   = matches.filter(m => m.home_score >  m.away_score).length
   const losses = matches.filter(m => m.home_score <  m.away_score).length
@@ -229,7 +231,20 @@ export default function DashboardPage() {
         </div>
       </header>
 
+      <PullToRefresh onRefresh={data.refresh}>
       <main className="max-w-4xl mx-auto px-5 py-5 space-y-4">
+
+        {/* Pending join requests banner (coach only) */}
+        {pendingCount > 0 && (
+          <Link href="/team/members"
+            className="flex items-center justify-between p-4 rounded-[14px] active:opacity-80 transition"
+            style={{ background: 'var(--chip)', border: '1px solid var(--accent)' }}>
+            <p className="font-bold text-[14px]" style={{ color: 'var(--accent)' }}>
+              가입 승인 대기 {pendingCount}명
+            </p>
+            <span className="text-[12px] font-bold" style={{ color: 'var(--accent)' }}>확인하기 →</span>
+          </Link>
+        )}
 
         {/* Latest match KV scoreboard */}
         {latestMatch && (() => {
@@ -368,6 +383,7 @@ export default function DashboardPage() {
         </section>
 
       </main>
+      </PullToRefresh>
       <BottomNav />
     </div>
   )
