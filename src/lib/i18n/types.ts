@@ -586,4 +586,36 @@ export interface Translations {
   playType: string
   levelLabel: string
   allLabel: string
+  joinTeamTitle: string
+  findTeamButton: string
+  searchingTeam: string
+  setNameLink: string
+  newAccountTitle: string
+  newAccountSubtitle: string
+  loginRequired: string
+  playerProfile: string
+  ratingTrend: string
+  maintain: string
+  badgesTitle: string
+  achievementBadges: string
+  seasonStatsTitle: string
+  statAppearances: string
+  statTraining: string
+  statRecordedMatches: string
+  growthChart: string
+  matchRecordsTitle: string
+  chartNeedsData: string
+  badgeAttendKing: string
+  badgeAttendDesc: string
+  badgeTopScorer: string
+  badgeStriker: string
+  badgeGoalsDesc: string
+  badgeTeamPlayer: string
+  badgeAssistsDesc: string
+  badgeAce: string
+  badgeAceDesc: string
+  badgeWall: string
+  badgeWallDesc: string
+  badgeFlawless: string
+  badgeFlawlessDesc: string
 }

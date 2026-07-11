@@ -43,25 +43,25 @@ interface Badge {
   color: string
 }
 
-function computeBadges(stats: SeasonStats, records: MatchRecord[]): Badge[] {
+function computeBadges(stats: SeasonStats, records: MatchRecord[], t: any): Badge[] {
   const badges: Badge[] = []
 
   if (stats.matchAttendance >= 10)
-    badges.push({ emoji: '🔥', label: '출석왕', desc: `${stats.matchAttendance}경기 출전`, color: 'bg-[#2d1200] text-orange-400 border-orange-900' })
+    badges.push({ emoji: '🔥', label: t.badgeAttendKing, desc: t.badgeAttendDesc.replace('{n}', String(stats.matchAttendance)), color: 'bg-[#2d1200] text-orange-400 border-orange-900' })
 
   if (stats.goals >= 10)
-    badges.push({ emoji: '⚽', label: '득점왕', desc: `${stats.goals}골`, color: 'bg-[#1a2600] text-[#ccff00] border-[#ccff00]/40' })
+    badges.push({ emoji: '⚽', label: t.badgeTopScorer, desc: t.badgeGoalsDesc.replace('{n}', String(stats.goals)), color: 'bg-[#1a2600] text-[#ccff00] border-[#ccff00]/40' })
   else if (stats.goals >= 5)
-    badges.push({ emoji: '🎯', label: '공격수', desc: `${stats.goals}골`, color: 'bg-[#052e16] text-green-400 border-green-900' })
+    badges.push({ emoji: '🎯', label: t.badgeStriker, desc: t.badgeGoalsDesc.replace('{n}', String(stats.goals)), color: 'bg-[#052e16] text-green-400 border-green-900' })
 
   if (stats.assists >= 5)
-    badges.push({ emoji: '🤝', label: '팀플레이어', desc: `${stats.assists}어시스트`, color: 'bg-[#0c3d5e] text-sky-400 border-sky-900' })
+    badges.push({ emoji: '🤝', label: t.badgeTeamPlayer, desc: t.badgeAssistsDesc.replace('{n}', String(stats.assists)), color: 'bg-[#0c3d5e] text-sky-400 border-sky-900' })
 
   if (stats.avgRating !== null && stats.avgRating >= 4.0)
-    badges.push({ emoji: '⭐', label: '에이스', desc: `평균 ${stats.avgRating.toFixed(1)}점`, color: 'bg-[#1a1000] text-amber-400 border-amber-900' })
+    badges.push({ emoji: '⭐', label: t.badgeAce, desc: t.badgeAceDesc.replace('{n}', stats.avgRating.toFixed(1)), color: 'bg-[#1a1000] text-amber-400 border-amber-900' })
 
   if (stats.cleanSheets >= 3)
-    badges.push({ emoji: '🧤', label: '철벽', desc: `클린시트 ${stats.cleanSheets}회`, color: 'bg-[#2d1b69] text-violet-400 border-violet-900' })
+    badges.push({ emoji: '🧤', label: t.badgeWall, desc: t.badgeWallDesc.replace('{n}', String(stats.cleanSheets)), color: 'bg-[#2d1b69] text-violet-400 border-violet-900' })
 
   // 3경기 연속 4.5+ 평점
   let streak = 0
@@ -70,16 +70,17 @@ function computeBadges(stats: SeasonStats, records: MatchRecord[]): Badge[] {
     else streak = 0
   }
   if (streak >= 3)
-    badges.push({ emoji: '💪', label: '무결점', desc: '3연속 4.5+ 평점', color: 'bg-[#2d0f1a] text-rose-400 border-rose-900' })
+    badges.push({ emoji: '💪', label: t.badgeFlawless, desc: t.badgeFlawlessDesc, color: 'bg-[#2d0f1a] text-rose-400 border-rose-900' })
 
   return badges
 }
 
 // SVG 라인차트 (인라인, 외부 의존 없음)
 function RatingSparkline({ records }: { records: MatchRecord[] }) {
+  const { t } = useI18n()
   const ratedRecords = [...records].reverse().filter(r => r.rating !== null)
   if (ratedRecords.length < 2) return (
-    <div className="flex items-center justify-center h-20 text-xs" style={{ color: 'var(--muted2)' }}>경기 기록이 쌓이면 그래프가 표시됩니다</div>
+    <div className="flex items-center justify-center h-20 text-xs" style={{ color: 'var(--muted2)' }}>{t.chartNeedsData}</div>
   )
 
   const W = 300, H = 80, PAD = 12
@@ -103,11 +104,11 @@ function RatingSparkline({ records }: { records: MatchRecord[] }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>평점 추이</span>
+        <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.ratingTrend}</span>
         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
           trend > 0 ? 'bg-lime-900/40 text-lime-300' : trend < 0 ? 'bg-red-900/40 text-red-300' : 'text-white/30'
         }`} style={{ background: trend === 0 ? '#1a1a1a' : undefined }}>
-          {trend > 0 ? `▲ +${trend.toFixed(1)}` : trend < 0 ? `▼ ${trend.toFixed(1)}` : '→ 유지'}
+          {trend > 0 ? `▲ +${trend.toFixed(1)}` : trend < 0 ? `▼ ${trend.toFixed(1)}` : `→ ${t.maintain}`}
         </span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 80 }}>
@@ -217,7 +218,7 @@ export default function PlayerStatsPage() {
       trainingAttendance: trainingAttendance?.length || 0,
     }
     setSeasonStats(stats)
-    setBadges(computeBadges(stats, sortedRecords))
+    setBadges(computeBadges(stats, sortedRecords, t))
     setLoading(false)
   }
 
@@ -257,7 +258,7 @@ export default function PlayerStatsPage() {
             <div className="flex flex-col items-center rounded-2xl px-4 py-3" style={{ background: 'var(--chip)' }}>
               <Star className="w-4 h-4 mb-0.5 fill-current" style={{ color: 'var(--accent)' }} />
               <span className="text-xl font-black" style={{ color: 'var(--accent)' }}>{seasonStats.avgRating.toFixed(1)}</span>
-              <span className="text-[10px]" style={{ color: 'var(--muted2)' }}>평균 평점</span>
+              <span className="text-[10px]" style={{ color: 'var(--muted2)' }}>{t.avgRatingShort}</span>
             </div>
           )}
         </section>
@@ -265,7 +266,7 @@ export default function PlayerStatsPage() {
         {/* 뱃지 */}
         {badges.length > 0 && (
           <section className="p-4" style={cardStyle}>
-            <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>업적 뱃지</p>
+            <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>{t.achievementBadges}</p>
             <div className="flex flex-wrap gap-2">
               {badges.map((b, i) => (
                 <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'var(--chipText)' }}>
@@ -283,15 +284,15 @@ export default function PlayerStatsPage() {
         {/* 시즌 스탯 */}
         {seasonStats && (
           <section className="p-4" style={cardStyle}>
-            <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>시즌 스탯</p>
+            <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>{t.seasonStatsTitle}</p>
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { label: '출전', value: seasonStats.matchAttendance, color: 'var(--accent)' },
-                { label: '골', value: seasonStats.goals, color: '#a3e635' },
-                { label: '어시스트', value: seasonStats.assists, color: '#38bdf8' },
-                { label: '클린시트', value: seasonStats.cleanSheets, color: '#a78bfa' },
-                { label: '훈련', value: seasonStats.trainingAttendance, color: '#fb923c' },
-                { label: '기록 경기', value: seasonStats.games, color: 'var(--muted2)' },
+                { label: t.statAppearances, value: seasonStats.matchAttendance, color: 'var(--accent)' },
+                { label: t.goals, value: seasonStats.goals, color: '#a3e635' },
+                { label: t.assistsLabel, value: seasonStats.assists, color: '#38bdf8' },
+                { label: t.cleanSheet, value: seasonStats.cleanSheets, color: '#a78bfa' },
+                { label: t.statTraining, value: seasonStats.trainingAttendance, color: '#fb923c' },
+                { label: t.statRecordedMatches, value: seasonStats.games, color: 'var(--muted2)' },
               ].map(s => (
                 <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: '#1a1a1a' }}>
                   <p className="text-2xl font-black" style={{ color: s.color }}>{s.value}</p>
@@ -307,7 +308,7 @@ export default function PlayerStatsPage() {
           <section className="p-4" style={cardStyle}>
             <div className="flex items-center gap-2 mb-3">
               <TrendingUp className="w-4 h-4" style={{ color: 'var(--accent)' }} />
-              <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>성장 그래프</p>
+              <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.growthChart}</p>
             </div>
             <RatingSparkline records={matchRecords} />
           </section>

@@ -7,9 +7,11 @@ import { createClient, getSessionUser } from '@/lib/supabase'
 import { ArrowLeft, Loader2, Clock, CheckCircle, XCircle, Search } from 'lucide-react'
 import type { Team, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 import { Skeleton } from '@/components/Skeleton'
 
 function JoinTeamContent() {
+  const { t } = useI18n()
   const router = useRouter()
   const searchParams = useSearchParams()
   const inviteCode = searchParams.get('code')
@@ -45,7 +47,7 @@ function JoinTeamContent() {
     setExistingStatus(null)
     const user = await getSessionUser(supabase)
     const { data, error } = await supabase.from('teams').select('*').eq('invite_code', code.toUpperCase()).single()
-    if (error || !data) { setError('유효하지 않은 초대 코드입니다'); setTeam(null); setLoading(false); return }
+    if (error || !data) { setError(t.invalidInviteCode); setTeam(null); setLoading(false); return }
     setTeam(data)
     if (user) {
       try {
@@ -66,7 +68,7 @@ function JoinTeamContent() {
     if (!team) return
     setJoining(true)
     const user = await getSessionUser(supabase)
-    if (!user) { toast.error('로그인이 필요합니다'); return }
+    if (!user) { toast.error(t.loginRequired); return }
     const { error } = await supabase.from('team_members').insert({
       team_id: team.id, user_id: user.id, role: 'member', status: 'pending',
       can_edit_players: false, can_edit_matches: false, can_edit_quarters: false,
@@ -78,14 +80,14 @@ function JoinTeamContent() {
             .from('team_members').select('status').eq('team_id', team.id).eq('user_id', user.id).single()
           setExistingStatus(!checkError && existing ? existing.status as MemberStatus : 'pending')
         } catch { setExistingStatus('pending') }
-        toast.success('이미 가입 요청이 있습니다. 관리자 승인을 기다려주세요.')
+        toast.success(t.alreadyRequested)
       } else {
-        toast.error(`가입 요청 실패: ${error.message}`)
+        toast.error(`${t.joinRequestFailed}: ${error.message}`)
       }
       setJoining(false)
       return
     }
-    toast.success('가입 요청을 보냈습니다. 관리자 승인을 기다려주세요.')
+    toast.success(t.joinRequestSent)
     setExistingStatus('pending')
     setJoining(false)
   }
@@ -100,20 +102,20 @@ function JoinTeamContent() {
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-base font-black text-white">팀 가입</h1>
+          <h1 className="text-base font-black text-white">{t.joinTeamTitle}</h1>
         </div>
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-4">
         {/* Code input */}
         <div style={cardStyle} className="p-5">
-          <p className="text-[13px] mb-3" style={{ color: 'var(--muted2)' }}>초대 코드를 입력하여 팀에 가입 요청하세요</p>
+          <p className="text-[13px] mb-3" style={{ color: 'var(--muted2)' }}>{t.enterInviteCodeDescription}</p>
           <form onSubmit={handleSearch} className="space-y-3">
             <input
               type="text"
               value={inputCode}
               onChange={(e) => setInputCode(e.target.value.toUpperCase())}
-              placeholder="초대 코드 입력"
+              placeholder={t.inviteCodePlaceholder}
               maxLength={8}
               className="w-full px-5 py-4 rounded-xl text-center font-display text-[28px] tracking-[0.3em] uppercase outline-none transition"
               style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'var(--accent)' }}
@@ -125,7 +127,7 @@ function JoinTeamContent() {
               style={{ background: 'var(--accent)', color: '#0a0a0a' }}
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
-              {loading ? '검색 중…' : '팀 찾기'}
+              {loading ? t.searchingTeam : t.findTeamButton}
             </button>
           </form>
         </div>
@@ -145,11 +147,11 @@ function JoinTeamContent() {
                 <Clock className="w-5 h-5 text-amber-400" />
               </div>
               <div>
-                <p className="font-bold text-white">승인 대기 중</p>
+                <p className="font-bold text-white">{t.pendingApproval}</p>
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <p className="text-[13px] text-amber-400/80">관리자가 가입 요청을 검토 중입니다.</p>
+            <p className="text-[13px] text-amber-400/80">{t.pendingApprovalDescription}</p>
           </div>
         )}
 
@@ -160,12 +162,12 @@ function JoinTeamContent() {
                 <CheckCircle className="w-5 h-5" style={{ color: 'var(--accent)' }} />
               </div>
               <div>
-                <p className="font-bold text-white">이미 가입된 팀입니다</p>
+                <p className="font-bold text-white">{t.alreadyJoinedTeam}</p>
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
             <button onClick={() => router.push('/dashboard')} className="w-full py-3 rounded-xl font-bold text-[14px] transition" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-              대시보드로 이동
+              {t.goToDashboard}
             </button>
           </div>
         )}
@@ -177,11 +179,11 @@ function JoinTeamContent() {
                 <XCircle className="w-5 h-5 text-red-400" />
               </div>
               <div>
-                <p className="font-bold text-white">가입 요청이 거절되었습니다</p>
+                <p className="font-bold text-white">{t.joinRequestRejected}</p>
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <p className="text-[13px] text-red-400/80">관리자에게 문의해주세요.</p>
+            <p className="text-[13px] text-red-400/80">{t.joinRejectedDescription}</p>
           </div>
         )}
 
@@ -189,20 +191,20 @@ function JoinTeamContent() {
         {team && !loading && !existingStatus && (
           <div style={cardStyle} className="overflow-hidden">
             <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--line)' }}>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>팀 이름</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.teamName}</p>
               <p className="text-[17px] font-bold text-white">{team.name}</p>
               {team.description && <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{team.description}</p>}
             </div>
 
             {!loadingProfile && (
               <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--line)' }}>
-                <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>가입 이름</p>
+                <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.joinName}</p>
                 {displayName ? (
                   <p className="font-semibold text-white">{displayName}</p>
                 ) : (
                   <div>
-                    <p className="text-[13px] text-red-400 mb-1">이름이 설정되지 않았습니다.</p>
-                    <Link href="/profile" className="text-[13px] font-bold" style={{ color: 'var(--accent)' }}>프로필에서 이름 설정하기 →</Link>
+                    <p className="text-[13px] text-red-400 mb-1">{t.nameNotSet}</p>
+                    <Link href="/profile" className="text-[13px] font-bold" style={{ color: 'var(--accent)' }}>{t.setNameLink}</Link>
                   </div>
                 )}
               </div>
@@ -216,9 +218,9 @@ function JoinTeamContent() {
                 style={{ background: 'var(--accent)', color: '#0a0a0a' }}
               >
                 {joining ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
-                {joining ? '요청 중…' : '가입 요청하기'}
+                {joining ? t.requesting : t.requestJoin}
               </button>
-              <p className="text-[11px] text-center mt-2" style={{ color: 'var(--muted2)' }}>관리자 승인 후 팀에 참여할 수 있습니다</p>
+              <p className="text-[11px] text-center mt-2" style={{ color: 'var(--muted2)' }}>{t.approvalRequired}</p>
             </div>
           </div>
         )}
