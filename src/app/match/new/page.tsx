@@ -7,9 +7,11 @@ import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
 import { ArrowLeft, MapPin, Calendar, Swords } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 
 export default function NewMatchPage() {
   const router = useRouter()
+  const { t } = useI18n()
   const [loading, setLoading] = useState(false)
   const [teamId, setTeamId] = useState<string | null>(null)
   const [teamName, setTeamName] = useState('')
@@ -33,7 +35,7 @@ export default function NewMatchPage() {
       const { data } = await supabase.from('teams').select('name').eq('id', team.teamId).single()
       if (data) setTeamName(data.name)
     } else {
-      toast.error('경기를 생성할 권한이 없습니다')
+      toast.error(t.noCreateMatchPermission)
       router.push('/dashboard')
     }
   }
@@ -48,10 +50,10 @@ export default function NewMatchPage() {
         .insert({ team_id: teamId, opponent: opponent.trim(), match_date: matchDate, location: location.trim() || null })
         .select().single()
       if (error) throw error
-      toast.success('경기가 생성되었습니다')
+      toast.success(t.matchCreated)
       router.push(`/match/${data.id}?attendees=1`)
     } catch {
-      toast.error('경기 생성에 실패했습니다')
+      toast.error(t.saveFailed)
     } finally {
       setLoading(false)
     }
@@ -66,7 +68,7 @@ export default function NewMatchPage() {
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-base font-black text-white">새 경기</h1>
+          <h1 className="text-base font-black text-white">{t.newMatch}</h1>
         </div>
       </header>
 
@@ -75,14 +77,14 @@ export default function NewMatchPage() {
         <div style={cardStyle} className="p-5">
           <div className="flex items-center gap-3">
             <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: 'var(--chip)' }}>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>우리 팀</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.homeTeam}</p>
               <p className="font-bold text-[15px] truncate" style={{ color: 'var(--accent)' }}>{teamName || '…'}</p>
             </div>
             <div className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
               <Swords className="w-4 h-4 text-white/30" />
             </div>
             <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: '#1a1a1a' }}>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>상대 팀</p>
+              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.opponent}</p>
               <p className="font-bold text-[15px] text-white/60 truncate">{opponent || '?'}</p>
             </div>
           </div>
@@ -91,9 +93,9 @@ export default function NewMatchPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} style={cardStyle} className="overflow-hidden">
           {[
-            { icon: <Swords className="w-4 h-4 text-white/40" />, label: '상대팀 이름 *', type: 'text', value: opponent, onChange: setOpponent, placeholder: '예: FC 서울', required: true, autoFocus: false },
-            { icon: <Calendar className="w-4 h-4 text-white/40" />, label: '경기 날짜 *', type: 'date', value: matchDate, onChange: setMatchDate, placeholder: '', required: true, autoFocus: false },
-            { icon: <MapPin className="w-4 h-4 text-white/40" />, label: '장소 (선택)', type: 'text', value: location, onChange: setLocation, placeholder: '예: 잠실 운동장', required: false, autoFocus: false },
+            { icon: <Swords className="w-4 h-4 text-white/40" />, label: t.opponentNameRequired, type: 'text', value: opponent, onChange: setOpponent, placeholder: t.opponentPlaceholder, required: true, autoFocus: false },
+            { icon: <Calendar className="w-4 h-4 text-white/40" />, label: t.matchDateRequired, type: 'date', value: matchDate, onChange: setMatchDate, placeholder: '', required: true, autoFocus: false },
+            { icon: <MapPin className="w-4 h-4 text-white/40" />, label: t.location, type: 'text', value: location, onChange: setLocation, placeholder: t.locationPlaceholder, required: false, autoFocus: false },
           ].map((field, i) => (
             <div key={i} className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: i < 2 ? '1px solid var(--line)' : 'none' }}>
               <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#1a1a1a' }}>
@@ -121,10 +123,10 @@ export default function NewMatchPage() {
               className="w-full py-4 rounded-xl font-black text-[15px] active:scale-[0.99] disabled:opacity-40 transition"
               style={{ background: 'var(--accent)', color: '#0a0a0a' }}
             >
-              {loading ? '생성 중…' : '경기 생성하기'}
+              {loading ? t.creating : t.createMatch}
             </button>
             <p className="text-center text-[11px] mt-3" style={{ color: 'var(--muted2)' }}>
-              생성하면 4쿼터가 자동으로 만들어집니다
+              {t.createMatchDescription}
             </p>
           </div>
         </form>

@@ -13,6 +13,7 @@ import { PlayersListSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
 import { useAppData } from '@/hooks/useAppData'
+import { useI18n } from '@/lib/i18n/context'
 import { PullToRefresh } from '@/components/PullToRefresh'
 
 const POS_COLOR: Record<PositionType, string> = {
@@ -39,6 +40,7 @@ interface PlayerWithStats extends Player {
 export default function PlayersPage() {
   const router = useRouter()
   const data = useAppData()
+  const { t } = useI18n()
   const supabase = createClient()
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
@@ -130,10 +132,10 @@ export default function PlayersPage() {
 
       setLocalPlayers([...(localPlayers ?? data.players), newPlayer])
       setLocalMemberLinks(prev => ({ ...prev, [selectedMember.id]: newPlayer.id }))
-      toast.success(`${name.trim()} 선수로 등록되었습니다`)
+      toast.success(`${name.trim()} — ${t.playerAdded}`)
       resetForm()
     } catch {
-      toast.error('선수 추가에 실패했습니다')
+      toast.error(t.saveFailed)
     } finally {
       setSaving(false)
     }
@@ -150,10 +152,10 @@ export default function PlayersPage() {
         .select().single()
       if (error) throw error
       setLocalPlayers([...(localPlayers ?? data.players), newPlayer])
-      toast.success('선수가 추가되었습니다')
+      toast.success(t.playerAdded)
       resetForm()
     } catch {
-      toast.error('선수 추가에 실패했습니다')
+      toast.error(t.saveFailed)
     } finally {
       setSaving(false)
     }
@@ -166,8 +168,8 @@ export default function PlayersPage() {
       .from('players')
       .update({ name: name.trim(), number: number ? parseInt(number) : null, default_position: position })
       .eq('id', editingPlayer.id)
-    if (error) { toast.error('수정에 실패했습니다'); return }
-    toast.success('선수 정보가 수정되었습니다')
+    if (error) { toast.error(t.saveFailed); return }
+    toast.success(t.playerUpdated)
     setLocalPlayers((localPlayers ?? data.players).map(p =>
       p.id === editingPlayer.id ? { ...p, name: name.trim(), number: number ? parseInt(number) : null, default_position: position } : p
     ))
@@ -177,8 +179,8 @@ export default function PlayersPage() {
   const handleDeletePlayer = async (playerId: string) => {
     const supabase = createClient()
     const { error } = await supabase.from('players').delete().eq('id', playerId)
-    if (error) { toast.error('삭제에 실패했습니다'); return }
-    toast.success('선수가 삭제되었습니다')
+    if (error) { toast.error(t.deleteFailed); return }
+    toast.success(t.playerDeleted)
     setLocalPlayers((localPlayers ?? data.players).filter(p => p.id !== playerId))
   }
 
@@ -215,8 +217,8 @@ export default function PlayersPage() {
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex justify-between items-center">
           <div>
-            <h1 className="font-black text-[20px] text-white">선수</h1>
-            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {playersWithStats.length}명</p>
+            <h1 className="font-black text-[20px] text-white">{t.playersLabel}</h1>
+            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {t.playersN.replace('{n}', String(playersWithStats.length))}</p>
           </div>
           {canEdit && (
             <button onClick={() => { resetForm(); setShowAddSheet(true) }}
@@ -234,7 +236,7 @@ export default function PlayersPage() {
         {/* Search */}
         <input
           type="text" value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="선수 검색…"
+          placeholder={t.searchPlayer}
           className="w-full outline-none text-white placeholder-[#555] text-[14px]"
           style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 12, padding: '12px 14px' }}
         />
@@ -244,11 +246,11 @@ export default function PlayersPage() {
           <form onSubmit={handleUpdatePlayer}
             className="rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-black text-white">선수 수정</h3>
+              <h3 className="font-black text-white">{t.editPlayerTitle}</h3>
               <button type="button" onClick={resetForm} className="p-1 rounded" style={{ color: '#555' }}><X className="w-5 h-5" /></button>
             </div>
             <div className="grid grid-cols-3 gap-3 mb-3">
-              <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="이름"
+              <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder={t.playerName}
                 className="col-span-2 outline-none text-white placeholder-[#444] text-sm"
                 style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
               <input type="number" value={number} onChange={e => setNumber(e.target.value)} min={1} max={99} placeholder="#"
@@ -266,7 +268,7 @@ export default function PlayersPage() {
             </div>
             <button type="submit" className="w-full py-3 rounded-xl font-black text-sm active:scale-[0.98] transition"
               style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-              수정 완료
+              {t.editDone}
             </button>
           </form>
         )}
@@ -275,11 +277,11 @@ export default function PlayersPage() {
         {filtered.length === 0 ? (
           <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <p className="text-[14px]" style={{ color: '#555' }}>
-              {search ? '검색 결과가 없습니다' : '등록된 선수가 없습니다'}
+              {t.noPlayers}
             </p>
             {!search && canEdit && (
               <p className="text-[12px] mt-1" style={{ color: '#444' }}>
-                팀원이 가입하면 선수로 등록할 수 있습니다
+                {t.noAvailableMembersDesc}
               </p>
             )}
           </div>
@@ -301,21 +303,21 @@ export default function PlayersPage() {
                     {player.linkedMember && (
                       <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
                         style={{ background: 'rgba(163,230,53,0.15)', color: '#a3e635' }}>
-                        앱 연결
+                        {t.appLinked}
                       </span>
                     )}
                   </div>
                   <p className="text-[12px] mt-0.5" style={{ color: 'var(--muted2)' }}>
                     {player.default_position === 'GK'
-                      ? `클린시트 ${player.stats.cleanSheets}`
-                      : `골${player.stats.goals} 어시${player.stats.assists}`}
+                      ? `${t.cleanSheet} ${player.stats.cleanSheets}`
+                      : `${t.goalsCount.replace('{n}', String(player.stats.goals))} ${t.assistsCount.replace('{n}', String(player.stats.assists))}`}
                   </p>
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="font-display text-[22px] leading-none" style={{ color: 'var(--accent)' }}>
                     {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '–'}
                   </p>
-                  <p className="text-[9px] mt-0.5" style={{ color: '#555' }}>평균 평점</p>
+                  <p className="text-[9px] mt-0.5" style={{ color: '#555' }}>{t.avgRatingShort}</p>
                 </div>
                 {canEdit && (
                   <div className="flex gap-1 ml-1" onClick={e => e.preventDefault()}>
@@ -351,7 +353,7 @@ export default function PlayersPage() {
             </div>
 
             <div className="flex-shrink-0 px-5 pb-3 flex items-center justify-between">
-              <h2 className="font-black text-white text-lg">선수 추가</h2>
+              <h2 className="font-black text-white text-lg">{t.addPlayer}</h2>
               <button onClick={resetForm} className="p-1 rounded" style={{ color: '#555' }}>
                 <X className="w-5 h-5" />
               </button>
@@ -364,13 +366,13 @@ export default function PlayersPage() {
                   onClick={() => { setAddMode('member'); setSelectedMember(null); setName('') }}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-bold transition"
                   style={{ background: addMode === 'member' ? 'var(--card)' : 'transparent', color: addMode === 'member' ? 'var(--accent)' : '#555' }}>
-                  <UserCheck className="w-3.5 h-3.5" /> 팀원에서 추가
+                  <UserCheck className="w-3.5 h-3.5" /> {t.membersFromTeam}
                 </button>
                 <button
                   onClick={() => { setAddMode('manual'); setSelectedMember(null); setName('') }}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-bold transition"
                   style={{ background: addMode === 'manual' ? 'var(--card)' : 'transparent', color: addMode === 'manual' ? '#888' : '#555' }}>
-                  <UserPlus className="w-3.5 h-3.5" /> 직접 추가
+                  <UserPlus className="w-3.5 h-3.5" /> {t.addManually}
                 </button>
               </div>
             </div>
@@ -383,19 +385,19 @@ export default function PlayersPage() {
                 <div>
                   {availableMembers.length === 0 ? (
                     <div className="text-center py-8">
-                      <p className="text-[14px] font-bold text-white mb-1">등록 가능한 팀원이 없어요</p>
+                      <p className="text-[14px] font-bold text-white mb-1">{t.noAvailableMembers}</p>
                       <p className="text-[12px]" style={{ color: '#555' }}>
-                        이미 모든 팀원이 선수로 등록되었거나<br />아직 가입한 팀원이 없습니다
+                        {t.noAvailableMembersDesc}
                       </p>
                     </div>
                   ) : !selectedMember ? (
                     <div>
                       <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: '#555' }}>
-                        선수로 등록할 팀원 선택 · {availableMembers.length}명
+                        {t.selectMemberPrompt.replace('{n}', String(availableMembers.length))}
                       </p>
                       <div className="space-y-2">
                         {availableMembers.map(member => {
-                          const displayName = member.profile?.display_name || '이름 없음'
+                          const displayName = member.profile?.display_name || t.noName
                           const initial = displayName.charAt(0).toUpperCase()
                           return (
                             <button
@@ -409,9 +411,9 @@ export default function PlayersPage() {
                               </div>
                               <div className="flex-1 text-left">
                                 <p className="font-bold text-[14px] text-white">{displayName}</p>
-                                <p className="text-[11px]" style={{ color: '#555' }}>{member.role === 'coach' ? '감독' : '팀원'}</p>
+                                <p className="text-[11px]" style={{ color: '#555' }}>{member.role === 'coach' ? t.coach : t.member}</p>
                               </div>
-                              <span className="text-[12px] font-bold" style={{ color: 'var(--accent)' }}>선택 →</span>
+                              <span className="text-[12px] font-bold" style={{ color: 'var(--accent)' }}>{t.selectArrow}</span>
                             </button>
                           )
                         })}
@@ -426,7 +428,7 @@ export default function PlayersPage() {
                           {(selectedMember.profile?.display_name || '?').charAt(0).toUpperCase()}
                         </div>
                         <p className="flex-1 font-bold text-[14px]" style={{ color: '#a3e635' }}>
-                          {selectedMember.profile?.display_name || '이름 없음'}
+                          {selectedMember.profile?.display_name || t.noName}
                         </p>
                         <button type="button" onClick={() => { setSelectedMember(null); setName('') }}
                           className="p-1 rounded" style={{ color: '#555' }}>
@@ -435,7 +437,7 @@ export default function PlayersPage() {
                       </div>
 
                       <div className="grid grid-cols-3 gap-3 mb-3">
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="선수 이름"
+                        <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder={t.playerName}
                           className="col-span-2 outline-none text-white placeholder-[#444] text-sm"
                           style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
                         <input type="number" value={number} onChange={e => setNumber(e.target.value)} min={1} max={99} placeholder="#"
@@ -453,7 +455,7 @@ export default function PlayersPage() {
                       </div>
                       <button type="submit" disabled={saving} className="w-full py-3.5 rounded-xl font-black text-sm active:scale-[0.98] transition disabled:opacity-40"
                         style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-                        {saving ? '등록 중…' : '선수로 등록하기'}
+                        {saving ? t.registering : t.registerAsPlayer}
                       </button>
                     </form>
                   )}
@@ -464,10 +466,10 @@ export default function PlayersPage() {
               {addMode === 'manual' && (
                 <form onSubmit={handleAddManual}>
                   <p className="text-[12px] mb-4 p-3 rounded-xl" style={{ background: '#1a1a1a', color: '#666' }}>
-                    앱에 가입하지 않은 선수를 직접 추가합니다. 나중에 팀원과 연결할 수 있습니다.
+                    {t.manualAddHint}
                   </p>
                   <div className="grid grid-cols-3 gap-3 mb-3">
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder="이름"
+                    <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder={t.playerName}
                       className="col-span-2 outline-none text-white placeholder-[#444] text-sm"
                       style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
                     <input type="number" value={number} onChange={e => setNumber(e.target.value)} min={1} max={99} placeholder="#"
@@ -485,7 +487,7 @@ export default function PlayersPage() {
                   </div>
                   <button type="submit" disabled={saving} className="w-full py-3.5 rounded-xl font-black text-sm active:scale-[0.98] transition disabled:opacity-40"
                     style={{ background: '#2a2a2a', color: '#888' }}>
-                    {saving ? '추가 중…' : '직접 추가하기'}
+                    {saving ? t.adding : t.manualAddButton}
                   </button>
                 </form>
               )}
@@ -496,9 +498,9 @@ export default function PlayersPage() {
 
       <ConfirmSheet
         open={!!deleteTarget}
-        title="선수를 삭제하시겠습니까?"
-        description="이 선수의 경기 기록과 통계도 함께 삭제되며 복구할 수 없습니다."
-        confirmLabel="삭제"
+        title={t.deletePlayerTitle}
+        description={t.deletePlayerDesc}
+        confirmLabel={t.delete}
         danger
         onConfirm={() => { const id = deleteTarget!; setDeleteTarget(null); handleDeletePlayer(id) }}
         onCancel={() => setDeleteTarget(null)}

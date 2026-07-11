@@ -2,18 +2,20 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-
-const TABS = [
-  { href: '/dashboard', label: '경기',    match: (p: string) => p === '/dashboard' || p.startsWith('/match') },
-  { href: '/team/players', label: '선수', match: (p: string) => p.startsWith('/team/players') },
-  { href: '/training', label: '훈련', match: (p: string) => p.startsWith('/training') },
-  { href: '/community',    label: '매칭', match: (p: string) => p.startsWith('/community') },
-  { href: '/team/members', label: '팀 관리', match: (p: string) =>
-      p.startsWith('/team/members') || p.startsWith('/team/notifications') || p.startsWith('/team/public-profile') },
-]
+import { useI18n } from '@/lib/i18n/context'
 
 export function BottomNav() {
   const pathname = usePathname()
+  const { t } = useI18n()
+
+  const TABS = [
+    { href: '/dashboard', label: t.matchesLabel,   match: (p: string) => p === '/dashboard' || p.startsWith('/match') },
+    { href: '/team/players', label: t.playersLabel, match: (p: string) => p.startsWith('/team/players') },
+    { href: '/training', label: t.trainingLabel, match: (p: string) => p.startsWith('/training') },
+    { href: '/community',    label: t.navMatching, match: (p: string) => p.startsWith('/community') },
+    { href: '/team/members', label: t.teamManagement, match: (p: string) =>
+        p.startsWith('/team/members') || p.startsWith('/team/notifications') || p.startsWith('/team/public-profile') },
+  ]
 
   return (
     <nav

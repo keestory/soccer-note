@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [showLanguageSheet, setShowLanguageSheet] = useState(false)
-  const { locale, setLocale } = useI18n()
+  const { locale, setLocale, t } = useI18n()
   const currentLocale = LOCALES.find(l => l.code === locale)
   const supabase = createClient()
 
@@ -39,15 +39,15 @@ export default function ProfilePage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!displayName.trim()) { toast.error('이름을 입력해주세요'); return }
+    if (!displayName.trim()) { toast.error(t.nameRequired); return }
     setSaving(true)
     const user = await getSessionUser(supabase)
     if (!user) { router.push('/login'); return }
     const trimmedName = displayName.trim()
     const { error } = await supabase.auth.updateUser({ data: { display_name: trimmedName } })
-    if (error) { toast.error('이름 변경에 실패했습니다'); setSaving(false); return }
+    if (error) { toast.error(t.nameChangeFailed); setSaving(false); return }
     await supabase.from('profiles').upsert({ id: user.id, display_name: trimmedName, email: user.email || '', updated_at: new Date().toISOString() })
-    toast.success('이름이 변경되었습니다')
+    toast.success(t.nameChangeSuccess)
     setSaving(false)
   }
 
@@ -91,7 +91,7 @@ export default function ProfilePage() {
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-base font-black text-white">내 프로필</h1>
+          <h1 className="text-base font-black text-white">{t.myProfile}</h1>
         </div>
       </header>
 
@@ -101,7 +101,7 @@ export default function ProfilePage() {
           <div className="w-20 h-20 rounded-full flex items-center justify-center text-[#0a0a0a] text-3xl font-bold mb-3" style={{ background: 'var(--accent)' }}>
             {avatarInitial}
           </div>
-          <p className="font-bold text-white text-lg">{displayName || '이름 없음'}</p>
+          <p className="font-bold text-white text-lg">{displayName || t.noName}</p>
           <p className="text-[13px] mt-0.5" style={{ color: 'var(--muted2)' }}>{email}</p>
         </div>
 
@@ -109,18 +109,18 @@ export default function ProfilePage() {
         <form onSubmit={handleSave} style={cardStyle} className="overflow-hidden">
           <div className="px-5 pt-5 pb-4 space-y-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>이름 / 닉네임</label>
+              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.nameLabel}</label>
               <input
                 type="text"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 className="w-full px-4 py-3.5 outline-none transition text-[15px]"
                 style={inputStyle}
-                placeholder="팀원들에게 보여질 이름"
+                placeholder={t.namePlaceholder}
               />
             </div>
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>이메일</label>
+              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.email}</label>
               <input
                 type="email"
                 value={email}
@@ -137,7 +137,7 @@ export default function ProfilePage() {
               className="w-full py-3.5 rounded-xl font-bold text-[15px] disabled:opacity-50 transition active:scale-[0.98]"
               style={{ background: 'var(--accent)', color: '#0a0a0a' }}
             >
-              {saving ? '저장 중…' : '저장'}
+              {saving ? t.saving : t.save}
             </button>
           </div>
         </form>
@@ -153,7 +153,7 @@ export default function ProfilePage() {
               <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
                 <Globe className="w-4 h-4 text-white/60" />
               </div>
-              <span className="font-medium text-white">언어</span>
+              <span className="font-medium text-white">{t.language}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[13px]" style={{ color: 'var(--muted2)' }}>
@@ -172,7 +172,7 @@ export default function ProfilePage() {
               <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
                 <LogOut className="w-4 h-4 text-white/60" />
               </div>
-              <span className="font-medium text-white">로그아웃</span>
+              <span className="font-medium text-white">{t.logout}</span>
             </div>
             <ChevronRight className="w-4 h-4 text-white/20" />
           </button>
@@ -185,7 +185,7 @@ export default function ProfilePage() {
               <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#2a1010' }}>
                 <Trash2 className="w-4 h-4 text-red-400" />
               </div>
-              <span className="font-medium text-red-400">계정 삭제</span>
+              <span className="font-medium text-red-400">{t.deleteAccount}</span>
             </div>
             <ChevronRight className="w-4 h-4 text-red-900" />
           </button>
@@ -203,7 +203,7 @@ export default function ProfilePage() {
             <div className="flex-shrink-0 pt-3 pb-2">
               <div className="w-10 h-1 rounded-full mx-auto" style={{ background: '#2a2a2a' }} />
             </div>
-            <h3 className="flex-shrink-0 text-lg font-bold text-center text-white pb-3">언어 선택</h3>
+            <h3 className="flex-shrink-0 text-lg font-bold text-center text-white pb-3">{t.selectLanguage}</h3>
             <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-1.5">
               {LOCALES.map(l => (
                 <button
@@ -236,8 +236,8 @@ export default function ProfilePage() {
             <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#2a1010' }}>
               <Trash2 className="w-7 h-7 text-red-400" />
             </div>
-            <h3 className="text-lg font-bold text-center text-white mb-2">계정을 삭제할까요?</h3>
-            <p className="text-[13px] text-center mb-6" style={{ color: 'var(--muted2)' }}>모든 데이터가 영구 삭제되며 복구할 수 없습니다.</p>
+            <h3 className="text-lg font-bold text-center text-white mb-2">{t.deleteAccountConfirm}</h3>
+            <p className="text-[13px] text-center mb-6" style={{ color: 'var(--muted2)' }}>{t.deleteAccountDescription}</p>
             <div className="space-y-3">
               <button
                 onClick={async () => {
@@ -246,20 +246,20 @@ export default function ProfilePage() {
                     await supabase.auth.signOut()
                     router.push('/')
                   } catch {
-                    toast.error('계정 삭제에 실패했습니다')
+                    toast.error(t.deleteAccountFailed)
                     setShowDeleteConfirm(false)
                   }
                 }}
                 className="w-full py-3.5 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition"
               >
-                삭제하기
+                {t.delete}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 className="w-full py-3.5 rounded-xl font-bold text-white transition"
                 style={{ background: '#1a1a1a' }}
               >
-                취소
+                {t.cancel}
               </button>
             </div>
           </div>
@@ -267,9 +267,9 @@ export default function ProfilePage() {
       )}
       <ConfirmSheet
         open={showLogoutConfirm}
-        title="로그아웃할까요?"
-        description="다시 로그인하면 데이터는 그대로 유지됩니다."
-        confirmLabel="로그아웃"
+        title={t.logoutConfirmTitle}
+        description={t.logoutConfirmDesc}
+        confirmLabel={t.logout}
         onConfirm={() => { setShowLogoutConfirm(false); handleLogout() }}
         onCancel={() => setShowLogoutConfirm(false)}
       />
