@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
-import { ArrowLeft, LogOut, Trash2, ChevronRight } from 'lucide-react'
+import { ArrowLeft, LogOut, Trash2, ChevronRight, Globe } from 'lucide-react'
+import { useI18n } from '@/lib/i18n/context'
+import { LOCALES } from '@/lib/i18n'
 import toast from 'react-hot-toast'
 import { Skeleton } from '@/components/Skeleton'
 import { BottomNav } from '@/components/BottomNav'
@@ -18,6 +20,9 @@ export default function ProfilePage() {
   const [email, setEmail] = useState('')
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [showLanguageSheet, setShowLanguageSheet] = useState(false)
+  const { locale, setLocale } = useI18n()
+  const currentLocale = LOCALES.find(l => l.code === locale)
   const supabase = createClient()
 
   useEffect(() => { loadProfile() }, [])
@@ -140,6 +145,25 @@ export default function ProfilePage() {
         {/* Settings list */}
         <div style={cardStyle} className="overflow-hidden">
           <button
+            onClick={() => setShowLanguageSheet(true)}
+            className="w-full flex items-center justify-between px-5 py-4 transition"
+            style={{ borderBottom: '1px solid var(--line)' }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
+                <Globe className="w-4 h-4 text-white/60" />
+              </div>
+              <span className="font-medium text-white">언어</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[13px]" style={{ color: 'var(--muted2)' }}>
+                {currentLocale?.flag} {currentLocale?.label}
+              </span>
+              <ChevronRight className="w-4 h-4 text-white/20" />
+            </div>
+          </button>
+
+          <button
             onClick={() => setShowLogoutConfirm(true)}
             className="w-full flex items-center justify-between px-5 py-4 transition"
             style={{ borderBottom: '1px solid var(--line)' }}
@@ -167,6 +191,42 @@ export default function ProfilePage() {
           </button>
         </div>
       </main>
+
+      {/* Language picker bottom sheet */}
+      {showLanguageSheet && (
+        <div className="fixed inset-0 bg-black/70 z-50 flex items-end" onClick={() => setShowLanguageSheet(false)}>
+          <div
+            className="w-full rounded-t-3xl safe-bottom"
+            style={{ background: '#111010', border: '1px solid var(--line)', maxHeight: '75dvh', display: 'flex', flexDirection: 'column' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex-shrink-0 pt-3 pb-2">
+              <div className="w-10 h-1 rounded-full mx-auto" style={{ background: '#2a2a2a' }} />
+            </div>
+            <h3 className="flex-shrink-0 text-lg font-bold text-center text-white pb-3">언어 선택</h3>
+            <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-1.5">
+              {LOCALES.map(l => (
+                <button
+                  key={l.code}
+                  onClick={() => { setLocale(l.code); setShowLanguageSheet(false) }}
+                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition active:opacity-70"
+                  style={locale === l.code
+                    ? { background: 'var(--chip)', border: '1px solid var(--accent)' }
+                    : { background: '#1a1a1a', border: '1px solid transparent' }}
+                >
+                  <span className="text-xl">{l.flag}</span>
+                  <span className="font-medium text-[15px]" style={{ color: locale === l.code ? 'var(--accent)' : '#ccc' }}>
+                    {l.label}
+                  </span>
+                  {locale === l.code && (
+                    <span className="ml-auto w-2 h-2 rounded-full" style={{ background: 'var(--accent)' }} />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Delete confirm bottom sheet */}
       {showDeleteConfirm && (
