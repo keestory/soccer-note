@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 
 function GoogleIcon() {
   return (
@@ -18,6 +19,7 @@ function GoogleIcon() {
 }
 
 export default function SignupPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
@@ -36,7 +38,7 @@ export default function SignupPage() {
       })
       if (error) toast.error(error.message)
     } catch {
-      toast.error('Google 로그인 중 오류가 발생했습니다')
+      toast.error(t.loginError)
     } finally {
       setGoogleLoading(false)
     }
@@ -44,9 +46,9 @@ export default function SignupPage() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!displayName.trim()) { toast.error('이름/닉네임을 입력해주세요'); return }
-    if (password !== confirmPassword) { toast.error('비밀번호가 일치하지 않습니다'); return }
-    if (password.length < 6) { toast.error('비밀번호는 6자 이상이어야 합니다'); return }
+    if (!displayName.trim()) { toast.error(t.nameRequired); return }
+    if (password !== confirmPassword) { toast.error(t.passwordsNoMatch); return }
+    if (password.length < 6) { toast.error(t.passwordMinLength); return }
 
     setLoading(true)
     try {
@@ -64,10 +66,10 @@ export default function SignupPage() {
           display_name: displayName.trim(),
         })
       }
-      toast.success('회원가입 성공! 이메일을 확인해주세요.')
+      toast.success(t.signupSuccessMessage)
       router.push('/login')
     } catch {
-      toast.error('회원가입 중 오류가 발생했습니다')
+      toast.error(t.signupError)
     } finally {
       setLoading(false)
     }
@@ -85,8 +87,8 @@ export default function SignupPage() {
       {/* Header */}
       <div className="px-6 pt-6 pb-2">
         <p className="font-display text-[11px] tracking-[0.18em] uppercase" style={{ color: 'var(--accent)' }}>SOCCERNOTE</p>
-        <h1 className="font-display text-[28px] text-white leading-tight mt-1">새 계정 만들기</h1>
-        <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>팀을 만들고 기록을 시작해요</p>
+        <h1 className="font-display text-[28px] text-white leading-tight mt-1"> {t.newAccountTitle}</h1>
+        <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{t.newAccountSubtitle}</p>
       </div>
 
       {/* Form */}
@@ -99,20 +101,20 @@ export default function SignupPage() {
           style={{ background: '#ffffff', color: '#111' }}
         >
           <GoogleIcon />
-          {googleLoading ? '연결 중…' : 'Google로 계속하기'}
+          {googleLoading ? t.connecting : t.continueWithGoogle}
         </button>
 
         <div className="flex items-center gap-3 mb-4">
           <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
-          <span className="text-[11px] font-medium" style={{ color: 'var(--muted2)' }}>또는 이메일</span>
+          <span className="text-[11px] font-medium" style={{ color: 'var(--muted2)' }}>{t.orEmail}</span>
           <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
         </div>
 
         <form onSubmit={handleSignup} className="space-y-3.5">
           {[
-            { id: 'displayName', label: '이름 / 닉네임', type: 'text', value: displayName, onChange: setDisplayName, placeholder: '팀원들에게 보여질 이름', autoComplete: 'name' },
-            { id: 'email', label: '이메일', type: 'email', value: email, onChange: setEmail, placeholder: 'email@example.com', autoComplete: 'email' },
-            { id: 'password', label: '비밀번호', type: 'password', value: password, onChange: setPassword, placeholder: '6자 이상 입력', autoComplete: 'new-password' },
+            { id: 'displayName', label: t.nameLabel, type: 'text', value: displayName, onChange: setDisplayName, placeholder: t.namePlaceholder, autoComplete: 'name' },
+            { id: 'email', label: t.email, type: 'email', value: email, onChange: setEmail, placeholder: 'email@example.com', autoComplete: 'email' },
+            { id: 'password', label: t.password, type: 'password', value: password, onChange: setPassword, placeholder: t.passwordMin6, autoComplete: 'new-password' },
           ].map(field => (
             <div key={field.id}>
               <label htmlFor={field.id} className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{field.label}</label>
@@ -131,7 +133,7 @@ export default function SignupPage() {
           ))}
 
           <div>
-            <label htmlFor="confirmPassword" className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>비밀번호 확인</label>
+            <label htmlFor="confirmPassword" className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.passwordConfirm}</label>
             <input
               id="confirmPassword"
               type="password"
@@ -144,10 +146,10 @@ export default function SignupPage() {
                 ...inputStyle,
                 ...(confirmPassword && password !== confirmPassword ? { border: '1px solid #ef4444' } : {}),
               }}
-              placeholder="비밀번호 재입력"
+              placeholder={t.passwordReenter}
             />
             {confirmPassword && password !== confirmPassword && (
-              <p className="text-[12px] text-red-400 mt-1 font-medium">비밀번호가 일치하지 않습니다</p>
+              <p className="text-[12px] text-red-400 mt-1 font-medium">{t.passwordsNoMatch}</p>
             )}
           </div>
 
@@ -157,12 +159,12 @@ export default function SignupPage() {
             className="w-full py-4 rounded-[14px] font-black text-[16px] disabled:opacity-50 active:scale-[0.98] transition"
             style={{ background: 'var(--accent)', color: '#0a0a0a' }}
           >
-            {loading ? '가입 중…' : '시작하기'}
+            {loading ? t.loading : t.getStarted}
           </button>
 
           <p className="text-center text-[13px]" style={{ color: 'var(--muted2)' }}>
-            이미 계정이 있으신가요?{' '}
-            <Link href="/login" className="font-black text-white">로그인</Link>
+            {t.hasAccount}{' '}
+            <Link href="/login" className="font-black text-white">{t.login}</Link>
           </p>
         </form>
       </div>

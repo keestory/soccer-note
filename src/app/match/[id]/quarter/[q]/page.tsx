@@ -8,6 +8,7 @@ import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner,
 import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 import { QuarterEditSkeleton } from '@/components/Skeleton'
 
 // Formation presets: positions as [x%, y%] for each role
@@ -113,6 +114,7 @@ function getRatingStyle(rating: number | null): { textClass: string; accentClass
 }
 
 export default function QuarterEditPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const params = useParams()
   const matchId = params.id as string
@@ -172,7 +174,7 @@ export default function QuarterEditPage() {
       .single()
 
     if (!matchData) {
-      toast.error('경기를 찾을 수 없습니다')
+      toast.error(t.matchLoadFailed)
       router.push('/dashboard')
       return
     }
@@ -198,14 +200,14 @@ export default function QuarterEditPage() {
     }
 
     if (!hasPermission) {
-      toast.error('쿼터 편집 권한이 없습니다')
+      toast.error(t.noQuarterPermission)
       router.push(`/match/${matchId}`)
       return
     }
 
     const currentQuarter = matchData.quarters?.find((q: Quarter) => q.quarter_number === quarterNumber)
     if (!currentQuarter) {
-      toast.error('쿼터를 찾을 수 없습니다')
+      toast.error(t.quarterNotFound)
       router.push(`/match/${matchId}`)
       return
     }
@@ -395,7 +397,7 @@ export default function QuarterEditPage() {
 
   const applyFormation = (formationKey: string) => {
     if (fieldPlayers.length === 0) {
-      toast.error('먼저 선수를 추가해주세요')
+      toast.error(t.addPlayersFirst)
       return
     }
 
@@ -441,7 +443,7 @@ export default function QuarterEditPage() {
       const updatedSelected = updated.find(fp => fp.id === selectedPlayer.id)
       if (updatedSelected) setSelectedPlayer(updatedSelected)
     }
-    toast.success(`${formation.label} 포메이션 적용`)
+    toast.success(`${formation.label} — ${t.formationApplied}`)
   }
 
   const openSubModal = () => {
@@ -464,7 +466,7 @@ export default function QuarterEditPage() {
   const handleAddSubstitution = async () => {
     if (!quarter || !subOutId || !subInId) return
     if (subOutId === subInId) {
-      toast.error('같은 선수끼리 교체할 수 없습니다')
+      toast.error(t.samePlayerSubError)
       return
     }
 
@@ -481,7 +483,7 @@ export default function QuarterEditPage() {
       .single()
 
     if (error) {
-      toast.error('교체 기록 추가에 실패했습니다')
+      toast.error(t.substitutionAddFailed)
       setSavingSub(false)
       return
     }
@@ -515,7 +517,7 @@ export default function QuarterEditPage() {
       setAvailablePlayers(prev => prev.filter(p => p.id !== inPlayer.id))
     }
 
-    toast.success('교체 기록이 추가되었습니다')
+    toast.success(t.substitutionAdded)
   }
 
   const handleDeleteSubstitution = async (subId: string) => {
@@ -525,12 +527,12 @@ export default function QuarterEditPage() {
       .eq('id', subId)
 
     if (error) {
-      toast.error('교체 기록 삭제에 실패했습니다')
+      toast.error(t.substitutionDeleteFailed)
       return
     }
 
     setSubstitutions(substitutions.filter(s => s.id !== subId))
-    toast.success('교체 기록이 삭제되었습니다')
+    toast.success(t.substitutionDeleted)
   }
 
   const removePlayerFromField = (fieldPlayer: FieldPlayer) => {
@@ -611,21 +613,21 @@ export default function QuarterEditPage() {
 
         if (!res.ok) {
           console.error('Upload error:', result.error)
-          toast.error(`업로드 실패: ${file.name} - ${result.error}`)
+          toast.error(`${t.uploadFailed}: ${file.name} - ${result.error}`)
           continue
         }
 
         newUrls.push(result.url)
       } catch (err) {
         console.error('Upload error:', err)
-        toast.error(`업로드 실패: ${file.name}`)
+        toast.error(`${t.uploadFailed}: ${file.name}`)
       }
     }
 
     if (newUrls.length > 0) {
       const updated = [...selectedPlayer.mediaUrls, ...newUrls]
       updateFieldPlayer(selectedPlayer.id, { mediaUrls: updated })
-      toast.success(`${newUrls.length}개 파일 업로드 완료`)
+      toast.success(`${newUrls.length}${t.filesUploaded}`)
     }
 
     setUploadingMedia(false)
@@ -677,9 +679,9 @@ export default function QuarterEditPage() {
 
       // Reload data to get server-generated IDs
       await loadData()
-      toast.success('쿼터 전체 저장 완료')
+      toast.success(t.quarterAllSaved)
     } catch (error) {
-      toast.error('저장에 실패했습니다')
+      toast.error(t.saveFailed)
     } finally {
       setSaving(false)
     }
@@ -733,9 +735,9 @@ export default function QuarterEditPage() {
         if (error) throw error
       }
 
-      toast.success(`${fp.player.name} 저장 완료`)
+      toast.success(`${fp.player.name} — ${t.savedShort}`)
     } catch (error) {
-      toast.error('선수 저장에 실패했습니다')
+      toast.error(t.playerSaveFailed)
     } finally {
       setSavingPlayer(false)
     }
@@ -758,7 +760,7 @@ export default function QuarterEditPage() {
             <Link href={`/match/${matchId}`} className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-base font-black text-white">{quarterNumber}쿼터 편집</h1>
+            <h1 className="text-base font-black text-white">{quarterNumber}{t.quarterEditTitle.replace('{n}', String(quarterNumber))}</h1>
           </div>
           <button
             onClick={handleSave}
@@ -767,7 +769,7 @@ export default function QuarterEditPage() {
             style={{ background: 'var(--accent)', color: '#0a0a0a' }}
           >
             <Save className="w-4 h-4" />
-            {saving ? '저장 중...' : '저장'}
+            {saving ? t.saving : t.save}
           </button>
         </div>
       </header>
@@ -776,7 +778,7 @@ export default function QuarterEditPage() {
         {/* Soccer Field */}
         <section>
           <div className="flex justify-between items-center mb-3">
-            <h2 className="font-bold text-white text-sm">포메이션 배치</h2>
+            <h2 className="font-bold text-white text-sm">{t.formationPlacement}</h2>
             <div className="flex items-center gap-2">
               <select
                 onChange={(e) => {
@@ -789,7 +791,7 @@ export default function QuarterEditPage() {
                 className="px-2 py-1.5 rounded-lg text-sm outline-none"
                 style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff' }}
               >
-                <option value="" disabled>포메이션</option>
+                <option value="" disabled>{t.formation}</option>
                 {Object.entries(FORMATIONS).map(([key, f]) => (
                   <option key={key} value={key}>{f.label}</option>
                 ))}
@@ -801,7 +803,7 @@ export default function QuarterEditPage() {
                   style={{ background: 'var(--chip)', color: 'var(--accent)' }}
                 >
                   <Plus className="w-4 h-4" />
-                  선수 추가
+                  {t.addPlayer}
                 </button>
               )}
             </div>
@@ -812,10 +814,10 @@ export default function QuarterEditPage() {
             <div className="mb-4 p-4 rounded-xl" style={cardStyle}>
               <div className="flex justify-between items-center mb-3">
                 <p className="text-sm text-white/60">
-                  추가할 선수를 선택하세요
+                  {t.selectPlayersToAdd}
                   {selectedPickerPlayers.size > 0 && (
                     <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
-                      {selectedPickerPlayers.size}명 선택
+                      {t.selectedCount.replace('{n}', String(selectedPickerPlayers.size))}
                     </span>
                   )}
                 </p>
@@ -876,7 +878,7 @@ export default function QuarterEditPage() {
                   className="w-full py-2.5 rounded-lg font-medium transition-colors"
                   style={{ background: 'var(--accent)', color: '#0a0a0a' }}
                 >
-                  {selectedPickerPlayers.size}명 추가하기
+                  {t.addNPlayers.replace('{n}', String(selectedPickerPlayers.size))}
                 </button>
               )}
             </div>
@@ -966,12 +968,12 @@ export default function QuarterEditPage() {
 
             {fieldPlayers.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <p className="px-4 py-2 rounded-lg text-sm" style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.5)' }}>선수를 추가하고 드래그하여 배치하세요</p>
+                <p className="px-4 py-2 rounded-lg text-sm" style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.5)' }}>{t.dragToPlace}</p>
               </div>
             )}
           </div>
           <p className="text-center text-sm mt-2" style={{ color: 'var(--muted2)' }}>
-            선수를 드래그하여 위치를 조정하세요
+            {t.dragToAdjust}
           </p>
         </section>
 
@@ -980,7 +982,7 @@ export default function QuarterEditPage() {
           <div className="flex items-center justify-between mb-3">
             <h2 className="font-bold text-white text-sm flex items-center gap-2">
               <ArrowRightLeft className="w-4 h-4 text-white/40" />
-              교체 기록 ({substitutions.length}건)
+              {t.substitutionRecords} ({substitutions.length})
             </h2>
             <button
               onClick={openSubModal}
@@ -988,7 +990,7 @@ export default function QuarterEditPage() {
               style={{ background: '#1a1200', color: '#f59e0b' }}
             >
               <Plus className="w-4 h-4" />
-              교체 추가
+              {t.addSubstitution}
             </button>
           </div>
 
@@ -1030,7 +1032,7 @@ export default function QuarterEditPage() {
               ))}
             </div>
           ) : (
-            <p className="text-sm" style={{ color: 'var(--muted2)' }}>교체 기록이 없습니다</p>
+            <p className="text-sm" style={{ color: 'var(--muted2)' }}>{t.noSubstitutions}</p>
           )}
         </section>
 
@@ -1045,7 +1047,7 @@ export default function QuarterEditPage() {
             >
               <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: '#2a2a2a' }} />
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-white text-lg">교체 추가</h3>
+                <h3 className="font-bold text-white text-lg">{t.addSubstitution}</h3>
                 <button onClick={() => { setShowSubModal(false); setSubPickerMode(null) }} className="p-1 text-white/40 hover:text-white rounded">
                   <X className="w-5 h-5" />
                 </button>
@@ -1057,7 +1059,7 @@ export default function QuarterEditPage() {
                     <span className={`px-2 py-0.5 rounded-full text-xs font-bold`} style={subPickerMode === 'out' ? { background: '#2a0a0a', color: '#ef4444' } : { background: 'var(--chip)', color: 'var(--accent)' }}>
                       {subPickerMode === 'out' ? 'OUT' : 'IN'}
                     </span>
-                    선수를 선택하세요
+                    {t.selectPlayer}
                   </p>
                   <div className="overflow-y-auto flex-1 space-y-1.5 mb-4">
                     {(subPickerMode === 'out'
@@ -1098,7 +1100,7 @@ export default function QuarterEditPage() {
               ) : (
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>교체 시간 (분)</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.substitutionTime}</label>
                     <input
                       type="number"
                       min={0}
@@ -1110,7 +1112,7 @@ export default function QuarterEditPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-red-400">OUT 선수</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-red-400">OUT</label>
                     <button
                       onClick={() => setSubPickerMode('out')}
                       className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition"
@@ -1128,13 +1130,13 @@ export default function QuarterEditPage() {
                             </div>
                             <span className="font-medium text-white">{fp.player.name}</span>
                           </>
-                        ) : <span style={{ color: 'var(--muted2)' }}>선택하세요</span>
-                      })() : <span style={{ color: 'var(--muted2)' }}>선수를 선택하세요</span>}
+                        ) : <span style={{ color: 'var(--muted2)' }}>{t.selectPlayer}</span>
+                      })() : <span style={{ color: 'var(--muted2)' }}>{t.selectPlayer}</span>}
                     </button>
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>IN 선수</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>IN</label>
                     <button
                       onClick={() => setSubPickerMode('in')}
                       className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition"
@@ -1152,8 +1154,8 @@ export default function QuarterEditPage() {
                             </div>
                             <span className="font-medium text-white">{p.name}</span>
                           </>
-                        ) : <span style={{ color: 'var(--muted2)' }}>선택하세요</span>
-                      })() : <span style={{ color: 'var(--muted2)' }}>선수를 선택하세요</span>}
+                        ) : <span style={{ color: 'var(--muted2)' }}>{t.selectPlayer}</span>
+                      })() : <span style={{ color: 'var(--muted2)' }}>{t.selectPlayer}</span>}
                     </button>
                   </div>
 
@@ -1163,7 +1165,7 @@ export default function QuarterEditPage() {
                     className="w-full py-4 rounded-2xl font-bold disabled:opacity-40 text-base"
                     style={{ background: 'var(--accent)', color: '#0a0a0a' }}
                   >
-                    {savingSub ? '저장 중...' : '교체 추가'}
+                    {savingSub ? t.saving : t.addSubstitution}
                   </button>
                 </div>
               )}
@@ -1211,7 +1213,7 @@ export default function QuarterEditPage() {
             {/* Rating Slider */}
             <div className="mb-5">
               <div className="flex items-center justify-between mb-3">
-                <label className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>평점</label>
+                <label className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.rating}</label>
                 <span className="font-display text-3xl tabular-nums" style={{ color: 'var(--accent)' }}>
                   {selectedPlayer.rating !== null ? selectedPlayer.rating.toFixed(1) : '−'}
                 </span>
@@ -1240,7 +1242,7 @@ export default function QuarterEditPage() {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>골</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.goals}</label>
                 <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { goals: Math.max(0, selectedPlayer.goals - 1) })}
@@ -1255,7 +1257,7 @@ export default function QuarterEditPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>어시스트</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.assistsLabel}</label>
                 <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { assists: Math.max(0, selectedPlayer.assists - 1) })}
@@ -1283,7 +1285,7 @@ export default function QuarterEditPage() {
                 }}
               >
                 <Check className="w-4 h-4" />
-                클린시트
+                {t.cleanSheet}
               </button>
               <button
                 onClick={() => updateFieldPlayer(selectedPlayer.id, { contribution: selectedPlayer.contribution > 0 ? 0 : 1 })}
@@ -1295,17 +1297,17 @@ export default function QuarterEditPage() {
                 }}
               >
                 <Check className="w-4 h-4" />
-                기여도
+                {t.contribution}
               </button>
             </div>
 
             {/* Review Section */}
             <div className="mt-5 pt-5" style={{ borderTop: '1px solid var(--line)' }}>
-              <h3 className="font-bold text-white mb-3">선수 총평</h3>
+              <h3 className="font-bold text-white mb-3">{t.playerReview}</h3>
 
               {/* Media Upload */}
               <div className="mb-4">
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted2)' }}>사진/동영상</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted2)' }}>{t.photoVideo}</label>
                 <div className="flex gap-2 mb-2">
                   <button
                     type="button"
@@ -1315,7 +1317,7 @@ export default function QuarterEditPage() {
                     style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}
                   >
                     <ImageIcon className="w-4 h-4" />
-                    갤러리
+                    {t.gallery}
                   </button>
                   <button
                     type="button"
@@ -1325,7 +1327,7 @@ export default function QuarterEditPage() {
                     style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}
                   >
                     <Camera className="w-4 h-4" />
-                    촬영하기
+                    {t.takePhoto}
                   </button>
                   {uploadingMedia && <Spinner className="w-5 h-5 animate-spin self-center" style={{ color: 'var(--accent)' }} />}
                 </div>
@@ -1353,11 +1355,11 @@ export default function QuarterEditPage() {
               </div>
 
               <div className="mb-3">
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>참 잘했어요</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>{t.praiseLabel}</label>
                 <textarea
                   value={selectedPlayer.praiseText}
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { praiseText: e.target.value })}
-                  placeholder="잘한 점을 적어주세요"
+                  placeholder={t.praisePlaceholder}
                   rows={2}
                   className="w-full px-3 py-2 text-sm outline-none resize-none"
                   style={textareaStyle}
@@ -1365,11 +1367,11 @@ export default function QuarterEditPage() {
               </div>
 
               <div className="mb-3">
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-amber-400">조금 더 연습해볼까요?</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5 text-amber-400">{t.improvementLabel}</label>
                 <textarea
                   value={selectedPlayer.improvementText}
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { improvementText: e.target.value })}
-                  placeholder="개선할 점을 적어주세요"
+                  placeholder={t.improvementPlaceholder}
                   rows={2}
                   className="w-full px-3 py-2 text-sm outline-none resize-none"
                   style={textareaStyle}
@@ -1377,18 +1379,18 @@ export default function QuarterEditPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>이 부분을 칭찬해주세요!</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>{t.highlightLabel}</label>
                 <textarea
                   value={selectedPlayer.highlightText}
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { highlightText: e.target.value })}
-                  placeholder="특별히 칭찬할 부분을 적어주세요"
+                  placeholder={t.highlightPlaceholder}
                   rows={2}
                   className="w-full px-3 py-2 text-sm outline-none resize-none"
                   style={textareaStyle}
                 />
               </div>
 
-              <p className="text-xs mt-4 text-center" style={{ color: 'var(--muted2)' }}>상단 저장 버튼으로 전체 한 번에 저장됩니다</p>
+              <p className="text-xs mt-4 text-center" style={{ color: 'var(--muted2)' }}>{t.saveAllNote}</p>
             </div>
           </section>
         )}
@@ -1396,7 +1398,7 @@ export default function QuarterEditPage() {
         {/* All Players List */}
         {fieldPlayers.length > 0 && (
           <section>
-            <h2 className="font-bold text-white text-sm mb-3">배치된 선수 ({fieldPlayers.length}명)</h2>
+            <h2 className="font-bold text-white text-sm mb-3">{t.placedPlayers} ({fieldPlayers.length})</h2>
             <div style={{ ...cardStyle, overflow: 'hidden' }}>
               {fieldPlayers.map((fp, i) => (
                 <button
@@ -1419,8 +1421,8 @@ export default function QuarterEditPage() {
                       <p className="font-medium text-white">{fp.player.name}</p>
                       <p className="text-sm" style={{ color: 'var(--muted2)' }}>
                         {POSITION_LABELS[fp.positionType]}
-                        {fp.goals > 0 && ` | ${fp.goals}골`}
-                        {fp.assists > 0 && ` ${fp.assists}어시`}
+                        {fp.goals > 0 && ` | ${t.goalsCount.replace('{n}', String(fp.goals))}`}
+                        {fp.assists > 0 && ` ${fp.assists}${t.assistShort}`}
                       </p>
                     </div>
                   </div>
