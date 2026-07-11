@@ -14,6 +14,7 @@ import { formatDate, calculateMVP } from '@/lib/utils'
 import toast from 'react-hot-toast'
 import { DashboardSkeleton } from '@/components/Skeleton'
 import { useAppData } from '@/hooks/useAppData'
+import { useI18n } from '@/lib/i18n/context'
 import { loadTeamData, updateStore } from '@/lib/dataStore'
 import type { TeamWithRole } from '@/lib/dataStore'
 
@@ -32,6 +33,7 @@ function primeTeamCache(userId: string, team: TeamWithRole) {
 export default function DashboardPage() {
   const router = useRouter()
   const data = useAppData()
+  const { t } = useI18n()
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [showTeamPicker, setShowTeamPicker] = useState(false)
   const [teamName, setTeamName] = useState('')
@@ -71,14 +73,14 @@ export default function DashboardPage() {
     const supabase = createClient()
     const { data: team, error } = await supabase
       .from('teams').insert({ name: teamName, user_id: data.userId }).select().single()
-    if (error) { toast.error('팀 생성에 실패했습니다'); return }
+    if (error) { toast.error(t.teamCreateFailed); return }
     const memberData = {
       id: crypto.randomUUID(), team_id: team.id, user_id: data.userId,
       role: 'coach' as const, can_edit_players: true, can_edit_matches: true,
       can_edit_quarters: true, joined_at: new Date().toISOString(), updated_at: new Date().toISOString()
     }
     await supabase.from('team_members').upsert(memberData)
-    toast.success('팀이 생성되었습니다!')
+    toast.success(t.teamCreated)
     setTeamName('')
     setShowCreateTeam(false)
     // Refresh store so new team appears
@@ -116,7 +118,7 @@ export default function DashboardPage() {
 
           {teams.length > 0 && (
             <div className="rounded-2xl p-5 mb-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <h2 className="font-black text-white mb-4">내 팀 목록 ({teams.length}개)</h2>
+              <h2 className="font-black text-white mb-4">{t.myTeams} ({teams.length})</h2>
               <div className="space-y-2 max-h-[40vh] overflow-y-auto">
                 {teams.map(team => (
                   <button key={team.id} onClick={() => handleSelectTeam(team)}
@@ -124,7 +126,7 @@ export default function DashboardPage() {
                     style={{ background: '#1a1a1a' }}>
                     <div>
                       <p className="font-bold text-white">{team.name}</p>
-                      <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? '감독' : '팀원'}</p>
+                      <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? t.coach : t.member}</p>
                     </div>
                     <ChevronDown className="w-4 h-4 -rotate-90" style={{ color: '#555' }} />
                   </button>
@@ -134,31 +136,31 @@ export default function DashboardPage() {
           )}
 
           <form onSubmit={handleCreateTeam} className="rounded-2xl p-5 mb-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <h2 className="font-black text-white mb-4">새 팀 만들기</h2>
+            <h2 className="font-black text-white mb-4">{t.createTeam}</h2>
             <input type="text" value={teamName} onChange={e => setTeamName(e.target.value)} required
               className="w-full outline-none text-white placeholder-[#555] mb-3"
               style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 12, padding: '13px 15px' }}
-              placeholder="팀 이름" />
+              placeholder={t.teamName} />
             <button type="submit" className="w-full font-black py-3.5 rounded-xl active:scale-[0.98] transition"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>팀 만들기</button>
+              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>{t.createTeamButton}</button>
           </form>
 
           <div className="rounded-2xl p-5 mb-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <h2 className="font-black text-white mb-3">팀에 가입하기</h2>
+            <h2 className="font-black text-white mb-3">{t.joinTeam}</h2>
             <Link href="/team/join"
               className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold transition active:opacity-70"
               style={{ background: '#1a1a1a', color: 'var(--accent)' }}>
               <UserPlus className="w-4 h-4" />
-              초대 코드로 가입
+              {t.inviteCodeJoin}
             </Link>
           </div>
 
           <div className="flex flex-col gap-2 mt-4">
             <Link href="/profile" className="flex items-center justify-center gap-2 py-3 text-sm font-medium" style={{ color: 'var(--muted2)' }}>
-              <User className="w-4 h-4" /> 내 프로필
+              <User className="w-4 h-4" /> {t.myProfile}
             </Link>
             <button onClick={handleLogout} className="flex items-center justify-center gap-2 py-3 text-sm" style={{ color: '#555' }}>
-              <LogOut className="w-4 h-4" /> 로그아웃
+              <LogOut className="w-4 h-4" /> {t.logout}
             </button>
           </div>
         </div>
@@ -181,7 +183,7 @@ export default function DashboardPage() {
             style={{ background: 'var(--card)', border: '1px solid var(--line)', maxHeight: '70dvh' }}
             onClick={e => e.stopPropagation()}
           >
-            <h3 className="font-black text-white mb-3">팀 선택</h3>
+            <h3 className="font-black text-white mb-3">{t.selectTeam}</h3>
             <div className="space-y-2 mb-4 overflow-y-auto flex-1">
               {teams.map(team => {
                 const active = selectedTeam?.id === team.id
@@ -194,7 +196,7 @@ export default function DashboardPage() {
                     }}>
                     <div>
                       <p className="font-bold text-white">{team.name}</p>
-                      <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? '감독' : '팀원'}</p>
+                      <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? t.coach : t.member}</p>
                     </div>
                     {active && <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: 'var(--accent)' }} />}
                   </button>
@@ -202,9 +204,9 @@ export default function DashboardPage() {
               })}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setShowTeamPicker(false)} className="flex-1 py-3 rounded-xl font-bold" style={{ background: '#1a1a1a', color: '#aaa' }}>닫기</button>
-              <button onClick={() => { setShowTeamPicker(false); setShowCreateTeam(true) }} className="flex-1 py-3 rounded-xl font-black" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>+ 새 팀</button>
-              <Link href="/team/join" className="flex-1 py-3 rounded-xl font-bold text-center" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>+ 가입</Link>
+              <button onClick={() => setShowTeamPicker(false)} className="flex-1 py-3 rounded-xl font-bold" style={{ background: '#1a1a1a', color: '#aaa' }}>{t.close}</button>
+              <button onClick={() => { setShowTeamPicker(false); setShowCreateTeam(true) }} className="flex-1 py-3 rounded-xl font-black" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>{t.newTeamShort}</button>
+              <Link href="/team/join" className="flex-1 py-3 rounded-xl font-bold text-center" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.joinShort}</Link>
             </div>
           </div>
         </div>
@@ -216,7 +218,7 @@ export default function DashboardPage() {
           <div className="min-w-0">
             <p className="font-display text-[13px] tracking-widest" style={{ color: 'var(--accent)' }}>SOCCERNOTE</p>
             <button onClick={() => setShowTeamPicker(true)} className="flex items-center gap-1 mt-0.5">
-              <span className="font-black text-[19px] text-white truncate max-w-[180px]">{selectedTeam?.name || '팀 선택'}</span>
+              <span className="font-black text-[19px] text-white truncate max-w-[180px]">{selectedTeam?.name || t.selectTeam}</span>
               <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: '#555' }} />
             </button>
           </div>
@@ -240,9 +242,9 @@ export default function DashboardPage() {
             className="flex items-center justify-between p-4 rounded-[14px] active:opacity-80 transition"
             style={{ background: 'var(--chip)', border: '1px solid var(--accent)' }}>
             <p className="font-bold text-[14px]" style={{ color: 'var(--accent)' }}>
-              가입 승인 대기 {pendingCount}명
+              {t.pendingJoinBadge.replace('{n}', String(pendingCount))}
             </p>
-            <span className="text-[12px] font-bold" style={{ color: 'var(--accent)' }}>확인하기 →</span>
+            <span className="text-[12px] font-bold" style={{ color: 'var(--accent)' }}>{t.checkNow}</span>
           </Link>
         )}
 
@@ -259,7 +261,7 @@ export default function DashboardPage() {
               style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
               <div className="flex items-center justify-between mb-3">
                 <span className="font-display text-[13px]" style={{ color: 'var(--muted1)', letterSpacing: '0.08em' }}>
-                  지난 경기 · {formatDate(latestMatch.match_date)}
+                  {t.lastMatch} · {formatDate(latestMatch.match_date)}
                 </span>
                 <span className="text-[12px] font-black px-3 py-1 rounded-full"
                   style={{ background: isWin ? 'var(--accent)' : isLoss ? 'rgba(192,90,77,.14)' : '#222', color: isWin ? '#0a0a0a' : isLoss ? '#e07a6d' : '#888' }}>
@@ -275,7 +277,7 @@ export default function DashboardPage() {
                   {latestMatch.away_score}
                 </span>
                 <div className="pb-2 ml-2">
-                  <p className="text-[11px] mb-0.5" style={{ color: 'var(--muted2)' }}>상대</p>
+                  <p className="text-[11px] mb-0.5" style={{ color: 'var(--muted2)' }}>{t.opponentShort}</p>
                   <p className="font-black text-[19px] text-white">vs {latestMatch.opponent}</p>
                 </div>
               </div>
@@ -308,7 +310,7 @@ export default function DashboardPage() {
           <Link href="/match/new"
             className="flex items-center justify-center w-full py-4 font-black text-[16px] rounded-[14px] active:scale-[0.98] transition"
             style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-            새 경기 기록하기
+            {t.newMatchRecord}
           </Link>
         )}
 
@@ -320,19 +322,19 @@ export default function DashboardPage() {
                 <span className="font-display text-[46px] leading-none text-white">{winRate ?? '–'}</span>
                 {winRate !== null && <span className="font-display text-[28px] leading-none" style={{ color: 'var(--accent)' }}>%</span>}
               </div>
-              <p className="text-[12px] mt-1" style={{ color: 'var(--muted2)' }}>시즌 승률 · {total}경기</p>
+              <p className="text-[12px] mt-1" style={{ color: 'var(--muted2)' }}>{t.seasonWinRate.replace('{n}', String(total))}</p>
             </div>
             <div className="flex-1 flex flex-col gap-2 justify-center">
               <div className="flex items-center justify-between">
-                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>승</span>
+                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.win}</span>
                 <span className="font-display text-[19px] leading-none" style={{ color: 'var(--accent)' }}>{wins}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>패</span>
+                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.loss}</span>
                 <span className="font-display text-[19px] leading-none" style={{ color: '#c05a4d' }}>{losses}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>무</span>
+                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.draw}</span>
                 <span className="font-display text-[19px] leading-none" style={{ color: '#4a4636' }}>{draws}</span>
               </div>
             </div>
@@ -342,12 +344,12 @@ export default function DashboardPage() {
         {/* Recent matches */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-black text-[16px] text-white">최근 경기</h2>
+            <h2 className="font-black text-[16px] text-white">{t.recentMatches}</h2>
           </div>
 
           {matches.length === 0 ? (
             <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <p className="text-[14px]" style={{ color: '#555' }}>아직 기록된 경기가 없습니다</p>
+              <p className="text-[14px]" style={{ color: '#555' }}>{t.noMatches}</p>
             </div>
           ) : (
             <div className="space-y-2">

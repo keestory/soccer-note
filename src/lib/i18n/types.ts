@@ -526,4 +526,40 @@ export interface Translations {
   deleteAccountSuccess: string
   deleteAccountFailed: string
   deleting: string
+
+  // v2 UI strings
+  navMatching: string
+  newTeamShort: string
+  joinShort: string
+  inviteCodeJoin: string
+  pendingJoinBadge: string
+  checkNow: string
+  lastMatch: string
+  opponentShort: string
+  seasonWinRate: string
+  membersFromTeam: string
+  addManually: string
+  selectMemberPrompt: string
+  noAvailableMembers: string
+  noAvailableMembersDesc: string
+  registerAsPlayer: string
+  registering: string
+  manualAddHint: string
+  manualAddButton: string
+  adding: string
+  appLinked: string
+  selectArrow: string
+  editDone: string
+  deletePlayerTitle: string
+  deletePlayerDesc: string
+  avgRatingShort: string
+  trainingCountN: string
+  firstTraining: string
+  attendCountN: string
+  minutesN: string
+  selectLanguage: string
+  logoutConfirmTitle: string
+  logoutConfirmDesc: string
+  playersN: string
+  optional: string
 }

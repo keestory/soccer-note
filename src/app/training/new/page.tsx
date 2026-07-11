@@ -12,21 +12,21 @@ import type { TrainingType } from '@/types/database'
 import { BottomNav } from '@/components/BottomNav'
 import { TRAINING_TYPE_COLORS } from '@/lib/training-colors'
 
-const TRAINING_TYPES: { key: TrainingType; label: string }[] = [
-  { key: 'mini-game', label: '미니게임' },
-  { key: 'passing',   label: '패스' },
-  { key: 'shooting',  label: '슛' },
-  { key: 'fitness',   label: '체력' },
-  { key: 'tactics',   label: '전술' },
-  { key: 'mixed',     label: '복합' },
-  { key: 'other',     label: '기타' },
-]
 
 const DURATION_PRESETS = [30, 60, 90, 120]
 
 export default function NewTrainingPage() {
   const router = useRouter()
   const { t } = useI18n()
+  const TRAINING_TYPES: { key: TrainingType; label: string }[] = [
+    { key: 'mini-game', label: t.trainingTypeMiniGame },
+    { key: 'passing',   label: t.trainingTypePassing },
+    { key: 'shooting',  label: t.trainingTypeShooting },
+    { key: 'fitness',   label: t.trainingTypeFitness },
+    { key: 'tactics',   label: t.trainingTypeTactics },
+    { key: 'mixed',     label: t.trainingTypeMixed },
+    { key: 'other',     label: t.trainingTypeOther },
+  ]
   const [loading, setLoading] = useState(false)
   const [teamId, setTeamId] = useState<string | null>(null)
   const [trainingDate, setTrainingDate] = useState(new Date().toISOString().split('T')[0])
@@ -93,14 +93,14 @@ export default function NewTrainingPage() {
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="font-black text-[20px] text-white">훈련</h1>
-              <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>새 훈련 기록</p>
+              <h1 className="font-black text-[20px] text-white">{t.trainingLabel}</h1>
+              <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{t.newTraining}</p>
             </div>
           </div>
           <button form="training-form" type="submit" disabled={loading}
             className="px-4 py-2.5 rounded-[11px] font-black text-sm disabled:opacity-40 active:scale-95 transition"
             style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-            {loading ? '저장 중...' : '저장'}
+            {loading ? t.saving : t.save}
           </button>
         </div>
       </header>
@@ -110,7 +110,7 @@ export default function NewTrainingPage() {
 
           {/* Training type */}
           <div className="rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <label className="block text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted1)' }}>훈련 종류</label>
+            <label className="block text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted1)' }}>{t.trainingType}</label>
             <div className="grid grid-cols-4 gap-2">
               {TRAINING_TYPES.map(({ key, label }) => {
                 const c = TRAINING_TYPE_COLORS[key] || '#888'
@@ -134,7 +134,7 @@ export default function NewTrainingPage() {
           {/* Date */}
           <div className="rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <label className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'var(--muted1)' }}>
-              <Calendar className="w-3.5 h-3.5" /> 날짜
+              <Calendar className="w-3.5 h-3.5" /> {t.trainingDate}
             </label>
             <input type="date" value={trainingDate} onChange={e => setTrainingDate(e.target.value)} required
               className="w-full font-bold text-base outline-none" style={{ background: 'transparent', color: '#fff', colorScheme: 'dark' }} />
@@ -143,14 +143,14 @@ export default function NewTrainingPage() {
           {/* Duration */}
           <div className="rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <label className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted1)' }}>
-              <Clock className="w-3.5 h-3.5" /> 훈련 시간
+              <Clock className="w-3.5 h-3.5" /> {t.trainingDuration}
             </label>
             <div className="flex gap-2 mb-3">
               {DURATION_PRESETS.map(d => (
                 <button key={d} type="button" onClick={() => setDuration(d)}
                   className="flex-1 py-2.5 rounded-xl text-sm font-black transition"
                   style={{ background: duration === d ? 'var(--accent)' : '#1a1a1a', color: duration === d ? '#0a0a0a' : '#555', border: '1px solid transparent' }}>
-                  {d}분
+                  {t.minutesN.replace('{n}', String(d))}
                 </button>
               ))}
             </div>
@@ -158,7 +158,7 @@ export default function NewTrainingPage() {
               <button type="button" onClick={() => setDuration(Math.max(10, duration - 10))}
                 className="w-9 h-9 flex items-center justify-center rounded-xl font-bold text-lg"
                 style={{ background: '#1e1e1e', color: '#888' }}>−</button>
-              <span className="flex-1 text-center text-xl font-black text-white">{duration}분</span>
+              <span className="flex-1 text-center text-xl font-black text-white">{t.minutesN.replace('{n}', String(duration))}</span>
               <button type="button" onClick={() => setDuration(Math.min(480, duration + 10))}
                 className="w-9 h-9 flex items-center justify-center rounded-xl font-bold text-lg"
                 style={{ background: '#1e1e1e', color: 'var(--accent)' }}>+</button>
@@ -168,7 +168,7 @@ export default function NewTrainingPage() {
           {/* Location */}
           <div className="rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <label className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'var(--muted1)' }}>
-              <MapPin className="w-3.5 h-3.5" /> 장소 <span className="normal-case font-medium" style={{ color: '#444' }}>선택</span>
+              <MapPin className="w-3.5 h-3.5" /> {t.location} <span className="normal-case font-medium" style={{ color: '#444' }}>{t.optional}</span>
             </label>
             <input type="text" value={locationVal} onChange={e => setLocationVal(e.target.value)}
               className="w-full font-bold text-base outline-none placeholder-[#444]"
@@ -179,7 +179,7 @@ export default function NewTrainingPage() {
           {/* Notes */}
           <div className="rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'var(--muted1)' }}>
-              메모 <span className="normal-case font-medium" style={{ color: '#444' }}>선택</span>
+              {t.trainingNotes} <span className="normal-case font-medium" style={{ color: '#444' }}>{t.optional}</span>
             </label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3}
               className="w-full text-sm outline-none resize-none leading-relaxed placeholder-[#444]"

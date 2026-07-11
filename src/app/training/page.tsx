@@ -8,18 +8,20 @@ import type { TrainingType } from '@/types/database'
 import { BottomNav } from '@/components/BottomNav'
 import { PullToRefresh } from '@/components/PullToRefresh'
 import { useAppData } from '@/hooks/useAppData'
+import { useI18n } from '@/lib/i18n/context'
 import { TRAINING_TYPE_COLORS } from '@/lib/training-colors'
 import { formatDate } from '@/lib/utils'
 import { PlayersListSkeleton } from '@/components/Skeleton'
 
-const TYPE_LABELS: Record<TrainingType, string> = {
-  'mini-game': '미니게임', passing: '패스', shooting: '슛',
-  fitness: '체력', tactics: '전술', mixed: '복합', other: '기타',
-}
 
 export default function TrainingListPage() {
   const router = useRouter()
   const data = useAppData()
+  const { t } = useI18n()
+  const TYPE_LABELS: Record<TrainingType, string> = {
+    'mini-game': t.trainingTypeMiniGame, passing: t.trainingTypePassing, shooting: t.trainingTypeShooting,
+    fitness: t.trainingTypeFitness, tactics: t.trainingTypeTactics, mixed: t.trainingTypeMixed, other: t.trainingTypeOther,
+  }
 
   useEffect(() => {
     if (data.isLoaded && !data.userId) router.push('/login')
@@ -41,8 +43,8 @@ export default function TrainingListPage() {
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex justify-between items-center">
           <div>
-            <h1 className="font-black text-[20px] text-white">훈련</h1>
-            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {trainings.length}회</p>
+            <h1 className="font-black text-[20px] text-white">{t.trainingLabel}</h1>
+            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {t.trainingCountN.replace('{n}', String(trainings.length))}</p>
           </div>
           {canEdit && (
             <Link href="/training/new"
@@ -58,21 +60,21 @@ export default function TrainingListPage() {
         <div className="max-w-4xl mx-auto px-5 py-4">
           {trainings.length === 0 ? (
             <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <p className="text-[14px] mb-1" style={{ color: '#555' }}>아직 훈련 기록이 없습니다</p>
+              <p className="text-[14px] mb-1" style={{ color: '#555' }}>{t.noTrainings}</p>
               {canEdit && (
                 <Link href="/training/new" className="inline-block mt-3 px-5 py-2.5 rounded-xl font-black text-sm"
                   style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-                  첫 훈련 기록하기
+                  {t.firstTraining}
                 </Link>
               )}
             </div>
           ) : (
             <div className="space-y-2">
-              {trainings.map(t => {
-                const color = TRAINING_TYPE_COLORS[t.training_type] || '#888'
-                const attendeeCount = (t.training_attendees ?? []).length
+              {trainings.map(tr => {
+                const color = TRAINING_TYPE_COLORS[tr.training_type] || '#888'
+                const attendeeCount = (tr.training_attendees ?? []).length
                 return (
-                  <Link key={t.id} href={`/training/${t.id}`}
+                  <Link key={tr.id} href={`/training/${tr.id}`}
                     className="flex items-center gap-3 p-4 rounded-[14px] active:opacity-80 transition"
                     style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
                     <div className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center flex-shrink-0"
@@ -81,15 +83,15 @@ export default function TrainingListPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-[14px] text-white">
-                        {TYPE_LABELS[t.training_type as TrainingType] || t.training_type}
+                        {TYPE_LABELS[tr.training_type as TrainingType] || tr.training_type}
                       </p>
                       <div className="flex items-center gap-2 text-[12px] mt-0.5" style={{ color: 'var(--muted2)' }}>
-                        <span className="flex items-center gap-0.5"><Clock className="w-3 h-3" />{t.duration_minutes}분</span>
-                        {t.location && <span className="flex items-center gap-0.5 truncate"><MapPin className="w-3 h-3" />{t.location}</span>}
-                        {attendeeCount > 0 && <span>참석 {attendeeCount}명</span>}
+                        <span className="flex items-center gap-0.5"><Clock className="w-3 h-3" />{t.minutesN.replace('{n}', String(tr.duration_minutes))}</span>
+                        {tr.location && <span className="flex items-center gap-0.5 truncate"><MapPin className="w-3 h-3" />{tr.location}</span>}
+                        {attendeeCount > 0 && <span>{t.attendCountN.replace('{n}', String(attendeeCount))}</span>}
                       </div>
                     </div>
-                    <p className="text-[12px] flex-shrink-0" style={{ color: '#555' }}>{formatDate(t.training_date)}</p>
+                    <p className="text-[12px] flex-shrink-0" style={{ color: '#555' }}>{formatDate(tr.training_date)}</p>
                   </Link>
                 )
               })}
