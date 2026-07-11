@@ -123,7 +123,7 @@ export default function Onboarding() {
         {/* Skip */}
         <div className="relative z-10 flex justify-end p-4">
           <button onClick={handleSkip} className="text-white/40 text-sm px-3 py-1.5 hover:text-white/70 transition">
-            건너뛰기
+            {t.onboardingSkip}
           </button>
         </div>
 
@@ -138,10 +138,10 @@ export default function Onboarding() {
           </div>
 
           <h1 className="font-display text-5xl font-black text-white leading-[1.15] mb-4">
-            같이 뛰면<br />더 즐겁잖아요
+            {t.kvTitle1}<br />{t.kvTitle2}
           </h1>
           <p className="text-white/60 text-base leading-relaxed">
-            우리 팀의 경기, 함께 기록해요
+            {t.kvSubtitle}
           </p>
         </div>
 
@@ -162,13 +162,13 @@ export default function Onboarding() {
             className="w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition"
             style={{ background: '#a3e635', color: '#0a1f0a' }}
           >
-            시작하기 <ChevronRight className="w-5 h-5" />
+            {t.onboardingStart} <ChevronRight className="w-5 h-5" />
           </button>
           <Link
             href="/login"
             className="block text-center text-white/40 text-sm py-2 hover:text-white/60 transition"
           >
-            이미 계정이 있어요
+            {t.haveAccountLink}
           </Link>
         </div>
       </div>
@@ -191,8 +191,8 @@ export default function Onboarding() {
       {/* Top row: badge + skip */}
       <div className="flex justify-between items-center p-4">
         <div>
-          {slide.forCoach  && <span className="px-3 py-1 text-xs font-semibold rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>감독</span>}
-          {slide.forParent && <span className="px-3 py-1 text-xs font-semibold rounded-full" style={{ background: '#002a1a', color: '#2dd4bf' }}>학부모</span>}
+          {slide.forCoach  && <span className="px-3 py-1 text-xs font-semibold rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.coach}</span>}
+          {slide.forParent && <span className="px-3 py-1 text-xs font-semibold rounded-full" style={{ background: '#002a1a', color: '#2dd4bf' }}>{t.parentBadge}</span>}
         </div>
         <button onClick={handleSkip} className="text-sm font-medium px-4 py-2 transition" style={{ color: 'rgba(255,255,255,0.4)' }}>
           건너뛰기
@@ -231,14 +231,14 @@ export default function Onboarding() {
           className="flex-1 py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition"
           style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}
         >
-          <ChevronLeft className="w-5 h-5" /> 이전
+          <ChevronLeft className="w-5 h-5" /> {t.onboardingPrev}
         </button>
         <button
           onClick={handleNext}
           className="flex-1 py-4 rounded-xl font-black flex items-center justify-center gap-2 transition active:scale-[0.98]"
           style={{ background: 'var(--accent)', color: '#0a0a0a' }}
         >
-          {isLastSlide ? '시작하기' : '다음'} <ChevronRight className="w-5 h-5" />
+          {isLastSlide ? t.onboardingStart : t.onboardingNext} <ChevronRight className="w-5 h-5" />
         </button>
       </div>
     </div>

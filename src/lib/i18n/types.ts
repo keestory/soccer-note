@@ -663,4 +663,9 @@ export interface Translations {
   recipientStatus: string
   unconfirmed: string
   statsLoadFailed: string
+  kvTitle1: string
+  kvTitle2: string
+  kvSubtitle: string
+  haveAccountLink: string
+  parentBadge: string
 }

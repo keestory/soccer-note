@@ -644,4 +644,9 @@ export const translations: Translations = {
   recipientStatus: '受信者の状況',
   unconfirmed: '未確認',
   statsLoadFailed: '統計を読み込めません',
+  kvTitle1: '一緒に走れば',
+  kvTitle2: 'もっと楽しい',
+  kvSubtitle: 'チームの試合を一緒に記録しよう',
+  haveAccountLink: 'アカウントを持っています',
+  parentBadge: '保護者',
 }

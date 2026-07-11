@@ -644,4 +644,9 @@ export const translations: Translations = {
   recipientStatus: 'Stato destinatari',
   unconfirmed: 'Non confermato',
   statsLoadFailed: 'Impossibile caricare le statistiche',
+  kvTitle1: 'Giocare insieme',
+  kvTitle2: 'è più divertente',
+  kvSubtitle: 'Registrate insieme le partite della squadra',
+  haveAccountLink: 'Ho già un account',
+  parentBadge: 'Genitore',
 }
