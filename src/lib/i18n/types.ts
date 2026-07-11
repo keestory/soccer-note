@@ -562,4 +562,15 @@ export interface Translations {
   logoutConfirmDesc: string
   playersN: string
   optional: string
+  share: string
+  publicProfileTitle: string
+  publicProfileDesc: string
+  approvedDone: string
+  cannotLeaveAsCoach: string
+  coachTransferred: string
+  backLabel: string
+  memberExcludeConfirm: string
+  excludeLabel: string
+  memberCountN: string
+  inviteJoinMessage: string
 }
