@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 
 function GoogleIcon() {
   return (
@@ -19,6 +20,7 @@ function GoogleIcon() {
 
 export default function LoginPage() {
   const router = useRouter()
+  const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -70,7 +72,7 @@ export default function LoginPage() {
       if (error) { toast.error(error.message); return }
       router.push('/dashboard')
     } catch {
-      toast.error('로그인 중 오류가 발생했습니다')
+      toast.error(t.loginError)
     } finally {
       setLoading(false)
     }
@@ -88,7 +90,7 @@ export default function LoginPage() {
           <span className="font-display text-4xl leading-none" style={{ color: '#0a0a0a', letterSpacing: '0.05em' }}>S</span>
         </div>
         <span className="font-display text-[34px] leading-none text-white mb-2" style={{ letterSpacing: '0.08em' }}>SOCCERNOTE</span>
-        <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>우리 팀 경기의 모든 기록</p>
+        <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.appTagline}</p>
       </div>
 
       {/* Google button */}
@@ -106,13 +108,13 @@ export default function LoginPage() {
         }}
       >
         <GoogleIcon />
-        {googleLoading ? '연결 중…' : 'Google로 계속하기'}
+        {googleLoading ? t.connecting : t.continueWithGoogle}
       </button>
 
       {/* Divider */}
       <div className="flex items-center gap-3 mb-5">
         <div className="flex-1 h-px" style={{ background: '#1c1c1c' }} />
-        <span className="text-[11px]" style={{ color: '#555' }}>또는 이메일</span>
+        <span className="text-[11px]" style={{ color: '#555' }}>{t.orEmail}</span>
         <div className="flex-1 h-px" style={{ background: '#1c1c1c' }} />
       </div>
 
@@ -124,7 +126,7 @@ export default function LoginPage() {
           onChange={e => setEmail(e.target.value)}
           required
           autoComplete="email"
-          placeholder="이메일"
+          placeholder={t.email}
           className="w-full outline-none text-base text-white placeholder-[#555] transition"
           style={{
             background: 'var(--card)',
@@ -141,7 +143,7 @@ export default function LoginPage() {
             onChange={e => setPassword(e.target.value)}
             required
             autoComplete="current-password"
-            placeholder="비밀번호"
+            placeholder={t.password}
             className="w-full outline-none text-base text-white placeholder-[#555] transition"
             style={{
               background: 'var(--card)',
@@ -156,7 +158,7 @@ export default function LoginPage() {
             className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px]"
             style={{ color: 'var(--muted2)' }}
           >
-            {showPassword ? '숨기기' : '보기'}
+            {showPassword ? t.hide : t.show}
           </button>
         </div>
 
@@ -171,13 +173,13 @@ export default function LoginPage() {
             padding: '15px',
           }}
         >
-          {loading ? '로그인 중…' : '로그인'}
+          {loading ? t.loading : t.loginButton}
         </button>
       </form>
 
       <p className="text-center mt-6 text-[14px]" style={{ color: '#888' }}>
-        계정이 없으신가요?{' '}
-        <Link href="/signup" className="font-bold" style={{ color: 'var(--accent)' }}>회원가입</Link>
+        {t.noAccount}{' '}
+        <Link href="/signup" className="font-bold" style={{ color: 'var(--accent)' }}>{t.signup}</Link>
       </p>
     </div>
   )
