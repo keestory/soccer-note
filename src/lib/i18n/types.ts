@@ -646,4 +646,21 @@ export interface Translations {
   saveAllNote: string
   formationPlacement: string
   assistShort: string
+  noPermission: string
+  enterTitleBody: string
+  selectRecipients: string
+  recipients: string
+  searchByName: string
+  selectAll: string
+  sendToMeToo: string
+  noMembers: string
+  meLabel: string
+  parentLabel: string
+  nSelected: string
+  sendToMeOnly: string
+  readCount: string
+  confirmedCount: string
+  recipientStatus: string
+  unconfirmed: string
+  statsLoadFailed: string
 }

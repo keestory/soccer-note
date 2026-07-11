@@ -350,7 +350,7 @@ export default function TrainingDetailPage() {
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>훈련 기록</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.trainingLabel}</p>
             <h1 className="text-base font-black text-white">{getTypeLabel(training.training_type)}</h1>
           </div>
           {canEdit && (
@@ -367,9 +367,9 @@ export default function TrainingDetailPage() {
           <span className="text-3xl">{TYPE_EMOJI[training.training_type]}</span>
           <div className="flex gap-5 text-sm">
             {[
-              { label: '날짜', val: formatDate(training.training_date) },
-              { label: '시간', val: `${training.duration_minutes}분` },
-              ...(training.location ? [{ label: '장소', val: training.location }] : []),
+              { label: t.trainingDate, val: formatDate(training.training_date) },
+              { label: t.trainingDuration, val: t.minutesN.replace('{n}', String(training.duration_minutes)) },
+              ...(training.location ? [{ label: t.location, val: training.location }] : []),
             ].map(item => (
               <div key={item.label}>
                 <p className="text-[10px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{item.label}</p>
@@ -384,7 +384,7 @@ export default function TrainingDetailPage() {
         {/* Training Info Card */}
         <div className="p-4" style={cardStyle}>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>훈련 정보</p>
+            <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.trainingLabel}</p>
             {canEdit && !editingInfo && (
               <button onClick={startEditInfo} className="p-1.5 text-white/40 hover:text-white rounded-xl">
                 <Edit2 className="w-4 h-4" />
@@ -434,16 +434,16 @@ export default function TrainingDetailPage() {
         <div className="p-4" style={cardStyle}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>참석 선수</p>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{displayAttendees.length}명</span>
+              <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.attendees}</p>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.playersN.replace('{n}', String(displayAttendees.length))}</span>
             </div>
             {canEdit && (
-              <button onClick={openAttendeePicker} className="px-3 py-1.5 rounded-xl text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>편집</button>
+              <button onClick={openAttendeePicker} className="px-3 py-1.5 rounded-xl text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.edit}</button>
             )}
           </div>
 
           {displayAttendees.length === 0 ? (
-            <p className="text-[13px] text-center py-6" style={{ color: 'var(--muted2)' }}>참석 선수를 추가해주세요</p>
+            <p className="text-[13px] text-center py-6" style={{ color: 'var(--muted2)' }}>{t.selectAttendees}</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {displayAttendees.map(a => (
@@ -553,9 +553,9 @@ export default function TrainingDetailPage() {
 
       <ConfirmSheet
         open={showDeleteConfirm}
-        title="훈련을 삭제할까요?"
-        description="삭제하면 참석 기록과 평가가 모두 사라져요"
-        confirmLabel="삭제"
+        title={t.deleteTrainingConfirm}
+        description={t.deletePlayerDesc}
+        confirmLabel={t.delete}
         danger
         onConfirm={handleDelete}
         onCancel={() => setShowDeleteConfirm(false)}
