@@ -9,9 +9,11 @@ import type { MatchApplication, MatchPost } from '@/types/database'
 import { format, parseISO } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 
 export default function ApplicationsPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const params = useParams()
   const postId = params.id as string
@@ -38,7 +40,7 @@ export default function ApplicationsPage() {
       .eq('team_id', resolved.teamId)
       .single()
 
-    if (!postData) { toast.error('접근 권한이 없어요'); router.back(); return }
+    if (!postData) { toast.error(t.noAccessPost); router.back(); return }
     setPost(postData)
     loadApplications()
   }
@@ -71,7 +73,7 @@ export default function ApplicationsPage() {
       .select('id')
       .single()
 
-    if (matchError) { toast.error('경기 생성에 실패했어요'); setAccepting(null); return }
+    if (matchError) { toast.error(t.matchCreateFail); setAccepting(null); return }
 
     await Promise.all([
       supabase.from('match_applications').update({ status: 'accepted', match_id: match.id }).eq('id', app.id),
@@ -79,7 +81,7 @@ export default function ApplicationsPage() {
       supabase.from('match_applications').update({ status: 'rejected' }).eq('post_id', postId).eq('status', 'pending').neq('id', app.id),
     ])
 
-    toast.success('매칭 성사! 🎉 경기가 등록됐어요')
+    toast.success(t.matchSuccessMsg)
     setAccepting(null)
     setConfirmAccept(null)
     loadApplications()
@@ -87,8 +89,8 @@ export default function ApplicationsPage() {
 
   const handleReject = async (appId: string) => {
     const { error } = await supabase.from('match_applications').update({ status: 'rejected' }).eq('id', appId)
-    if (error) toast.error('거절에 실패했어요')
-    else { toast.success('신청을 거절했어요'); loadApplications() }
+    if (error) toast.error(t.rejectApplyFailed)
+    else { toast.success(t.applyRejected); loadApplications() }
   }
 
   const pending = applications.filter(a => a.status === 'pending')
@@ -109,12 +111,12 @@ export default function ApplicationsPage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>받은 신청</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.receivedApplications}</p>
             {post && <p className="text-sm font-black text-white truncate">{post.title}</p>}
           </div>
           {pending.length > 0 && (
             <div className="text-sm font-black px-3 py-1.5 rounded-xl" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-              {pending.length}건 대기
+              {t.nWaiting.replace('{n}', String(pending.length))}
             </div>
           )}
         </div>
@@ -128,15 +130,15 @@ export default function ApplicationsPage() {
         ) : applications.length === 0 ? (
           <div className="text-center py-16">
             <div className="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-3" style={{ background: '#1a1a1a' }}>📭</div>
-            <p className="font-bold text-white">아직 신청이 없어요</p>
-            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>게시글이 노출되면 신청이 들어올 거예요</p>
+            <p className="font-bold text-white">{t.noApplicationsYet}</p>
+            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>{t.noApplyDesc}</p>
           </div>
         ) : (
           <>
             {pending.length > 0 && (
               <section>
                 <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--accent)' }}>대기 중</span>
+                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--accent)' }}>{t.waitingLabel}</span>
                   <span className="w-5 h-5 text-[10px] font-black rounded-full flex items-center justify-center"
                     style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{pending.length}</span>
                 </div>
@@ -158,7 +160,7 @@ export default function ApplicationsPage() {
             {decided.length > 0 && (
               <section>
                 <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>처리 완료</span>
+                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.processedLabel}</span>
                 </div>
                 <div className="space-y-3">
                   {decided.map(app => (
@@ -181,9 +183,9 @@ export default function ApplicationsPage() {
       {confirmAccept && (
         <ConfirmSheet
           open={true}
-          title={`${(confirmAccept as any).applying_team?.name}팀을 수락할까요?`}
-          description="수락하면 경기가 자동 생성되고, 다른 신청은 거절돼요"
-          confirmLabel="수락하기"
+          title={t.acceptTeamQ.replace('{team}', (confirmAccept as any).applying_team?.name ?? '')}
+          description={t.acceptDesc}
+          confirmLabel={t.acceptLabel}
           onConfirm={() => handleAccept(confirmAccept)}
           onCancel={() => setConfirmAccept(null)}
         />
@@ -196,13 +198,14 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
   app: MatchApplication; onAccept: () => void; onReject: () => void
   loading: boolean; postMatched: boolean
 }) {
+  const { t } = useI18n()
   const profile = (app as any).applying_team_profile
   const team = (app as any).applying_team
 
   const statusConfig = {
-    accepted: { label: '수락됨', bg: '#052e16', color: '#4ade80' },
-    rejected: { label: '거절됨', bg: '#1a1a1a', color: 'rgba(255,255,255,0.4)' },
-    pending: { label: '대기 중', bg: '#451a03', color: '#fbbf24' },
+    accepted: { label: t.acceptedLabel, bg: '#052e16', color: '#4ade80' },
+    rejected: { label: t.rejectedLabel, bg: '#1a1a1a', color: 'rgba(255,255,255,0.4)' },
+    pending: { label: t.waitingLabel, bg: '#451a03', color: '#fbbf24' },
   }[app.status]
 
   const accentLine = app.status === 'accepted' ? '#166534' : app.status === 'rejected' ? '#2a2a2a' : 'var(--accent)'
@@ -253,13 +256,13 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
             <button onClick={onReject} disabled={loading}
               className="flex-1 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition disabled:opacity-50"
               style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}>
-              거절
+              {t.reject}
             </button>
             <button onClick={onAccept} disabled={loading}
               className="flex-[2] py-2.5 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
               style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
               <Swords className="w-4 h-4" />
-              {loading ? '처리 중...' : '수락하기'}
+              {loading ? t.processing : t.acceptLabel}
             </button>
           </div>
         )}
@@ -267,7 +270,7 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
         {app.status === 'accepted' && (
           <div className="flex items-center gap-2 rounded-xl p-2.5" style={{ background: '#052e16' }}>
             <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: '#4ade80' }} />
-            <p className="text-xs font-bold" style={{ color: '#4ade80' }}>매칭 성사 — 경기가 자동으로 생성됐어요</p>
+            <p className="text-xs font-bold" style={{ color: '#4ade80' }}>{t.matchAutoCreated}</p>
           </div>
         )}
       </div>

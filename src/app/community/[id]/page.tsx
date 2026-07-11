@@ -10,6 +10,7 @@ import type { MatchPost, MatchApplication } from '@/types/database'
 import { format, parseISO, isToday, isTomorrow } from 'date-fns'
 import { ko } from 'date-fns/locale'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 
 const LEVEL_STYLE: Record<string, { bg: string; color: string }> = {
@@ -19,14 +20,15 @@ const LEVEL_STYLE: Record<string, { bg: string; color: string }> = {
   '고급': { bg: '#451a03', color: '#fbbf24' },
 }
 
-function formatDate(dateStr: string) {
+function formatDate(dateStr: string, t: any) {
   const d = parseISO(dateStr)
-  if (isToday(d)) return '오늘'
-  if (isTomorrow(d)) return '내일'
+  if (isToday(d)) return t.todayLabel
+  if (isTomorrow(d)) return t.tomorrowLabel
   return format(d, 'M월 d일(EEE)', { locale: ko })
 }
 
 export default function PostDetailPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const params = useParams()
   const postId = params.id as string
@@ -65,7 +67,7 @@ export default function PostDetailPage() {
       .eq('id', postId)
       .single()
 
-    if (!postData) { toast.error('게시글을 찾을 수 없어요'); router.back(); return }
+    if (!postData) { toast.error(t.postNotFound); router.back(); return }
     setPost(postData)
     setIsMyPost(myTeamId === postData.team_id)
 
@@ -95,10 +97,10 @@ export default function PostDetailPage() {
       .insert({ post_id: postId, applying_team_id: teamId, message: applyMessage.trim() || null })
 
     if (error) {
-      if (error.code === '23505') toast.error('이미 신청한 게시글이에요')
-      else toast.error('신청에 실패했어요')
+      if (error.code === '23505') toast.error(t.alreadyApplied)
+      else toast.error(t.applyFailed)
     } else {
-      toast.success('매칭 신청을 보냈어요! 🎉')
+      toast.success(t.applySent)
       setShowApplySheet(false)
       setApplyMessage('')
       loadPost(teamId)
@@ -109,14 +111,14 @@ export default function PostDetailPage() {
   const handleWithdraw = async () => {
     if (!myApplication) return
     const { error } = await supabase.from('match_applications').delete().eq('id', myApplication.id)
-    if (error) toast.error('신청 취소에 실패했어요')
-    else { toast.success('신청을 취소했어요'); setMyApplication(null); loadPost(teamId || undefined) }
+    if (error) toast.error(t.cancelApplyFailed)
+    else { toast.success(t.applyCancelled); setMyApplication(null); loadPost(teamId || undefined) }
   }
 
   const handleDeletePost = async () => {
     const { error } = await supabase.from('match_posts').delete().eq('id', postId)
-    if (error) toast.error('삭제에 실패했어요')
-    else { toast.success('게시글을 삭제했어요'); router.push('/community') }
+    if (error) toast.error(t.deleteFailed)
+    else { toast.success(t.postDeleted); router.push('/community') }
   }
 
   const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
@@ -154,7 +156,7 @@ export default function PostDetailPage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>매칭 요청</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.matchRequestLabel}</p>
             <p className="text-sm font-black text-white truncate">{post.team?.name}</p>
           </div>
           {isMyPost && isCoach && (
@@ -182,7 +184,7 @@ export default function PostDetailPage() {
                 {matchedOrClosed && (
                   <span className="text-xs font-bold px-2 py-0.5 rounded-lg"
                     style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
-                    {post.status === 'matched' ? '매칭완료' : '마감'}
+                    {post.status === 'matched' ? t.matchedDone : t.closedLabel}
                   </span>
                 )}
               </div>
@@ -200,8 +202,8 @@ export default function PostDetailPage() {
               <Calendar className="w-4 h-4" style={{ color: 'var(--accent)' }} />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>날짜</p>
-              <p className="text-sm font-bold text-white">{formatDate(post.match_date)}</p>
+              <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.dateLabel}</p>
+              <p className="text-sm font-bold text-white">{formatDate(post.match_date, t)}</p>
               {post.match_time && <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{post.match_time}</p>}
             </div>
           </div>
@@ -210,7 +212,7 @@ export default function PostDetailPage() {
               <MapPin className="w-4 h-4" style={{ color: 'var(--accent)' }} />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>장소</p>
+              <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.placeLabel}</p>
               <p className="text-sm font-bold text-white truncate">{post.region}</p>
               <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>{post.location}</p>
             </div>
@@ -220,7 +222,7 @@ export default function PostDetailPage() {
         {/* Description */}
         {post.description && (
           <div style={cardStyle} className="p-4">
-            <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>팀 메시지</p>
+            <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.teamMessage}</p>
             <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.description}</p>
           </div>
         )}
@@ -235,9 +237,9 @@ export default function PostDetailPage() {
                 <Send className="w-5 h-5" style={{ color: 'var(--accent)' }} />
               </div>
               <div>
-                <p className="font-black text-white">받은 신청 확인</p>
+                <p className="font-black text-white">{t.viewApplications}</p>
                 <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                  {applicationCount > 0 ? `${applicationCount}팀이 신청했어요` : '아직 신청이 없어요'}
+                  {applicationCount > 0 ? t.nTeamsApplied.replace('{n}', String(applicationCount)) : t.noApplicationsYet}
                 </p>
               </div>
             </div>
@@ -267,19 +269,17 @@ export default function PostDetailPage() {
               </div>
               <div className="flex-1">
                 <p className="font-black text-white">
-                  {myApplication.status === 'accepted' ? '매칭 성사! 경기가 등록됐어요' :
-                   myApplication.status === 'rejected' ? '이번엔 아쉽게도 거절됐어요' : '신청 검토 중이에요'}
+                  {myApplication.status === 'accepted' ? t.matchAcceptedMsg : myApplication.status === 'rejected' ? t.matchRejectedMsg : t.matchPendingMsg}
                 </p>
                 <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                  {myApplication.status === 'accepted' ? '경기 탭에서 확인해보세요' :
-                   myApplication.status === 'rejected' ? '다른 매칭을 찾아보세요' : '상대팀의 응답을 기다리고 있어요'}
+                  {myApplication.status === 'accepted' ? t.checkMatchTab : myApplication.status === 'rejected' ? t.findOtherMatch : t.waitingResponse}
                 </p>
               </div>
               {myApplication.status === 'pending' && (
                 <button onClick={() => setShowWithdrawConfirm(true)}
                   className="text-xs px-3 py-1.5 rounded-xl transition"
                   style={{ color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.2)' }}>
-                  취소
+                  {t.cancel}
                 </button>
               )}
             </div>
@@ -296,7 +296,7 @@ export default function PostDetailPage() {
             className="w-full max-w-4xl mx-auto py-4 rounded-2xl font-black text-base active:scale-[0.98] transition flex items-center justify-center gap-2"
             style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
             <Swords className="w-5 h-5" />
-            매칭 신청하기
+            {t.applyButton}
           </button>
         </div>
       )}

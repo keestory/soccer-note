@@ -6,6 +6,7 @@ import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
 import { ArrowLeft, Calendar, MapPin, Users, Clock } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 
 const SIDO_LIST = ['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주']
 
@@ -40,6 +41,7 @@ const LEVEL_ACTIVE: Record<string, { bg: string; color: string }> = {
 }
 
 export default function NewPostPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const [saving, setSaving] = useState(false)
   const [form, setForm] = useState({
@@ -51,16 +53,16 @@ export default function NewPostPage() {
   const set = (key: string, val: string) => setForm(f => ({ ...f, [key]: val }))
 
   const handleSubmit = async () => {
-    if (!form.title.trim()) { toast.error('제목을 입력해주세요'); return }
+    if (!form.title.trim()) { toast.error(t.enterTitle); return }
     if (!form.match_date) { toast.error('경기 날짜를 선택해주세요'); return }
     if (!form.location.trim()) { toast.error('경기 장소를 입력해주세요'); return }
-    if (!form.region || !form.district) { toast.error('지역을 선택해주세요'); return }
+    if (!form.region || !form.district) { toast.error(t.selectRegion); return }
 
     setSaving(true)
     const user = await getSessionUser(supabase)
     if (!user) { router.push('/login'); return }
     const resolved = await resolveTeam(supabase, user.id)
-    if (!resolved) { toast.error('팀 정보를 찾을 수 없어요'); setSaving(false); return }
+    if (!resolved) { toast.error(t.teamInfoNotFound); setSaving(false); return }
 
     const { data, error } = await supabase
       .from('match_posts')
@@ -78,8 +80,8 @@ export default function NewPostPage() {
       .select('id')
       .single()
 
-    if (error) { toast.error('게시글 등록에 실패했어요'); setSaving(false); return }
-    toast.success('매칭 요청을 올렸어요! 🎉')
+    if (error) { toast.error(t.postFailed); setSaving(false); return }
+    toast.success(t.postSuccess)
     router.push(`/community/${data.id}`)
   }
 
@@ -106,15 +108,15 @@ export default function NewPostPage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <h1 className="text-base font-black text-white">매칭 요청 올리기</h1>
-            <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>{filled}/{fields.length} 필수 항목 완료</p>
+            <h1 className="text-base font-black text-white">{t.postMatchRequest}</h1>
+            <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.requiredFieldsDone.replace('{n}', String(filled)).replace('{m}', String(fields.length))}</p>
           </div>
           <button
             onClick={handleSubmit}
             disabled={saving || filled < fields.length}
             className="px-4 py-2 rounded-xl text-sm font-black disabled:opacity-40 active:scale-95 transition"
             style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-            {saving ? '등록 중...' : '등록'}
+            {saving ? t.registering2 : t.register}
           </button>
         </div>
       </header>
@@ -123,12 +125,12 @@ export default function NewPostPage() {
 
         {/* Title */}
         <div style={cardStyle} className="px-4 py-4">
-          <label className="block text-[11px] font-black uppercase tracking-widest mb-2" style={labelStyle}>제목 *</label>
+          <label className="block text-[11px] font-black uppercase tracking-widest mb-2" style={labelStyle}>{t.titleReq}</label>
           <input
             type="text"
             value={form.title}
             onChange={e => set('title', e.target.value)}
-            placeholder="예) 주말 오전 7vs7 상대팀 구합니다"
+            placeholder={t.matchTitlePlaceholder}
             maxLength={60}
             className="w-full text-base font-bold placeholder-white/20"
             style={inputStyle}
@@ -144,7 +146,7 @@ export default function NewPostPage() {
         <div style={{ ...cardStyle, overflow: 'hidden', padding: 0 }}>
           <div className="px-4 pt-4 pb-3" style={{ borderBottom: '1px solid var(--line)' }}>
             <label className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>
-              <Calendar className="w-3.5 h-3.5" /> 경기 날짜 *
+              <Calendar className="w-3.5 h-3.5" /> {t.matchDateRequired}
             </label>
             <input
               type="date"
@@ -157,7 +159,7 @@ export default function NewPostPage() {
           </div>
           <div className="px-4 py-3">
             <label className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>
-              <Clock className="w-3.5 h-3.5" /> 경기 시간 <span className="normal-case font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>선택</span>
+              <Clock className="w-3.5 h-3.5" /> {t.matchTimeLabel} <span className="normal-case font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>{t.optional}</span>
             </label>
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
               {TIMES.map(t => (
@@ -175,19 +177,19 @@ export default function NewPostPage() {
         <div style={{ ...cardStyle, overflow: 'hidden', padding: 0 }}>
           <div className="px-4 pt-4 pb-3" style={{ borderBottom: '1px solid var(--line)' }}>
             <label className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>
-              <MapPin className="w-3.5 h-3.5" /> 경기 장소 *
+              <MapPin className="w-3.5 h-3.5" /> {t.matchPlaceReq}
             </label>
             <input
               type="text"
               value={form.location}
               onChange={e => set('location', e.target.value)}
-              placeholder="예) 상암 월드컵 구장"
+              placeholder={t.matchPlacePlaceholder}
               className="w-full text-base font-bold placeholder-white/20"
               style={inputStyle}
             />
           </div>
           <div className="px-4 py-3">
-            <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>지역 *</label>
+            <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>{t.regionReq}</label>
             <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-1">
               {SIDO_LIST.map(r => (
                 <button key={r} onClick={() => { set('region', r); set('district', '') }}
@@ -199,7 +201,7 @@ export default function NewPostPage() {
             </div>
             {form.region && (
               <div className="mt-2">
-                <p className="text-[10px] font-bold mb-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{form.region} · 세부 지역</p>
+                <p className="text-[10px] font-bold mb-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{form.region} · {t.subRegion}</p>
                 <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
                   {(DISTRICTS[form.region] || []).map(d => (
                     <button key={d} onClick={() => set('district', d)}
@@ -220,7 +222,7 @@ export default function NewPostPage() {
         <div style={{ ...cardStyle, overflow: 'hidden', padding: 0 }}>
           <div className="px-4 pt-4 pb-3" style={{ borderBottom: '1px solid var(--line)' }}>
             <label className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>
-              <Users className="w-3.5 h-3.5" /> 경기 방식
+              <Users className="w-3.5 h-3.5" /> {t.matchFormat}
             </label>
             <div className="flex gap-2">
               {FORMATS.map(f => (
@@ -233,7 +235,7 @@ export default function NewPostPage() {
             </div>
           </div>
           <div className="px-4 py-3">
-            <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>수준</label>
+            <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>{t.levelLabel}</label>
             <div className="flex gap-2">
               {LEVELS.map(l => (
                 <button key={l} onClick={() => set('level', l)}
@@ -251,12 +253,12 @@ export default function NewPostPage() {
         {/* Description */}
         <div style={cardStyle} className="px-4 py-4">
           <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>
-            추가 설명 <span className="normal-case font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>선택</span>
+            {t.extraDesc} <span className="normal-case font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>{t.optional}</span>
           </label>
           <textarea
             value={form.description}
             onChange={e => set('description', e.target.value)}
-            placeholder="팀 소개, 요청 사항, 구장 정보 등을 자유롭게 적어주세요"
+            placeholder={t.extraDescPlaceholder}
             rows={4}
             maxLength={500}
             className="w-full text-sm outline-none resize-none leading-relaxed placeholder-white/20"
