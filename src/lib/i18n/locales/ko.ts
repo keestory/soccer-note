@@ -644,4 +644,9 @@ export const translations: Translations = {
   recipientStatus: '수신자 현황',
   unconfirmed: '미확인',
   statsLoadFailed: '통계를 불러올 수 없습니다',
+  kvTitle1: '같이 뛰면',
+  kvTitle2: '더 즐겁잖아요',
+  kvSubtitle: '우리 팀의 경기, 함께 기록해요',
+  haveAccountLink: '이미 계정이 있어요',
+  parentBadge: '학부모',
 }
