@@ -179,7 +179,7 @@ function NotificationsContent() {
     // Check permissions
     const isCoachRole = memberResult.data?.role === 'coach'
     if (!isOwner && !isCoachRole) {
-      toast.error('권한이 없습니다')
+      toast.error(t.noPermission)
       router.push('/dashboard')
       return
     }
@@ -241,13 +241,13 @@ function NotificationsContent() {
 
   const handleSend = async () => {
     if (!team || !title.trim() || !body.trim()) {
-      toast.error('제목과 내용을 입력해주세요')
+      toast.error(t.enterTitleBody)
       return
     }
 
     // 선택된 멤버가 없고 본인에게도 보내지 않는 경우
     if (selectedUserIds.length === 0 && !includeSelf) {
-      toast.error('발송 대상을 선택해주세요')
+      toast.error(t.selectRecipients)
       return
     }
 
@@ -414,7 +414,7 @@ function NotificationsContent() {
 
           {/* 발송 대상 선택 */}
           <div>
-            <label className="block text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted2)' }}>발송 대상</label>
+            <label className="block text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--muted2)' }}>{t.recipients}</label>
 
             {/* 검색창 */}
             <div className="relative mb-3">
@@ -423,7 +423,7 @@ function NotificationsContent() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="이름으로 검색..."
+                placeholder={t.searchByName}
                 className="w-full pl-10 pr-4 py-2 outline-none text-sm"
                 style={inputStyle}
               />
@@ -440,7 +440,7 @@ function NotificationsContent() {
                     <Check className="w-3 h-3" style={{ color: '#0a0a0a' }} />
                   )}
                 </div>
-                전체 선택 ({selectedUserIds.length}/{members.length})
+                {t.selectAll} ({selectedUserIds.length}/{members.length})
               </button>
 
               <label className="flex items-center gap-2 cursor-pointer">
@@ -450,7 +450,7 @@ function NotificationsContent() {
                 }}>
                   {includeSelf && <Check className="w-3 h-3 text-black" />}
                 </div>
-                <span className="text-sm text-white/60">나에게도 보내기</span>
+                <span className="text-sm text-white/60">{t.sendToMeToo}</span>
                 <input type="checkbox" checked={includeSelf} onChange={(e) => setIncludeSelf(e.target.checked)} className="sr-only" />
               </label>
             </div>
@@ -459,7 +459,7 @@ function NotificationsContent() {
             <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg p-2" style={{ background: '#1a1a1a' }}>
               {filteredMembers.length === 0 ? (
                 <p className="text-center text-sm py-4" style={{ color: 'var(--muted2)' }}>
-                  {searchQuery ? '검색 결과가 없습니다' : '멤버가 없습니다'}
+                  {searchQuery ? t.noPlayers : t.noMembers}
                 </p>
               ) : (
                 filteredMembers.map((member) => {
@@ -481,17 +481,17 @@ function NotificationsContent() {
                       </div>
                       <div className="flex-1 text-left">
                         <span className="text-sm font-medium text-white">
-                          {member.profile?.display_name || '이름 없음'}
+                          {member.profile?.display_name || t.noName}
                         </span>
                         {isSelf && (
-                          <span className="ml-2 text-xs" style={{ color: 'var(--accent)' }}>(나)</span>
+                          <span className="ml-2 text-xs" style={{ color: 'var(--accent)' }}>({t.meLabel})</span>
                         )}
                       </div>
                       <span className="text-xs px-2 py-0.5 rounded-full" style={{
                         background: member.role === 'coach' ? 'var(--chip)' : member.role === 'parent' ? '#002a1a' : '#2a2a2a',
                         color: member.role === 'coach' ? 'var(--accent)' : member.role === 'parent' ? '#2dd4bf' : 'rgba(255,255,255,0.4)',
                       }}>
-                        {member.role === 'coach' ? '코치' : member.role === 'parent' ? '학부모' : '멤버'}
+                        {member.role === 'coach' ? t.coach : member.role === 'parent' ? t.parentLabel : t.member}
                       </span>
                     </button>
                   )
@@ -503,11 +503,11 @@ function NotificationsContent() {
               {selectedUserIds.length > 0 || includeSelf ? (
                 <>
                   <UserCheck className="w-3 h-3 inline mr-1" />
-                  {selectedUserIds.length}명 선택됨
-                  {includeSelf && selectedUserIds.length > 0 ? ' + 나' : includeSelf ? '나에게만 발송' : ''}
+                  {t.nSelected.replace('{n}', String(selectedUserIds.length))}
+                  {includeSelf && selectedUserIds.length > 0 ? ` + ${t.meLabel}` : includeSelf ? t.sendToMeOnly : ''}
                 </>
               ) : (
-                '발송 대상을 선택해주세요'
+                t.selectRecipients
               )}
             </p>
           </div>
@@ -610,19 +610,19 @@ function NotificationsContent() {
                             <div className="flex items-center gap-3 text-sm">
                               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
                                 <Eye className="w-4 h-4" />
-                                <span>읽음 {stats.read_count}/{stats.total_sent}</span>
+                                <span>{t.readCount} {stats.read_count}/{stats.total_sent}</span>
                               </div>
                               <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#002a1a', color: '#2dd4bf' }}>
                                 <CheckCircle2 className="w-4 h-4" />
-                                <span>확인 {stats.confirmed_count}/{stats.total_sent}</span>
+                                <span>{t.confirmedCount} {stats.confirmed_count}/{stats.total_sent}</span>
                               </div>
                             </div>
                             <div>
-                              <h4 className="text-sm font-medium text-white/60 mb-2">수신자 현황</h4>
+                              <h4 className="text-sm font-medium text-white/60 mb-2">{t.recipientStatus}</h4>
                               <div className="space-y-2 max-h-48 overflow-y-auto">
                                 {stats.recipients.map((recipient) => (
                                   <div key={recipient.user_id} className="flex items-center justify-between rounded-lg p-2 text-sm" style={{ background: '#1a1a1a' }}>
-                                    <span className="font-medium text-white">{recipient.display_name || '이름 없음'}</span>
+                                    <span className="font-medium text-white">{recipient.display_name || t.noName}</span>
                                     <div className="flex items-center gap-2">
                                       {recipient.confirmed_at ? (
                                         <span className="flex items-center gap-1 text-teal-400">
@@ -635,7 +635,7 @@ function NotificationsContent() {
                                           <span className="text-xs">{formatShortDate(recipient.read_at)}</span>
                                         </span>
                                       ) : (
-                                        <span className="text-xs text-white/30">미확인</span>
+                                        <span className="text-xs text-white/30">{t.unconfirmed}</span>
                                       )}
                                     </div>
                                   </div>
@@ -644,7 +644,7 @@ function NotificationsContent() {
                             </div>
                           </div>
                         ) : (
-                          <p className="text-sm text-center py-4" style={{ color: 'var(--muted2)' }}>통계를 불러올 수 없습니다</p>
+                          <p className="text-sm text-center py-4" style={{ color: 'var(--muted2)' }}>{t.statsLoadFailed}</p>
                         )}
                       </div>
                     )}
