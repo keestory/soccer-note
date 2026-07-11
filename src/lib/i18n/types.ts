@@ -573,4 +573,17 @@ export interface Translations {
   excludeLabel: string
   memberCountN: string
   inviteJoinMessage: string
+  appTagline: string
+  continueWithGoogle: string
+  connecting: string
+  orEmail: string
+  show: string
+  hide: string
+  findTeamsTagline: string
+  filter: string
+  writePost: string
+  region: string
+  playType: string
+  levelLabel: string
+  allLabel: string
 }

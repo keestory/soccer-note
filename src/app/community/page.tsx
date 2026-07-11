@@ -7,6 +7,7 @@ import { createClient, getSessionUser } from '@/lib/supabase'
 import { resolveTeam } from '@/lib/team-resolver'
 import { Plus } from 'lucide-react'
 import { BottomNav } from '@/components/BottomNav'
+import { useI18n } from '@/lib/i18n/context'
 import type { MatchPost } from '@/types/database'
 import { format, isToday, isTomorrow, parseISO, differenceInDays } from 'date-fns'
 import { ko } from 'date-fns/locale'
@@ -33,6 +34,7 @@ function formatMatchDate(dateStr: string) {
 }
 
 export default function CommunityPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const [posts, setPosts] = useState<MatchPost[]>([])
   const [loading, setLoading] = useState(true)
@@ -96,8 +98,8 @@ export default function CommunityPage() {
           <div className="flex items-start justify-between">
             <div>
               <p className="font-display text-[13px] tracking-widest mb-1" style={{ color: 'var(--accent)' }}>MATCH COMMUNITY</p>
-              <h1 className="font-black text-[23px] text-white leading-none">상대팀 찾기</h1>
-              <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>함께 뛸 팀을 구해보세요</p>
+              <h1 className="font-black text-[23px] text-white leading-none">{t.navMatching}</h1>
+              <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{t.findTeamsTagline}</p>
             </div>
             <div className="flex items-center gap-2 mt-1">
               <button
@@ -108,14 +110,14 @@ export default function CommunityPage() {
                   background: showFilters || activeFilters > 0 ? 'var(--chip)' : 'transparent',
                   color: showFilters || activeFilters > 0 ? 'var(--accent)' : '#aaa',
                 }}>
-                필터{activeFilters > 0 ? ` (${activeFilters})` : ''}
+                {t.filter}{activeFilters > 0 ? ` (${activeFilters})` : ''}
               </button>
               {isCoach && (
                 <Link href="/community/new"
                   className="px-3.5 py-2 rounded-[9px] text-sm font-black flex items-center gap-1.5 transition active:scale-95"
                   style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                   <Plus className="w-4 h-4" />
-                  글쓰기
+                  {t.writePost}
                 </Link>
               )}
             </div>
@@ -125,9 +127,9 @@ export default function CommunityPage() {
         {/* Filter chips */}
         {showFilters && (
           <div className="border-t px-5 py-3 space-y-2.5" style={{ borderColor: '#1a1a1a', background: '#0a0a0a' }}>
-            <FilterRow label="지역" options={REGIONS} value={filterRegion} onChange={setFilterRegion} />
-            <FilterRow label="방식" options={FORMATS} value={filterFormat} onChange={setFilterFormat} />
-            <FilterRow label="수준" options={LEVELS} value={filterLevel} onChange={setFilterLevel} />
+            <FilterRow label={t.region} options={REGIONS} value={filterRegion} onChange={setFilterRegion} />
+            <FilterRow label={t.playType} options={FORMATS} value={filterFormat} onChange={setFilterFormat} />
+            <FilterRow label={t.levelLabel} options={LEVELS} value={filterLevel} onChange={setFilterLevel} />
           </div>
         )}
 
