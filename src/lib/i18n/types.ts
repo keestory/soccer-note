@@ -618,4 +618,32 @@ export interface Translations {
   badgeWallDesc: string
   badgeFlawless: string
   badgeFlawlessDesc: string
+  editMatchInfo: string
+  matchInfoUpdated: string
+  matchInfoUpdateFailed: string
+  matchNotes: string
+  matchNoteSaved: string
+  addNote: string
+  matchNotePlaceholder: string
+  coachMvp: string
+  momQuestion: string
+  momSubtitle: string
+  voteDone: string
+  voteFailed: string
+  votesN: string
+  lineupShortcutQ: string
+  shortcut: string
+  saveNPlayers: string
+  deleteMatchDesc: string
+  avgPoints: string
+  substitutionAdded: string
+  substitutionAddFailed: string
+  substitutionDeleted: string
+  substitutionDeleteFailed: string
+  dragToPlace: string
+  quarterAllSaved: string
+  savedShort: string
+  saveAllNote: string
+  formationPlacement: string
+  assistShort: string
 }

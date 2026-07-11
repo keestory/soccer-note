@@ -9,11 +9,13 @@ import type { Match, Player, Quarter, MatchAttendee } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import { formatDate, calculateMVP, getPlayerStatsFromMatch, formatRating } from '@/lib/utils'
 import toast from 'react-hot-toast'
+import { useI18n } from '@/lib/i18n/context'
 import { MatchDetailSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
 
 export default function MatchDetailPage() {
+  const { t } = useI18n()
   const router = useRouter()
   const params = useParams()
   const matchId = params.id as string
@@ -94,7 +96,7 @@ export default function MatchDetailPage() {
         setMomVotes(prev => ({ ...prev, [playerId]: (prev[playerId] || 0) + 1 }))
         toast.success('MOM 투표 완료! 🏅')
       }
-    } catch { toast.error('투표에 실패했습니다') }
+    } catch { toast.error(t.voteFailed) }
     finally { setVotingMom(false) }
   }
 
@@ -123,7 +125,7 @@ export default function MatchDetailPage() {
       .single()
 
     if (error || !data) {
-      toast.error('경기를 불러올 수 없습니다')
+      toast.error(t.matchLoadFailed)
       router.push('/dashboard')
       return
     }
@@ -228,7 +230,7 @@ export default function MatchDetailPage() {
       .eq('id', q.id)
 
     if (error) {
-      toast.error('점수 저장에 실패했습니다')
+      toast.error(t.scoreSaveFailed)
       return
     }
 
@@ -259,7 +261,7 @@ export default function MatchDetailPage() {
 
     setMatch(prev => prev ? { ...prev, home_score: newTotal.home, away_score: newTotal.away } : null)
     setEditingQuarterScore(null)
-    toast.success('점수가 저장되었습니다')
+    toast.success(t.scoreSaved)
   }
 
   const openAttendeePicker = () => {
@@ -291,7 +293,7 @@ export default function MatchDetailPage() {
         .from('match_attendees')
         .insert(toAdd.map(player_id => ({ match_id: matchId, player_id })))
       if (error) {
-        toast.error('참석 선수 저장에 실패했습니다')
+        toast.error(t.attendeeSaveFailed)
         return
       }
     }
@@ -303,7 +305,7 @@ export default function MatchDetailPage() {
         .delete()
         .in('id', toRemove.map(a => a.id))
       if (error) {
-        toast.error('참석 선수 삭제에 실패했습니다')
+        toast.error(t.attendeeDeleteFailed)
         return
       }
     }
@@ -316,7 +318,7 @@ export default function MatchDetailPage() {
 
     if (data) setAttendees(data)
     setShowAttendeePicker(false)
-    toast.success('참석 선수가 저장되었습니다', {
+    toast.success(t.attendeeSaved, {
       duration: 4000,
       icon: '✅',
     })
@@ -324,15 +326,15 @@ export default function MatchDetailPage() {
     if (selectedAttendees.size > 0) {
       setTimeout(() => {
         toast(
-          (t) => (
+          (toastInst) => (
             <span className="flex items-center gap-2">
-              <span>1쿼터 라인업 바로 편집할까요?</span>
+              <span>{t.lineupShortcutQ}</span>
               <Link
                 href={`/match/${matchId}/quarter/1`}
                 className="px-2 py-1 text-xs rounded-lg font-medium" style={{ background: 'var(--accent)', color: '#0a0a0a' }}
-                onClick={() => toast.dismiss(t.id)}
+                onClick={() => toast.dismiss(toastInst.id)}
               >
-                바로가기
+                {t.shortcut}
               </Link>
             </span>
           ),
@@ -363,7 +365,7 @@ export default function MatchDetailPage() {
       .eq('id', matchId)
 
     if (error) {
-      toast.error('경기 정보 수정에 실패했습니다')
+      toast.error(t.matchInfoUpdateFailed)
       return
     }
 
@@ -374,7 +376,7 @@ export default function MatchDetailPage() {
       location: editLocation.trim() || null,
     } : null)
     setEditingMatchInfo(false)
-    toast.success('경기 정보가 수정되었습니다')
+    toast.success(t.matchInfoUpdated)
   }
 
   const handleDeleteMatch = async () => {
@@ -384,11 +386,11 @@ export default function MatchDetailPage() {
       .eq('id', matchId)
 
     if (error) {
-      toast.error('삭제에 실패했습니다')
+      toast.error(t.deleteFailed)
       return
     }
 
-    toast.success('경기가 삭제되었습니다')
+    toast.success(t.matchDeleted)
     router.push('/dashboard')
   }
 
@@ -400,10 +402,10 @@ export default function MatchDetailPage() {
       .update({ notes: notes.trim() || null })
       .eq('id', matchId)
     setSavingNotes(false)
-    if (error) { toast.error('저장에 실패했습니다'); return }
+    if (error) { toast.error(t.saveFailed); return }
     setMatch(prev => prev ? { ...prev, notes: notes.trim() || null } : null)
     setEditingNotes(false)
-    toast.success('경기 메모가 저장되었습니다')
+    toast.success(t.matchNoteSaved)
   }
 
   if (loading || !match) {
@@ -459,16 +461,16 @@ export default function MatchDetailPage() {
         <div className="max-w-4xl mx-auto px-4 pt-4">
           <div className="p-4 rounded-xl" style={cardStyle}>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-white">경기 정보 수정</h3>
+              <h3 className="font-bold text-white">{t.editMatchInfo}</h3>
               <button onClick={() => setEditingMatchInfo(false)} className="p-1 text-white/40 hover:text-white rounded">
                 <X className="w-5 h-5" />
               </button>
             </div>
             <div className="space-y-3">
               {[
-                { label: '상대팀', type: 'text', value: editOpponent, onChange: setEditOpponent, placeholder: '상대팀 이름' },
-                { label: '경기 날짜', type: 'date', value: editDate, onChange: setEditDate, placeholder: '' },
-                { label: '경기장', type: 'text', value: editLocation, onChange: setEditLocation, placeholder: '경기장 이름 (선택사항)' },
+                { label: t.opponent, type: 'text', value: editOpponent, onChange: setEditOpponent, placeholder: t.opponentPlaceholder },
+                { label: t.matchDate, type: 'date', value: editDate, onChange: setEditDate, placeholder: '' },
+                { label: t.location, type: 'text', value: editLocation, onChange: setEditLocation, placeholder: t.locationPlaceholder },
               ].map(f => (
                 <div key={f.label}>
                   <label className="block text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{f.label}</label>
@@ -487,7 +489,7 @@ export default function MatchDetailPage() {
                 className="w-full py-3 rounded-lg font-bold text-sm"
                 style={{ background: 'var(--accent)', color: '#0a0a0a' }}
               >
-                수정 완료
+                {t.editDone}
               </button>
             </div>
           </div>
@@ -518,7 +520,7 @@ export default function MatchDetailPage() {
             )
           })()}
           <div className="flex justify-center gap-6 text-[12px] mb-3" style={{ color: 'var(--muted2)' }}>
-            <span>우리팀</span>
+            <span>{t.homeTeam}</span>
             <span>{match.opponent}</span>
           </div>
           <div className="flex justify-center gap-3 text-[11px]" style={{ color: 'var(--muted2)' }}>
@@ -535,11 +537,11 @@ export default function MatchDetailPage() {
               <Star className="w-6 h-6 fill-current" style={{ color: '#0a0a0a' }} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--accent)' }}>코치 MVP</p>
+              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--accent)' }}>{t.coachMvp}</p>
               <p className="text-[17px] font-black text-white">
                 {mvp.playerName}
                 <span className="font-normal text-[13px] ml-2" style={{ color: 'var(--muted2)' }}>
-                  평균 {mvp.averageRating.toFixed(1)}점
+                  {t.avgPoints.replace('{n}', mvp.averageRating.toFixed(1))}
                 </span>
               </p>
             </div>
@@ -552,11 +554,11 @@ export default function MatchDetailPage() {
             <div className="flex items-center gap-2 mb-3">
               <span className="text-lg">🏅</span>
               <div>
-                <h3 className="font-black text-white text-[14px]">이 경기의 MOM은?</h3>
-                <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>팀원이 뽑는 Man of the Match</p>
+                <h3 className="font-black text-white text-[14px]">{t.momQuestion}</h3>
+                <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>{t.momSubtitle}</p>
               </div>
               {myMomVote && (
-                <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>투표 완료</span>
+                <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.voteDone}</span>
               )}
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -584,7 +586,7 @@ export default function MatchDetailPage() {
                     <div className="relative flex-1 text-left">
                       <p className="text-xs font-black truncate text-white">{a.player?.name}</p>
                       <p className="text-[10px]" style={{ color: 'var(--muted2)' }}>
-                        {voteCount > 0 ? `${voteCount}표${totalVotes > 0 ? ` (${pct}%)` : ''}` : '0표'}
+                        {t.votesN.replace('{n}', String(voteCount))}{voteCount > 0 && totalVotes > 0 ? ` (${pct}%)` : ''}
                       </p>
                     </div>
                     {isMyVote && <Check className="relative w-4 h-4 flex-shrink-0" style={{ color: 'var(--accent)' }} />}
@@ -600,7 +602,7 @@ export default function MatchDetailPage() {
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-white flex items-center gap-2">
               <Users className="w-4 h-4" style={{ color: 'var(--muted2)' }} />
-              참석 선수 ({attendees.length}명)
+              {t.attendees} ({attendees.length})
             </h3>
             {canEditMatches && (
               <button
@@ -609,7 +611,7 @@ export default function MatchDetailPage() {
                 style={{ background: 'var(--chip)', color: 'var(--accent)' }}
               >
                 <Plus className="w-4 h-4" />
-                편집
+                {t.edit}
               </button>
             )}
           </div>
@@ -627,7 +629,7 @@ export default function MatchDetailPage() {
               ))}
             </div>
           ) : (
-            <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>참석한 선수를 추가해주세요</p>
+            <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.selectAttendees}</p>
           )}
         </section>
 
@@ -636,7 +638,7 @@ export default function MatchDetailPage() {
           <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4">
             <div className="rounded-xl w-full max-w-md p-4 max-h-[80vh] flex flex-col" style={cardStyle}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-white text-lg">참석 선수 선택</h3>
+                <h3 className="font-bold text-white text-lg">{t.attendees}</h3>
                 <button onClick={() => setShowAttendeePicker(false)} className="p-1 text-white/40 hover:text-white rounded">
                   <X className="w-5 h-5" />
                 </button>
@@ -677,7 +679,7 @@ export default function MatchDetailPage() {
                 className="w-full py-3 rounded-lg font-bold"
                 style={{ background: 'var(--accent)', color: '#0a0a0a' }}
               >
-                {selectedAttendees.size}명 저장
+                {t.saveNPlayers.replace('{n}', String(selectedAttendees.size))}
               </button>
             </div>
           </div>
@@ -697,7 +699,7 @@ export default function MatchDetailPage() {
                   border: activeQuarter === q ? 'none' : '1px solid var(--line)',
                 }}
               >
-                {q}쿼터
+                {t.quarterN.replace('{n}', String(q))}
               </button>
             ))}
           </div>
@@ -707,11 +709,11 @@ export default function MatchDetailPage() {
             <div className="rounded-xl overflow-hidden" style={{ background: '#111010', border: '1px solid var(--line)' }}>
               <div className="p-4 flex justify-between items-center" style={{ borderBottom: '1px solid var(--line)' }}>
                 <div className="flex items-center gap-3">
-                  <h3 className="font-bold text-white">{activeQuarter}쿼터 기록</h3>
+                  <h3 className="font-bold text-white">{t.quarterN.replace('{n}', String(activeQuarter))} {t.quarterRecord}</h3>
                   {canEditQuarters && editingQuarterScore === activeQuarter ? (
                     <div className="flex items-center gap-2">
                       <div className="flex flex-col items-center">
-                        <span className="text-[10px] mb-0.5" style={{ color: 'var(--muted2)' }}>우리팀</span>
+                        <span className="text-[10px] mb-0.5" style={{ color: 'var(--muted2)' }}>{t.homeTeam}</span>
                         <input
                           type="number"
                           min={0}
@@ -733,8 +735,8 @@ export default function MatchDetailPage() {
                           style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
                         />
                       </div>
-                      <button onClick={handleSaveQuarterScore} className="px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>저장</button>
-                      <button onClick={() => setEditingQuarterScore(null)} className="px-2 py-1 rounded text-xs text-white/50" style={{ background: '#1a1a1a' }}>취소</button>
+                      <button onClick={handleSaveQuarterScore} className="px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>{t.save}</button>
+                      <button onClick={() => setEditingQuarterScore(null)} className="px-2 py-1 rounded text-xs text-white/50" style={{ background: '#1a1a1a' }}>{t.cancel}</button>
                     </div>
                   ) : canEditQuarters ? (
                     <button
@@ -762,7 +764,7 @@ export default function MatchDetailPage() {
                     style={{ background: 'var(--chip)', color: 'var(--accent)' }}
                   >
                     <Edit2 className="w-4 h-4" />
-                    편집
+                    {t.edit}
                   </Link>
                 )}
               </div>
@@ -888,7 +890,7 @@ export default function MatchDetailPage() {
 
                   {currentQuarter.quarter_records?.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center text-white/70">
-                      <span className="bg-black/30 px-3 py-1.5 rounded">선수를 배치해주세요</span>
+                      <span className="bg-black/30 px-3 py-1.5 rounded">{t.placePlayersMessage}</span>
                     </div>
                   )}
                 </div>
@@ -899,7 +901,7 @@ export default function MatchDetailPage() {
                 <div className="px-4 py-3" style={{ background: '#0d1a10', borderTop: '1px solid var(--line)' }}>
                   <p className="text-xs font-bold mb-2 flex items-center gap-1" style={{ color: 'var(--accent)' }}>
                     <ArrowRightLeft className="w-3.5 h-3.5" />
-                    교체 ({currentQuarter.quarter_substitutions.length}건)
+                    {t.substitutionCount.replace('{n}', String(currentQuarter.quarter_substitutions.length))}
                   </p>
                   <div className="space-y-1.5">
                     {currentQuarter.quarter_substitutions
@@ -938,10 +940,10 @@ export default function MatchDetailPage() {
                       </div>
 
                       <div className="mt-2 ml-11 flex flex-wrap gap-1.5">
-                        {record.goals > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>골 {record.goals}</span>}
-                        {record.assists > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>어시스트 {record.assists}</span>}
-                        {record.clean_sheet && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">클린시트</span>}
-                        {record.contribution > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">기여도</span>}
+                        {record.goals > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.goals} {record.goals}</span>}
+                        {record.assists > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>{t.assistsLabel} {record.assists}</span>}
+                        {record.clean_sheet && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">{t.cleanSheet}</span>}
+                        {record.contribution > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">{t.contribution}</span>}
                       </div>
 
                       {hasReview && (
@@ -957,19 +959,19 @@ export default function MatchDetailPage() {
                           )}
                           {record.praise_text && (
                             <div className="rounded-lg px-3 py-2" style={{ background: 'var(--chip)' }}>
-                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--accent)' }}>참 잘했어요</p>
+                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--accent)' }}>{t.praiseLabel}</p>
                               <p className="text-[13px] text-white/80">{record.praise_text}</p>
                             </div>
                           )}
                           {record.improvement_text && (
                             <div className="rounded-lg px-3 py-2 bg-amber-900/20">
-                              <p className="text-[10px] font-bold text-amber-400 mb-0.5">조금 더 연습해볼까요?</p>
+                              <p className="text-[10px] font-bold text-amber-400 mb-0.5">{t.improvementLabel}</p>
                               <p className="text-[13px] text-white/80">{record.improvement_text}</p>
                             </div>
                           )}
                           {record.highlight_text && (
                             <div className="rounded-lg px-3 py-2" style={{ background: 'var(--chip)' }}>
-                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--chipText)' }}>이 부분을 칭찬해주세요!</p>
+                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--chipText)' }}>{t.highlightLabel}</p>
                               <p className="text-[13px] text-white/80">{record.highlight_text}</p>
                             </div>
                           )}
@@ -989,7 +991,7 @@ export default function MatchDetailPage() {
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-bold text-white flex items-center gap-2">
                 <FileText className="w-4 h-4" style={{ color: 'var(--muted2)' }} />
-                경기 메모
+                {t.matchNotes}
               </h3>
               {canEditMatches && !editingNotes && (
                 <button onClick={() => setEditingNotes(true)} className="p-1.5 text-white/40 hover:text-white rounded-lg">
@@ -1003,17 +1005,17 @@ export default function MatchDetailPage() {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={4}
-                  placeholder="경기에 대한 메모를 남겨보세요"
+                  placeholder={t.matchNotePlaceholder}
                   className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none text-white"
                   style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
                   autoFocus
                 />
                 <div className="flex gap-2 mt-2">
                   <button onClick={handleSaveNotes} disabled={savingNotes} className="flex-1 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-                    {savingNotes ? '저장 중...' : '저장'}
+                    {savingNotes ? t.saving : t.save}
                   </button>
                   <button onClick={() => { setNotes(match.notes || ''); setEditingNotes(false) }} className="px-4 py-2.5 rounded-xl font-bold text-sm text-white/60" style={{ background: '#1a1a1a' }}>
-                    취소
+                    {t.cancel}
                   </button>
                 </div>
               </div>
@@ -1021,7 +1023,7 @@ export default function MatchDetailPage() {
               <p className="text-[13px] text-white/70 whitespace-pre-wrap">{match.notes}</p>
             ) : (
               <button onClick={() => setEditingNotes(true)} className="w-full py-4 border-2 border-dashed rounded-xl text-[13px] transition" style={{ borderColor: 'var(--line)', color: 'var(--muted2)' }}>
-                메모 추가하기
+                {t.addNote}
               </button>
             )}
           </section>
@@ -1030,7 +1032,7 @@ export default function MatchDetailPage() {
         {/* Overall Player Stats */}
         {playerStats.length > 0 && (
           <section>
-            <h3 className="font-bold text-white mb-3">전체 선수 통계</h3>
+            <h3 className="font-bold text-white mb-3">{t.overallPlayerStats}</h3>
             <div className="rounded-xl overflow-hidden" style={{ background: '#111010', border: '1px solid var(--line)' }}>
               {playerStats.map((stats, index) => (
                 <div key={stats.playerId} className="p-4 flex items-center justify-between" style={{ borderTop: index > 0 ? '1px solid var(--line)' : 'none' }}>
@@ -1042,16 +1044,16 @@ export default function MatchDetailPage() {
                         {index === 0 && mvp && <Star className="w-4 h-4 fill-current" style={{ color: 'var(--accent)' }} />}
                       </p>
                       <div className="flex flex-wrap gap-1.5 mt-0.5">
-                        {stats.totalGoals > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>골 {stats.totalGoals}</span>}
-                        {stats.totalAssists > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>어시스트 {stats.totalAssists}</span>}
-                        {stats.cleanSheets > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">클린시트 {stats.cleanSheets}</span>}
-                        {stats.avgContribution > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">기여도</span>}
+                        {stats.totalGoals > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.goals} {stats.totalGoals}</span>}
+                        {stats.totalAssists > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>{t.assistsLabel} {stats.totalAssists}</span>}
+                        {stats.cleanSheets > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">{t.cleanSheet} {stats.cleanSheets}</span>}
+                        {stats.avgContribution > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">{t.contribution}</span>}
                       </div>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="text-xl font-bold font-display" style={{ color: 'var(--accent)' }}>{stats.averageRating.toFixed(1)}</p>
-                    <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>평균</p>
+                    <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>{t.avgRatingShort}</p>
                   </div>
                 </div>
               ))}
@@ -1062,9 +1064,9 @@ export default function MatchDetailPage() {
 
       <ConfirmSheet
         open={showDeleteConfirm}
-        title="경기를 삭제하시겠습니까?"
-        description="삭제된 경기는 복구할 수 없습니다."
-        confirmLabel="삭제"
+        title={t.deleteMatchConfirm}
+        description={t.deleteMatchDesc}
+        confirmLabel={t.delete}
         danger
         onConfirm={() => { setShowDeleteConfirm(false); handleDeleteMatch() }}
         onCancel={() => setShowDeleteConfirm(false)}
