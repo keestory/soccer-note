@@ -729,4 +729,14 @@ export interface Translations {
   todayLabel: string
   tomorrowLabel: string
   applyButton: string
+  teamIntro: string
+  memberIntro: string
+  selfIntro: string
+  selfIntroPlaceholder: string
+  preferredPositions: string
+  preferredNumbers: string
+  preferredPositionsPlaceholder: string
+  preferredNumbersPlaceholder: string
+  noBio: string
+  introTab: string
 }

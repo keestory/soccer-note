@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
-import { Plus, Trash2, Edit2, X, UserCheck, UserPlus } from 'lucide-react'
+import { Plus, Trash2, Edit2, X, UserCheck, UserPlus, Users } from 'lucide-react'
 import type { Player, PositionType } from '@/types/database'
 import { POSITION_LABELS } from '@/types/database'
 import type { MemberWithProfile } from '@/lib/dataStore'
@@ -56,6 +56,9 @@ export default function PlayersPage() {
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
   const [position, setPosition] = useState<PositionType>('MF')
+  const [bio, setBio] = useState('')
+  const [preferredPositions, setPreferredPositions] = useState('')
+  const [preferredNumbers, setPreferredNumbers] = useState('')
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -164,14 +167,20 @@ export default function PlayersPage() {
   const handleUpdatePlayer = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingPlayer || !name.trim()) return
-    const { error } = await supabase
-      .from('players')
-      .update({ name: name.trim(), number: number ? parseInt(number) : null, default_position: position })
-      .eq('id', editingPlayer.id)
+    const posArr = preferredPositions.split(',').map(s => s.trim()).filter(Boolean)
+    const patch = {
+      name: name.trim(),
+      number: number ? parseInt(number) : null,
+      default_position: position,
+      bio: bio.trim() || null,
+      preferred_positions: posArr.length ? posArr : null,
+      preferred_numbers: preferredNumbers.trim() || null,
+    }
+    const { error } = await supabase.from('players').update(patch).eq('id', editingPlayer.id)
     if (error) { toast.error(t.saveFailed); return }
     toast.success(t.playerUpdated)
     setLocalPlayers((localPlayers ?? data.players).map(p =>
-      p.id === editingPlayer.id ? { ...p, name: name.trim(), number: number ? parseInt(number) : null, default_position: position } : p
+      p.id === editingPlayer.id ? { ...p, ...patch } : p
     ))
     resetForm()
   }
@@ -189,11 +198,15 @@ export default function PlayersPage() {
     setName(player.name)
     setNumber(player.number?.toString() || '')
     setPosition(player.default_position)
+    setBio(player.bio || '')
+    setPreferredPositions((player.preferred_positions || []).join(', '))
+    setPreferredNumbers(player.preferred_numbers || '')
     setShowAddSheet(false)
   }
 
   const resetForm = () => {
     setName(''); setNumber(''); setPosition('MF')
+    setBio(''); setPreferredPositions(''); setPreferredNumbers('')
     setShowAddSheet(false); setEditingPlayer(null)
     setSelectedMember(null); setAddMode('member')
   }
@@ -220,13 +233,20 @@ export default function PlayersPage() {
             <h1 className="font-black text-[20px] text-white">{t.playersLabel}</h1>
             <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {t.playersN.replace('{n}', String(playersWithStats.length))}</p>
           </div>
-          {canEdit && (
-            <button onClick={() => { resetForm(); setShowAddSheet(true) }}
-              className="w-9 h-9 flex items-center justify-center rounded-[11px] font-black active:scale-95 transition"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
-              <Plus className="w-5 h-5" />
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            <Link href="/team/intro"
+              className="h-9 px-3 flex items-center gap-1.5 rounded-[11px] text-sm font-bold transition active:scale-95"
+              style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
+              <Users className="w-4 h-4" /> {t.introTab}
+            </Link>
+            {canEdit && (
+              <button onClick={() => { resetForm(); setShowAddSheet(true) }}
+                className="w-9 h-9 flex items-center justify-center rounded-[11px] font-black active:scale-95 transition"
+                style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                <Plus className="w-5 h-5" />
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -257,7 +277,7 @@ export default function PlayersPage() {
                 className="outline-none text-white placeholder-[#444] text-sm"
                 style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
             </div>
-            <div className="grid grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-4 gap-2 mb-3">
               {(['GK','DF','MF','FW'] as PositionType[]).map(pos => (
                 <button key={pos} type="button" onClick={() => setPosition(pos)}
                   className="py-2 rounded-[9px] text-sm font-bold transition"
@@ -265,6 +285,20 @@ export default function PlayersPage() {
                   {pos}
                 </button>
               ))}
+            </div>
+            <div className="space-y-2 mb-4">
+              <input type="text" value={preferredPositions} onChange={e => setPreferredPositions(e.target.value)}
+                placeholder={t.preferredPositionsPlaceholder}
+                className="w-full outline-none text-white placeholder-[#444] text-sm"
+                style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
+              <input type="text" value={preferredNumbers} onChange={e => setPreferredNumbers(e.target.value)}
+                placeholder={t.preferredNumbersPlaceholder}
+                className="w-full outline-none text-white placeholder-[#444] text-sm"
+                style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
+              <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3}
+                placeholder={t.selfIntroPlaceholder}
+                className="w-full outline-none text-white placeholder-[#444] text-sm resize-none"
+                style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
             </div>
             <button type="submit" className="w-full py-3 rounded-xl font-black text-sm active:scale-[0.98] transition"
               style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
