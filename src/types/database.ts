@@ -49,6 +49,7 @@ export interface Player {
   bio?: string | null;
   preferred_positions?: string[] | null;
   preferred_numbers?: string | null;
+  photo_url?: string | null;
   created_at: string;
   updated_at: string;
 }

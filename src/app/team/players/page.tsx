@@ -59,7 +59,28 @@ export default function PlayersPage() {
   const [bio, setBio] = useState('')
   const [preferredPositions, setPreferredPositions] = useState('')
   const [preferredNumbers, setPreferredNumbers] = useState('')
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
   const [saving, setSaving] = useState(false)
+
+  const handlePhotoUpload = async (file: File) => {
+    setUploading(true)
+    try {
+      const ext = file.name.split('.').pop() || 'jpg'
+      const filePath = `players/${crypto.randomUUID()}.${ext}`
+      const fd = new FormData()
+      fd.append('file', file)
+      fd.append('filePath', filePath)
+      const res = await fetch('/api/upload', { method: 'POST', body: fd })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error)
+      setPhotoUrl(json.url)
+    } catch {
+      toast.error(t.uploadFailed)
+    } finally {
+      setUploading(false)
+    }
+  }
 
   useEffect(() => {
     if (data.isLoaded && !data.userId) router.push('/login')
@@ -175,6 +196,7 @@ export default function PlayersPage() {
       bio: bio.trim() || null,
       preferred_positions: posArr.length ? posArr : null,
       preferred_numbers: preferredNumbers.trim() || null,
+      photo_url: photoUrl,
     }
     const { error } = await supabase.from('players').update(patch).eq('id', editingPlayer.id)
     if (error) { toast.error(t.saveFailed); return }
@@ -201,12 +223,13 @@ export default function PlayersPage() {
     setBio(player.bio || '')
     setPreferredPositions((player.preferred_positions || []).join(', '))
     setPreferredNumbers(player.preferred_numbers || '')
+    setPhotoUrl(player.photo_url || null)
     setShowAddSheet(false)
   }
 
   const resetForm = () => {
     setName(''); setNumber(''); setPosition('MF')
-    setBio(''); setPreferredPositions(''); setPreferredNumbers('')
+    setBio(''); setPreferredPositions(''); setPreferredNumbers(''); setPhotoUrl(null)
     setShowAddSheet(false); setEditingPlayer(null)
     setSelectedMember(null); setAddMode('member')
   }
@@ -269,6 +292,22 @@ export default function PlayersPage() {
               <h3 className="font-black text-white">{t.editPlayerTitle}</h3>
               <button type="button" onClick={resetForm} className="p-1 rounded" style={{ color: '#555' }}><X className="w-5 h-5" /></button>
             </div>
+            <div className="flex justify-center mb-4">
+              <label className="relative cursor-pointer">
+                <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center"
+                  style={{ background: '#1a1a1a', border: '1px solid var(--line)' }}>
+                  {photoUrl
+                    ? <img src={photoUrl} alt="" className="w-full h-full object-cover" />
+                    : <Users className="w-7 h-7" style={{ color: '#555' }} />}
+                </div>
+                <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center"
+                  style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                  {uploading ? <span className="text-[10px] font-bold">…</span> : <Plus className="w-4 h-4" />}
+                </span>
+                <input type="file" accept="image/*" className="hidden"
+                  onChange={e => { const f = e.target.files?.[0]; if (f) handlePhotoUpload(f) }} />
+              </label>
+            </div>
             <div className="grid grid-cols-3 gap-3 mb-3">
               <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder={t.playerName}
                 className="col-span-2 outline-none text-white placeholder-[#444] text-sm"
@@ -325,9 +364,11 @@ export default function PlayersPage() {
               <Link key={player.id} href={`/team/players/${player.id}`}
                 className="flex items-center gap-3 p-4 rounded-[14px] active:opacity-80 transition"
                 style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-                <div className="w-[34px] h-[34px] rounded-[9px] flex items-center justify-center flex-shrink-0 font-black text-[10px]"
+                <div className="w-[34px] h-[34px] rounded-[9px] overflow-hidden flex items-center justify-center flex-shrink-0 font-black text-[10px]"
                   style={{ background: POS_COLOR[player.default_position], color: POS_TEXT[player.default_position] }}>
-                  {player.default_position}
+                  {player.photo_url
+                    ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
+                    : player.default_position}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
