@@ -244,8 +244,10 @@ export default function PlayerStatsPage() {
 
         {/* 선수 프로필 */}
         <section className="p-5 flex items-center gap-4" style={cardStyle}>
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-white text-xl font-black flex-shrink-0" style={{ backgroundColor: posColor }}>
-            {player.number || '-'}
+          <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center text-white text-xl font-black flex-shrink-0" style={{ backgroundColor: posColor }}>
+            {player.photo_url
+              ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
+              : (player.number || '-')}
           </div>
           <div className="flex-1">
             <h2 className="text-xl font-black text-white">{player.name}</h2>

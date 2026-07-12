@@ -63,9 +63,11 @@ export default function TeamIntroPage() {
                     className="rounded-[16px] p-4 active:opacity-80 transition"
                     style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-xl flex items-center justify-center font-black text-[15px] flex-shrink-0"
+                      <div className="w-11 h-11 rounded-xl overflow-hidden flex items-center justify-center font-black text-[15px] flex-shrink-0"
                         style={{ background: color, color: textColor }}>
-                        {p.number ?? '–'}
+                        {p.photo_url
+                          ? <img src={p.photo_url} alt={p.name} className="w-full h-full object-cover" />
+                          : (p.number ?? '–')}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-[15px] text-white truncate">{p.name}</p>

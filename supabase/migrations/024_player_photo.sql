@@ -1,0 +1,3 @@
+-- Player photo for member intro cards
+ALTER TABLE players
+  ADD COLUMN IF NOT EXISTS photo_url TEXT;
