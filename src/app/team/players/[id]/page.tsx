@@ -263,6 +263,34 @@ export default function PlayerStatsPage() {
           )}
         </section>
 
+        {/* 멤버 소개 */}
+        {(player.bio || player.preferred_positions?.length || player.preferred_numbers) && (
+          <section className="p-4 space-y-3" style={cardStyle}>
+            <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.memberIntro}</p>
+            {player.bio && (
+              <p className="text-[14px] leading-relaxed text-white/90 whitespace-pre-wrap">{player.bio}</p>
+            )}
+            <div className="flex flex-wrap gap-4">
+              {player.preferred_positions && player.preferred_positions.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-bold uppercase mb-1" style={{ color: 'var(--muted2)' }}>{t.preferredPositions}</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {player.preferred_positions.map((pos, i) => (
+                      <span key={i} className="text-xs font-bold px-2 py-0.5 rounded-lg" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>{pos}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {player.preferred_numbers && (
+                <div>
+                  <p className="text-[10px] font-bold uppercase mb-1" style={{ color: 'var(--muted2)' }}>{t.preferredNumbers}</p>
+                  <p className="text-sm font-bold text-white">{player.preferred_numbers}</p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* 뱃지 */}
         {badges.length > 0 && (
           <section className="p-4" style={cardStyle}>

@@ -46,6 +46,9 @@ export interface Player {
   name: string;
   number: number | null;
   default_position: PositionType;
+  bio?: string | null;
+  preferred_positions?: string[] | null;
+  preferred_numbers?: string | null;
   created_at: string;
   updated_at: string;
 }
