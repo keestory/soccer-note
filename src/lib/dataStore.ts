@@ -36,7 +36,10 @@ export interface TeamWithRole extends Team {
 }
 
 // 싱글톤 스토어
-const store: DataStore = {
+// NOTE: updateStore가 매번 새 객체를 만들어 참조를 교체한다.
+// useSyncExternalStore는 스냅샷을 참조로 비교하므로, 제자리 변경(Object.assign)을
+// 하면 리렌더가 트리거되지 않는다 (예: 팀 전환 시 헤더가 즉시 안 바뀜).
+let store: DataStore = {
   userId: null,
   displayName: null,
   teams: [],
@@ -65,7 +68,8 @@ function notify() {
 
 // 스토어 업데이트
 export function updateStore(partial: Partial<DataStore>) {
-  Object.assign(store, partial)
+  // 새 객체를 만들어 참조를 교체 → useSyncExternalStore가 변경을 감지해 리렌더
+  store = { ...store, ...partial }
   notify()
 }
 
