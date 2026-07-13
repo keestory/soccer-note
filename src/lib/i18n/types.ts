@@ -739,4 +739,15 @@ export interface Translations {
   preferredNumbersPlaceholder: string
   noBio: string
   introTab: string
+  abilityCard: string
+  overall: string
+  attrPace: string
+  attrShooting: string
+  attrPassing: string
+  attrDribbling: string
+  attrDefending: string
+  attrPhysical: string
+  strengths: string
+  strengthsPlaceholder: string
+  rateYourself: string
 }
