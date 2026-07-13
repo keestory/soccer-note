@@ -62,15 +62,19 @@ BEGIN
                     WHERE b.training_id = a.training_id AND b.player_id = keep);
       UPDATE training_attendees SET player_id = keep WHERE player_id = dup;
 
-      -- fitness_sessions (no per-player unique)
-      UPDATE fitness_sessions SET player_id = keep WHERE player_id = dup;
+      -- Optional tables (skip if the feature/table isn't in this project)
+      IF to_regclass('public.fitness_sessions') IS NOT NULL THEN
+        UPDATE fitness_sessions SET player_id = keep WHERE player_id = dup;
+      END IF;
 
-      -- quarter_substitutions (in/out)
-      UPDATE quarter_substitutions SET player_out_id = keep WHERE player_out_id = dup;
-      UPDATE quarter_substitutions SET player_in_id  = keep WHERE player_in_id  = dup;
+      IF to_regclass('public.quarter_substitutions') IS NOT NULL THEN
+        UPDATE quarter_substitutions SET player_out_id = keep WHERE player_out_id = dup;
+        UPDATE quarter_substitutions SET player_in_id  = keep WHERE player_in_id  = dup;
+      END IF;
 
-      -- MOM votes (unique is on voter, not the voted player — always safe)
-      UPDATE match_mom_votes SET voted_player_id = keep WHERE voted_player_id = dup;
+      IF to_regclass('public.match_mom_votes') IS NOT NULL THEN
+        UPDATE match_mom_votes SET voted_player_id = keep WHERE voted_player_id = dup;
+      END IF;
 
       -- team member link
       UPDATE team_members SET linked_player_id = keep WHERE linked_player_id = dup;
