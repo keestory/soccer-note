@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import { Plus, Trash2, Edit2, X, UserCheck, UserPlus, Users } from 'lucide-react'
-import type { Player, PositionType } from '@/types/database'
-import { POSITION_LABELS } from '@/types/database'
+import type { Player, PositionType, PlayerAttributes } from '@/types/database'
+import { POSITION_LABELS, ATTRIBUTE_KEYS } from '@/types/database'
 import type { MemberWithProfile } from '@/lib/dataStore'
 import toast from 'react-hot-toast'
 import { PlayersListSkeleton } from '@/components/Skeleton'
@@ -61,6 +61,8 @@ export default function PlayersPage() {
   const [preferredNumbers, setPreferredNumbers] = useState('')
   const [photoUrl, setPhotoUrl] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
+  const [attrs, setAttrs] = useState<PlayerAttributes>({ pace: 50, shooting: 50, passing: 50, dribbling: 50, defending: 50, physical: 50 })
+  const [strengthTags, setStrengthTags] = useState('')
   const [saving, setSaving] = useState(false)
 
   const handlePhotoUpload = async (file: File) => {
@@ -197,6 +199,8 @@ export default function PlayersPage() {
       preferred_positions: posArr.length ? posArr : null,
       preferred_numbers: preferredNumbers.trim() || null,
       photo_url: photoUrl,
+      attributes: attrs,
+      strength_tags: strengthTags.split(',').map(s => s.trim()).filter(Boolean),
     }
     const { error } = await supabase.from('players').update(patch).eq('id', editingPlayer.id)
     if (error) { toast.error(t.saveFailed); return }
@@ -224,12 +228,15 @@ export default function PlayersPage() {
     setPreferredPositions((player.preferred_positions || []).join(', '))
     setPreferredNumbers(player.preferred_numbers || '')
     setPhotoUrl(player.photo_url || null)
+    setAttrs(player.attributes ?? { pace: 50, shooting: 50, passing: 50, dribbling: 50, defending: 50, physical: 50 })
+    setStrengthTags((player.strength_tags || []).join(', '))
     setShowAddSheet(false)
   }
 
   const resetForm = () => {
     setName(''); setNumber(''); setPosition('MF')
     setBio(''); setPreferredPositions(''); setPreferredNumbers(''); setPhotoUrl(null)
+    setAttrs({ pace: 50, shooting: 50, passing: 50, dribbling: 50, defending: 50, physical: 50 }); setStrengthTags('')
     setShowAddSheet(false); setEditingPlayer(null)
     setSelectedMember(null); setAddMode('member')
   }
@@ -338,6 +345,27 @@ export default function PlayersPage() {
                 placeholder={t.selfIntroPlaceholder}
                 className="w-full outline-none text-white placeholder-[#444] text-sm resize-none"
                 style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
+              <input type="text" value={strengthTags} onChange={e => setStrengthTags(e.target.value)}
+                placeholder={t.strengthsPlaceholder}
+                className="w-full outline-none text-white placeholder-[#444] text-sm"
+                style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
+            </div>
+
+            {/* 능력치 슬라이더 (자가 평가) */}
+            <div className="rounded-xl p-3 mb-4 space-y-2.5" style={{ background: '#151515', border: '1px solid var(--line)' }}>
+              <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.rateYourself}</p>
+              {ATTRIBUTE_KEYS.map(k => {
+                const label = { pace: t.attrPace, shooting: t.attrShooting, passing: t.attrPassing, dribbling: t.attrDribbling, defending: t.attrDefending, physical: t.attrPhysical }[k]
+                return (
+                  <div key={k} className="flex items-center gap-3">
+                    <span className="text-[12px] font-bold w-14 flex-shrink-0" style={{ color: '#aaa' }}>{label}</span>
+                    <input type="range" min={1} max={99} value={attrs[k]}
+                      onChange={e => setAttrs(a => ({ ...a, [k]: parseInt(e.target.value) }))}
+                      className="flex-1" style={{ accentColor: 'var(--accent)' }} />
+                    <span className="font-display text-[15px] w-7 text-right flex-shrink-0" style={{ color: 'var(--accent)' }}>{attrs[k]}</span>
+                  </div>
+                )
+              })}
             </div>
             <button type="submit" className="w-full py-3 rounded-xl font-black text-sm active:scale-[0.98] transition"
               style={{ background: 'var(--accent)', color: '#0a0a0a' }}>

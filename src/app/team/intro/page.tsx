@@ -10,6 +10,7 @@ import { PullToRefresh } from '@/components/PullToRefresh'
 import { useAppData } from '@/hooks/useAppData'
 import { useI18n } from '@/lib/i18n/context'
 import { PlayersListSkeleton } from '@/components/Skeleton'
+import { overallRating } from '@/components/AbilityHexagon'
 
 const POS_COLOR: Record<PositionType, string> = {
   GK: '#f5a623', DF: '#3b82f6', MF: '#2dd4bf', FW: '#ef4444',
@@ -69,6 +70,12 @@ export default function TeamIntroPage() {
                           ? <img src={p.photo_url} alt={p.name} className="w-full h-full object-cover" />
                           : (p.number ?? '–')}
                       </div>
+                      {p.attributes && (
+                        <div className="flex flex-col items-center px-2 py-1 rounded-lg flex-shrink-0" style={{ background: 'var(--chip)' }}>
+                          <span className="font-display text-[17px] leading-none" style={{ color: 'var(--accent)' }}>{overallRating(p.attributes)}</span>
+                          <span className="text-[8px] font-bold uppercase" style={{ color: 'var(--muted2)' }}>{t.overall}</span>
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <p className="font-bold text-[15px] text-white truncate">{p.name}</p>
                         <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">

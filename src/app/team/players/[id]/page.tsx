@@ -11,6 +11,7 @@ import { formatDate } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n/context'
 import { PlayerDetailSkeleton } from '@/components/Skeleton'
 import { BottomNav } from '@/components/BottomNav'
+import { AbilityHexagon, overallRating } from '@/components/AbilityHexagon'
 
 interface MatchRecord {
   matchId: string
@@ -264,6 +265,37 @@ export default function PlayerStatsPage() {
             </div>
           )}
         </section>
+
+        {/* 능력치 카드 */}
+        {player.attributes && (
+          <section className="p-4" style={cardStyle}>
+            <div className="flex items-center justify-between mb-1">
+              <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.abilityCard}</p>
+              <div className="flex items-baseline gap-1.5">
+                <span className="font-display text-[28px] leading-none" style={{ color: 'var(--accent)' }}>{overallRating(player.attributes)}</span>
+                <span className="text-[10px] font-bold uppercase" style={{ color: 'var(--muted2)' }}>{t.overall}</span>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              <AbilityHexagon attributes={player.attributes} />
+            </div>
+          </section>
+        )}
+
+        {/* 강점 태그 */}
+        {player.strength_tags && player.strength_tags.length > 0 && (
+          <section className="p-4" style={cardStyle}>
+            <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>{t.strengths}</p>
+            <div className="flex flex-wrap gap-2">
+              {player.strength_tags.map((tag, i) => (
+                <span key={i} className="text-[13px] font-bold px-3 py-1.5 rounded-xl"
+                  style={{ background: 'var(--chip)', color: 'var(--chipText)', border: '1px solid var(--line)' }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* 멤버 소개 */}
         {(player.bio || player.preferred_positions?.length || player.preferred_numbers) && (

@@ -40,6 +40,19 @@ export interface TeamMember {
   profile?: Profile;
 }
 
+export interface PlayerAttributes {
+  pace: number;
+  shooting: number;
+  passing: number;
+  dribbling: number;
+  defending: number;
+  physical: number;
+}
+
+export const ATTRIBUTE_KEYS: (keyof PlayerAttributes)[] = [
+  'pace', 'shooting', 'passing', 'dribbling', 'defending', 'physical',
+];
+
 export interface Player {
   id: string;
   team_id: string;
@@ -50,6 +63,8 @@ export interface Player {
   preferred_positions?: string[] | null;
   preferred_numbers?: string | null;
   photo_url?: string | null;
+  attributes?: PlayerAttributes | null;
+  strength_tags?: string[] | null;
   created_at: string;
   updated_at: string;
 }
