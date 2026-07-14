@@ -29,6 +29,11 @@ export function createClient() {
           try { localStorage.removeItem(name) } catch {}
         },
       },
+      // Implicit flow avoids the PKCE code_verifier storage handoff that breaks
+      // in Capacitor (WKWebView ↔ in-app browser). Tokens come back in the URL
+      // fragment and we set the session directly. (mergeDeepRight lets this
+      // override @supabase/ssr's default flowType: 'pkce'.)
+      auth: { flowType: 'implicit' },
     }
   )
   return _client

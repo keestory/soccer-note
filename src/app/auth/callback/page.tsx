@@ -1,44 +1,33 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { Suspense } from 'react'
 
 function CallbackHandler() {
   const router = useRouter()
-  const searchParams = useSearchParams()
 
   useEffect(() => {
-    const handleCallback = async () => {
-      const supabase = createClient()
-      const code = searchParams.get('code')
+    // Web implicit flow: createBrowserClient (detectSessionInUrl) auto-parses
+    // the #access_token fragment and fires SIGNED_IN. We just wait for it.
+    const supabase = createClient()
+    let done = false
+    const finish = (path: string) => { if (!done) { done = true; router.replace(path) } }
 
-      if (code) {
-        // Exchange PKCE code for session
-        const { error } = await supabase.auth.exchangeCodeForSession(code)
-        if (error) {
-          console.error('Auth callback error:', error)
-          router.push('/login')
-          return
-        }
-      }
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (session) finish('/dashboard')
+    })
 
-      // If running inside Capacitor (soccernote:// scheme available),
-      // signal the app to close the browser and refresh session.
-      // We detect Capacitor by checking if the app can open custom schemes.
-      const isCapacitor = !!(window as any).Capacitor?.isNativePlatform?.()
+    // In case the session was already established before we subscribed
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) finish('/dashboard')
+    })
 
-      if (isCapacitor) {
-        // Close SFSafariViewController by redirecting to custom scheme.
-        // The app's AppUrlOpen listener will catch this and refresh the session.
-        window.location.href = 'soccernote://auth/callback?status=ok'
-      } else {
-        router.push('/dashboard')
-      }
-    }
+    // Fallback if nothing arrives
+    const timer = setTimeout(() => finish('/login'), 6000)
 
-    handleCallback()
+    return () => { sub.subscription.unsubscribe(); clearTimeout(timer) }
   }, [])
 
   return (
