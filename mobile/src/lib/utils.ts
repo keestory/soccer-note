@@ -1,10 +1,4 @@
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
 import type { Match, PlayerStats, QuarterRecord } from '@/types/database'
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
 
 // Calculate MVP from match data
 export function calculateMVP(match: Match): PlayerStats | null {
