@@ -107,69 +107,46 @@ export default function Onboarding() {
     setTouchEnd(0)
   }
 
-  /* ── KV Slide (index 0) ─────────────────────────────────────── */
+  /* ── Landing (index 0) ──────────────────────────────────────── */
   if (currentSlide === 0) {
     return (
       <div
-        className="min-h-screen relative flex flex-col safe-top safe-bottom overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0a1f0a 0%, #1a3f1a 50%, #2D5A27 100%)' }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        className="min-h-screen flex flex-col safe-top safe-bottom"
+        style={{ background: '#0a0a0a' }}
       >
-        <div className="field-pattern absolute inset-0 z-0" />
-        <KVBackground />
-
-        {/* Skip */}
-        <div className="relative z-10 flex justify-end p-4">
-          <button onClick={handleSkip} className="text-white/40 text-sm px-3 py-1.5 hover:text-white/70 transition">
-            {t.onboardingSkip}
-          </button>
+        {/* Center: logo + wordmark + tagline */}
+        <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
+          <div
+            className="w-[104px] h-[104px] flex items-center justify-center mb-7"
+            style={{ background: 'var(--accent)', borderRadius: 26 }}
+          >
+            <span className="font-display text-[64px] leading-none" style={{ color: '#0a0a0a' }}>S</span>
+          </div>
+          <span
+            className="font-display text-[42px] leading-none text-white mb-3"
+            style={{ letterSpacing: '0.06em' }}
+          >
+            SOCCERNOTE
+          </span>
+          <p className="text-[15px]" style={{ color: 'var(--muted2)' }}>{t.appTagline}</p>
         </div>
 
-        {/* Center content */}
-        <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-8 text-center -mt-8">
-          {/* Ball with glow */}
-          <div className="relative w-24 h-24 mb-10">
-            <div className="absolute inset-0 bg-lime-400/25 rounded-full blur-2xl scale-150" />
-            <div className="relative w-24 h-24 bg-white/10 rounded-full flex items-center justify-center border border-white/20 shadow-2xl">
-              <span className="text-5xl select-none">⚽</span>
-            </div>
-          </div>
-
-          <h1 className="font-display text-5xl font-black text-white leading-[1.15] mb-4">
-            {t.kvTitle1}<br />{t.kvTitle2}
-          </h1>
-          <p className="text-white/60 text-base leading-relaxed">
-            {t.kvSubtitle}
-          </p>
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="relative z-10 px-6 pb-8 space-y-3">
-          {/* Slide dots */}
-          <div className="flex justify-center gap-2 mb-6">
-            {Array.from({ length: totalSlides }).map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentSlide(i)}
-                className={`h-2 rounded-full transition-all ${i === 0 ? 'w-6 bg-lime-400' : 'w-2 bg-white/25'}`}
-              />
-            ))}
-          </div>
+        {/* Bottom buttons */}
+        <div className="px-6 pb-8 space-y-3">
           <button
-            onClick={handleNext}
-            className="w-full py-4 rounded-2xl font-black text-lg flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition"
-            style={{ background: '#a3e635', color: '#0a1f0a' }}
+            onClick={() => router.push('/signup')}
+            className="w-full py-[18px] rounded-[18px] font-black text-[17px] active:scale-[0.98] transition"
+            style={{ background: 'var(--accent)', color: '#0a0a0a' }}
           >
-            {t.onboardingStart} <ChevronRight className="w-5 h-5" />
+            {t.signupButton}
           </button>
-          <Link
-            href="/login"
-            className="block text-center text-white/40 text-sm py-2 hover:text-white/60 transition"
+          <button
+            onClick={() => router.push('/login')}
+            className="w-full py-[18px] rounded-[18px] font-black text-[17px] text-white active:scale-[0.98] transition"
+            style={{ background: 'var(--card)', border: '1px solid var(--line)' }}
           >
-            {t.haveAccountLink}
-          </Link>
+            {t.landingLogin}
+          </button>
         </div>
       </div>
     )

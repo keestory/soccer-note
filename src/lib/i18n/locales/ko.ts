@@ -731,4 +731,5 @@ export const translations: Translations = {
   strengths: '강점',
   strengthsPlaceholder: '예) 왼발, 헤더, 스루패스',
   rateYourself: '내 능력치를 매겨보세요',
+  landingLogin: '로그인하기',
 }

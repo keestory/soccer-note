@@ -731,4 +731,5 @@ export const translations: Translations = {
   strengths: 'Strengths',
   strengthsPlaceholder: 'e.g. Left foot, Header, Through ball',
   rateYourself: 'Rate yourself',
+  landingLogin: 'Log in',
 }

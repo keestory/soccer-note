@@ -731,4 +731,5 @@ export const translations: Translations = {
   strengths: '強み',
   strengthsPlaceholder: '例）左足、ヘディング、スルーパス',
   rateYourself: '自分の能力値をつけよう',
+  landingLogin: 'ログイン',
 }

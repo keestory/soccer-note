@@ -731,4 +731,5 @@ export const translations: Translations = {
   strengths: 'Stärken',
   strengthsPlaceholder: 'z. B. Linker Fuß, Kopfball, Steilpass',
   rateYourself: 'Bewerte dich selbst',
+  landingLogin: 'Anmelden',
 }
