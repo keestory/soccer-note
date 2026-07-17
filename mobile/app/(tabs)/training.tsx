@@ -29,9 +29,16 @@ export default function Training() {
 
   return (
     <SafeAreaView style={s.fill} edges={['top']}>
-      <View style={s.header}>
-        <Text style={s.title}>{t.trainingLabel}</Text>
-        <Text style={s.sub}>{data.selectedTeam?.name} · {t.trainingCountN.replace('{n}', String(trainings.length))}</Text>
+      <View style={s.headerRow}>
+        <View>
+          <Text style={s.title}>{t.trainingLabel}</Text>
+          <Text style={s.sub}>{data.selectedTeam?.name} · {t.trainingCountN.replace('{n}', String(trainings.length))}</Text>
+        </View>
+        {(data.selectedTeam?.role === 'coach' || data.selectedTeam?.membership?.can_edit_matches) && (
+          <Pressable style={s.addBtn} onPress={() => router.push('/training/new')}>
+            <Text style={s.addText}>＋</Text>
+          </Pressable>
+        )}
       </View>
       <ScrollView contentContainerStyle={{ padding: 20, gap: 8 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.accent} />}>
@@ -67,7 +74,9 @@ export default function Training() {
 const s = StyleSheet.create({
   fill: { flex: 1, backgroundColor: theme.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
-  header: { paddingHorizontal: 20, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: '#1a1a1a' },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: '#1a1a1a' },
+  addBtn: { width: 36, height: 36, borderRadius: 11, backgroundColor: theme.accent, alignItems: 'center', justifyContent: 'center' },
+  addText: { color: '#0a0a0a', fontSize: 22, fontWeight: '900', marginTop: -2 },
   title: { color: theme.white, fontSize: 20, fontWeight: '900' },
   sub: { color: theme.muted2, fontSize: 12, marginTop: 2 },
   card: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 16 },

@@ -85,6 +85,13 @@ export default function Dashboard() {
           </View>
         </View>
 
+        {/* New match */}
+        {(team?.role === 'coach' || team?.membership?.can_edit_matches) && (
+          <Pressable style={s.newMatch} onPress={() => router.push('/match/new')}>
+            <Text style={s.newMatchText}>{t.newMatchRecord}</Text>
+          </Pressable>
+        )}
+
         {/* Recent matches */}
         <Text style={s.sectionTitle}>{t.recentMatches}</Text>
         {data.matches.length === 0 ? (
@@ -174,6 +181,8 @@ const s = StyleSheet.create({
   pct: { color: theme.accent, fontSize: 26, fontWeight: '900' },
   statLabel: { color: theme.muted2, fontSize: 12, marginTop: 4 },
   sectionTitle: { color: theme.white, fontSize: 16, fontWeight: '900', marginTop: 4 },
+  newMatch: { backgroundColor: theme.accent, borderRadius: 14, paddingVertical: 16, alignItems: 'center' },
+  newMatchText: { color: '#0a0a0a', fontSize: 16, fontWeight: '900' },
   matchRow: {
     flexDirection: 'row', alignItems: 'center', backgroundColor: theme.card,
     borderWidth: 1, borderColor: theme.line, borderRadius: 14, padding: 16,
