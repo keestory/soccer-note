@@ -43,9 +43,16 @@ export default function Players() {
           <Text style={st.title}>{t.playersLabel}</Text>
           <Text style={st.sub}>{data.selectedTeam?.name} · {t.playersN.replace('{n}', String(players.length))}</Text>
         </View>
-        <Pressable style={st.introBtn} onPress={() => router.push('/team-intro')}>
-          <Text style={st.introText}>{t.introTab}</Text>
-        </Pressable>
+        <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+          <Pressable style={st.introBtn} onPress={() => router.push('/team-intro')}>
+            <Text style={st.introText}>{t.introTab}</Text>
+          </Pressable>
+          {data.selectedTeam?.role === 'coach' && (
+            <Pressable style={st.addBtn} onPress={() => router.push('/player/form')}>
+              <Text style={st.addText}>＋</Text>
+            </Pressable>
+          )}
+        </View>
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 20, gap: 8 }}
@@ -91,6 +98,8 @@ const st = StyleSheet.create({
   sub: { color: theme.muted2, fontSize: 12, marginTop: 2 },
   introBtn: { backgroundColor: theme.chip, borderRadius: 11, paddingHorizontal: 14, paddingVertical: 9 },
   introText: { color: theme.accent, fontWeight: '800', fontSize: 13 },
+  addBtn: { width: 36, height: 36, borderRadius: 11, backgroundColor: theme.accent, alignItems: 'center', justifyContent: 'center' },
+  addText: { color: '#0a0a0a', fontSize: 22, fontWeight: '900', marginTop: -2 },
   search: {
     backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 12,
     paddingHorizontal: 14, paddingVertical: 12, color: theme.white, fontSize: 14, marginBottom: 4,

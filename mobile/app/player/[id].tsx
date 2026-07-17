@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
-import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Image } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Image, Alert } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ArrowLeft, Star } from 'lucide-react-native'
+import { ArrowLeft, Star, Pencil, Trash2 } from 'lucide-react-native'
 import { theme, POS_COLOR, POS_TEXT } from '@/lib/theme'
 import { useI18n } from '@/lib/i18n/context'
 import { supabase } from '@/lib/supabase'
+import { useAppData } from '@/hooks/useAppData'
+import { refreshData } from '@/lib/dataStore'
 import type { Player } from '@/types/database'
 import { AbilityHexagon } from '@/components/AbilityHexagon'
 import { overallRating } from '@/lib/attributes'
@@ -14,6 +16,8 @@ export default function PlayerDetail() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const { t } = useI18n()
+  const data = useAppData()
+  const isCoach = data.selectedTeam?.role === 'coach'
   const [player, setPlayer] = useState<Player | null>(null)
   const [stats, setStats] = useState({ games: 0, goals: 0, assists: 0, cleanSheets: 0, avg: null as number | null, matchAtt: 0, trainAtt: 0 })
   const [loading, setLoading] = useState(true)
@@ -51,6 +55,20 @@ export default function PlayerDetail() {
     })()
   }, [id])
 
+  const onDelete = () => {
+    Alert.alert(t.deletePlayerTitle, t.deletePlayerDesc, [
+      { text: t.cancel, style: 'cancel' },
+      {
+        text: t.delete, style: 'destructive', onPress: async () => {
+          const { error } = await supabase.from('players').delete().eq('id', id)
+          if (error) { Alert.alert(t.deleteFailed, error.message); return }
+          await refreshData()
+          router.back()
+        },
+      },
+    ])
+  }
+
   if (loading || !player) return <View style={[s.fill, s.center]}><ActivityIndicator color={theme.accent} /></View>
 
   const posColor = POS_COLOR[player.default_position]
@@ -60,6 +78,12 @@ export default function PlayerDetail() {
       <View style={s.header}>
         <Pressable onPress={() => router.back()} hitSlop={12}><ArrowLeft color="#888" size={22} /></Pressable>
         <Text style={s.headerTitle}>{player.name}</Text>
+        {isCoach && (
+          <View style={{ flexDirection: 'row', gap: 16, marginLeft: 'auto' }}>
+            <Pressable onPress={() => router.push(`/player/form?id=${id}`)} hitSlop={12}><Pencil color={theme.accent} size={20} /></Pressable>
+            <Pressable onPress={onDelete} hitSlop={12}><Trash2 color={theme.danger} size={20} /></Pressable>
+          </View>
+        )}
       </View>
       <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
         <View style={[s.card, { flexDirection: 'row', alignItems: 'center', gap: 16 }]}>
