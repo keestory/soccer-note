@@ -6,6 +6,7 @@ import { ArrowLeft, MapPin } from 'lucide-react-native'
 import { theme } from '@/lib/theme'
 import { useI18n } from '@/lib/i18n/context'
 import { supabase } from '@/lib/supabase'
+import { useAppData } from '@/hooks/useAppData'
 import type { Match } from '@/types/database'
 import { calculateMVP, formatDate } from '@/lib/utils'
 
@@ -13,6 +14,8 @@ export default function MatchDetail() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const { t } = useI18n()
+  const data = useAppData()
+  const isCoach = data.selectedTeam?.role === 'coach' || data.selectedTeam?.membership?.can_edit_quarters
   const [match, setMatch] = useState<Match | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -68,9 +71,10 @@ export default function MatchDetail() {
                 const hs = q.quarter_records?.filter((r: any) => r.is_home !== false).reduce((sum: number, r: any) => sum + (r.goals || 0), 0) ?? 0
                 const as_ = q.quarter_records?.filter((r: any) => r.is_home === false).reduce((sum: number, r: any) => sum + (r.goals || 0), 0) ?? 0
                 return (
-                  <View key={q.id} style={s.qChip}>
+                  <Pressable key={q.id} style={s.qChip} disabled={!isCoach}
+                    onPress={() => router.push(`/match/${match.id}/quarter/${q.quarter_number}`)}>
                     <Text style={s.qText}>Q{q.quarter_number} {hs}·{as_}</Text>
-                  </View>
+                  </Pressable>
                 )
               })}
             </View>
@@ -83,10 +87,19 @@ export default function MatchDetail() {
           )}
         </View>
 
-        <View style={[s.card, { alignItems: 'center', paddingVertical: 24 }]}>
-          <Text style={{ fontSize: 28, marginBottom: 8 }}>🚧</Text>
-          <Text style={s.muted}>쿼터별 기록 입력은 다음 단계에서 이식됩니다</Text>
-        </View>
+        {isCoach && quarters.length > 0 && (
+          <View style={s.card}>
+            <Text style={s.cardLabel}>{t.quarterRecord}</Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+              {quarters.map((q: any) => (
+                <Pressable key={q.id} style={s.qEditBtn}
+                  onPress={() => router.push(`/match/${match.id}/quarter/${q.quarter_number}`)}>
+                  <Text style={s.qEditText}>{t.quarterN.replace('{n}', String(q.quarter_number))}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   )
@@ -105,4 +118,7 @@ const s = StyleSheet.create({
   dash: { fontSize: 48, color: theme.dash, fontWeight: '900' },
   qChip: { flex: 1, backgroundColor: theme.chip, borderRadius: 8, paddingVertical: 6, alignItems: 'center' },
   qText: { color: theme.chipText, fontSize: 12, fontWeight: '700' },
+  cardLabel: { color: theme.muted2, fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1 },
+  qEditBtn: { backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: theme.line, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10 },
+  qEditText: { color: theme.accent, fontWeight: '800', fontSize: 13 },
 })
