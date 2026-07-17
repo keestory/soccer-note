@@ -750,4 +750,5 @@ export interface Translations {
   strengths: string
   strengthsPlaceholder: string
   rateYourself: string
+  landingLogin: string
 }

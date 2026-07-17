@@ -731,4 +731,5 @@ export const translations: Translations = {
   strengths: 'Fortalezas',
   strengthsPlaceholder: 'ej. Pie izquierdo, Cabeza, Pase al hueco',
   rateYourself: 'Autoevalúate',
+  landingLogin: 'Iniciar sesión',
 }
