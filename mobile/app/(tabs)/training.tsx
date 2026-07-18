@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   View, Text, Pressable, StyleSheet, ScrollView, RefreshControl, ActivityIndicator,
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Clock, MapPin } from 'lucide-react-native'
-import { theme } from '@/lib/theme'
+import { useTheme } from '@/lib/theme-context'
+import type { Theme } from '@/lib/theme'
 import { useI18n } from '@/lib/i18n/context'
 import { useAppData } from '@/hooks/useAppData'
 import { TRAINING_TYPE_COLORS } from '@/lib/training-colors'
@@ -15,6 +16,8 @@ import type { TrainingType } from '@/types/database'
 export default function Training() {
   const router = useRouter()
   const { t } = useI18n()
+  const theme = useTheme()
+  const s = useMemo(() => makeStyles(theme), [theme])
   const data = useAppData()
   const [refreshing, setRefreshing] = useState(false)
 
@@ -44,7 +47,7 @@ export default function Training() {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.accent} />}>
         {trainings.length === 0 ? (
           <View style={[s.card, { alignItems: 'center', paddingVertical: 32 }]}>
-            <Text style={{ color: '#555' }}>{t.noTrainings}</Text>
+            <Text style={{ color: theme.textMute }}>{t.noTrainings}</Text>
           </View>
         ) : trainings.map((tr) => {
           const color = TRAINING_TYPE_COLORS[tr.training_type] || '#888'
@@ -71,19 +74,19 @@ export default function Training() {
   )
 }
 
-const s = StyleSheet.create({
+const makeStyles = (theme: Theme) => StyleSheet.create({
   fill: { flex: 1, backgroundColor: theme.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: '#1a1a1a' },
-  addBtn: { width: 36, height: 36, borderRadius: 11, backgroundColor: theme.accent, alignItems: 'center', justifyContent: 'center' },
-  addText: { color: '#0a0a0a', fontSize: 22, fontWeight: '900', marginTop: -2 },
-  title: { color: theme.white, fontSize: 20, fontWeight: '900' },
-  sub: { color: theme.muted2, fontSize: 12, marginTop: 2 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: theme.line },
+  addBtn: { width: 36, height: 36, borderRadius: 11, backgroundColor: theme.btnBg, alignItems: 'center', justifyContent: 'center' },
+  addText: { color: theme.btnText, fontSize: 22, fontWeight: '900', marginTop: -2 },
+  title: { color: theme.text, fontSize: 20, fontWeight: '900' },
+  sub: { color: theme.textMute, fontSize: 12, marginTop: 2 },
   card: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 16 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 14, padding: 16 },
   dot: { width: 34, height: 34, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
-  type: { color: theme.white, fontSize: 14, fontWeight: '800' },
+  type: { color: theme.text, fontSize: 14, fontWeight: '800' },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: 3 },
-  meta: { color: theme.muted2, fontSize: 12 },
-  date: { color: '#555', fontSize: 12 },
+  meta: { color: theme.textMute, fontSize: 12 },
+  date: { color: theme.textMute, fontSize: 12 },
 })

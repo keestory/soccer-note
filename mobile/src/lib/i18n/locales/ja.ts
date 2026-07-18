@@ -732,4 +732,8 @@ export const translations: Translations = {
   strengthsPlaceholder: '例）左足、ヘディング、スルーパス',
   rateYourself: '自分の能力値をつけよう',
   landingLogin: 'ログイン',
+  themeLabel: 'テーマ',
+  themeSystem: 'システム',
+  themeLight: 'ライト',
+  themeDark: 'ダーク',
 }

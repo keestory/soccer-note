@@ -1,19 +1,21 @@
 import { Tabs } from 'expo-router'
 import { Trophy, Users, Dumbbell, Swords, Settings } from 'lucide-react-native'
-import { theme } from '@/lib/theme'
+import { useTheme } from '@/lib/theme-context'
 import { useI18n } from '@/lib/i18n/context'
 
 export default function TabsLayout() {
   const { t } = useI18n()
+  const theme = useTheme()
+  const active = theme.isDark ? theme.accent : theme.text
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: theme.accent,
-        tabBarInactiveTintColor: '#5c5c5c',
+        tabBarActiveTintColor: active,
+        tabBarInactiveTintColor: theme.textMute,
         tabBarStyle: {
           backgroundColor: theme.nav,
-          borderTopColor: '#1a1a1a',
+          borderTopColor: theme.line,
           height: 84,
           paddingTop: 8,
         },

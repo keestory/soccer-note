@@ -751,4 +751,8 @@ export interface Translations {
   strengthsPlaceholder: string
   rateYourself: string
   landingLogin: string
+  themeLabel: string
+  themeSystem: string
+  themeLight: string
+  themeDark: string
 }

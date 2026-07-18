@@ -732,4 +732,8 @@ export const translations: Translations = {
   strengthsPlaceholder: 'ex. Pied gauche, Tête, Passe en profondeur',
   rateYourself: 'Auto-évaluez-vous',
   landingLogin: 'Se connecter',
+  themeLabel: 'Thème',
+  themeSystem: 'Système',
+  themeLight: 'Clair',
+  themeDark: 'Sombre',
 }

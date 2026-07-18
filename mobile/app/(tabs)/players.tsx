@@ -4,13 +4,16 @@ import {
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { theme, POS_COLOR, POS_TEXT } from '@/lib/theme'
+import { POS_COLOR, POS_TEXT, type Theme } from '@/lib/theme'
+import { useTheme } from '@/lib/theme-context'
 import { useI18n } from '@/lib/i18n/context'
 import { useAppData } from '@/hooks/useAppData'
 
 export default function Players() {
   const router = useRouter()
   const { t } = useI18n()
+  const theme = useTheme()
+  const st = useMemo(() => makeStyles(theme), [theme])
   const data = useAppData()
   const [search, setSearch] = useState('')
   const [refreshing, setRefreshing] = useState(false)
@@ -57,11 +60,11 @@ export default function Players() {
 
       <ScrollView contentContainerStyle={{ padding: 20, gap: 8 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.accent} />}>
-        <TextInput style={st.search} placeholder={t.searchPlayer} placeholderTextColor="#555"
+        <TextInput style={st.search} placeholder={t.searchPlayer} placeholderTextColor={theme.textMute}
           value={search} onChangeText={setSearch} />
         {filtered.length === 0 ? (
           <View style={[st.card, { alignItems: 'center', paddingVertical: 32 }]}>
-            <Text style={{ color: '#555' }}>{t.noPlayers}</Text>
+            <Text style={{ color: theme.textMute }}>{t.noPlayers}</Text>
           </View>
         ) : filtered.map((p) => (
           <Pressable key={p.id} style={st.row} onPress={() => router.push(`/player/${p.id}`)}>
@@ -69,7 +72,7 @@ export default function Players() {
               <Text style={{ color: POS_TEXT[p.default_position], fontWeight: '900', fontSize: 10 }}>{p.default_position}</Text>
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={st.name}>{p.name} <Text style={{ color: '#555' }}>#{p.number ?? '–'}</Text></Text>
+              <Text style={st.name}>{p.name} <Text style={{ color: theme.textMute }}>#{p.number ?? '–'}</Text></Text>
               <Text style={st.meta}>
                 {p.default_position === 'GK'
                   ? `${t.cleanSheet} ${p.cleanSheets}`
@@ -87,22 +90,22 @@ export default function Players() {
   )
 }
 
-const st = StyleSheet.create({
+const makeStyles = (theme: Theme) => StyleSheet.create({
   fill: { flex: 1, backgroundColor: theme.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
   header: {
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingHorizontal: 20, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: '#1a1a1a',
+    paddingHorizontal: 20, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: theme.line,
   },
-  title: { color: theme.white, fontSize: 20, fontWeight: '900' },
-  sub: { color: theme.muted2, fontSize: 12, marginTop: 2 },
+  title: { color: theme.text, fontSize: 20, fontWeight: '900' },
+  sub: { color: theme.textMute, fontSize: 12, marginTop: 2 },
   introBtn: { backgroundColor: theme.chip, borderRadius: 11, paddingHorizontal: 14, paddingVertical: 9 },
-  introText: { color: theme.accent, fontWeight: '800', fontSize: 13 },
-  addBtn: { width: 36, height: 36, borderRadius: 11, backgroundColor: theme.accent, alignItems: 'center', justifyContent: 'center' },
-  addText: { color: '#0a0a0a', fontSize: 22, fontWeight: '900', marginTop: -2 },
+  introText: { color: theme.isDark ? theme.accent : theme.text, fontWeight: '800', fontSize: 13 },
+  addBtn: { width: 36, height: 36, borderRadius: 11, backgroundColor: theme.btnBg, alignItems: 'center', justifyContent: 'center' },
+  addText: { color: theme.btnText, fontSize: 22, fontWeight: '900', marginTop: -2 },
   search: {
     backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 12,
-    paddingHorizontal: 14, paddingVertical: 12, color: theme.white, fontSize: 14, marginBottom: 4,
+    paddingHorizontal: 14, paddingVertical: 12, color: theme.text, fontSize: 14, marginBottom: 4,
   },
   card: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 16 },
   row: {
@@ -110,8 +113,8 @@ const st = StyleSheet.create({
     borderWidth: 1, borderColor: theme.line, borderRadius: 14, padding: 16,
   },
   posBadge: { width: 34, height: 34, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
-  name: { color: theme.white, fontSize: 14, fontWeight: '800' },
-  meta: { color: theme.muted2, fontSize: 12, marginTop: 2 },
-  rating: { color: theme.accent, fontSize: 22, fontWeight: '900' },
-  ratingLabel: { color: '#555', fontSize: 9, marginTop: 2 },
+  name: { color: theme.text, fontSize: 14, fontWeight: '800' },
+  meta: { color: theme.textMute, fontSize: 12, marginTop: 2 },
+  rating: { color: theme.isDark ? theme.accent : theme.text, fontSize: 22, fontWeight: '900' },
+  ratingLabel: { color: theme.textMute, fontSize: 9, marginTop: 2 },
 })
