@@ -1,7 +1,7 @@
 import Svg, { Polygon, Line, Circle, Text as SvgText, TSpan } from 'react-native-svg'
 import type { PlayerAttributes } from '@/types/database'
 import { ATTRIBUTE_KEYS } from '@/types/database'
-import { theme } from '@/lib/theme'
+import { useTheme } from '@/lib/theme-context'
 import { useI18n } from '@/lib/i18n/context'
 
 const LABEL_KEYS: Record<keyof PlayerAttributes, keyof ReturnType<typeof useI18n>['t']> = {
@@ -11,8 +11,10 @@ const LABEL_KEYS: Record<keyof PlayerAttributes, keyof ReturnType<typeof useI18n
 
 export function AbilityHexagon({ attributes, size = 240 }: { attributes: PlayerAttributes; size?: number }) {
   const { t } = useI18n()
+  const theme = useTheme()
   const cx = size / 2, cy = size / 2, R = size * 0.32
-  const accent = theme.accent
+  // Volt is invisible on the light card — use navy for the radar in light mode.
+  const accent = theme.isDark ? theme.accent : theme.text
 
   const pt = (i: number, r: number): [number, number] => {
     const ang = -Math.PI / 2 + (i * 2 * Math.PI) / 6
@@ -38,7 +40,7 @@ export function AbilityHexagon({ attributes, size = 240 }: { attributes: PlayerA
       {ATTRIBUTE_KEYS.map((k, i) => {
         const [x, y] = pt(i, 1.3)
         return (
-          <SvgText key={k} x={x} y={y} fill="#fff" fontSize={size * 0.052} fontWeight="800" textAnchor="middle" alignmentBaseline="middle">
+          <SvgText key={k} x={x} y={y} fill={theme.text} fontSize={size * 0.052} fontWeight="800" textAnchor="middle" alignmentBaseline="middle">
             {t[LABEL_KEYS[k]]}
             <TSpan fill={accent} dx={3}>{String(attributes[k] || 0)}</TSpan>
           </SvgText>

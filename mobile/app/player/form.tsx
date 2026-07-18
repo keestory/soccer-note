@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   View, Text, TextInput, Pressable, StyleSheet, ScrollView, Alert, ActivityIndicator, Image,
 } from 'react-native'
@@ -8,7 +8,8 @@ import { ArrowLeft, Camera } from 'lucide-react-native'
 import Slider from '@react-native-community/slider'
 import * as ImagePicker from 'expo-image-picker'
 import { decode } from 'base64-arraybuffer'
-import { theme, POS_COLOR, POS_TEXT } from '@/lib/theme'
+import { POS_COLOR, POS_TEXT, type Theme } from '@/lib/theme'
+import { useTheme } from '@/lib/theme-context'
 import { useI18n } from '@/lib/i18n/context'
 import { supabase } from '@/lib/supabase'
 import { getStore, refreshData } from '@/lib/dataStore'
@@ -21,6 +22,9 @@ export default function PlayerForm() {
   const { id } = useLocalSearchParams<{ id?: string }>()
   const router = useRouter()
   const { t } = useI18n()
+  const theme = useTheme()
+  const s = useMemo(() => makeStyles(theme), [theme])
+  const accentText = theme.isDark ? theme.accent : theme.text
   const editing = !!id
 
   const [name, setName] = useState('')
@@ -97,7 +101,7 @@ export default function PlayerForm() {
   return (
     <SafeAreaView style={s.fill} edges={['top', 'bottom']}>
       <View style={s.header}>
-        <Pressable onPress={() => router.back()} hitSlop={12}><ArrowLeft color="#888" size={22} /></Pressable>
+        <Pressable onPress={() => router.back()} hitSlop={12}><ArrowLeft color={theme.textMute} size={22} /></Pressable>
         <Text style={s.headerTitle}>{editing ? t.editPlayerTitle : t.addPlayerTitle}</Text>
       </View>
       <ScrollView contentContainerStyle={{ padding: 20, gap: 12 }} keyboardShouldPersistTaps="handled">
@@ -111,15 +115,15 @@ export default function PlayerForm() {
         </Pressable>
 
         <View style={{ flexDirection: 'row', gap: 10 }}>
-          <TextInput style={[s.input, { flex: 2 }]} value={name} onChangeText={setName} placeholder={t.playerName} placeholderTextColor="#555" />
-          <TextInput style={[s.input, { flex: 1 }]} value={number} onChangeText={setNumber} placeholder="#" keyboardType="number-pad" placeholderTextColor="#555" />
+          <TextInput style={[s.input, { flex: 2 }]} value={name} onChangeText={setName} placeholder={t.playerName} placeholderTextColor={theme.textMute} />
+          <TextInput style={[s.input, { flex: 1 }]} value={number} onChangeText={setNumber} placeholder="#" keyboardType="number-pad" placeholderTextColor={theme.textMute} />
         </View>
 
         <View style={{ flexDirection: 'row', gap: 8 }}>
           {(['GK', 'DF', 'MF', 'FW'] as PositionType[]).map((p) => (
             <Pressable key={p} onPress={() => setPosition(p)}
-              style={[s.posBtn, { backgroundColor: position === p ? POS_COLOR[p] : '#1a1a1a' }]}>
-              <Text style={{ color: position === p ? POS_TEXT[p] : '#666', fontWeight: '800' }}>{p}</Text>
+              style={[s.posBtn, { backgroundColor: position === p ? POS_COLOR[p] : theme.card2 }]}>
+              <Text style={{ color: position === p ? POS_TEXT[p] : theme.textMute, fontWeight: '800' }}>{p}</Text>
             </Pressable>
           ))}
         </View>
@@ -131,39 +135,39 @@ export default function PlayerForm() {
             const label = { pace: t.attrPace, shooting: t.attrShooting, passing: t.attrPassing, dribbling: t.attrDribbling, defending: t.attrDefending, physical: t.attrPhysical }[k]
             return (
               <View key={k} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 }}>
-                <Text style={{ color: '#aaa', width: 52, fontSize: 12, fontWeight: '700' }}>{label}</Text>
+                <Text style={{ color: theme.text2, width: 52, fontSize: 12, fontWeight: '700' }}>{label}</Text>
                 <Slider style={{ flex: 1 }} minimumValue={1} maximumValue={99} step={1}
                   value={attrs[k]} onValueChange={(v) => setAttrs((a) => ({ ...a, [k]: Math.round(v) }))}
-                  minimumTrackTintColor={theme.accent} maximumTrackTintColor="#2a2a2a" thumbTintColor={theme.accent} />
-                <Text style={{ color: theme.accent, width: 26, textAlign: 'right', fontWeight: '900' }}>{attrs[k]}</Text>
+                  minimumTrackTintColor={accentText} maximumTrackTintColor={theme.inputLine} thumbTintColor={accentText} />
+                <Text style={{ color: accentText, width: 26, textAlign: 'right', fontWeight: '900' }}>{attrs[k]}</Text>
               </View>
             )
           })}
         </View>
 
-        <TextInput style={s.input} value={preferredPositions} onChangeText={setPreferredPositions} placeholder={t.preferredPositionsPlaceholder} placeholderTextColor="#555" />
-        <TextInput style={s.input} value={preferredNumbers} onChangeText={setPreferredNumbers} placeholder={t.preferredNumbersPlaceholder} placeholderTextColor="#555" />
-        <TextInput style={s.input} value={strengthTags} onChangeText={setStrengthTags} placeholder={t.strengthsPlaceholder} placeholderTextColor="#555" />
-        <TextInput style={[s.input, { height: 90, textAlignVertical: 'top' }]} value={bio} onChangeText={setBio} placeholder={t.selfIntroPlaceholder} placeholderTextColor="#555" multiline />
+        <TextInput style={s.input} value={preferredPositions} onChangeText={setPreferredPositions} placeholder={t.preferredPositionsPlaceholder} placeholderTextColor={theme.textMute} />
+        <TextInput style={s.input} value={preferredNumbers} onChangeText={setPreferredNumbers} placeholder={t.preferredNumbersPlaceholder} placeholderTextColor={theme.textMute} />
+        <TextInput style={s.input} value={strengthTags} onChangeText={setStrengthTags} placeholder={t.strengthsPlaceholder} placeholderTextColor={theme.textMute} />
+        <TextInput style={[s.input, { height: 90, textAlignVertical: 'top' }]} value={bio} onChangeText={setBio} placeholder={t.selfIntroPlaceholder} placeholderTextColor={theme.textMute} multiline />
 
         <Pressable style={s.btn} onPress={submit} disabled={saving}>
-          {saving ? <ActivityIndicator color="#0a0a0a" /> : <Text style={s.btnText}>{editing ? t.editDone : t.addPlayer}</Text>}
+          {saving ? <ActivityIndicator color={theme.btnText} /> : <Text style={s.btnText}>{editing ? t.editDone : t.addPlayer}</Text>}
         </Pressable>
       </ScrollView>
     </SafeAreaView>
   )
 }
 
-const s = StyleSheet.create({
+const makeStyles = (theme: Theme) => StyleSheet.create({
   fill: { flex: 1, backgroundColor: theme.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: theme.line },
-  headerTitle: { color: theme.white, fontSize: 16, fontWeight: '900' },
+  headerTitle: { color: theme.text, fontSize: 16, fontWeight: '900' },
   photo: { width: 96, height: 96, borderRadius: 24, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  input: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, color: theme.white, fontSize: 15 },
+  input: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, color: theme.text, fontSize: 15 },
   posBtn: { flex: 1, borderRadius: 10, paddingVertical: 12, alignItems: 'center' },
   card: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 16, padding: 16 },
-  cardLabel: { color: theme.muted2, fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1 },
-  btn: { backgroundColor: theme.accent, borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 4 },
-  btnText: { color: '#0a0a0a', fontWeight: '900', fontSize: 16 },
+  cardLabel: { color: theme.textMute, fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1 },
+  btn: { backgroundColor: theme.btnBg, borderRadius: 14, paddingVertical: 16, alignItems: 'center', marginTop: 4 },
+  btnText: { color: theme.btnText, fontWeight: '900', fontSize: 16 },
 })

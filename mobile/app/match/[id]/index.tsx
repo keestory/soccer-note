@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ArrowLeft, MapPin } from 'lucide-react-native'
-import { theme } from '@/lib/theme'
+import { useTheme } from '@/lib/theme-context'
+import type { Theme } from '@/lib/theme'
 import { useI18n } from '@/lib/i18n/context'
 import { supabase } from '@/lib/supabase'
 import { useAppData } from '@/hooks/useAppData'
@@ -14,6 +15,8 @@ export default function MatchDetail() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
   const { t } = useI18n()
+  const theme = useTheme()
+  const s = useMemo(() => makeStyles(theme), [theme])
   const data = useAppData()
   const isCoach = data.selectedTeam?.role === 'coach' || data.selectedTeam?.membership?.can_edit_quarters
   const [match, setMatch] = useState<Match | null>(null)
@@ -41,23 +44,23 @@ export default function MatchDetail() {
   return (
     <SafeAreaView style={s.fill} edges={['top', 'bottom']}>
       <View style={s.header}>
-        <Pressable onPress={() => router.back()} hitSlop={12}><ArrowLeft color="#888" size={22} /></Pressable>
+        <Pressable onPress={() => router.back()} hitSlop={12}><ArrowLeft color={theme.textMute} size={22} /></Pressable>
         <View>
           <Text style={s.headerTitle}>vs {match.opponent}</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
             <Text style={s.headerSub}>{formatDate(match.match_date)}</Text>
-            {match.location ? <><MapPin color="#555" size={11} /><Text style={s.headerSub}>{match.location}</Text></> : null}
+            {match.location ? <><MapPin color={theme.textMute} size={11} /><Text style={s.headerSub}>{match.location}</Text></> : null}
           </View>
         </View>
       </View>
 
       <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }}>
-        {/* Scoreboard */}
-        <View style={s.card}>
+        {/* Scoreboard (navy hero surface in both themes) */}
+        <View style={s.hero}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-            <Text style={s.muted}>{formatDate(match.match_date)}</Text>
-            <View style={[s.resultPill, { backgroundColor: isWin ? theme.accent : isLoss ? 'rgba(192,90,77,.14)' : '#222' }]}>
-              <Text style={{ color: isWin ? '#0a0a0a' : isLoss ? '#e07a6d' : '#888', fontWeight: '900', fontSize: 12 }}>{result}</Text>
+            <Text style={s.heroMuted}>{formatDate(match.match_date)}</Text>
+            <View style={[s.resultPill, { backgroundColor: isWin ? theme.accent : isLoss ? theme.dangerSoft : theme.hero2 }]}>
+              <Text style={{ color: isWin ? theme.onAccent : isLoss ? theme.dangerText : theme.heroMute, fontWeight: '900', fontSize: 12 }}>{result}</Text>
             </View>
           </View>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
@@ -82,7 +85,7 @@ export default function MatchDetail() {
           {mvp && (
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 12 }}>
               <Text style={{ color: theme.accent }}>★</Text>
-              <Text style={s.muted}>MVP {mvp.playerName} · {mvp.averageRating.toFixed(1)}</Text>
+              <Text style={s.heroMuted}>MVP {mvp.playerName} · {mvp.averageRating.toFixed(1)}</Text>
             </View>
           )}
         </View>
@@ -105,20 +108,21 @@ export default function MatchDetail() {
   )
 }
 
-const s = StyleSheet.create({
+const makeStyles = (theme: Theme) => StyleSheet.create({
   fill: { flex: 1, backgroundColor: theme.bg },
   center: { alignItems: 'center', justifyContent: 'center' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: theme.line },
-  headerTitle: { color: theme.white, fontSize: 16, fontWeight: '900' },
-  headerSub: { color: '#777', fontSize: 12 },
+  headerTitle: { color: theme.text, fontSize: 16, fontWeight: '900' },
+  headerSub: { color: theme.textMute, fontSize: 12 },
+  hero: { backgroundColor: theme.hero, borderRadius: 20, padding: 20 },
   card: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 20, padding: 20 },
-  muted: { color: theme.muted2, fontSize: 12 },
+  heroMuted: { color: theme.heroMute, fontSize: 12 },
   resultPill: { borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 },
   score: { fontSize: 72, fontWeight: '900' },
-  dash: { fontSize: 48, color: theme.dash, fontWeight: '900' },
-  qChip: { flex: 1, backgroundColor: theme.chip, borderRadius: 8, paddingVertical: 6, alignItems: 'center' },
-  qText: { color: theme.chipText, fontSize: 12, fontWeight: '700' },
-  cardLabel: { color: theme.muted2, fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1 },
-  qEditBtn: { backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: theme.line, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10 },
-  qEditText: { color: theme.accent, fontWeight: '800', fontSize: 13 },
+  dash: { fontSize: 48, color: theme.heroDash, fontWeight: '900' },
+  qChip: { flex: 1, backgroundColor: theme.hero2, borderRadius: 8, paddingVertical: 6, alignItems: 'center' },
+  qText: { color: theme.heroMute, fontSize: 12, fontWeight: '700' },
+  cardLabel: { color: theme.textMute, fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1 },
+  qEditBtn: { backgroundColor: theme.card2, borderWidth: 1, borderColor: theme.line, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 10 },
+  qEditText: { color: theme.isDark ? theme.accent : theme.text, fontWeight: '800', fontSize: 13 },
 })

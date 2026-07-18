@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Modal,
   TextInput, Alert, PanResponder, Image, Switch,
@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { ArrowLeft, Plus, X, Check, Trash2, ArrowRightLeft, Camera } from 'lucide-react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { decode } from 'base64-arraybuffer'
-import { theme, POS_COLOR, POS_TEXT } from '@/lib/theme'
+import { POS_COLOR, POS_TEXT, type Theme } from '@/lib/theme'
+import { useTheme } from '@/lib/theme-context'
 import { useI18n } from '@/lib/i18n/context'
 import { supabase } from '@/lib/supabase'
 import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType } from '@/types/database'
@@ -42,11 +43,11 @@ interface FieldPlayer {
   mediaUrls: string[]
 }
 
-function ratingColor(r: number | null): string {
-  if (r === null) return '#666'
+function ratingColor(r: number | null, theme: Theme): string {
+  if (r === null) return theme.textMute
   if (r <= 3) return theme.danger
   if (r <= 6) return '#f5a623'
-  return theme.accent
+  return theme.isDark ? theme.accent : theme.text
 }
 
 function toFieldPlayer(r: QuarterRecord): FieldPlayer {
@@ -73,6 +74,9 @@ export default function QuarterEdit() {
   const quarterNumber = parseInt(q || '1')
   const router = useRouter()
   const { t } = useI18n()
+  const theme = useTheme()
+  const s = useMemo(() => makeStyles(theme), [theme])
+  const accentText = theme.isDark ? theme.accent : theme.text
 
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -257,10 +261,10 @@ export default function QuarterEdit() {
   return (
     <SafeAreaView style={s.fill} edges={['top', 'bottom']}>
       <View style={s.header}>
-        <Pressable onPress={() => router.back()} hitSlop={12}><ArrowLeft color="#888" size={22} /></Pressable>
+        <Pressable onPress={() => router.back()} hitSlop={12}><ArrowLeft color={theme.textMute} size={22} /></Pressable>
         <Text style={s.headerTitle}>{t.quarterN.replace('{n}', String(quarterNumber))}</Text>
         <Pressable style={[s.saveBtn, saving && { opacity: 0.5 }]} onPress={saveAll} disabled={saving}>
-          {saving ? <ActivityIndicator color="#0a0a0a" size="small" />
+          {saving ? <ActivityIndicator color={theme.btnText} size="small" />
             : <Text style={s.saveBtnText}>{t.saveQuarter}</Text>}
         </Pressable>
       </View>
@@ -283,7 +287,7 @@ export default function QuarterEdit() {
           <View style={[s.fieldBox, { right: 0 }]} />
           {fieldPlayers.map((fp) => (
             <FieldToken key={fp.id} fp={fp} fieldW={fieldSize.w} fieldH={fieldSize.h}
-              selected={fp.id === selectedId} onMove={movePlayer} onSelect={() => setSelectedId(fp.id)} />
+              selected={fp.id === selectedId} onMove={movePlayer} onSelect={() => setSelectedId(fp.id)} s={s} theme={theme} />
           ))}
           {fieldPlayers.length === 0 && (
             <View style={s.center}><Text style={{ color: 'rgba(255,255,255,0.5)', fontWeight: '700' }}>{t.addPlayersFirst}</Text></View>
@@ -295,11 +299,11 @@ export default function QuarterEdit() {
           <Text style={s.sectionTitle}>{t.selectPlayersToAdd} · {available.length}</Text>
           <View style={{ flexDirection: 'row', gap: 8 }}>
             <Pressable style={s.smallBtn} onPress={() => setShowSub(true)}>
-              <ArrowRightLeft color={theme.accent} size={14} />
+              <ArrowRightLeft color={accentText} size={14} />
               <Text style={s.smallBtnText}>{t.substitution}</Text>
             </Pressable>
             <Pressable style={s.smallBtn} onPress={() => setShowPicker(true)}>
-              <Plus color={theme.accent} size={14} />
+              <Plus color={accentText} size={14} />
               <Text style={s.smallBtnText}>{t.addPlayer}</Text>
             </Pressable>
           </View>
@@ -315,9 +319,9 @@ export default function QuarterEdit() {
                 <Text style={s.subText}>
                   <Text style={{ color: theme.danger }}>▼ {sb.player_out?.name}</Text>
                   {'  '}
-                  <Text style={{ color: theme.accent }}>▲ {sb.player_in?.name}</Text>
+                  <Text style={{ color: accentText }}>▲ {sb.player_in?.name}</Text>
                 </Text>
-                <Pressable onPress={() => delSub(sb.id)} hitSlop={10}><Trash2 color="#666" size={16} /></Pressable>
+                <Pressable onPress={() => delSub(sb.id)} hitSlop={10}><Trash2 color={theme.textMute} size={16} /></Pressable>
               </View>
             ))}
           </View>
@@ -345,37 +349,37 @@ export default function QuarterEdit() {
                 <View>
                   <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 6 }}>
                     <Text style={s.cardLabel}>{t.rating}</Text>
-                    <Text style={{ color: ratingColor(selected.rating), fontWeight: '900', fontSize: 16 }}>
+                    <Text style={{ color: ratingColor(selected.rating, theme), fontWeight: '900', fontSize: 16 }}>
                       {selected.rating !== null ? selected.rating.toFixed(1) : '–'}
                     </Text>
                   </View>
                   <View style={{ flexDirection: 'row', gap: 5 }}>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
-                      <Pressable key={n} style={[s.ratePill, selected.rating === n && { backgroundColor: ratingColor(n) }]}
+                      <Pressable key={n} style={[s.ratePill, selected.rating === n && { backgroundColor: ratingColor(n, theme) }]}
                         onPress={() => update(selected.id, { rating: selected.rating === n ? null : n })}>
-                        <Text style={{ color: selected.rating === n ? '#0a0a0a' : '#888', fontWeight: '800', fontSize: 12 }}>{n}</Text>
+                        <Text style={{ color: selected.rating === n ? '#0a0a0a' : theme.textMute, fontWeight: '800', fontSize: 12 }}>{n}</Text>
                       </Pressable>
                     ))}
                   </View>
                 </View>
 
                 {/* Stat steppers */}
-                <Stepper label={t.goals} value={selected.goals} onChange={(v) => update(selected.id, { goals: v })} />
-                <Stepper label={t.assistsLabel} value={selected.assists} onChange={(v) => update(selected.id, { assists: v })} />
-                <Stepper label={t.contribution} value={selected.contribution} onChange={(v) => update(selected.id, { contribution: v })} />
+                <Stepper label={t.goals} value={selected.goals} onChange={(v) => update(selected.id, { goals: v })} s={s} theme={theme} />
+                <Stepper label={t.assistsLabel} value={selected.assists} onChange={(v) => update(selected.id, { assists: v })} s={s} theme={theme} />
+                <Stepper label={t.contribution} value={selected.contribution} onChange={(v) => update(selected.id, { contribution: v })} s={s} theme={theme} />
                 <View style={s.toggleRow}>
                   <Text style={s.toggleLabel}>{t.cleanSheet}</Text>
                   <Switch value={selected.cleanSheet} onValueChange={(v) => update(selected.id, { cleanSheet: v })}
-                    trackColor={{ true: theme.accent, false: '#333' }} thumbColor="#fff" />
+                    trackColor={{ true: accentText, false: theme.inputLine }} thumbColor="#fff" />
                 </View>
 
                 {/* Notes */}
                 <TextInput style={s.input} value={selected.praiseText} onChangeText={(v) => update(selected.id, { praiseText: v })}
-                  placeholder={t.praisePlaceholder} placeholderTextColor="#555" />
+                  placeholder={t.praisePlaceholder} placeholderTextColor={theme.textMute} />
                 <TextInput style={s.input} value={selected.improvementText} onChangeText={(v) => update(selected.id, { improvementText: v })}
-                  placeholder={t.improvementPlaceholder} placeholderTextColor="#555" />
+                  placeholder={t.improvementPlaceholder} placeholderTextColor={theme.textMute} />
                 <TextInput style={s.input} value={selected.highlightText} onChangeText={(v) => update(selected.id, { highlightText: v })}
-                  placeholder={t.highlightPlaceholder} placeholderTextColor="#555" />
+                  placeholder={t.highlightPlaceholder} placeholderTextColor={theme.textMute} />
 
                 {/* Media */}
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
@@ -387,7 +391,7 @@ export default function QuarterEdit() {
                       </Pressable>
                     </View>
                   ))}
-                  <Pressable style={s.mediaAdd} onPress={pickMedia}><Camera color="#888" size={20} /></Pressable>
+                  <Pressable style={s.mediaAdd} onPress={pickMedia}><Camera color={theme.textMute} size={20} /></Pressable>
                 </View>
 
                 <Pressable style={s.doneBtn} onPress={() => setSelectedId(null)}>
@@ -406,10 +410,10 @@ export default function QuarterEdit() {
           <View style={s.sheet}>
             <View style={s.sheetHeader}>
               <Text style={s.sheetName}>{t.selectPlayersToAdd}</Text>
-              <Pressable onPress={() => setShowPicker(false)} hitSlop={10}><X color="#888" size={22} /></Pressable>
+              <Pressable onPress={() => setShowPicker(false)} hitSlop={10}><X color={theme.textMute} size={22} /></Pressable>
             </View>
             <ScrollView contentContainerStyle={{ padding: 16, gap: 8 }} style={{ maxHeight: 380 }}>
-              {available.length === 0 ? <Text style={{ color: '#555', textAlign: 'center', padding: 20 }}>{t.noPlayers}</Text>
+              {available.length === 0 ? <Text style={{ color: theme.textMute, textAlign: 'center', padding: 20 }}>{t.noPlayers}</Text>
                 : available.map((p) => {
                   const on = pickerSel.has(p.id)
                   return (
@@ -419,8 +423,8 @@ export default function QuarterEdit() {
                       <View style={[s.posDot, { backgroundColor: POS_COLOR[p.default_position] }]}>
                         <Text style={{ color: POS_TEXT[p.default_position], fontWeight: '900', fontSize: 10 }}>{p.default_position}</Text>
                       </View>
-                      <Text style={s.pickName}>{p.name} <Text style={{ color: '#555' }}>#{p.number ?? '–'}</Text></Text>
-                      {on && <Check color={theme.accent} size={18} />}
+                      <Text style={s.pickName}>{p.name} <Text style={{ color: theme.textMute }}>#{p.number ?? '–'}</Text></Text>
+                      {on && <Check color={accentText} size={18} />}
                     </Pressable>
                   )
                 })}
@@ -439,29 +443,29 @@ export default function QuarterEdit() {
           <View style={s.sheet}>
             <View style={s.sheetHeader}>
               <Text style={s.sheetName}>{t.substitution}</Text>
-              <Pressable onPress={() => setShowSub(false)} hitSlop={10}><X color="#888" size={22} /></Pressable>
+              <Pressable onPress={() => setShowSub(false)} hitSlop={10}><X color={theme.textMute} size={22} /></Pressable>
             </View>
             <ScrollView contentContainerStyle={{ padding: 16, gap: 12 }} style={{ maxHeight: 420 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                 <Text style={s.toggleLabel}>{t.minute}</Text>
                 <TextInput style={[s.input, { width: 80 }]} value={subMinute} onChangeText={setSubMinute}
-                  keyboardType="number-pad" placeholderTextColor="#555" />
+                  keyboardType="number-pad" placeholderTextColor={theme.textMute} />
               </View>
               <Text style={[s.cardLabel, { color: theme.danger }]}>▼ {t.playerOut}</Text>
               <View style={{ gap: 6 }}>
                 {fieldPlayers.map((fp) => (
                   <Pressable key={fp.id} style={[s.pickRow, subOut === fp.playerId && s.pickRowOn]} onPress={() => setSubOut(fp.playerId)}>
-                    <Text style={s.pickName}>{fp.player.name} <Text style={{ color: '#555' }}>#{fp.player.number ?? '–'}</Text></Text>
-                    {subOut === fp.playerId && <Check color={theme.accent} size={18} />}
+                    <Text style={s.pickName}>{fp.player.name} <Text style={{ color: theme.textMute }}>#{fp.player.number ?? '–'}</Text></Text>
+                    {subOut === fp.playerId && <Check color={accentText} size={18} />}
                   </Pressable>
                 ))}
               </View>
-              <Text style={[s.cardLabel, { color: theme.accent }]}>▲ {t.playerIn}</Text>
+              <Text style={[s.cardLabel, { color: accentText }]}>▲ {t.playerIn}</Text>
               <View style={{ gap: 6 }}>
                 {subInCandidates.map((p) => (
                   <Pressable key={p.id} style={[s.pickRow, subIn === p.id && s.pickRowOn]} onPress={() => setSubIn(p.id)}>
-                    <Text style={s.pickName}>{p.name} <Text style={{ color: '#555' }}>#{p.number ?? '–'}</Text></Text>
-                    {subIn === p.id && <Check color={theme.accent} size={18} />}
+                    <Text style={s.pickName}>{p.name} <Text style={{ color: theme.textMute }}>#{p.number ?? '–'}</Text></Text>
+                    {subIn === p.id && <Check color={accentText} size={18} />}
                   </Pressable>
                 ))}
               </View>
@@ -476,9 +480,10 @@ export default function QuarterEdit() {
   )
 }
 
-function FieldToken({ fp, fieldW, fieldH, selected, onMove, onSelect }: {
+function FieldToken({ fp, fieldW, fieldH, selected, onMove, onSelect, s, theme }: {
   fp: FieldPlayer; fieldW: number; fieldH: number; selected: boolean
   onMove: (id: string, x: number, y: number) => void; onSelect: () => void
+  s: ReturnType<typeof makeStyles>; theme: Theme
 }) {
   const start = useRef({ x: fp.positionX, y: fp.positionY })
   // refs holding latest values so the once-created PanResponder never reads stale props
@@ -508,7 +513,7 @@ function FieldToken({ fp, fieldW, fieldH, selected, onMove, onSelect }: {
     ]}>
       <Text style={{ color: POS_TEXT[fp.positionType], fontWeight: '900', fontSize: 13 }}>{fp.player.number ?? '-'}</Text>
       {fp.rating !== null && (
-        <View style={[s.tokenRating, { backgroundColor: ratingColor(fp.rating) }]}>
+        <View style={[s.tokenRating, { backgroundColor: ratingColor(fp.rating, theme) }]}>
           <Text style={{ color: '#0a0a0a', fontSize: 8, fontWeight: '900' }}>{fp.rating}</Text>
         </View>
       )}
@@ -516,7 +521,7 @@ function FieldToken({ fp, fieldW, fieldH, selected, onMove, onSelect }: {
   )
 }
 
-function Stepper({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+function Stepper({ label, value, onChange, s, theme }: { label: string; value: number; onChange: (v: number) => void; s: ReturnType<typeof makeStyles>; theme: Theme }) {
   return (
     <View style={s.toggleRow}>
       <Text style={s.toggleLabel}>{label}</Text>
@@ -524,7 +529,7 @@ function Stepper({ label, value, onChange }: { label: string; value: number; onC
         <Pressable style={s.stepBtn} onPress={() => onChange(Math.max(0, value - 1))} hitSlop={6}>
           <Text style={s.stepText}>−</Text>
         </Pressable>
-        <Text style={{ color: '#fff', fontSize: 18, fontWeight: '900', width: 24, textAlign: 'center' }}>{value}</Text>
+        <Text style={{ color: theme.text, fontSize: 18, fontWeight: '900', width: 24, textAlign: 'center' }}>{value}</Text>
         <Pressable style={s.stepBtn} onPress={() => onChange(value + 1)} hitSlop={6}>
           <Text style={s.stepText}>＋</Text>
         </Pressable>
@@ -533,46 +538,46 @@ function Stepper({ label, value, onChange }: { label: string; value: number; onC
   )
 }
 
-const s = StyleSheet.create({
+const makeStyles = (theme: Theme) => StyleSheet.create({
   fill: { flex: 1, backgroundColor: theme.bg },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 16, paddingVertical: 12, backgroundColor: theme.nav, borderBottomWidth: 1, borderBottomColor: theme.line },
-  headerTitle: { color: theme.white, fontSize: 16, fontWeight: '900' },
-  saveBtn: { marginLeft: 'auto', backgroundColor: theme.accent, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 8 },
-  saveBtnText: { color: '#0a0a0a', fontWeight: '900', fontSize: 13 },
+  headerTitle: { color: theme.text, fontSize: 16, fontWeight: '900' },
+  saveBtn: { marginLeft: 'auto', backgroundColor: theme.btnBg, borderRadius: 10, paddingHorizontal: 16, paddingVertical: 8 },
+  saveBtnText: { color: theme.btnText, fontWeight: '900', fontSize: 13 },
   formChip: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 10, paddingHorizontal: 14, paddingVertical: 8 },
-  formChipText: { color: theme.white, fontWeight: '800', fontSize: 13 },
-  field: { aspectRatio: 1.5, backgroundColor: '#12341a', borderRadius: 16, borderWidth: 1, borderColor: '#1e4a28', overflow: 'hidden' },
-  fieldLineMid: { position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, backgroundColor: 'rgba(255,255,255,0.12)' },
-  fieldCircle: { position: 'absolute', left: '50%', top: '50%', width: 80, height: 80, borderRadius: 40, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)', marginLeft: -40, marginTop: -40 },
-  fieldBox: { position: 'absolute', top: '25%', bottom: '25%', width: 40, borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)' },
+  formChipText: { color: theme.text, fontWeight: '800', fontSize: 13 },
+  field: { aspectRatio: 1.5, backgroundColor: theme.pitch1, borderRadius: 16, borderWidth: 1, borderColor: theme.pitch2, overflow: 'hidden' },
+  fieldLineMid: { position: 'absolute', left: '50%', top: 0, bottom: 0, width: 1, backgroundColor: theme.pitchLine },
+  fieldCircle: { position: 'absolute', left: '50%', top: '50%', width: 80, height: 80, borderRadius: 40, borderWidth: 1, borderColor: theme.pitchLine, marginLeft: -40, marginTop: -40 },
+  fieldBox: { position: 'absolute', top: '25%', bottom: '25%', width: 40, borderWidth: 1, borderColor: theme.pitchLine },
   token: { position: 'absolute', width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   tokenRating: { position: 'absolute', top: -4, right: -4, minWidth: 14, height: 14, borderRadius: 7, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 2 },
-  sectionTitle: { color: theme.muted2, fontSize: 12, fontWeight: '800' },
+  sectionTitle: { color: theme.textMute, fontSize: 12, fontWeight: '800' },
   smallBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: theme.chip, borderRadius: 9, paddingHorizontal: 10, paddingVertical: 7 },
-  smallBtnText: { color: theme.accent, fontWeight: '800', fontSize: 12 },
+  smallBtnText: { color: theme.isDark ? theme.accent : theme.text, fontWeight: '800', fontSize: 12 },
   card: { backgroundColor: theme.card, borderWidth: 1, borderColor: theme.line, borderRadius: 16, padding: 16 },
-  cardLabel: { color: theme.muted2, fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1 },
+  cardLabel: { color: theme.textMute, fontSize: 11, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 1 },
   subRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 10 },
-  subMin: { color: theme.white, fontWeight: '900', width: 32 },
-  subText: { flex: 1, fontSize: 13, fontWeight: '700' },
+  subMin: { color: theme.text, fontWeight: '900', width: 32 },
+  subText: { flex: 1, fontSize: 13, fontWeight: '700', color: theme.text },
   sheetBg: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
   sheet: { backgroundColor: theme.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderWidth: 1, borderColor: theme.line, maxHeight: '88%' },
   sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 1, borderBottomColor: theme.line },
-  sheetName: { color: theme.white, fontSize: 17, fontWeight: '900' },
-  ratePill: { flex: 1, backgroundColor: '#1a1a1a', borderRadius: 8, paddingVertical: 10, alignItems: 'center' },
+  sheetName: { color: theme.text, fontSize: 17, fontWeight: '900' },
+  ratePill: { flex: 1, backgroundColor: theme.card2, borderRadius: 8, paddingVertical: 10, alignItems: 'center' },
   toggleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  toggleLabel: { color: '#ccc', fontSize: 14, fontWeight: '700' },
-  stepBtn: { width: 34, height: 34, borderRadius: 10, backgroundColor: '#1a1a1a', alignItems: 'center', justifyContent: 'center' },
-  stepText: { color: theme.accent, fontSize: 20, fontWeight: '900', marginTop: -2 },
-  input: { backgroundColor: '#1a1a1a', borderWidth: 1, borderColor: theme.line, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: theme.white, fontSize: 14 },
+  toggleLabel: { color: theme.text2, fontSize: 14, fontWeight: '700' },
+  stepBtn: { width: 34, height: 34, borderRadius: 10, backgroundColor: theme.card2, alignItems: 'center', justifyContent: 'center' },
+  stepText: { color: theme.isDark ? theme.accent : theme.text, fontSize: 20, fontWeight: '900', marginTop: -2 },
+  input: { backgroundColor: theme.inputBg, borderWidth: 1, borderColor: theme.inputLine, borderRadius: 10, paddingHorizontal: 12, paddingVertical: 10, color: theme.text, fontSize: 14 },
   media: { width: 64, height: 64, borderRadius: 10 },
   mediaX: { position: 'absolute', top: -6, right: -6, width: 20, height: 20, borderRadius: 10, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' },
   mediaAdd: { width: 64, height: 64, borderRadius: 10, borderWidth: 1, borderColor: theme.line, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center' },
-  doneBtn: { backgroundColor: theme.accent, borderRadius: 12, paddingVertical: 14, alignItems: 'center' },
-  doneBtnText: { color: '#0a0a0a', fontWeight: '900', fontSize: 15 },
-  pickRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#1a1a1a', borderRadius: 10, padding: 12, borderWidth: 1, borderColor: 'transparent' },
-  pickRowOn: { borderColor: theme.accent, backgroundColor: theme.chip },
-  pickName: { color: theme.white, fontWeight: '700', flex: 1 },
+  doneBtn: { backgroundColor: theme.btnBg, borderRadius: 12, paddingVertical: 14, alignItems: 'center' },
+  doneBtnText: { color: theme.btnText, fontWeight: '900', fontSize: 15 },
+  pickRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: theme.card2, borderRadius: 10, padding: 12, borderWidth: 1, borderColor: 'transparent' },
+  pickRowOn: { borderColor: theme.isDark ? theme.accent : theme.line2, backgroundColor: theme.chip },
+  pickName: { color: theme.text, fontWeight: '700', flex: 1 },
   posDot: { width: 30, height: 30, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
 })
