@@ -32,7 +32,43 @@ Then:
 - [x] **Phase 3 — Core screens**: tab navigation, Dashboard (season stats,
       recent matches, team switcher), Players (with stats), Team intro
       (roster + OVR), Training list, Profile (name / language / logout)
+- [x] Phase 4 — Match / Training / Quarter records (create + edit, drag formation)
+- [x] Phase 7 — Light (Navy Board) / Dark (GOLDLINE) themes with toggle
 - [ ] Phase 2 — Google OAuth (native)
-- [ ] Phase 4 — Match / Training / Quarter records (create + edit)
 - [ ] Phase 5 — Community, Notifications, member management
-- [ ] Phase 6 — Native builds & store release
+- [ ] Native builds & store release (in progress — see below)
+
+## Building for the App Store / Play Store (EAS)
+
+Native binaries are built in the cloud with **EAS Build** (needs a free Expo
+account). Run these from `mobile/` on your Mac (Node 20 LTS):
+
+```bash
+npm i -g eas-cli          # one-time
+eas login                 # your Expo account
+eas init                  # links the project, writes extra.eas.projectId
+
+# Supabase keys must exist at build time (public anon key — safe to embed).
+# Set them as EAS environment variables (once per project):
+eas env:create --environment production --name EXPO_PUBLIC_SUPABASE_URL --value "https://<your-project>.supabase.co"
+eas env:create --environment production --name EXPO_PUBLIC_SUPABASE_ANON_KEY --value "<your-anon-key>"
+
+# Build:
+eas build --platform ios --profile production        # → .ipa
+eas build --platform android --profile production    # → .aab
+
+# Try it on a device first without the stores:
+eas build --platform android --profile preview       # installable .apk
+```
+
+Then submit to the stores (needs an Apple Developer account $99/yr and/or a
+Google Play Developer account $25 one-time):
+
+```bash
+eas submit --platform ios --latest
+eas submit --platform android --latest
+```
+
+`eas.json` defines the `development` / `preview` / `production` profiles.
+`app.json` already carries the bundle id (`com.soccernote.app`), version codes,
+and the iOS photo/camera permission strings the App Store review requires.
