@@ -762,4 +762,5 @@ export interface Translations {
   backToLogin: string
   resetSessionInvalid: string
   passwordPolicyHint: string
+  memberRoleLabel: string
 }

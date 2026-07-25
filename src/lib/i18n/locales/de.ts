@@ -743,4 +743,5 @@ export const translations: Translations = {
   backToLogin: 'Zurück zur Anmeldung',
   resetSessionInvalid: 'Link ungültig oder abgelaufen. Bitte neu anfordern.',
   passwordPolicyHint: 'Das Passwort muss einen Groß- und einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.',
+  memberRoleLabel: 'Rolle',
 }
