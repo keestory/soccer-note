@@ -162,6 +162,12 @@ export default function LoginPage() {
           </button>
         </div>
 
+        <div className="flex justify-end -mt-1">
+          <Link href="/forgot-password" className="text-[13px] font-semibold" style={{ color: 'var(--accent)' }}>
+            {t.forgotPassword}
+          </Link>
+        </div>
+
         <button
           type="submit"
           disabled={loading}
@@ -177,11 +183,7 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <p className="text-center mt-4 text-[13px]">
-        <Link href="/forgot-password" style={{ color: 'var(--muted2)' }}>{t.forgotPassword}</Link>
-      </p>
-
-      <p className="text-center mt-3 text-[14px]" style={{ color: '#888' }}>
+      <p className="text-center mt-6 text-[14px]" style={{ color: '#888' }}>
         {t.noAccount}{' '}
         <Link href="/signup" className="font-bold" style={{ color: 'var(--accent)' }}>{t.signup}</Link>
       </p>
