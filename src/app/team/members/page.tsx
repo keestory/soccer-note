@@ -290,8 +290,8 @@ function TeamMembersContent() {
                         {isCoach && member.profile?.email ? ` · ${member.profile.email}` : ''}
                       </p>
                     </div>
-                    {/* Coach actions */}
-                    {isCoach && member.role !== 'coach' && (
+                    {/* Coach actions — available for every member except the team owner */}
+                    {isCoach && member.user_id !== team?.user_id && (
                       <div className="flex gap-1 flex-shrink-0">
                         <button onClick={() => setEditingMember(editingMember === member.id ? null : member.id)}
                           className="p-2 rounded-lg" style={{ color: '#555' }}>
@@ -307,6 +307,22 @@ function TeamMembersContent() {
                   {/* Permission editor */}
                   {editingMember === member.id && (
                     <div className="px-4 pb-4 pt-2 space-y-2" style={{ borderTop: '1px solid var(--line)' }}>
+                      {/* Role */}
+                      <p className="text-[12px] font-bold mb-2" style={{ color: 'var(--muted1)' }}>{t.memberRoleLabel}</p>
+                      <div className="flex gap-2 mb-3">
+                        {(['member', 'coach'] as const).map(r => (
+                          <button
+                            key={r}
+                            onClick={() => updateMemberPermissions(member.id, { role: r })}
+                            className="flex-1 py-2 rounded-lg text-[13px] font-bold transition"
+                            style={member.role === r
+                              ? { background: 'var(--accent)', color: '#0a0a0a' }
+                              : { background: '#1e1e1e', color: '#888', border: '1px solid var(--line)' }}
+                          >
+                            {r === 'coach' ? t.coach : t.member}
+                          </button>
+                        ))}
+                      </div>
                       <p className="text-[12px] font-bold mb-2" style={{ color: 'var(--muted1)' }}>{t.permissionSettings}</p>
                       {[
                         { label: t.playerManagement, key: 'can_edit_players', val: member.can_edit_players },

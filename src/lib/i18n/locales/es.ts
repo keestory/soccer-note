@@ -743,4 +743,7 @@ export const translations: Translations = {
   backToLogin: 'Volver al inicio de sesión',
   resetSessionInvalid: 'Enlace no válido o caducado. Solicite uno nuevo.',
   passwordPolicyHint: 'La contraseña debe incluir una mayúscula, una minúscula, un número y un carácter especial.',
+  memberRoleLabel: 'Rol',
+  rosterTab: 'Plantilla',
+  rankingTab: 'Clasificación',
 }
