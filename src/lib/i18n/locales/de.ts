@@ -746,4 +746,7 @@ export const translations: Translations = {
   memberRoleLabel: 'Rolle',
   rosterTab: 'Kader',
   rankingTab: 'Rangliste',
+  startDate: 'Startdatum',
+  endDate: 'Enddatum',
+  allPeriod: 'Gesamt',
 }

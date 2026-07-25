@@ -52,6 +52,8 @@ export default function PlayersPage() {
   const [search, setSearch] = useState('')
   const [view, setView] = useState<'roster' | 'ranking'>('roster')
   const [rankStat, setRankStat] = useState<RankStatKey>('goals')
+  const [rankStart, setRankStart] = useState('')
+  const [rankEnd, setRankEnd] = useState('')
   const [localPlayers, setLocalPlayers] = useState<Player[] | null>(null)
   const [localMemberLinks, setLocalMemberLinks] = useState<Record<string, string>>({}) // memberId → playerId
 
@@ -268,13 +270,39 @@ export default function PlayersPage() {
     { key: 'attendance', label: t.attendance, suffix: '' },
     { key: 'cleanSheets', label: t.cleanSheet, suffix: '' },
   ]
+  // Stats recomputed over the selected date range (empty range = all time)
+  const rangeStats = useMemo(() => {
+    const inRange = (d?: string) => !!d && (!rankStart || d >= rankStart) && (!rankEnd || d <= rankEnd)
+    const rangeMatches = (rankStart || rankEnd)
+      ? data.matches.filter((mt: any) => inRange(mt.match_date))
+      : data.matches
+    const map = new Map<string, PlayerStats>()
+    for (const p of playersWithStats) {
+      const recs = rangeMatches
+        .flatMap((mt: any) => (mt.quarters ?? []).flatMap((q: any) => q.quarter_records ?? []))
+        .filter((r: any) => r.player_id === p.id)
+      const rated = recs.filter((r: any) => r.rating !== null)
+      map.set(p.id, {
+        attendance: rangeMatches.filter((mt: any) => (mt.match_attendees ?? []).some((a: any) => a.player_id === p.id)).length,
+        games: recs.length,
+        goals: recs.reduce((s: number, r: any) => s + (r.goals || 0), 0),
+        assists: recs.reduce((s: number, r: any) => s + (r.assists || 0), 0),
+        cleanSheets: recs.filter((r: any) => r.clean_sheet).length,
+        contribution: recs.reduce((s: number, r: any) => s + (r.contribution || 0), 0),
+        avgRating: rated.length ? rated.reduce((s: number, r: any) => s + (r.rating || 0), 0) / rated.length : null,
+      })
+    }
+    return map
+  }, [playersWithStats, data.matches, rankStart, rankEnd])
+
+  const statOf = (p: PlayerWithStats) => rangeStats.get(p.id) ?? p.stats
   const rankValue = (p: PlayerWithStats) => {
-    const v = p.stats[rankStat]
+    const v = statOf(p)[rankStat]
     return v === null ? -1 : v
   }
   const rankedPlayers = [...playersWithStats].sort((a, b) => rankValue(b) - rankValue(a))
   const formatRank = (p: PlayerWithStats) => {
-    const v = p.stats[rankStat]
+    const v = statOf(p)[rankStat]
     if (rankStat === 'avgRating') return v === null ? '–' : (v as number).toFixed(1)
     return String(v ?? 0)
   }
@@ -336,6 +364,30 @@ export default function PlayersPage() {
         {/* Ranking view */}
         {view === 'ranking' && (
           <div className="space-y-3">
+            {/* Date range filter */}
+            <div className="rounded-xl p-3" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.startDate}</p>
+                  <input type="date" value={rankStart} max={rankEnd || undefined} onChange={e => setRankStart(e.target.value)}
+                    className="w-full outline-none text-white text-[13px]"
+                    style={{ colorScheme: 'dark', background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 9, padding: '9px 11px' }} />
+                </div>
+                <span className="pt-4" style={{ color: '#555' }}>~</span>
+                <div className="flex-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.endDate}</p>
+                  <input type="date" value={rankEnd} min={rankStart || undefined} onChange={e => setRankEnd(e.target.value)}
+                    className="w-full outline-none text-white text-[13px]"
+                    style={{ colorScheme: 'dark', background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 9, padding: '9px 11px' }} />
+                </div>
+              </div>
+              {(rankStart || rankEnd) && (
+                <button onClick={() => { setRankStart(''); setRankEnd('') }}
+                  className="mt-2 text-[12px] font-bold" style={{ color: 'var(--accent)' }}>
+                  {t.allPeriod}
+                </button>
+              )}
+            </div>
             {/* Stat tabs */}
             <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
               {statTabs.map(tab => (

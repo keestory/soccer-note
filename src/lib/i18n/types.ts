@@ -765,4 +765,7 @@ export interface Translations {
   memberRoleLabel: string
   rosterTab: string
   rankingTab: string
+  startDate: string
+  endDate: string
+  allPeriod: string
 }
