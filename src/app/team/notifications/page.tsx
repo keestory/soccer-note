@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState, useMemo } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient, getSessionUser } from '@/lib/supabase'
+import { createClient, getSessionUser, authHeader } from '@/lib/supabase'
 import { ArrowLeft, Bell, Send, Loader2, MessageSquare, Users, CheckCircle, XCircle, Search, Check, UserCheck, ChevronDown, ChevronUp, Eye, CheckCircle2 } from 'lucide-react'
 import { NotificationsPageSkeleton } from '@/components/Skeleton'
 import { getStore, MemberWithProfile } from '@/lib/dataStore'
@@ -173,7 +173,7 @@ function NotificationsContent() {
         : Promise.resolve({ data: null }),
       fetch(`/api/send-notification?teamId=${teamData.id}`),
       supabase.from('team_members').select('*').eq('team_id', teamData.id).eq('status', 'approved').or('is_removed.is.null,is_removed.eq.false'),
-      fetch(`/api/team-members-profiles?teamId=${teamData.id}`)
+      fetch(`/api/team-members-profiles?teamId=${teamData.id}`, { headers: await authHeader(supabase) })
     ])
 
     // Check permissions

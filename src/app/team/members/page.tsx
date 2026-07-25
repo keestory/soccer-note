@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient, getSessionUser } from '@/lib/supabase'
+import { createClient, getSessionUser, authHeader } from '@/lib/supabase'
 import { resolveTeam, clearResolvedTeam } from '@/lib/team-resolver'
 import { getStore } from '@/lib/dataStore'
 import { Copy, Check, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle, Globe, Settings, Users } from 'lucide-react'
@@ -76,7 +76,7 @@ function TeamMembersContent() {
     const [{ data: teamData }, { data: membersData }, profilesJson] = await Promise.all([
       supabase.from('teams').select('*').eq('id', teamId).single(),
       supabase.from('team_members').select('*').eq('team_id', teamId).or('is_removed.is.null,is_removed.eq.false').order('joined_at'),
-      fetch(`/api/team-members-profiles?teamId=${teamId}`).then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch(`/api/team-members-profiles?teamId=${teamId}`, { headers: await authHeader(supabase) }).then(r => r.ok ? r.json() : null).catch(() => null),
     ])
 
     if (!teamData) { toast.error('팀을 찾을 수 없습니다'); router.push('/dashboard'); return }

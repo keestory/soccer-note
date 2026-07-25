@@ -8,11 +8,22 @@ const supabaseAdmin = createClient(
 )
 
 export async function GET(request: NextRequest) {
-  // Verify user is authenticated
-  const supabase = await createServerSupabaseClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  // Verify user is authenticated. Prefer a Bearer token (works when the session
+  // lives in browser storage, e.g. implicit flow / Capacitor WKWebView where the
+  // auth cookie is unreliable); fall back to the server cookie for plain web.
+  let user = null
+  const authHeader = request.headers.get('authorization')
+  if (authHeader?.startsWith('Bearer ')) {
+    const { data } = await supabaseAdmin.auth.getUser(authHeader.slice(7))
+    user = data.user
+  }
+  if (!user) {
+    const supabase = await createServerSupabaseClient()
+    const { data: { user: cookieUser } } = await supabase.auth.getUser()
+    user = cookieUser
+  }
 
-  if (authError || !user) {
+  if (!user) {
     return NextResponse.json({ error: '인증이 필요합니다' }, { status: 401 })
   }
 
