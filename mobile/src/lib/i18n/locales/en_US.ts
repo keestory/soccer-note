@@ -736,4 +736,10 @@ export const translations: Translations = {
   themeSystem: 'System',
   themeLight: 'Light',
   themeDark: 'Dark',
+  forgotPassword: 'Forgot password?',
+  resetPasswordTitle: 'Reset password',
+  resetPasswordDesc: 'We will email you a reset link',
+  sendResetLink: 'Send reset link',
+  resetLinkSent: 'Reset link sent. Check your email.',
+  backToLogin: 'Back to login',
 }

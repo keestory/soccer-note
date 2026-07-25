@@ -736,4 +736,10 @@ export const translations: Translations = {
   themeSystem: 'システム',
   themeLight: 'ライト',
   themeDark: 'ダーク',
+  forgotPassword: 'パスワードをお忘れですか？',
+  resetPasswordTitle: 'パスワードの再設定',
+  resetPasswordDesc: '登録メールに再設定リンクを送ります',
+  sendResetLink: 'リンクを送信',
+  resetLinkSent: '再設定リンクを送信しました。メールをご確認ください。',
+  backToLogin: 'ログインに戻る',
 }

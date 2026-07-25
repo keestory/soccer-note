@@ -736,4 +736,10 @@ export const translations: Translations = {
   themeSystem: '시스템',
   themeLight: '라이트',
   themeDark: '다크',
+  forgotPassword: '비밀번호를 잊으셨나요?',
+  resetPasswordTitle: '비밀번호 재설정',
+  resetPasswordDesc: '가입하신 이메일로 재설정 링크를 보내드려요',
+  sendResetLink: '재설정 링크 보내기',
+  resetLinkSent: '재설정 링크를 이메일로 보냈어요. 메일함을 확인하세요.',
+  backToLogin: '로그인으로 돌아가기',
 }

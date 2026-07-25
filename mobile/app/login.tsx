@@ -66,6 +66,10 @@ export default function Login() {
           </Pressable>
         </View>
 
+        <Pressable onPress={() => router.push('/forgot-password')} style={styles.forgotLink} hitSlop={8}>
+          <Text style={styles.forgotText}>{t.forgotPassword}</Text>
+        </Pressable>
+
         <Pressable
           style={({ pressed }) => [styles.primaryBtn, pressed && { opacity: 0.85 }]}
           onPress={onLogin}
@@ -103,6 +107,8 @@ const makeStyles = (theme: Theme) => StyleSheet.create({
   pwWrap: { flexDirection: 'row', alignItems: 'center', position: 'relative', marginBottom: 12 },
   showBtn: { position: 'absolute', right: 16 },
   showText: { color: theme.textMute, fontSize: 13 },
+  forgotLink: { alignSelf: 'flex-end', marginTop: 10, marginBottom: 2 },
+  forgotText: { color: theme.isDark ? theme.accent : theme.text, fontSize: 13, fontWeight: '700' },
   primaryBtn: {
     backgroundColor: theme.btnBg, borderRadius: 13, paddingVertical: 16, alignItems: 'center', marginTop: 4,
   },

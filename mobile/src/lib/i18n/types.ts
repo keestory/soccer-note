@@ -755,4 +755,10 @@ export interface Translations {
   themeSystem: string
   themeLight: string
   themeDark: string
+  forgotPassword: string
+  resetPasswordTitle: string
+  resetPasswordDesc: string
+  sendResetLink: string
+  resetLinkSent: string
+  backToLogin: string
 }

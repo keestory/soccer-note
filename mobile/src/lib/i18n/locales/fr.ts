@@ -736,4 +736,10 @@ export const translations: Translations = {
   themeSystem: 'Système',
   themeLight: 'Clair',
   themeDark: 'Sombre',
+  forgotPassword: 'Mot de passe oublié ?',
+  resetPasswordTitle: 'Réinitialiser le mot de passe',
+  resetPasswordDesc: 'Un lien de réinitialisation vous sera envoyé',
+  sendResetLink: 'Envoyer le lien',
+  resetLinkSent: 'Lien envoyé. Vérifiez vos e-mails.',
+  backToLogin: 'Retour à la connexion',
 }
