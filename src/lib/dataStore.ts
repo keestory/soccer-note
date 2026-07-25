@@ -1,6 +1,6 @@
 'use client'
 
-import { createClient } from '@/lib/supabase'
+import { createClient, authHeader } from '@/lib/supabase'
 import type { Team, Match, TeamMember, Player, TeamVisibilitySettings, TrainingSession, Profile } from '@/types/database'
 
 // 프로필이 포함된 멤버 타입
@@ -184,7 +184,7 @@ export async function loadTeamData(teamId: string): Promise<void> {
     supabase.from('players').select('*').eq('team_id', teamId).order('number'),
     supabase.from('team_visibility_settings').select('*').eq('team_id', teamId).single(),
     supabase.from('team_members').select('*').eq('team_id', teamId).or('is_removed.is.null,is_removed.eq.false').order('joined_at'),
-    fetch(`/api/team-members-profiles?teamId=${teamId}`)
+    fetch(`/api/team-members-profiles?teamId=${teamId}`, { headers: await authHeader(supabase) })
   ])
 
   // 멤버 프로필 매핑
