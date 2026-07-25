@@ -751,4 +751,15 @@ export interface Translations {
   strengthsPlaceholder: string
   rateYourself: string
   landingLogin: string
+  forgotPassword: string
+  resetPasswordTitle: string
+  resetPasswordDesc: string
+  sendResetLink: string
+  resetLinkSent: string
+  newPasswordLabel: string
+  updatePasswordButton: string
+  passwordUpdatedMessage: string
+  backToLogin: string
+  resetSessionInvalid: string
+  passwordPolicyHint: string
 }
