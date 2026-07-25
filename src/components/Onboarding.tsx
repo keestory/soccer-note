@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase'
 import {
   ChevronRight,
   ChevronLeft,
@@ -73,6 +74,14 @@ export default function Onboarding() {
   const router = useRouter()
   const { t } = useI18n()
   const [currentSlide, setCurrentSlide] = useState(0)
+
+  // Already signed in? Skip onboarding/login and go straight to the app.
+  useEffect(() => {
+    createClient().auth.getSession().then(({ data: { session } }) => {
+      if (session) router.replace('/dashboard')
+    })
+  }, [])
+
   const [touchStart, setTouchStart] = useState(0)
   const [touchEnd, setTouchEnd] = useState(0)
 
