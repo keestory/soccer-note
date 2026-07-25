@@ -744,4 +744,6 @@ export const translations: Translations = {
   resetSessionInvalid: 'This link is invalid or expired. Please request a new one.',
   passwordPolicyHint: 'Password must include an uppercase letter, a lowercase letter, a number, and a special character.',
   memberRoleLabel: 'Role',
+  rosterTab: 'Roster',
+  rankingTab: 'Ranking',
 }

@@ -29,6 +29,7 @@ interface PlayerStats {
   goals: number
   assists: number
   cleanSheets: number
+  contribution: number
   avgRating: number | null
 }
 
@@ -36,6 +37,8 @@ interface PlayerWithStats extends Player {
   stats: PlayerStats
   linkedMember?: MemberWithProfile
 }
+
+type RankStatKey = 'goals' | 'assists' | 'contribution' | 'avgRating' | 'attendance' | 'cleanSheets'
 
 export default function PlayersPage() {
   const router = useRouter()
@@ -47,6 +50,8 @@ export default function PlayersPage() {
   const [showAddSheet, setShowAddSheet] = useState(false)
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
   const [search, setSearch] = useState('')
+  const [view, setView] = useState<'roster' | 'ranking'>('roster')
+  const [rankStat, setRankStat] = useState<RankStatKey>('goals')
   const [localPlayers, setLocalPlayers] = useState<Player[] | null>(null)
   const [localMemberLinks, setLocalMemberLinks] = useState<Record<string, string>>({}) // memberId → playerId
 
@@ -131,6 +136,7 @@ export default function PlayersPage() {
           goals: allRecords.reduce((s: number, r: any) => s + (r.goals || 0), 0),
           assists: allRecords.reduce((s: number, r: any) => s + (r.assists || 0), 0),
           cleanSheets: allRecords.filter((r: any) => r.clean_sheet).length,
+          contribution: allRecords.reduce((s: number, r: any) => s + (r.contribution || 0), 0),
           avgRating: rated.length > 0
             ? rated.reduce((s: number, r: any) => s + (r.rating || 0), 0) / rated.length
             : null,
@@ -253,6 +259,27 @@ export default function PlayersPage() {
     ? playersWithStats.filter(p => p.name.includes(search.trim()))
     : playersWithStats
 
+  // Roster / ranking view
+  const statTabs: { key: RankStatKey; label: string; suffix: string }[] = [
+    { key: 'goals', label: t.goals, suffix: t.goals },
+    { key: 'assists', label: t.assistsLabel, suffix: t.assistsLabel },
+    { key: 'contribution', label: t.contribution, suffix: '' },
+    { key: 'avgRating', label: t.rating, suffix: '' },
+    { key: 'attendance', label: t.attendance, suffix: '' },
+    { key: 'cleanSheets', label: t.cleanSheet, suffix: '' },
+  ]
+  const rankValue = (p: PlayerWithStats) => {
+    const v = p.stats[rankStat]
+    return v === null ? -1 : v
+  }
+  const rankedPlayers = [...playersWithStats].sort((a, b) => rankValue(b) - rankValue(a))
+  const formatRank = (p: PlayerWithStats) => {
+    const v = p.stats[rankStat]
+    if (rankStat === 'avgRating') return v === null ? '–' : (v as number).toFixed(1)
+    return String(v ?? 0)
+  }
+  const RANK_MEDAL = ['#f5b301', '#c7ccd1', '#cd7f32'] // gold / silver / bronze
+
   return (
     <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
@@ -283,13 +310,84 @@ export default function PlayersPage() {
       <PullToRefresh onRefresh={async () => { setLocalPlayers(null); setLocalMemberLinks({}); await data.refresh() }}>
       <div className="max-w-4xl mx-auto px-5 py-4 space-y-4">
 
-        {/* Search */}
+        {/* Roster / Ranking toggle */}
+        <div className="flex gap-1 p-1 rounded-xl" style={{ background: '#1a1a1a' }}>
+          {(['roster', 'ranking'] as const).map(v => (
+            <button key={v} onClick={() => setView(v)}
+              className="flex-1 py-2 rounded-lg text-[13px] font-bold transition"
+              style={view === v
+                ? { background: 'var(--card)', color: 'var(--accent)' }
+                : { background: 'transparent', color: '#666' }}>
+              {v === 'roster' ? t.rosterTab : t.rankingTab}
+            </button>
+          ))}
+        </div>
+
+        {/* Search (roster only) */}
+        {view === 'roster' && (
         <input
           type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder={t.searchPlayer}
           className="w-full outline-none text-white placeholder-[#555] text-[14px]"
           style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 12, padding: '12px 14px' }}
         />
+        )}
+
+        {/* Ranking view */}
+        {view === 'ranking' && (
+          <div className="space-y-3">
+            {/* Stat tabs */}
+            <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+              {statTabs.map(tab => (
+                <button key={tab.key} onClick={() => setRankStat(tab.key)}
+                  className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-bold transition"
+                  style={rankStat === tab.key
+                    ? { background: 'var(--accent)', color: '#0a0a0a' }
+                    : { background: 'var(--card)', color: '#888', border: '1px solid var(--line)' }}>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            {/* Ranked list */}
+            {rankedPlayers.length === 0 ? (
+              <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+                <p className="text-[14px]" style={{ color: '#555' }}>{t.noPlayers}</p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {rankedPlayers.map((player, i) => (
+                  <Link key={player.id} href={`/team/players/${player.id}`}
+                    className="flex items-center gap-3 p-4 rounded-[14px] active:opacity-80 transition"
+                    style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+                    <div className="w-7 h-7 rounded-full flex items-center justify-center font-black text-[13px] flex-shrink-0"
+                      style={i < 3
+                        ? { background: RANK_MEDAL[i], color: '#0a0a0a' }
+                        : { color: '#666' }}>
+                      {i + 1}
+                    </div>
+                    <div className="w-[34px] h-[34px] rounded-[9px] overflow-hidden flex items-center justify-center flex-shrink-0 font-black text-[10px]"
+                      style={{ background: POS_COLOR[player.default_position], color: POS_TEXT[player.default_position] }}>
+                      {player.photo_url
+                        ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
+                        : player.default_position}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-[14px] text-white truncate">
+                        {player.name} <span style={{ color: '#555' }}>#{player.number || '–'}</span>
+                      </p>
+                    </div>
+                    <div className="text-right flex-shrink-0 flex items-baseline gap-1">
+                      <p className="font-display text-[22px] leading-none" style={{ color: 'var(--accent)' }}>{formatRank(player)}</p>
+                      {statTabs.find(tb => tb.key === rankStat)?.suffix
+                        ? <span className="text-[11px]" style={{ color: 'var(--muted2)' }}>{statTabs.find(tb => tb.key === rankStat)!.suffix}</span>
+                        : null}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Edit form (inline, only for editing existing players) */}
         {canEdit && editingPlayer && (
@@ -374,8 +472,8 @@ export default function PlayersPage() {
           </form>
         )}
 
-        {/* Players list */}
-        {filtered.length === 0 ? (
+        {/* Players list (roster only) */}
+        {view === 'roster' && (filtered.length === 0 ? (
           <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <p className="text-[14px]" style={{ color: '#555' }}>
               {t.noPlayers}
@@ -437,7 +535,7 @@ export default function PlayersPage() {
               </Link>
             ))}
           </div>
-        )}
+        ))}
       </div>
       </PullToRefresh>
 

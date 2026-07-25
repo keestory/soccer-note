@@ -744,4 +744,6 @@ export const translations: Translations = {
   resetSessionInvalid: 'リンクが無効または期限切れです。もう一度お試しください。',
   passwordPolicyHint: 'パスワードには大文字・小文字・数字・記号をそれぞれ1文字以上含めてください。',
   memberRoleLabel: '役割',
+  rosterTab: '名簿',
+  rankingTab: 'ランキング',
 }

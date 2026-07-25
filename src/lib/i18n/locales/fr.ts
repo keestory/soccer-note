@@ -744,4 +744,6 @@ export const translations: Translations = {
   resetSessionInvalid: 'Lien invalide ou expiré. Demandez-en un nouveau.',
   passwordPolicyHint: 'Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial.',
   memberRoleLabel: 'Rôle',
+  rosterTab: 'Effectif',
+  rankingTab: 'Classement',
 }

@@ -744,4 +744,6 @@ export const translations: Translations = {
   resetSessionInvalid: 'Link ungültig oder abgelaufen. Bitte neu anfordern.',
   passwordPolicyHint: 'Das Passwort muss einen Groß- und einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen enthalten.',
   memberRoleLabel: 'Rolle',
+  rosterTab: 'Kader',
+  rankingTab: 'Rangliste',
 }

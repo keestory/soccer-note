@@ -763,4 +763,6 @@ export interface Translations {
   resetSessionInvalid: string
   passwordPolicyHint: string
   memberRoleLabel: string
+  rosterTab: string
+  rankingTab: string
 }
