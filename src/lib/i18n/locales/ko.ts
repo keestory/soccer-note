@@ -742,4 +742,5 @@ export const translations: Translations = {
   passwordUpdatedMessage: '비밀번호가 변경되었어요. 다시 로그인해 주세요.',
   backToLogin: '로그인으로 돌아가기',
   resetSessionInvalid: '링크가 만료되었거나 유효하지 않아요. 다시 요청해 주세요.',
+  passwordPolicyHint: '비밀번호는 영문 대문자, 소문자, 숫자, 특수문자를 각각 1개 이상 포함해야 해요.',
 }

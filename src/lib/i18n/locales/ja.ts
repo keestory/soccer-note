@@ -742,4 +742,5 @@ export const translations: Translations = {
   passwordUpdatedMessage: 'パスワードを変更しました。再度ログインしてください。',
   backToLogin: 'ログインに戻る',
   resetSessionInvalid: 'リンクが無効または期限切れです。もう一度お試しください。',
+  passwordPolicyHint: 'パスワードには大文字・小文字・数字・記号をそれぞれ1文字以上含めてください。',
 }

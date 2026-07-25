@@ -742,4 +742,5 @@ export const translations: Translations = {
   passwordUpdatedMessage: 'Password aggiornata. Accedi di nuovo.',
   backToLogin: 'Torna al login',
   resetSessionInvalid: 'Link non valido o scaduto. Richiedine uno nuovo.',
+  passwordPolicyHint: 'La password deve contenere una maiuscola, una minuscola, un numero e un carattere speciale.',
 }

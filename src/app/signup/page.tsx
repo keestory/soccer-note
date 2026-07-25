@@ -58,7 +58,13 @@ export default function SignupPage() {
         password,
         options: { data: { display_name: displayName.trim() } },
       })
-      if (error) { toast.error(error.message); return }
+      if (error) {
+        const msg = /should contain|complex|weak|character of each/i.test(error.message)
+          ? t.passwordPolicyHint
+          : error.message
+        toast.error(msg)
+        return
+      }
       if (data.user) {
         await supabase.from('profiles').upsert({
           id: data.user.id,

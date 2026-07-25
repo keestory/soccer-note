@@ -742,4 +742,5 @@ export const translations: Translations = {
   passwordUpdatedMessage: 'Password updated. Please sign in again.',
   backToLogin: 'Back to login',
   resetSessionInvalid: 'This link is invalid or expired. Please request a new one.',
+  passwordPolicyHint: 'Password must include an uppercase letter, a lowercase letter, a number, and a special character.',
 }

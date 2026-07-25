@@ -37,7 +37,15 @@ export default function ResetPasswordPage() {
     try {
       const supabase = createClient()
       const { error } = await supabase.auth.updateUser({ password })
-      if (error) { toast.error(error.message); return }
+      if (error) {
+        // Supabase returns the password-complexity policy error in English —
+        // surface a friendly localized message instead.
+        const msg = /should contain|complex|weak|character of each/i.test(error.message)
+          ? t.passwordPolicyHint
+          : error.message
+        toast.error(msg)
+        return
+      }
       toast.success(t.passwordUpdatedMessage)
       await supabase.auth.signOut()
       router.replace('/login')
@@ -79,6 +87,7 @@ export default function ResetPasswordPage() {
               {show ? t.hide : t.show}
             </button>
           </div>
+          <p className="text-[12px] leading-relaxed px-1" style={{ color: 'var(--muted2)' }}>{t.passwordPolicyHint}</p>
           <button
             type="submit"
             disabled={loading}

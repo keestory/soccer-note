@@ -742,4 +742,5 @@ export const translations: Translations = {
   passwordUpdatedMessage: 'Mot de passe mis à jour. Reconnectez-vous.',
   backToLogin: 'Retour à la connexion',
   resetSessionInvalid: 'Lien invalide ou expiré. Demandez-en un nouveau.',
+  passwordPolicyHint: 'Le mot de passe doit contenir une majuscule, une minuscule, un chiffre et un caractère spécial.',
 }

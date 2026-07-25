@@ -761,4 +761,5 @@ export interface Translations {
   passwordUpdatedMessage: string
   backToLogin: string
   resetSessionInvalid: string
+  passwordPolicyHint: string
 }
