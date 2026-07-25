@@ -29,11 +29,19 @@ export function createClient() {
           try { localStorage.removeItem(name) } catch {}
         },
       },
-      // Implicit flow avoids the PKCE code_verifier storage handoff that breaks
-      // in Capacitor (WKWebView ↔ in-app browser). Tokens come back in the URL
-      // fragment and we set the session directly. (mergeDeepRight lets this
-      // override @supabase/ssr's default flowType: 'pkce'.)
-      auth: { flowType: 'implicit' },
+      // PKCE (the default) issues a refresh token, so autoRefreshToken can keep
+      // the session alive indefinitely — implicit-flow sessions were expiring
+      // and logging users out. The session is persisted in localStorage (see the
+      // cookie adapter above), which survives WKWebView app restarts.
+      // Capacitor Google OAuth returns ?code= to the soccernote:// deep link and
+      // DeepLinkHandler completes it via exchangeCodeForSession (the verifier
+      // lives in this client's localStorage).
+      auth: {
+        flowType: 'pkce',
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
     }
   )
   return _client
