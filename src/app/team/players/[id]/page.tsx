@@ -18,6 +18,7 @@ interface MatchRecord {
   goals: number
   assists: number
   cleanSheet: boolean
+  contribution: number
   rating: number | null
   praise: string | null
   improvement: string | null
@@ -29,6 +30,7 @@ interface SeasonStats {
   goals: number
   assists: number
   cleanSheets: number
+  contribution: number
   matchAttendance: number
   trainingAttendance: number
 }
@@ -152,7 +154,7 @@ export default function PlayerStatsPage() {
         if (!matchMap.has(matchId)) {
           matchMap.set(matchId, {
             matchId, opponent: match.opponent, matchDate: match.match_date,
-            goals: 0, assists: 0, cleanSheet: false, rating: null,
+            goals: 0, assists: 0, cleanSheet: false, contribution: 0, rating: null,
             praise: record.praise_text, improvement: record.improvement_text, highlight: record.highlight_text,
           })
         }
@@ -160,6 +162,7 @@ export default function PlayerStatsPage() {
         mr.goals += record.goals || 0
         mr.assists += record.assists || 0
         if (record.clean_sheet) mr.cleanSheet = true
+        if (record.contribution) mr.contribution = Math.max(mr.contribution, record.contribution)
         if (record.rating !== null)
           mr.rating = mr.rating === null ? record.rating : (mr.rating + record.rating) / 2
         if (record.praise_text) mr.praise = record.praise_text
@@ -176,10 +179,11 @@ export default function PlayerStatsPage() {
     const totalGoals = sortedRecords.reduce((s, r) => s + r.goals, 0)
     const totalAssists = sortedRecords.reduce((s, r) => s + r.assists, 0)
     const totalCleanSheets = sortedRecords.filter(r => r.cleanSheet).length
+    const totalContribution = sortedRecords.reduce((s, r) => s + r.contribution, 0)
 
     const stats: SeasonStats = {
       games: sortedRecords.length, goals: totalGoals, assists: totalAssists,
-      cleanSheets: totalCleanSheets,
+      cleanSheets: totalCleanSheets, contribution: totalContribution,
       matchAttendance: matchAttendance?.length || 0,
       trainingAttendance: trainingAttendance?.length || 0,
     }
@@ -249,7 +253,7 @@ export default function PlayerStatsPage() {
             <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em', marginBottom: 12 }}>{t.seasonStatsTitle}</div>
             <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: 9 }}>
               {[
-                { label: t.statAppearances, value: seasonStats.matchAttendance },
+                { label: t.contribution, value: seasonStats.contribution },
                 { label: t.goals, value: seasonStats.goals },
                 { label: t.assistsLabel, value: seasonStats.assists },
                 { label: t.cleanSheet, value: seasonStats.cleanSheets },
