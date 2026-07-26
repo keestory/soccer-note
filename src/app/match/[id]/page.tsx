@@ -954,7 +954,7 @@ export default function MatchDetailPage() {
                         {record.goals > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--text)' }}>{t.goals} {record.goals}</span>}
                         {record.assists > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>{t.assistsLabel} {record.assists}</span>}
                         {record.clean_sheet && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">{t.cleanSheet}</span>}
-                        {record.contribution > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">{t.contribution}</span>}
+                        {record.contribution > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">{t.contribution}</span>}
                       </div>
 
                       {hasReview && (
@@ -975,8 +975,8 @@ export default function MatchDetailPage() {
                             </div>
                           )}
                           {record.improvement_text && (
-                            <div className="rounded-lg px-3 py-2 bg-amber-900/20">
-                              <p className="text-[10px] font-bold text-amber-400 mb-0.5">{t.improvementLabel}</p>
+                            <div className="rounded-lg px-3 py-2" style={{ background: '#fef0c7' }}>
+                              <p className="text-[10px] font-bold mb-0.5" style={{ color: '#b54708' }}>{t.improvementLabel}</p>
                               <p className="text-[13px] text-[color:var(--text)]/80">{record.improvement_text}</p>
                             </div>
                           )}
@@ -1058,7 +1058,7 @@ export default function MatchDetailPage() {
                         {stats.totalGoals > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--text)' }}>{t.goals} {stats.totalGoals}</span>}
                         {stats.totalAssists > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>{t.assistsLabel} {stats.totalAssists}</span>}
                         {stats.cleanSheets > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">{t.cleanSheet} {stats.cleanSheets}</span>}
-                        {stats.avgContribution > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">{t.contribution}</span>}
+                        {stats.avgContribution > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-700">{t.contribution}</span>}
                       </div>
                     </div>
                   </div>

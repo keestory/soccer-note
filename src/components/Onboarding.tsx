@@ -271,7 +271,7 @@ function MockDashboard() {
                 <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
                   style={m.home > m.away ? { background: 'var(--chip)', color: 'var(--text)' } :
                          m.home < m.away ? { background: '#2d0f0f', color: '#f87171' } :
-                         { background: '#2a2a2a', color: 'var(--muted2)' }}>
+                         { background: 'var(--card2)', color: 'var(--muted2)' }}>
                   {m.home > m.away ? '승' : m.home < m.away ? '패' : '무'}
                 </span>
               </div>
@@ -354,7 +354,7 @@ function MockPlayerRecord() {
                 </div>
               </div>
               <span className="text-lg font-bold px-3 py-1 rounded-lg"
-                style={r.rating >= 8 ? { background: 'var(--chip)', color: 'var(--text)' } : { background: '#2a2a2a', color: 'var(--muted2)' }}>
+                style={r.rating >= 8 ? { background: 'var(--chip)', color: 'var(--text)' } : { background: 'var(--card2)', color: 'var(--muted2)' }}>
                 {r.rating}.0
               </span>
             </div>
@@ -380,7 +380,7 @@ function MockSubstitution() {
             <ArrowLeftRight className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
             <span className="font-medium" style={{ color: 'var(--text)' }}>신동현</span>
           </div>
-          <span className="text-xs px-2 py-1 rounded" style={{ background: '#2a2a2a', color: 'var(--muted2)' }}>FW → FW</span>
+          <span className="text-xs px-2 py-1 rounded" style={{ background: 'var(--card2)', color: 'var(--muted2)' }}>FW → FW</span>
         </div>
         <div className="flex items-center gap-3 rounded-xl p-4" style={{ background: 'var(--card2)' }}>
           <span className="text-sm font-bold px-3 py-1 rounded-full" style={{ background: '#2d1b69', color: '#a78bfa' }}>22분</span>
@@ -389,7 +389,7 @@ function MockSubstitution() {
             <ArrowLeftRight className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
             <span className="font-medium" style={{ color: 'var(--text)' }}>오재원</span>
           </div>
-          <span className="text-xs px-2 py-1 rounded" style={{ background: '#2a2a2a', color: 'var(--muted2)' }}>MF → MF</span>
+          <span className="text-xs px-2 py-1 rounded" style={{ background: 'var(--card2)', color: 'var(--muted2)' }}>MF → MF</span>
         </div>
       </div>
       <div className="relative w-full aspect-[4/3] bg-gradient-to-b from-green-700 via-green-600 to-green-700 rounded-xl overflow-hidden">

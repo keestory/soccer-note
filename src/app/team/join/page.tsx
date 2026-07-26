@@ -134,7 +134,7 @@ function JoinTeamContent() {
 
         {/* Error */}
         {error && (
-          <div className="px-5 py-4 rounded-2xl text-[13px] font-medium text-red-400" style={{ background: '#2a1010', border: '1px solid #4a1a1a' }}>
+          <div className="px-5 py-4 rounded-2xl text-[13px] font-medium" style={{ background: '#fef3f2', border: '1px solid #fecdca', color: '#b42318' }}>
             {error}
           </div>
         )}
@@ -143,15 +143,15 @@ function JoinTeamContent() {
         {existingStatus === 'pending' && team && (
           <div className="p-5 rounded-2xl" style={{ background: '#fef0c7', border: '1px solid #fde68a' }}>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#2a2000' }}>
-                <Clock className="w-5 h-5 text-amber-400" />
+              <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#fde68a' }}>
+                <Clock className="w-5 h-5" style={{ color: '#b54708' }} />
               </div>
               <div>
                 <p className="font-bold text-[color:var(--text)]">{t.pendingApproval}</p>
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <p className="text-[13px] text-amber-400/80">{t.pendingApprovalDescription}</p>
+            <p className="text-[13px]" style={{ color: '#b54708' }}>{t.pendingApprovalDescription}</p>
           </div>
         )}
 
@@ -173,17 +173,17 @@ function JoinTeamContent() {
         )}
 
         {existingStatus === 'rejected' && team && (
-          <div className="p-5 rounded-2xl" style={{ background: '#2a1010', border: '1px solid #4a1a1a' }}>
+          <div className="p-5 rounded-2xl" style={{ background: '#fef3f2', border: '1px solid #fecdca' }}>
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#3a1515' }}>
-                <XCircle className="w-5 h-5 text-red-400" />
+              <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#fecdca' }}>
+                <XCircle className="w-5 h-5" style={{ color: '#b42318' }} />
               </div>
               <div>
                 <p className="font-bold text-[color:var(--text)]">{t.joinRequestRejected}</p>
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <p className="text-[13px] text-red-400/80">{t.joinRejectedDescription}</p>
+            <p className="text-[13px]" style={{ color: '#b42318' }}>{t.joinRejectedDescription}</p>
           </div>
         )}
 

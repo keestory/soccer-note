@@ -30,7 +30,7 @@ function ListItemSkeleton() {
 
 export function MembersPageSkeleton() {
   return (
-    <div className="min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-4 flex items-center gap-3">
           <div className="space-y-2">
@@ -57,7 +57,7 @@ export function MembersPageSkeleton() {
 
 export function DashboardSkeleton() {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-4 flex justify-between items-center">
           <div className="space-y-2">
@@ -81,7 +81,7 @@ export function DashboardSkeleton() {
 
 export function PlayersListSkeleton() {
   return (
-    <div className="min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-4 flex items-center gap-3">
           <Skeleton className="h-6 w-20" />
@@ -98,7 +98,7 @@ export function PlayersListSkeleton() {
 
 export function PlayerDetailSkeleton() {
   return (
-    <div className="min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-4 flex items-center gap-3">
           <Skeleton className="h-5 w-28" />
@@ -117,7 +117,7 @@ export function PlayerDetailSkeleton() {
 
 export function MatchDetailSkeleton() {
   return (
-    <div className="min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-4 flex items-center gap-3">
           <Skeleton className="h-5 w-32" />
@@ -139,7 +139,7 @@ export function MatchDetailSkeleton() {
 
 export function QuarterEditSkeleton() {
   return (
-    <div className="min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
           <Skeleton className="h-5 w-24" />
@@ -159,7 +159,7 @@ export function QuarterEditSkeleton() {
 
 export function TrainingDetailSkeleton() {
   return (
-    <div className="min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-20" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-4 flex items-center justify-between">
           <Skeleton className="h-5 w-24" />
@@ -179,7 +179,7 @@ export function TrainingDetailSkeleton() {
 
 export function NotificationsPageSkeleton() {
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
         <div className="max-w-4xl mx-auto px-5 py-4 flex items-center gap-4">
           <div className="space-y-2">

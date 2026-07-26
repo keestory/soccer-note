@@ -182,7 +182,7 @@ export default function AdminPage() {
             </div>
 
             {loginError && (
-              <p className="text-sm text-red-400 rounded-lg px-3 py-2" style={{ background: '#2a0a0a' }}>{loginError}</p>
+              <p className="text-sm rounded-lg px-3 py-2" style={{ background: '#fef3f2', color: '#b42318' }}>{loginError}</p>
             )}
 
             <button
@@ -208,7 +208,7 @@ export default function AdminPage() {
   if (authState === 'forbidden') {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4" style={{ background: 'var(--bg)' }}>
-        <Shield className="w-16 h-16 text-red-400" />
+        <Shield className="w-16 h-16" style={{ color: '#d92d20' }} />
         <p className="text-xl font-bold text-[color:var(--text)]">접근 권한이 없습니다.</p>
         <Link href="/dashboard" className="flex items-center gap-1" style={{ color: 'var(--text)' }}>
           <ArrowLeft className="w-4 h-4" /> 대시보드로 돌아가기
@@ -362,7 +362,7 @@ export default function AdminPage() {
                       <td className="px-4 py-3 text-[color:var(--text)]/40 font-mono text-xs">{team.invite_code || '-'}</td>
                       <td className="px-4 py-3">
                         {team.is_removed ? (
-                          <span className="text-xs bg-red-900/40 text-red-400 px-2 py-0.5 rounded-full">삭제됨</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: '#fef3f2', color: '#b42318' }}>삭제됨</span>
                         ) : (
                           <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--text)' }}>활성</span>
                         )}
