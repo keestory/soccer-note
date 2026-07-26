@@ -11,7 +11,7 @@ export default function PrivacyPage() {
         <h1 className="text-3xl font-bold text-[color:var(--text)] mb-2">개인정보 처리방침</h1>
         <p className="text-sm mb-8" style={{ color: 'var(--muted2)' }}>최종 수정일: 2026년 3월 22일</p>
 
-        <div className="max-w-none space-y-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>
+        <div className="max-w-none space-y-8 leading-relaxed" style={{ color: 'var(--text2)' }}>
           <section>
             <h2 className="text-xl font-semibold text-[color:var(--text)] mb-3">1. 개요</h2>
             <p>
@@ -180,7 +180,7 @@ export default function PrivacyPage() {
           </section>
         </div>
 
-        <div className="mt-12 pt-8 text-center text-sm" style={{ borderTop: "1px solid var(--line)", color: "rgba(255,255,255,0.3)" }}>
+        <div className="mt-12 pt-8 text-center text-sm" style={{ borderTop: "1px solid var(--line)", color: "var(--muted2)" }}>
           &copy; 2026 SoccerNote. All rights reserved.
         </div>
       </div>

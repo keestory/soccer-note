@@ -156,11 +156,11 @@ export default function PostDetailPage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.matchRequestLabel}</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.matchRequestLabel}</p>
             <p className="text-sm font-black text-[color:var(--text)] truncate">{post.team?.name}</p>
           </div>
           {isMyPost && isCoach && (
-            <button onClick={() => setShowDeleteConfirm(true)} className="p-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <button onClick={() => setShowDeleteConfirm(true)} className="p-2 rounded-xl" style={{ color: 'var(--muted2)' }}>
               <Trash2 className="w-5 h-5" />
             </button>
           )}
@@ -202,7 +202,7 @@ export default function PostDetailPage() {
               <Calendar className="w-4 h-4" style={{ color: 'var(--text)' }} />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.dateLabel}</p>
+              <p className="text-[10px] font-bold uppercase" style={{ color: 'var(--muted2)' }}>{t.dateLabel}</p>
               <p className="text-sm font-bold text-[color:var(--text)]">{formatDate(post.match_date, t)}</p>
               {post.match_time && <p className="text-xs" style={{ color: 'var(--muted2)' }}>{post.match_time}</p>}
             </div>
@@ -212,7 +212,7 @@ export default function PostDetailPage() {
               <MapPin className="w-4 h-4" style={{ color: 'var(--text)' }} />
             </div>
             <div>
-              <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.placeLabel}</p>
+              <p className="text-[10px] font-bold uppercase" style={{ color: 'var(--muted2)' }}>{t.placeLabel}</p>
               <p className="text-sm font-bold text-[color:var(--text)] truncate">{post.region}</p>
               <p className="text-xs truncate" style={{ color: 'var(--muted2)' }}>{post.location}</p>
             </div>
@@ -222,8 +222,8 @@ export default function PostDetailPage() {
         {/* Description */}
         {post.description && (
           <div style={cardStyle} className="p-4">
-            <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.teamMessage}</p>
-            <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'rgba(255,255,255,0.7)' }}>{post.description}</p>
+            <p className="text-[11px] font-black uppercase tracking-widest mb-2" style={{ color: 'var(--muted2)' }}>{t.teamMessage}</p>
+            <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--text2)' }}>{post.description}</p>
           </div>
         )}
 
@@ -324,10 +324,10 @@ export default function PostDetailPage() {
               rows={4}
               maxLength={200}
               className="w-full rounded-2xl p-3.5 text-sm resize-none outline-none transition placeholder-white/20"
-              style={{ background: 'var(--card2)', border: '1px solid var(--line)', color: 'rgba(255,255,255,0.9)', caretColor: 'var(--text)' }}
+              style={{ background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)', caretColor: 'var(--text)' }}
             />
             <div className="flex justify-end mb-4">
-              <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>{applyMessage.length}/200</span>
+              <span className="text-xs" style={{ color: 'var(--muted2)' }}>{applyMessage.length}/200</span>
             </div>
             <div className="space-y-2">
               <button onClick={handleApply} disabled={submitting}

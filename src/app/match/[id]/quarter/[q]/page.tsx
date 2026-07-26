@@ -1281,7 +1281,7 @@ export default function QuarterEditPage() {
                 style={{
                   background: selectedPlayer.cleanSheet ? 'var(--chip)' : 'var(--card2)',
                   border: selectedPlayer.cleanSheet ? '1px solid var(--accent)' : '1px solid var(--line)',
-                  color: selectedPlayer.cleanSheet ? 'var(--navy)' : 'rgba(255,255,255,0.3)',
+                  color: selectedPlayer.cleanSheet ? 'var(--navy)' : 'var(--text-faint)',
                 }}
               >
                 <Check className="w-4 h-4" />
@@ -1293,7 +1293,7 @@ export default function QuarterEditPage() {
                 style={{
                   background: selectedPlayer.contribution > 0 ? '#1a1200' : 'var(--card2)',
                   border: selectedPlayer.contribution > 0 ? '1px solid #f59e0b' : '1px solid var(--line)',
-                  color: selectedPlayer.contribution > 0 ? '#f59e0b' : 'rgba(255,255,255,0.3)',
+                  color: selectedPlayer.contribution > 0 ? '#f59e0b' : 'var(--text-faint)',
                 }}
               >
                 <Check className="w-4 h-4" />
