@@ -560,12 +560,14 @@ export default function QuarterEditPage() {
         clientY = moveEvent.clientY
       }
 
-      const x = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100))
-      const y = Math.max(5, Math.min(95, ((clientY - rect.top) / rect.height) * 100))
+      // Portrait pitch: horizontal drag maps to across-field (positionY),
+      // vertical drag maps to along-field (positionX), inverted so own goal is at the bottom.
+      const posY = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100))
+      const posX = Math.max(5, Math.min(95, 100 - ((clientY - rect.top) / rect.height) * 100))
 
       setFieldPlayers(prev =>
         prev.map(fp =>
-          fp.id === fieldPlayerId ? { ...fp, positionX: x, positionY: y } : fp
+          fp.id === fieldPlayerId ? { ...fp, positionX: posX, positionY: posY } : fp
         )
       )
     }
@@ -887,8 +889,8 @@ export default function QuarterEditPage() {
           {/* Field */}
           <div
             ref={fieldRef}
-            className="relative w-full aspect-[3/2] rounded-xl overflow-hidden touch-none select-none"
-            style={{ background: 'linear-gradient(180deg,#0e2018,#0a1a13)', border: '1px solid #143325' }}
+            className="relative w-full aspect-[3/4] rounded-xl overflow-hidden touch-none select-none"
+            style={{ background: 'linear-gradient(180deg,#12724a,#0e5e3d)', border: '1px solid #143325' }}
           >
             {/* Grass stripe pattern */}
             <div className="absolute inset-0" style={{
@@ -897,21 +899,21 @@ export default function QuarterEditPage() {
 
             {/* Field outline */}
             <div className="absolute inset-3 border border-white/20 rounded" />
-            {/* Center line */}
-            <div className="absolute left-1/2 top-3 bottom-3 w-px bg-white/20" />
+            {/* Center line (horizontal — portrait pitch) */}
+            <div className="absolute top-1/2 left-3 right-3 h-px bg-white/20" />
             {/* Center circle */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border border-white/20" />
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white/20" />
-            {/* Left penalty area */}
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border border-white/20 border-l-0" />
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border border-white/20 border-l-0" />
-            <div className="absolute left-[14%] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
-            <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-[18%] border border-white/20 border-l-0 rounded-r" style={{ background: 'rgba(255,255,255,0.04)' }} />
-            {/* Right penalty area */}
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border border-white/20 border-r-0" />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border border-white/20 border-r-0" />
-            <div className="absolute right-[14%] top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
-            <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-[18%] border border-white/20 border-r-0 rounded-l" style={{ background: 'rgba(255,255,255,0.04)' }} />
+            {/* Top penalty area */}
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border border-white/20 border-t-0" />
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border border-white/20 border-t-0" />
+            <div className="absolute top-[14%] left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 h-3 w-[18%] border border-white/20 border-t-0 rounded-b" style={{ background: 'rgba(255,255,255,0.04)' }} />
+            {/* Bottom penalty area */}
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border border-white/20 border-b-0" />
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border border-white/20 border-b-0" />
+            <div className="absolute bottom-[14%] left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-3 w-[18%] border border-white/20 border-b-0 rounded-t" style={{ background: 'rgba(255,255,255,0.04)' }} />
             {/* Corner arcs */}
             <div className="absolute left-3 top-3 w-6 h-6 border-b border-r border-white/20 rounded-br-full" />
             <div className="absolute right-3 top-3 w-6 h-6 border-b border-l border-white/20 rounded-bl-full" />
@@ -927,8 +929,8 @@ export default function QuarterEditPage() {
                   key={fp.id}
                   className={`absolute flex flex-col items-center cursor-grab active:cursor-grabbing touch-none transition-transform ${draggingId === fp.id ? 'z-20' : ''}`}
                   style={{
-                    left: `${fp.positionX}%`,
-                    top: `${fp.positionY}%`,
+                    left: `${fp.positionY}%`,
+                    top: `${100 - fp.positionX}%`,
                     transform: draggingId === fp.id
                       ? 'translate(-50%, calc(-50% - 28px)) scale(1.15)'
                       : 'translate(-50%, -50%)',

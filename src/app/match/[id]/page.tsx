@@ -782,31 +782,31 @@ export default function MatchDetailPage() {
 
               {/* Soccer Field Preview */}
               <div className="p-4">
-                <div className="relative w-full aspect-[3/2] rounded-lg overflow-hidden shadow-inner" style={{ background: 'linear-gradient(180deg,#0e2018,#0a1a13)', border: '1px solid #143325' }}>
+                <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-inner" style={{ background: 'linear-gradient(180deg,#12724a,#0e5e3d)', border: '1px solid #143325' }}>
                   {/* Grass pattern */}
                   <div className="absolute inset-0" style={{
                     backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px)',
                   }} />
 
                   {/* Field outline */}
-                  <div className="absolute inset-3 border-2 border-white/60 rounded" />
+                  <div className="absolute inset-3 border-2 border-white/40 rounded" />
 
-                  {/* Center line */}
-                  <div className="absolute left-1/2 top-3 bottom-3 w-0.5 bg-white/60" />
+                  {/* Center line (horizontal — portrait pitch) */}
+                  <div className="absolute top-1/2 left-3 right-3 h-0.5 bg-white/40" />
 
                   {/* Center circle */}
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 border-white/60" />
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/60" />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 border-white/40" />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/40" />
 
-                  {/* Left penalty area */}
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border-2 border-white/60 border-l-0" />
-                  <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border-2 border-white/60 border-l-0" />
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-2 h-[18%] bg-white/40 rounded-r" />
+                  {/* Top penalty area */}
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border-2 border-white/40 border-t-0" />
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border-2 border-white/40 border-t-0" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-2 w-[18%] bg-white/30 rounded-b" />
 
-                  {/* Right penalty area */}
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[15%] h-[55%] border-2 border-white/60 border-r-0" />
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[6%] h-[30%] border-2 border-white/60 border-r-0" />
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-[18%] bg-white/40 rounded-l" />
+                  {/* Bottom penalty area */}
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border-2 border-white/40 border-b-0" />
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border-2 border-white/40 border-b-0" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-[18%] bg-white/30 rounded-t" />
 
                   {/* Players */}
                   {(() => {
@@ -830,8 +830,8 @@ export default function MatchDetailPage() {
                           key={record.id}
                           className="absolute flex flex-col items-center"
                           style={{
-                            left: `${record.position_x}%`,
-                            top: `${record.position_y}%`,
+                            left: `${record.position_y}%`,
+                            top: `${100 - record.position_x}%`,
                             transform: 'translate(-50%, -50%)',
                           }}
                         >
