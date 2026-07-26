@@ -602,6 +602,10 @@ export interface Translations {
   statAppearances: string
   statTraining: string
   statRecordedMatches: string
+  seasonAttackPoints: string
+  matchAttackPoints: string
+  seasonTotal: string
+  matchRecordSection: string
   growthChart: string
   matchRecordsTitle: string
   chartNeedsData: string
