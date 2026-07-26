@@ -183,7 +183,7 @@ export default function InboxPage() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -193,7 +193,7 @@ export default function InboxPage() {
           <div className="flex-1 flex items-center gap-2">
             <h1 className="text-base font-black text-[color:var(--text)]">알림함</h1>
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 bg-red-500 text-[color:var(--text)] text-xs font-bold rounded-full">
+              <span className="px-2 py-0.5 text-xs font-bold rounded-full text-white" style={{ background: '#f04438' }}>
                 {unreadCount}
               </span>
             )}
