@@ -9,6 +9,8 @@ import { ArrowLeft, MapPin, Calendar, Swords } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 
+const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
+
 export default function NewMatchPage() {
   const router = useRouter()
   const { t } = useI18n()
@@ -73,20 +75,16 @@ export default function NewMatchPage() {
       </header>
 
       <main className="flex-1 overflow-y-auto max-w-4xl mx-auto w-full px-4 py-6 space-y-4 safe-bottom">
-        {/* VS visual */}
-        <div style={cardStyle} className="p-5">
-          <div className="flex items-center gap-3">
-            <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: 'var(--chip)' }}>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.homeTeam}</p>
-              <p className="font-bold text-[15px] truncate" style={{ color: 'var(--text)' }}>{teamName || '…'}</p>
-            </div>
-            <div className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'var(--card2)' }}>
-              <Swords className="w-4 h-4 text-[color:var(--text)]/30" />
-            </div>
-            <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: 'var(--card2)' }}>
-              <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.opponent}</p>
-              <p className="font-bold text-[15px] text-[color:var(--text)]/60 truncate">{opponent || '?'}</p>
-            </div>
+        {/* VS visual (navy) */}
+        <div className="flex items-center" style={{ background: '#101828', borderRadius: 18, padding: 18, gap: 12 }}>
+          <div style={{ flex: 1, background: '#1a2437', borderRadius: 13, padding: '14px 10px', textAlign: 'center', minWidth: 0 }}>
+            <div style={{ fontSize: 11, color: '#667085', marginBottom: 4 }}>{t.homeTeam}</div>
+            <div className="truncate" style={{ fontSize: 15, fontWeight: 700, color: '#c8f542' }}>{teamName || '…'}</div>
+          </div>
+          <div style={{ fontFamily: BEBAS, fontSize: 20, color: '#667085', flexShrink: 0 }}>VS</div>
+          <div style={{ flex: 1, background: '#1a2437', borderRadius: 13, padding: '14px 10px', textAlign: 'center', minWidth: 0 }}>
+            <div style={{ fontSize: 11, color: '#667085', marginBottom: 4 }}>{t.opponent}</div>
+            <div className="truncate" style={{ fontSize: 15, fontWeight: 700, color: opponent ? '#fff' : '#667085' }}>{opponent || '?'}</div>
           </div>
         </div>
 
