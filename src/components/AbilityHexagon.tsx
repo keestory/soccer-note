@@ -19,7 +19,7 @@ export function AbilityHexagon({ attributes, size = 220 }: { attributes: PlayerA
   const { t } = useI18n()
   const cx = size / 2, cy = size / 2
   const R = size * 0.34
-  const accent = 'var(--accent)'
+  const accent = 'var(--navy)'
 
   // point on the hexagon for attribute i at ratio r (0..1)
   const pt = (i: number, r: number) => {
@@ -55,7 +55,7 @@ export function AbilityHexagon({ attributes, size = 220 }: { attributes: PlayerA
         const [x, y] = pt(i, 1.28)
         return (
           <text key={k} x={x} y={y} textAnchor="middle" dominantBaseline="middle"
-            fontSize={size * 0.052} fontWeight={800} fill="#fff">
+            fontSize={size * 0.052} fontWeight={800} fill="var(--text)">
             {t[LABEL_KEYS[k]]}
             <tspan fontSize={size * 0.05} fill={accent} dx={4}>{attributes[k] || 0}</tspan>
           </text>
