@@ -30,6 +30,7 @@
   --on-navy: #ffffff;
   --on-accent: #0a0a0a; /* text on an accent fill */
   --danger: #c05a4d;
+  --nav-active: var(--accent); /* active bottom-nav tab */
 }
 
 /* ─── Navy Board light theme scope ──────────────────────────────────────
@@ -57,6 +58,7 @@
   --on-navy: #ffffff;
   --on-accent: #101828;
   --danger: #f04438;
+  --nav-active: #101828;
   color: #101828;
   background: var(--bg);
 }

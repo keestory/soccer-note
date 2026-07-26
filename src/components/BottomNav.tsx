@@ -20,7 +20,7 @@ export function BottomNav() {
   return (
     <nav
       className="fixed bottom-0 left-0 right-0 z-20 safe-bottom"
-      style={{ background: 'var(--nav)', borderTop: '1px solid #1a1a1a' }}
+      style={{ background: 'var(--nav)', borderTop: '1px solid var(--line)' }}
     >
       <div className="flex justify-around" style={{ padding: '10px 8px 16px' }}>
         {TABS.map(tab => {
@@ -33,12 +33,12 @@ export function BottomNav() {
             >
               <span
                 className="h-[3px] w-[22px] rounded-full transition-colors"
-                style={{ background: active ? 'var(--accent)' : 'transparent' }}
+                style={{ background: active ? 'var(--nav-active)' : 'transparent' }}
               />
               <span
                 className="text-[14px] transition-colors"
                 style={{
-                  color: active ? 'var(--accent)' : '#5c5c5c',
+                  color: active ? 'var(--nav-active)' : 'var(--text3)',
                   fontWeight: active ? 900 : 600,
                 }}
               >
