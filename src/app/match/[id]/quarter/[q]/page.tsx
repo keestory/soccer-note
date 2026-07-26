@@ -1056,7 +1056,7 @@ export default function QuarterEditPage() {
               {subPickerMode ? (
                 <div className="flex flex-col flex-1 min-h-0">
                   <p className="text-sm font-medium mb-3 flex items-center gap-2 text-[color:var(--text)]/70">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold`} style={subPickerMode === 'out' ? { background: '#2a0a0a', color: '#ef4444' } : { background: 'var(--chip)', color: 'var(--text)' }}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold`} style={subPickerMode === 'out' ? { background: '#fef3f2', color: '#d92d20' } : { background: 'var(--chip)', color: 'var(--text)' }}>
                       {subPickerMode === 'out' ? 'OUT' : 'IN'}
                     </span>
                     {t.selectPlayer}
