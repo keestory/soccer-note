@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: '개인정보 처리방침 - SoccerNote',
+  title: '개인정보 처리방침 - Football Note',
 }
 
 export default function PrivacyPage() {
@@ -15,7 +15,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-xl font-semibold text-[color:var(--text)] mb-3">1. 개요</h2>
             <p>
-              SoccerNote(이하 &quot;서비스&quot;)는 축구팀 경기 기록 및 선수 관리 애플리케이션입니다.
+              Football Note(이하 &quot;서비스&quot;)는 축구팀 경기 기록 및 선수 관리 애플리케이션입니다.
               본 개인정보 처리방침은 서비스 이용 과정에서 수집되는 개인정보의 항목, 수집 목적,
               보유 기간 및 이용자의 권리에 대해 안내합니다.
             </p>
@@ -174,14 +174,14 @@ export default function PrivacyPage() {
               개인정보 처리에 관한 문의사항이 있으시면 아래로 연락해 주세요.
             </p>
             <div className="rounded-xl p-4 mt-3" style={{ background: "var(--card2)" }}>
-              <p><strong>서비스명:</strong> SoccerNote</p>
+              <p><strong>서비스명:</strong> Football Note</p>
               <p><strong>이메일:</strong> keestory91@gmail.com</p>
             </div>
           </section>
         </div>
 
         <div className="mt-12 pt-8 text-center text-sm" style={{ borderTop: "1px solid var(--line)", color: "var(--muted2)" }}>
-          &copy; 2026 SoccerNote. All rights reserved.
+          &copy; 2026 Football Note. All rights reserved.
         </div>
       </div>
     </div>

@@ -129,13 +129,13 @@ export default function Onboarding() {
             className="w-[104px] h-[104px] flex items-center justify-center mb-7"
             style={{ background: 'var(--navy)', borderRadius: 26 }}
           >
-            <span className="font-display text-[64px] leading-none" style={{ color: 'var(--accent)' }}>S</span>
+            <span className="font-display text-[64px] leading-none" style={{ color: 'var(--accent)' }}>F</span>
           </div>
           <span
             className="font-display text-[42px] leading-none text-[color:var(--text)] mb-3"
             style={{ letterSpacing: '0.06em' }}
           >
-            SOCCERNOTE
+            FOOTBALL NOTE
           </span>
           <p className="text-[15px]" style={{ color: 'var(--muted2)' }}>{t.appTagline}</p>
         </div>

@@ -97,7 +97,7 @@ export default function SignupPage() {
     <div className="light min-h-screen flex flex-col safe-top safe-bottom" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <div className="px-6 pt-6 pb-2">
-        <p className="font-display text-[11px] tracking-[0.18em] uppercase" style={{ color: 'var(--text)' }}>SOCCERNOTE</p>
+        <p className="font-display text-[11px] tracking-[0.18em] uppercase" style={{ color: 'var(--text)' }}>FOOTBALL NOTE</p>
         <h1 className="font-display text-[28px] leading-tight mt-1" style={{ color: 'var(--text)' }}> {t.newAccountTitle}</h1>
         <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{t.newAccountSubtitle}</p>
       </div>

@@ -2,7 +2,7 @@ import type { Translations } from '../types'
 
 export const translations: Translations = {
   // Common
-  appName: 'SoccerNote',
+  appName: 'Football Note',
   appDescription: 'App di registrazione partite di calcio',
   loading: 'Caricamento...',
   save: 'Salva',

@@ -124,7 +124,7 @@ export default function DashboardPage() {
       <div className="light min-h-screen px-5 py-8" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-8">
-            <span className="font-display text-[30px] tracking-widest" style={{ color: 'var(--accent)' }}>SOCCERNOTE</span>
+            <span className="font-display text-[30px] tracking-widest" style={{ color: 'var(--accent)' }}>FOOTBALL NOTE</span>
           </div>
 
           {teams.length > 0 && (
