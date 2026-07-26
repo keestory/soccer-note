@@ -590,6 +590,9 @@ export interface Translations {
   show: string
   hide: string
   findTeamsTagline: string
+  findOpponentTitle: string
+  myPostBadge: string
+  appliedBadge: string
   filter: string
   writePost: string
   region: string
