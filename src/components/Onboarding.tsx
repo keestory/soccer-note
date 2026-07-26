@@ -120,19 +120,19 @@ export default function Onboarding() {
   if (currentSlide === 0) {
     return (
       <div
-        className="min-h-screen flex flex-col safe-top safe-bottom"
-        style={{ background: '#0a0a0a' }}
+        className="light min-h-screen flex flex-col safe-top safe-bottom"
+        style={{ background: 'var(--bg)' }}
       >
         {/* Center: logo + wordmark + tagline */}
         <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
           <div
             className="w-[104px] h-[104px] flex items-center justify-center mb-7"
-            style={{ background: 'var(--accent)', borderRadius: 26 }}
+            style={{ background: 'var(--navy)', borderRadius: 26 }}
           >
-            <span className="font-display text-[64px] leading-none" style={{ color: '#0a0a0a' }}>S</span>
+            <span className="font-display text-[64px] leading-none" style={{ color: 'var(--accent)' }}>S</span>
           </div>
           <span
-            className="font-display text-[42px] leading-none text-white mb-3"
+            className="font-display text-[42px] leading-none text-[color:var(--text)] mb-3"
             style={{ letterSpacing: '0.06em' }}
           >
             SOCCERNOTE
@@ -145,13 +145,13 @@ export default function Onboarding() {
           <button
             onClick={() => router.push('/signup')}
             className="w-full py-[18px] rounded-[18px] font-black text-[17px] active:scale-[0.98] transition"
-            style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}
           >
             {t.signupButton}
           </button>
           <button
             onClick={() => router.push('/login')}
-            className="w-full py-[18px] rounded-[18px] font-black text-[17px] text-white active:scale-[0.98] transition"
+            className="w-full py-[18px] rounded-[18px] font-black text-[17px] text-[color:var(--text)] active:scale-[0.98] transition"
             style={{ background: 'var(--card)', border: '1px solid var(--line)' }}
           >
             {t.landingLogin}
@@ -168,8 +168,8 @@ export default function Onboarding() {
 
   return (
     <div
-      className="min-h-screen flex flex-col safe-top safe-bottom"
-      style={{ background: '#0a0a0a' }}
+      className="light min-h-screen flex flex-col safe-top safe-bottom"
+      style={{ background: 'var(--bg)' }}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -177,23 +177,23 @@ export default function Onboarding() {
       {/* Top row: badge + skip */}
       <div className="flex justify-between items-center p-4">
         <div>
-          {slide.forCoach  && <span className="px-3 py-1 text-xs font-semibold rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.coach}</span>}
+          {slide.forCoach  && <span className="px-3 py-1 text-xs font-semibold rounded-full" style={{ background: 'var(--chip)', color: 'var(--text)' }}>{t.coach}</span>}
           {slide.forParent && <span className="px-3 py-1 text-xs font-semibold rounded-full" style={{ background: '#002a1a', color: '#2dd4bf' }}>{t.parentBadge}</span>}
         </div>
-        <button onClick={handleSkip} className="text-sm font-medium px-4 py-2 transition" style={{ color: 'rgba(255,255,255,0.4)' }}>
+        <button onClick={handleSkip} className="text-sm font-medium px-4 py-2 transition" style={{ color: 'var(--muted2)' }}>
           건너뛰기
         </button>
       </div>
 
       {/* Title + description */}
       <div className="px-6 pt-2 pb-4">
-        <h2 className="text-2xl font-bold text-white mb-2">{slide.title}</h2>
+        <h2 className="text-2xl font-bold text-[color:var(--text)] mb-2">{slide.title}</h2>
         <p className="text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>{slide.description}</p>
       </div>
 
       {/* Mock UI */}
       <div className="flex-1 px-4 overflow-hidden">
-        <div className="rounded-2xl overflow-hidden h-full max-h-[55vh]" style={{ background: '#111010', border: '1px solid var(--line)' }}>
+        <div className="rounded-2xl overflow-hidden h-full max-h-[55vh]" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
           {slide.mockUI}
         </div>
       </div>
@@ -205,7 +205,7 @@ export default function Onboarding() {
             key={i}
             onClick={() => setCurrentSlide(i)}
             className="h-2 rounded-full transition-all"
-            style={{ width: i === currentSlide ? 24 : 8, background: i === currentSlide ? 'var(--accent)' : 'rgba(255,255,255,0.2)' }}
+            style={{ width: i === currentSlide ? 24 : 8, background: i === currentSlide ? 'var(--navy)' : 'rgba(16,24,40,0.18)' }}
           />
         ))}
       </div>
@@ -215,14 +215,14 @@ export default function Onboarding() {
         <button
           onClick={handlePrev}
           className="flex-1 py-4 rounded-xl font-medium flex items-center justify-center gap-2 transition"
-          style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}
+          style={{ background: 'var(--card2)', color: 'var(--text2)' }}
         >
           <ChevronLeft className="w-5 h-5" /> {t.onboardingPrev}
         </button>
         <button
           onClick={handleNext}
           className="flex-1 py-4 rounded-xl font-black flex items-center justify-center gap-2 transition active:scale-[0.98]"
-          style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+          style={{ background: 'var(--navy)', color: 'var(--accent)' }}
         >
           {isLastSlide ? t.onboardingStart : t.onboardingNext} <ChevronRight className="w-5 h-5" />
         </button>
@@ -240,38 +240,38 @@ function MockDashboard() {
     { opponent: '드래곤 시티', date: '2026.01.11', home: 2, away: 0, mvp: '최서윤', rating: 9.0 },
   ]
   return (
-    <div className="p-4 h-full overflow-y-auto" style={{ background: '#111010' }}>
-      <div className="rounded-xl p-4 mb-4" style={{ background: '#1a1a1a', border: '1px solid var(--line)' }}>
+    <div className="p-4 h-full overflow-y-auto" style={{ background: 'var(--card)' }}>
+      <div className="rounded-xl p-4 mb-4" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.5)' }}>팀 전적</span>
-          <span className="text-sm font-bold" style={{ color: 'var(--accent)' }}>승률 67%</span>
+          <span className="text-sm font-bold" style={{ color: 'var(--text)' }}>승률 67%</span>
         </div>
         <div className="grid grid-cols-4 gap-2 text-center">
-          <div><p className="text-2xl font-bold text-white">12</p><p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>총 경기</p></div>
-          <div><p className="text-2xl font-bold" style={{ color: 'var(--accent)' }}>8</p><p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>승</p></div>
-          <div><p className="text-2xl font-bold text-red-400">2</p><p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>패</p></div>
-          <div><p className="text-2xl font-bold" style={{ color: 'rgba(255,255,255,0.3)' }}>2</p><p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>무</p></div>
+          <div><p className="text-2xl font-bold text-[color:var(--text)]">12</p><p className="text-xs" style={{ color: 'var(--muted2)' }}>총 경기</p></div>
+          <div><p className="text-2xl font-bold" style={{ color: 'var(--text)' }}>8</p><p className="text-xs" style={{ color: 'var(--muted2)' }}>승</p></div>
+          <div><p className="text-2xl font-bold text-red-400">2</p><p className="text-xs" style={{ color: 'var(--muted2)' }}>패</p></div>
+          <div><p className="text-2xl font-bold" style={{ color: 'rgba(255,255,255,0.3)' }}>2</p><p className="text-xs" style={{ color: 'var(--muted2)' }}>무</p></div>
         </div>
       </div>
-      <p className="text-sm font-semibold text-white mb-3">최근 경기</p>
+      <p className="text-sm font-semibold text-[color:var(--text)] mb-3">최근 경기</p>
       <div className="space-y-3">
         {matches.map((m, i) => (
-          <div key={i} className="rounded-xl p-4" style={{ background: '#1a1a1a', border: '1px solid var(--line)' }}>
+          <div key={i} className="rounded-xl p-4" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
             <div className="flex justify-between items-start mb-2">
               <div>
-                <p className="font-semibold text-white">vs {m.opponent}</p>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{m.date}</p>
+                <p className="font-semibold text-[color:var(--text)]">vs {m.opponent}</p>
+                <p className="text-xs" style={{ color: 'var(--muted2)' }}>{m.date}</p>
               </div>
               <div className="text-right">
                 <p className="text-2xl font-bold">
-                  <span style={{ color: 'var(--accent)' }}>{m.home}</span>
+                  <span style={{ color: 'var(--text)' }}>{m.home}</span>
                   <span className="mx-1" style={{ color: 'rgba(255,255,255,0.3)' }}>:</span>
-                  <span style={{ color: 'rgba(255,255,255,0.6)' }}>{m.away}</span>
+                  <span style={{ color: 'var(--text2)' }}>{m.away}</span>
                 </p>
                 <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                  style={m.home > m.away ? { background: 'var(--chip)', color: 'var(--accent)' } :
+                  style={m.home > m.away ? { background: 'var(--chip)', color: 'var(--text)' } :
                          m.home < m.away ? { background: '#2d0f0f', color: '#f87171' } :
-                         { background: '#2a2a2a', color: 'rgba(255,255,255,0.4)' }}>
+                         { background: '#2a2a2a', color: 'var(--muted2)' }}>
                   {m.home > m.away ? '승' : m.home < m.away ? '패' : '무'}
                 </span>
               </div>
@@ -316,10 +316,10 @@ function MockFormation() {
         <div className="absolute left-0 right-0 top-1/2 border-t-2 border-white/30" />
         {players.map((p, i) => (
           <div key={i} className="absolute flex flex-col items-center" style={{ left: `${p.x}%`, top: `${p.y}%`, transform: 'translate(-50%, -50%)' }}>
-            <div className="w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg border-2 border-white/50" style={{ backgroundColor: p.color }}>
+            <div className="w-10 h-10 rounded-full flex items-center justify-center text-[color:var(--text)] text-xs font-bold shadow-lg border-2 border-white/50" style={{ backgroundColor: p.color }}>
               {p.pos}
             </div>
-            <span className="text-[10px] text-white mt-1 font-medium drop-shadow-lg bg-black/30 px-1 rounded">{p.name}</span>
+            <span className="text-[10px] text-[color:var(--text)] mt-1 font-medium drop-shadow-lg bg-black/30 px-1 rounded">{p.name}</span>
           </div>
         ))}
       </div>
@@ -336,25 +336,25 @@ function MockPlayerRecord() {
   ]
   const POS_COLORS: Record<string, string> = { FW: '#ef4444', MF: '#2dd4bf', DF: '#3b82f6', GK: '#f59e0b' }
   return (
-    <div className="p-4 h-full overflow-y-auto" style={{ background: '#111010' }}>
+    <div className="p-4 h-full overflow-y-auto" style={{ background: 'var(--card)' }}>
       <div className="flex items-center justify-between mb-4">
-        <p className="font-semibold text-white">1쿼터 선수 평가</p>
-        <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>우리팀 <span className="font-bold" style={{ color: 'var(--accent)' }}>3</span> : <span className="font-bold text-white">1</span></span>
+        <p className="font-semibold text-[color:var(--text)]">1쿼터 선수 평가</p>
+        <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>우리팀 <span className="font-bold" style={{ color: 'var(--text)' }}>3</span> : <span className="font-bold text-[color:var(--text)]">1</span></span>
       </div>
       <div className="space-y-3">
         {records.map((r, i) => (
-          <div key={i} className="rounded-xl p-4" style={{ background: '#1a1a1a' }}>
+          <div key={i} className="rounded-xl p-4" style={{ background: 'var(--card2)' }}>
             <div className="flex items-center gap-3 mb-2">
-              <span className="w-10 h-10 rounded-full text-white text-xs font-bold flex items-center justify-center" style={{ backgroundColor: POS_COLORS[r.pos] }}>{r.pos}</span>
+              <span className="w-10 h-10 rounded-full text-[color:var(--text)] text-xs font-bold flex items-center justify-center" style={{ backgroundColor: POS_COLORS[r.pos] }}>{r.pos}</span>
               <div className="flex-1">
-                <p className="font-medium text-white">{r.name}</p>
+                <p className="font-medium text-[color:var(--text)]">{r.name}</p>
                 <div className="flex items-center gap-2 text-sm">
-                  {r.goals > 0   && <span className="font-bold" style={{ color: 'var(--accent)' }}>{r.goals}골</span>}
-                  {r.assists > 0 && <span className="font-bold" style={{ color: 'var(--accent)' }}>{r.assists}도움</span>}
+                  {r.goals > 0   && <span className="font-bold" style={{ color: 'var(--text)' }}>{r.goals}골</span>}
+                  {r.assists > 0 && <span className="font-bold" style={{ color: 'var(--text)' }}>{r.assists}도움</span>}
                 </div>
               </div>
               <span className="text-lg font-bold px-3 py-1 rounded-lg"
-                style={r.rating >= 8 ? { background: 'var(--chip)', color: 'var(--accent)' } : { background: '#2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
+                style={r.rating >= 8 ? { background: 'var(--chip)', color: 'var(--text)' } : { background: '#2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
                 {r.rating}.0
               </span>
             </div>
@@ -370,38 +370,38 @@ function MockPlayerRecord() {
 
 function MockSubstitution() {
   return (
-    <div className="p-4 h-full overflow-y-auto" style={{ background: '#111010' }}>
-      <p className="font-semibold text-white mb-4">선수 교체 기록</p>
+    <div className="p-4 h-full overflow-y-auto" style={{ background: 'var(--card)' }}>
+      <p className="font-semibold text-[color:var(--text)] mb-4">선수 교체 기록</p>
       <div className="space-y-3 mb-4">
-        <div className="flex items-center gap-3 rounded-xl p-4" style={{ background: '#1a1a1a' }}>
+        <div className="flex items-center gap-3 rounded-xl p-4" style={{ background: 'var(--card2)' }}>
           <span className="text-sm font-bold px-3 py-1 rounded-full" style={{ background: '#2d1b69', color: '#a78bfa' }}>15분</span>
           <div className="flex items-center gap-2 flex-1">
             <span className="font-medium text-red-400">임준서</span>
             <ArrowLeftRight className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
-            <span className="font-medium" style={{ color: 'var(--accent)' }}>신동현</span>
+            <span className="font-medium" style={{ color: 'var(--text)' }}>신동현</span>
           </div>
-          <span className="text-xs px-2 py-1 rounded" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.4)' }}>FW → FW</span>
+          <span className="text-xs px-2 py-1 rounded" style={{ background: '#2a2a2a', color: 'var(--muted2)' }}>FW → FW</span>
         </div>
-        <div className="flex items-center gap-3 rounded-xl p-4" style={{ background: '#1a1a1a' }}>
+        <div className="flex items-center gap-3 rounded-xl p-4" style={{ background: 'var(--card2)' }}>
           <span className="text-sm font-bold px-3 py-1 rounded-full" style={{ background: '#2d1b69', color: '#a78bfa' }}>22분</span>
           <div className="flex items-center gap-2 flex-1">
             <span className="font-medium text-red-400">강현우</span>
             <ArrowLeftRight className="w-4 h-4" style={{ color: 'rgba(255,255,255,0.3)' }} />
-            <span className="font-medium" style={{ color: 'var(--accent)' }}>오재원</span>
+            <span className="font-medium" style={{ color: 'var(--text)' }}>오재원</span>
           </div>
-          <span className="text-xs px-2 py-1 rounded" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.4)' }}>MF → MF</span>
+          <span className="text-xs px-2 py-1 rounded" style={{ background: '#2a2a2a', color: 'var(--muted2)' }}>MF → MF</span>
         </div>
       </div>
       <div className="relative w-full aspect-[4/3] bg-gradient-to-b from-green-700 via-green-600 to-green-700 rounded-xl overflow-hidden">
         <div className="absolute left-0 right-0 top-1/2 border-t-2 border-white/30" />
         <div className="absolute flex flex-col items-center" style={{ left: '75%', top: '25%', transform: 'translate(-50%, -50%)' }}>
-          <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-white text-xs font-bold ring-4 ring-yellow-400">FW</div>
-          <span className="text-[10px] text-white mt-1 bg-black/30 px-1 rounded">신동현</span>
+          <div className="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center text-[color:var(--text)] text-xs font-bold ring-4 ring-yellow-400">FW</div>
+          <span className="text-[10px] text-[color:var(--text)] mt-1 bg-black/30 px-1 rounded">신동현</span>
           <span className="text-[9px] bg-yellow-400 text-yellow-900 px-2 rounded font-bold mt-0.5">IN 15&apos;</span>
         </div>
         <div className="absolute flex flex-col items-center" style={{ left: '70%', top: '50%', transform: 'translate(-50%, -50%)' }}>
-          <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold ring-4 ring-yellow-400">MF</div>
-          <span className="text-[10px] text-white mt-1 bg-black/30 px-1 rounded">오재원</span>
+          <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-[color:var(--text)] text-xs font-bold ring-4 ring-yellow-400">MF</div>
+          <span className="text-[10px] text-[color:var(--text)] mt-1 bg-black/30 px-1 rounded">오재원</span>
           <span className="text-[9px] bg-yellow-400 text-yellow-900 px-2 rounded font-bold mt-0.5">IN 22&apos;</span>
         </div>
       </div>
@@ -411,47 +411,47 @@ function MockSubstitution() {
 
 function MockChildStats() {
   return (
-    <div className="p-4 h-full overflow-y-auto" style={{ background: '#111010' }}>
+    <div className="p-4 h-full overflow-y-auto" style={{ background: 'var(--card)' }}>
       <div className="text-center mb-4">
         <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-2" style={{ background: 'var(--chip)' }}>
           <span className="text-3xl">⚽</span>
         </div>
-        <h3 className="font-bold text-lg text-white">우리 아이: 배승호</h3>
-        <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>포지션: FW</p>
+        <h3 className="font-bold text-lg text-[color:var(--text)]">우리 아이: 배승호</h3>
+        <p className="text-sm" style={{ color: 'var(--muted2)' }}>포지션: FW</p>
       </div>
       <div className="grid grid-cols-3 gap-3 mb-4">
         <div className="rounded-xl p-3 text-center" style={{ background: 'var(--chip)' }}>
-          <p className="text-2xl font-bold" style={{ color: 'var(--accent)' }}>12</p>
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>총 골</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--text)' }}>12</p>
+          <p className="text-xs" style={{ color: 'var(--muted2)' }}>총 골</p>
         </div>
         <div className="rounded-xl p-3 text-center" style={{ background: 'var(--chip)' }}>
-          <p className="text-2xl font-bold" style={{ color: 'var(--accent)' }}>8</p>
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>어시스트</p>
+          <p className="text-2xl font-bold" style={{ color: 'var(--text)' }}>8</p>
+          <p className="text-xs" style={{ color: 'var(--muted2)' }}>어시스트</p>
         </div>
         <div className="rounded-xl p-3 text-center" style={{ background: '#1a1000' }}>
           <p className="text-2xl font-bold" style={{ color: '#fbbf24' }}>5</p>
-          <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>MVP</p>
+          <p className="text-xs" style={{ color: 'var(--muted2)' }}>MVP</p>
         </div>
       </div>
-      <div className="rounded-xl p-4" style={{ background: '#1a1a1a' }}>
-        <p className="font-semibold text-white mb-3">최근 경기 활약</p>
+      <div className="rounded-xl p-4" style={{ background: 'var(--card2)' }}>
+        <p className="font-semibold text-[color:var(--text)] mb-3">최근 경기 활약</p>
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>vs FC 레드스타</span>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm" style={{ color: 'var(--accent)' }}>2골</span>
+              <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>2골</span>
               <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
             </div>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>vs 블루윙즈 FC</span>
-            <span className="font-bold text-sm" style={{ color: 'var(--accent)' }}>1도움</span>
+            <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>1도움</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>vs 드래곤 시티</span>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-sm" style={{ color: 'var(--accent)' }}>1골</span>
-              <span className="font-bold text-sm" style={{ color: 'var(--accent)' }}>1도움</span>
+              <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>1골</span>
+              <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>1도움</span>
             </div>
           </div>
         </div>
@@ -462,14 +462,14 @@ function MockChildStats() {
 
 function MockFeedback() {
   return (
-    <div className="p-4 h-full overflow-y-auto" style={{ background: '#111010' }}>
+    <div className="p-4 h-full overflow-y-auto" style={{ background: 'var(--card)' }}>
       <div className="flex items-center gap-3 mb-4">
         <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: 'var(--chip)' }}>
           <span className="text-xl">⚽</span>
         </div>
         <div>
-          <h3 className="font-bold text-white">배승호</h3>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.4)' }}>vs FC 레드스타 (01.25)</p>
+          <h3 className="font-bold text-[color:var(--text)]">배승호</h3>
+          <p className="text-sm" style={{ color: 'var(--muted2)' }}>vs FC 레드스타 (01.25)</p>
         </div>
       </div>
       <div className="space-y-4">
