@@ -256,23 +256,8 @@ export default function PlayersPage() {
     setName(member.profile?.display_name || '')
   }
 
-  if (data.loading) return <PlayersListSkeleton />
-
-  const teamName = data.selectedTeam?.name || ''
-  const filtered = playersWithStats
-    .filter(p => posFilter === 'ALL' || p.default_position === posFilter)
-    .filter(p => !search.trim() || p.name.includes(search.trim()))
-
-  // Roster / ranking view
-  const statTabs: { key: RankStatKey; label: string; suffix: string }[] = [
-    { key: 'goals', label: t.goals, suffix: t.goals },
-    { key: 'assists', label: t.assistsLabel, suffix: t.assistsLabel },
-    { key: 'contribution', label: t.contribution, suffix: '' },
-    { key: 'avgRating', label: t.rating, suffix: '' },
-    { key: 'attendance', label: t.attendance, suffix: '' },
-    { key: 'cleanSheets', label: t.cleanSheet, suffix: '' },
-  ]
-  // Stats recomputed over the selected date range (empty range = all time)
+  // Stats recomputed over the selected date range (empty range = all time).
+  // Must stay above the early `return` below so hook order is stable.
   const rangeStats = useMemo(() => {
     const inRange = (d?: string) => !!d && (!rankStart || d >= rankStart) && (!rankEnd || d <= rankEnd)
     const rangeMatches = (rankStart || rankEnd)
@@ -296,6 +281,23 @@ export default function PlayersPage() {
     }
     return map
   }, [playersWithStats, data.matches, rankStart, rankEnd])
+
+  if (data.loading) return <PlayersListSkeleton />
+
+  const teamName = data.selectedTeam?.name || ''
+  const filtered = playersWithStats
+    .filter(p => posFilter === 'ALL' || p.default_position === posFilter)
+    .filter(p => !search.trim() || p.name.includes(search.trim()))
+
+  // Roster / ranking view
+  const statTabs: { key: RankStatKey; label: string; suffix: string }[] = [
+    { key: 'goals', label: t.goals, suffix: t.goals },
+    { key: 'assists', label: t.assistsLabel, suffix: t.assistsLabel },
+    { key: 'contribution', label: t.contribution, suffix: '' },
+    { key: 'avgRating', label: t.rating, suffix: '' },
+    { key: 'attendance', label: t.attendance, suffix: '' },
+    { key: 'cleanSheets', label: t.cleanSheet, suffix: '' },
+  ]
 
   const statOf = (p: PlayerWithStats) => rangeStats.get(p.id) ?? p.stats
   const rankValue = (p: PlayerWithStats) => {
