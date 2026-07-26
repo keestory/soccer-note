@@ -35,7 +35,7 @@ export default function LanguageSelector() {
 
       {open && (
         <div className="absolute right-0 top-full mt-1 rounded-xl py-1 z-50 min-w-[180px]"
-          style={{ background: '#1a1a1a', border: '1px solid var(--line)' }}>
+          style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
           {LOCALES.map((l) => (
             <button
               key={l.code}

@@ -19,6 +19,48 @@
 
   /* BottomNav height token — used for safe pb on scrollable pages */
   --bottom-nav-h: 64px;
+
+  /* Semantic text tokens (dark theme defaults) */
+  --text: #ffffff;
+  --text2: #9aa0a6;
+  --text3: #667085;
+  --text-faint: #333333;
+  --navy: #101828;      /* hero / scoreboard surface */
+  --navy2: #1a2437;
+  --on-navy: #ffffff;
+  --on-accent: #0a0a0a; /* text on an accent fill */
+  --danger: #c05a4d;
+  --nav-active: var(--accent); /* active bottom-nav tab */
+}
+
+/* ─── Navy Board light theme scope ──────────────────────────────────────
+   Applied on a page's root (className="light") during the phased migration.
+   The volt accent only ever sits on navy surfaces here. */
+.light {
+  --bg: #f5f6f8;
+  --card: #ffffff;
+  --card2: #f2f4f7;
+  --nav: #ffffff;
+  --accent: #c8f542;
+  --muted1: #667085;
+  --muted2: #98a2b3;
+  --chip: #f2f4f7;
+  --chipText: #101828;
+  --line: #eaecf0;
+  --line2: #e4e7ec;
+  --dash: #344054;
+  --text: #101828;
+  --text2: #475467;
+  --text3: #667085;
+  --text-faint: #d0d5dd;
+  --navy: #101828;
+  --navy2: #1a2437;
+  --on-navy: #ffffff;
+  --on-accent: #101828;
+  --danger: #f04438;
+  --nav-active: #101828;
+  color: #101828;
+  background: var(--bg);
 }
 
 /* ─── Native-feel resets ────────────────────────────────────────────── */

@@ -31,11 +31,11 @@ function CallbackHandler() {
   }, [])
 
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
+    <div className="light min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
       <div className="text-center">
         <div className="w-8 h-8 border-2 rounded-full animate-spin mx-auto mb-3"
-          style={{ borderColor: 'var(--accent)', borderTopColor: 'transparent' }} />
-        <p className="text-sm" style={{ color: '#555' }}>로그인 처리 중…</p>
+          style={{ borderColor: 'var(--text)', borderTopColor: 'transparent' }} />
+        <p className="text-sm" style={{ color: 'var(--muted2)' }}>로그인 처리 중…</p>
       </div>
     </div>
   )
@@ -44,9 +44,9 @@ function CallbackHandler() {
 export default function AuthCallbackPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
         <div className="w-8 h-8 border-2 rounded-full animate-spin"
-          style={{ borderColor: 'var(--accent)', borderTopColor: 'transparent' }} />
+          style={{ borderColor: 'var(--text)', borderTopColor: 'transparent' }} />
       </div>
     }>
       <CallbackHandler />

@@ -66,21 +66,21 @@ export default function PublicProfilePage() {
     setSaving(false)
   }
 
-  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--accent)', borderTopColor: 'transparent' }} />
+      <div className="light min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+        <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: 'var(--text)', borderTopColor: 'transparent' }} />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen pb-12" style={{ background: '#0a0a0a' }}>
+    <div className="min-h-screen pb-12" style={{ background: 'var(--bg)' }}>
 
       {/* Hero header */}
-      <div className="relative overflow-hidden safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <div className="relative overflow-hidden safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="absolute inset-0 field-pattern opacity-20" />
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 110" preserveAspectRatio="xMidYMid slice">
           <line x1="340" y1="-10" x2="200" y2="120" stroke="rgba(204,255,0,0.08)" strokeWidth="1.5" />
@@ -89,16 +89,16 @@ export default function PublicProfilePage() {
         </svg>
 
         <div className="relative px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'var(--text2)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
             <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>매칭 커뮤니티</p>
-            <h1 className="text-base font-black text-white">팀 프로필 설정</h1>
+            <h1 className="text-base font-black text-[color:var(--text)]">팀 프로필 설정</h1>
           </div>
           <button onClick={handleSave} disabled={saving}
             className="px-4 py-2 rounded-xl text-sm font-black disabled:opacity-40 active:scale-95 transition"
-            style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
             {saving ? '저장 중...' : '저장'}
           </button>
         </div>
@@ -110,12 +110,12 @@ export default function PublicProfilePage() {
               {form.emoji}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-black text-white truncate">{teamName}</p>
-              <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <p className="font-black text-[color:var(--text)] truncate">{teamName}</p>
+              <p className="text-xs truncate" style={{ color: 'var(--muted2)' }}>
                 {[form.level, form.region, form.preferred_format].filter(Boolean).join(' · ') || '프로필을 완성해주세요'}
               </p>
             </div>
-            <div className="w-2 h-2 rounded-full" style={{ background: form.is_public ? 'var(--accent)' : 'rgba(255,255,255,0.2)' }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: form.is_public ? 'var(--navy)' : 'rgba(255,255,255,0.2)' }} />
           </div>
         </div>
       </div>
@@ -127,16 +127,16 @@ export default function PublicProfilePage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center transition"
-                style={{ background: form.is_public ? 'var(--chip)' : '#1a1a1a' }}>
+                style={{ background: form.is_public ? 'var(--chip)' : 'var(--card2)' }}>
                 {form.is_public
-                  ? <Globe className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+                  ? <Globe className="w-5 h-5" style={{ color: 'var(--text)' }} />
                   : <EyeOff className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.3)' }} />}
               </div>
               <div>
-                <p className="font-black text-white">
+                <p className="font-black text-[color:var(--text)]">
                   {form.is_public ? '커뮤니티 공개' : '비공개'}
                 </p>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <p className="text-xs" style={{ color: 'var(--muted2)' }}>
                   {form.is_public ? '다른 팀이 프로필을 볼 수 있어요' : '신청 시 기본 정보만 공개돼요'}
                 </p>
               </div>
@@ -144,9 +144,9 @@ export default function PublicProfilePage() {
             <button
               onClick={() => set('is_public', !form.is_public)}
               className="relative w-12 h-7 rounded-full transition-colors"
-              style={{ background: form.is_public ? 'var(--accent)' : '#2a2a2a' }}>
+              style={{ background: form.is_public ? 'var(--navy)' : 'var(--line)' }}>
               <div className={`absolute top-1 w-5 h-5 rounded-full shadow transition-transform ${form.is_public ? 'translate-x-6' : 'translate-x-1'}`}
-                style={{ background: form.is_public ? '#0a0a0a' : '#555' }} />
+                style={{ background: form.is_public ? 'var(--accent)' : 'var(--muted2)' }} />
             </button>
           </div>
         </div>
@@ -160,7 +160,7 @@ export default function PublicProfilePage() {
                 className="w-12 h-12 rounded-2xl text-2xl flex items-center justify-center transition"
                 style={form.emoji === e
                   ? { background: 'var(--chip)', outline: '2px solid var(--accent)' }
-                  : { background: '#1a1a1a' }}>
+                  : { background: 'var(--card2)' }}>
                 {e}
               </button>
             ))}
@@ -177,7 +177,7 @@ export default function PublicProfilePage() {
             rows={3}
             maxLength={200}
             className="w-full text-sm outline-none resize-none leading-relaxed"
-            style={{ background: 'transparent', color: 'rgba(255,255,255,0.8)', caretColor: 'var(--accent)' }}
+            style={{ background: 'transparent', color: 'rgba(255,255,255,0.8)', caretColor: 'var(--text)' }}
           />
           <div className="flex justify-end">
             <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>{form.bio.length}/200</span>
@@ -192,8 +192,8 @@ export default function PublicProfilePage() {
               <button key={r} onClick={() => set('region', form.region === r ? '' : r)}
                 className="px-3 py-1.5 rounded-xl text-xs font-bold transition"
                 style={form.region === r
-                  ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--accent)' }
-                  : { background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
+                  ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--text)' }
+                  : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--muted2)' }}>
                 {r}
               </button>
             ))}
@@ -209,8 +209,8 @@ export default function PublicProfilePage() {
                 <button key={f} onClick={() => set('preferred_format', form.preferred_format === f ? '' : f)}
                   className="px-3 py-2 rounded-xl text-xs font-black flex-1 transition"
                   style={form.preferred_format === f
-                    ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--accent)' }
-                    : { background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
+                    ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--text)' }
+                    : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--muted2)' }}>
                   {f}
                 </button>
               ))}
@@ -223,8 +223,8 @@ export default function PublicProfilePage() {
                 <button key={l} onClick={() => set('level', form.level === l ? '' : l)}
                   className="px-4 py-2 rounded-xl text-xs font-black flex-1 transition"
                   style={form.level === l
-                    ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--accent)' }
-                    : { background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
+                    ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--text)' }
+                    : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--muted2)' }}>
                   {l}
                 </button>
               ))}

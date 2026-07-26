@@ -97,25 +97,25 @@ export default function ApplicationsPage() {
   const decided = applications.filter(a => a.status !== 'pending')
 
   return (
-    <div className="min-h-screen pb-12" style={{ background: '#0a0a0a' }}>
+    <div className="light min-h-screen pb-12" style={{ background: 'var(--bg)' }}>
 
       {/* Hero */}
-      <div className="relative overflow-hidden safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <div className="relative overflow-hidden safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="absolute inset-0 field-pattern opacity-20" />
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 100" preserveAspectRatio="xMidYMid slice">
           <line x1="340" y1="-10" x2="220" y2="110" stroke="rgba(204,255,0,0.08)" strokeWidth="1.5" />
           <line x1="380" y1="-10" x2="260" y2="110" stroke="rgba(204,255,0,0.04)" strokeWidth="1" />
         </svg>
         <div className="relative px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'var(--text2)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
             <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.receivedApplications}</p>
-            {post && <p className="text-sm font-black text-white truncate">{post.title}</p>}
+            {post && <p className="text-sm font-black text-[color:var(--text)] truncate">{post.title}</p>}
           </div>
           {pending.length > 0 && (
-            <div className="text-sm font-black px-3 py-1.5 rounded-xl" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+            <div className="text-sm font-black px-3 py-1.5 rounded-xl" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
               {t.nWaiting.replace('{n}', String(pending.length))}
             </div>
           )}
@@ -125,22 +125,22 @@ export default function ApplicationsPage() {
       <main className="max-w-4xl mx-auto px-4 pt-4 space-y-4">
         {loading ? (
           <div className="space-y-3">
-            {[1,2].map(i => <div key={i} className="rounded-2xl h-28 animate-pulse" style={{ background: '#111010' }} />)}
+            {[1,2].map(i => <div key={i} className="rounded-2xl h-28 animate-pulse" style={{ background: 'var(--card2)' }} />)}
           </div>
         ) : applications.length === 0 ? (
           <div className="text-center py-16">
-            <div className="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-3" style={{ background: '#1a1a1a' }}>📭</div>
-            <p className="font-bold text-white">{t.noApplicationsYet}</p>
-            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>{t.noApplyDesc}</p>
+            <div className="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-3" style={{ background: 'var(--card2)' }}>📭</div>
+            <p className="font-bold text-[color:var(--text)]">{t.noApplicationsYet}</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--muted2)' }}>{t.noApplyDesc}</p>
           </div>
         ) : (
           <>
             {pending.length > 0 && (
               <section>
                 <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--accent)' }}>{t.waitingLabel}</span>
+                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--text)' }}>{t.waitingLabel}</span>
                   <span className="w-5 h-5 text-[10px] font-black rounded-full flex items-center justify-center"
-                    style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{pending.length}</span>
+                    style={{ background: 'var(--chip)', color: 'var(--text)' }}>{pending.length}</span>
                 </div>
                 <div className="space-y-3">
                   {pending.map(app => (
@@ -204,16 +204,16 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
 
   const statusConfig = {
     accepted: { label: t.acceptedLabel, bg: '#052e16', color: '#4ade80' },
-    rejected: { label: t.rejectedLabel, bg: '#1a1a1a', color: 'rgba(255,255,255,0.4)' },
-    pending: { label: t.waitingLabel, bg: '#451a03', color: '#fbbf24' },
+    rejected: { label: t.rejectedLabel, bg: 'var(--card2)', color: 'var(--muted2)' },
+    pending: { label: t.waitingLabel, bg: 'var(--card2)', color: '#fbbf24' },
   }[app.status]
 
-  const accentLine = app.status === 'accepted' ? '#166534' : app.status === 'rejected' ? '#2a2a2a' : 'var(--accent)'
+  const accentLine = app.status === 'accepted' ? '#166534' : app.status === 'rejected' ? 'var(--line)' : 'var(--text)'
 
   return (
     <div className="rounded-2xl overflow-hidden"
       style={{
-        background: '#111010',
+        background: 'var(--card2)',
         border: `1px solid ${app.status === 'accepted' ? '#166534' : 'var(--line)'}`,
       }}>
       {/* Top accent line */}
@@ -227,14 +227,14 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <p className="font-black text-white">{team?.name}</p>
+              <p className="font-black text-[color:var(--text)]">{team?.name}</p>
               <span className="text-[10px] font-black px-2 py-0.5 rounded-lg"
                 style={{ background: statusConfig.bg, color: statusConfig.color }}>
                 {statusConfig.label}
               </span>
             </div>
             {profile?.level && (
-              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--muted2)' }}>
                 {profile.level}{profile.region ? ` · ${profile.region}` : ''}
               </p>
             )}
@@ -245,7 +245,7 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
         </div>
 
         {app.message && (
-          <div className="rounded-xl p-3 mb-3 flex gap-2" style={{ background: '#1a1a1a' }}>
+          <div className="rounded-xl p-3 mb-3 flex gap-2" style={{ background: 'var(--card2)' }}>
             <MessageCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }} />
             <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>{app.message}</p>
           </div>
@@ -255,12 +255,12 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
           <div className="flex gap-2">
             <button onClick={onReject} disabled={loading}
               className="flex-1 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition disabled:opacity-50"
-              style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}>
+              style={{ background: 'var(--card2)', color: 'var(--text2)' }}>
               {t.reject}
             </button>
             <button onClick={onAccept} disabled={loading}
               className="flex-[2] py-2.5 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
               <Swords className="w-4 h-4" />
               {loading ? t.processing : t.acceptLabel}
             </button>

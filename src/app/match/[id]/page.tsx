@@ -331,7 +331,7 @@ export default function MatchDetailPage() {
               <span>{t.lineupShortcutQ}</span>
               <Link
                 href={`/match/${matchId}/quarter/1`}
-                className="px-2 py-1 text-xs rounded-lg font-medium" style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+                className="px-2 py-1 text-xs rounded-lg font-medium" style={{ background: 'var(--navy)', color: 'var(--accent)' }}
                 onClick={() => toast.dismiss(toastInst.id)}
               >
                 {t.shortcut}
@@ -416,24 +416,24 @@ export default function MatchDetailPage() {
   const playerStats = getPlayerStatsFromMatch(match)
   const currentQuarter = match.quarters?.find(q => q.quarter_number === activeQuarter)
 
-  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: '#0a0a0a' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
+            <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
               <ArrowLeft className="w-5 h-5" />
             </Link>
             <div>
-              <h1 className="text-base font-black text-white">vs {match.opponent}</h1>
-              <div className="flex items-center gap-2 text-xs text-white/40">
+              <h1 className="text-base font-black text-[color:var(--text)]">vs {match.opponent}</h1>
+              <div className="flex items-center gap-2 text-xs text-[color:var(--text)]/40">
                 <span>{formatDate(match.match_date)}</span>
                 {match.location && (
                   <>
-                    <span className="text-white/20">|</span>
+                    <span className="text-[color:var(--text)]/20">|</span>
                     <span className="flex items-center gap-0.5">
                       <MapPin className="w-3 h-3" />
                       {match.location}
@@ -445,10 +445,10 @@ export default function MatchDetailPage() {
           </div>
           {canEditMatches && (
             <div className="flex items-center gap-1">
-              <button onClick={startEditMatchInfo} className="p-2 text-white/40 hover:text-white rounded-xl">
+              <button onClick={startEditMatchInfo} className="p-2 text-[color:var(--text)]/40 hover:text-[color:var(--text)] rounded-xl">
                 <Edit2 className="w-5 h-5" />
               </button>
-              <button onClick={() => setShowDeleteConfirm(true)} className="p-2 text-white/40 hover:text-red-400 rounded-xl">
+              <button onClick={() => setShowDeleteConfirm(true)} className="p-2 text-[color:var(--text)]/40 hover:text-red-400 rounded-xl">
                 <Trash2 className="w-5 h-5" />
               </button>
             </div>
@@ -461,8 +461,8 @@ export default function MatchDetailPage() {
         <div className="max-w-4xl mx-auto px-4 pt-4">
           <div className="p-4 rounded-xl" style={cardStyle}>
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-white">{t.editMatchInfo}</h3>
-              <button onClick={() => setEditingMatchInfo(false)} className="p-1 text-white/40 hover:text-white rounded">
+              <h3 className="font-bold text-[color:var(--text)]">{t.editMatchInfo}</h3>
+              <button onClick={() => setEditingMatchInfo(false)} className="p-1 text-[color:var(--text)]/40 hover:text-[color:var(--text)] rounded">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -478,8 +478,8 @@ export default function MatchDetailPage() {
                     type={f.type}
                     value={f.value}
                     onChange={(e) => f.onChange(e.target.value)}
-                    className="w-full px-3 py-2.5 rounded-lg text-white outline-none text-sm"
-                    style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
+                    className="w-full px-3 py-2.5 rounded-lg text-[color:var(--text)] outline-none text-sm"
+                    style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}
                     placeholder={f.placeholder}
                   />
                 </div>
@@ -487,7 +487,7 @@ export default function MatchDetailPage() {
               <button
                 onClick={handleSaveMatchInfo}
                 className="w-full py-3 rounded-lg font-bold text-sm"
-                style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}
               >
                 {t.editDone}
               </button>
@@ -498,7 +498,7 @@ export default function MatchDetailPage() {
 
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Score Section */}
-        <section className="p-6 text-center" style={cardStyle}>
+        <section className="p-6 text-center" style={{ background: 'var(--navy)', borderRadius: 16 }}>
           {(() => {
             const total = getTotalScore()
             const isWin = total.home > total.away
@@ -512,7 +512,7 @@ export default function MatchDetailPage() {
                 </div>
                 {!isDraw && (
                   <span className="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest mb-2"
-                    style={{ background: isWin ? 'var(--chip)' : '#2a1010', color: isWin ? 'var(--accent)' : '#ef4444' }}>
+                    style={{ background: isWin ? 'rgba(200,245,66,0.15)' : 'rgba(240,68,56,0.18)', color: isWin ? 'var(--accent)' : '#fda29b' }}>
                     {isWin ? 'WIN' : 'LOSS'}
                   </span>
                 )}
@@ -533,12 +533,12 @@ export default function MatchDetailPage() {
         {/* MVP Section */}
         {mvp && (
           <section className="p-4 rounded-2xl flex items-center gap-4" style={{ background: 'var(--chip)', border: '1px solid var(--line)' }}>
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--accent)' }}>
-              <Star className="w-6 h-6 fill-current" style={{ color: '#0a0a0a' }} />
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--navy)' }}>
+              <Star className="w-6 h-6 fill-current" style={{ color: 'var(--text)' }} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--accent)' }}>{t.coachMvp}</p>
-              <p className="text-[17px] font-black text-white">
+              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--text)' }}>{t.coachMvp}</p>
+              <p className="text-[17px] font-black text-[color:var(--text)]">
                 {mvp.playerName}
                 <span className="font-normal text-[13px] ml-2" style={{ color: 'var(--muted2)' }}>
                   {t.avgPoints.replace('{n}', mvp.averageRating.toFixed(1))}
@@ -554,11 +554,11 @@ export default function MatchDetailPage() {
             <div className="flex items-center gap-2 mb-3">
               <span className="text-lg">🏅</span>
               <div>
-                <h3 className="font-black text-white text-[14px]">{t.momQuestion}</h3>
+                <h3 className="font-black text-[color:var(--text)] text-[14px]">{t.momQuestion}</h3>
                 <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>{t.momSubtitle}</p>
               </div>
               {myMomVote && (
-                <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.voteDone}</span>
+                <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--text)' }}>{t.voteDone}</span>
               )}
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -574,22 +574,22 @@ export default function MatchDetailPage() {
                     onClick={() => handleMomVote(pid)}
                     disabled={votingMom}
                     className="relative flex items-center gap-2 p-2.5 rounded-xl border-2 transition active:scale-[0.97] overflow-hidden"
-                    style={{ borderColor: isMyVote ? 'var(--accent)' : 'var(--line)', background: isMyVote ? 'var(--chip)' : '#1a1a1a' }}
+                    style={{ borderColor: isMyVote ? 'var(--navy)' : 'var(--line)', background: isMyVote ? 'var(--chip)' : 'var(--card2)' }}
                   >
                     {totalVotes > 0 && (
                       <div className="absolute left-0 top-0 bottom-0 transition-all duration-500" style={{ width: `${pct}%`, background: 'rgba(204,255,0,0.08)' }} />
                     )}
-                    <div className="relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-black text-white flex-shrink-0"
+                    <div className="relative w-8 h-8 rounded-full flex items-center justify-center text-xs font-black text-[color:var(--text)] flex-shrink-0"
                       style={{ backgroundColor: POSITION_COLORS[a.player?.default_position || 'MF'] }}>
                       {a.player?.number || '?'}
                     </div>
                     <div className="relative flex-1 text-left">
-                      <p className="text-xs font-black truncate text-white">{a.player?.name}</p>
+                      <p className="text-xs font-black truncate text-[color:var(--text)]">{a.player?.name}</p>
                       <p className="text-[10px]" style={{ color: 'var(--muted2)' }}>
                         {t.votesN.replace('{n}', String(voteCount))}{voteCount > 0 && totalVotes > 0 ? ` (${pct}%)` : ''}
                       </p>
                     </div>
-                    {isMyVote && <Check className="relative w-4 h-4 flex-shrink-0" style={{ color: 'var(--accent)' }} />}
+                    {isMyVote && <Check className="relative w-4 h-4 flex-shrink-0" style={{ color: 'var(--text)' }} />}
                   </button>
                 )
               })}
@@ -600,7 +600,7 @@ export default function MatchDetailPage() {
         {/* Attendees Section */}
         <section className="p-4 rounded-xl" style={cardStyle}>
           <div className="flex items-center justify-between mb-3">
-            <h3 className="font-bold text-white flex items-center gap-2">
+            <h3 className="font-bold text-[color:var(--text)] flex items-center gap-2">
               <Users className="w-4 h-4" style={{ color: 'var(--muted2)' }} />
               {t.attendees} ({attendees.length})
             </h3>
@@ -608,7 +608,7 @@ export default function MatchDetailPage() {
               <button
                 onClick={openAttendeePicker}
                 className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold"
-                style={{ background: 'var(--chip)', color: 'var(--accent)' }}
+                style={{ background: 'var(--chip)', color: 'var(--text)' }}
               >
                 <Plus className="w-4 h-4" />
                 {t.edit}
@@ -620,10 +620,10 @@ export default function MatchDetailPage() {
               {attendees.map(a => (
                 <span
                   key={a.id}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-white"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-[color:var(--text)]"
                   style={{ backgroundColor: POSITION_COLORS[a.player?.default_position || 'MF'] }}
                 >
-                  {a.player?.number != null && <span className="text-white/70 text-xs">#{a.player.number}</span>}
+                  {a.player?.number != null && <span className="text-[color:var(--text)]/70 text-xs">#{a.player.number}</span>}
                   {a.player?.name}
                 </span>
               ))}
@@ -638,8 +638,8 @@ export default function MatchDetailPage() {
           <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center px-4">
             <div className="rounded-xl w-full max-w-md p-4 max-h-[80vh] flex flex-col" style={cardStyle}>
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-white text-lg">{t.attendees}</h3>
-                <button onClick={() => setShowAttendeePicker(false)} className="p-1 text-white/40 hover:text-white rounded">
+                <h3 className="font-bold text-[color:var(--text)] text-lg">{t.attendees}</h3>
+                <button onClick={() => setShowAttendeePicker(false)} className="p-1 text-[color:var(--text)]/40 hover:text-[color:var(--text)] rounded">
                   <X className="w-5 h-5" />
                 </button>
               </div>
@@ -659,12 +659,12 @@ export default function MatchDetailPage() {
                               key={p.id}
                               onClick={() => toggleAttendee(p.id)}
                               className="flex flex-col items-center p-2 rounded-lg border-2 transition"
-                              style={{ borderColor: isSelected ? 'var(--accent)' : 'var(--line)', background: isSelected ? 'var(--chip)' : '#1a1a1a' }}
+                              style={{ borderColor: isSelected ? 'var(--navy)' : 'var(--line)', background: isSelected ? 'var(--chip)' : 'var(--card2)' }}
                             >
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: POSITION_COLORS[pos] }}>
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center text-[color:var(--text)] text-xs font-bold" style={{ backgroundColor: POSITION_COLORS[pos] }}>
                                 {p.number || '?'}
                               </div>
-                              <span className="text-xs mt-1 text-white/70 truncate w-full text-center">{p.name}</span>
+                              <span className="text-xs mt-1 text-[color:var(--text)]/70 truncate w-full text-center">{p.name}</span>
                             </button>
                           )
                         })}
@@ -677,7 +677,7 @@ export default function MatchDetailPage() {
               <button
                 onClick={saveAttendees}
                 className="w-full py-3 rounded-lg font-bold"
-                style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}
               >
                 {t.saveNPlayers.replace('{n}', String(selectedAttendees.size))}
               </button>
@@ -694,8 +694,8 @@ export default function MatchDetailPage() {
                 onClick={() => setActiveQuarter(q)}
                 className="flex-1 py-3 rounded-lg font-bold text-sm transition"
                 style={{
-                  background: activeQuarter === q ? 'var(--accent)' : '#111010',
-                  color: activeQuarter === q ? '#0a0a0a' : 'var(--muted2)',
+                  background: activeQuarter === q ? 'var(--navy)' : 'var(--card2)',
+                  color: activeQuarter === q ? 'var(--accent)' : 'var(--muted2)',
                   border: activeQuarter === q ? 'none' : '1px solid var(--line)',
                 }}
               >
@@ -706,10 +706,10 @@ export default function MatchDetailPage() {
 
           {/* Quarter Content */}
           {currentQuarter && (
-            <div className="rounded-xl overflow-hidden" style={{ background: '#111010', border: '1px solid var(--line)' }}>
+            <div className="rounded-xl overflow-hidden" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
               <div className="p-4 flex justify-between items-center" style={{ borderBottom: '1px solid var(--line)' }}>
                 <div className="flex items-center gap-3">
-                  <h3 className="font-bold text-white">{t.quarterN.replace('{n}', String(activeQuarter))} {t.quarterRecord}</h3>
+                  <h3 className="font-bold text-[color:var(--text)]">{t.quarterN.replace('{n}', String(activeQuarter))} {t.quarterRecord}</h3>
                   {canEditQuarters && editingQuarterScore === activeQuarter ? (
                     <div className="flex items-center gap-2">
                       <div className="flex flex-col items-center">
@@ -719,11 +719,11 @@ export default function MatchDetailPage() {
                           min={0}
                           value={qHome}
                           onChange={(e) => setQHome(parseInt(e.target.value) || 0)}
-                          className="w-12 text-center rounded py-1 text-sm text-white outline-none"
-                          style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
+                          className="w-12 text-center rounded py-1 text-sm text-[color:var(--text)] outline-none"
+                          style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}
                         />
                       </div>
-                      <span className="text-white/30 mt-3">:</span>
+                      <span className="text-[color:var(--text)]/30 mt-3">:</span>
                       <div className="flex flex-col items-center">
                         <span className="text-[10px] mb-0.5" style={{ color: 'var(--muted2)' }}>{match.opponent}</span>
                         <input
@@ -731,12 +731,12 @@ export default function MatchDetailPage() {
                           min={0}
                           value={qAway}
                           onChange={(e) => setQAway(parseInt(e.target.value) || 0)}
-                          className="w-12 text-center rounded py-1 text-sm text-white outline-none"
-                          style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
+                          className="w-12 text-center rounded py-1 text-sm text-[color:var(--text)] outline-none"
+                          style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}
                         />
                       </div>
-                      <button onClick={handleSaveQuarterScore} className="px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>{t.save}</button>
-                      <button onClick={() => setEditingQuarterScore(null)} className="px-2 py-1 rounded text-xs text-white/50" style={{ background: '#1a1a1a' }}>{t.cancel}</button>
+                      <button onClick={handleSaveQuarterScore} className="px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>{t.save}</button>
+                      <button onClick={() => setEditingQuarterScore(null)} className="px-2 py-1 rounded text-xs text-[color:var(--text)]/50" style={{ background: 'var(--card2)' }}>{t.cancel}</button>
                     </div>
                   ) : canEditQuarters ? (
                     <button
@@ -745,13 +745,13 @@ export default function MatchDetailPage() {
                       style={{ border: '1px solid var(--line)', color: 'var(--muted2)' }}
                     >
                       <Edit2 className="w-3 h-3" />
-                      <span style={{ color: 'var(--accent)' }}>{currentQuarter.home_score || 0}</span>
+                      <span style={{ color: 'var(--text)' }}>{currentQuarter.home_score || 0}</span>
                       <span className="mx-1">:</span>
                       <span>{currentQuarter.away_score || 0}</span>
                     </button>
                   ) : (
                     <span className="text-sm rounded-lg px-3 py-2" style={{ border: '1px solid var(--line)', color: 'var(--muted2)' }}>
-                      <span style={{ color: 'var(--accent)' }}>{currentQuarter.home_score || 0}</span>
+                      <span style={{ color: 'var(--text)' }}>{currentQuarter.home_score || 0}</span>
                       <span className="mx-1">:</span>
                       <span>{currentQuarter.away_score || 0}</span>
                     </span>
@@ -761,7 +761,7 @@ export default function MatchDetailPage() {
                   <Link
                     href={`/match/${matchId}/quarter/${activeQuarter}`}
                     className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-bold"
-                    style={{ background: 'var(--chip)', color: 'var(--accent)' }}
+                    style={{ background: 'var(--chip)', color: 'var(--text)' }}
                   >
                     <Edit2 className="w-4 h-4" />
                     {t.edit}
@@ -899,7 +899,7 @@ export default function MatchDetailPage() {
               {/* Substitutions */}
               {currentQuarter.quarter_substitutions && currentQuarter.quarter_substitutions.length > 0 && (
                 <div className="px-4 py-3" style={{ background: '#0d1a10', borderTop: '1px solid var(--line)' }}>
-                  <p className="text-xs font-bold mb-2 flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+                  <p className="text-xs font-bold mb-2 flex items-center gap-1" style={{ color: 'var(--text)' }}>
                     <ArrowRightLeft className="w-3.5 h-3.5" />
                     {t.substitutionCount.replace('{n}', String(currentQuarter.quarter_substitutions.length))}
                   </p>
@@ -910,8 +910,8 @@ export default function MatchDetailPage() {
                         <div key={sub.id} className="flex items-center gap-2 text-[13px]">
                           <span className="text-[11px] font-bold w-8" style={{ color: 'var(--muted2)' }}>{sub.minute}&apos;</span>
                           <span className="text-red-400">{sub.player_out?.number ? `#${sub.player_out.number} ` : ''}{sub.player_out?.name}</span>
-                          <span className="text-white/20">→</span>
-                          <span style={{ color: 'var(--accent)' }}>{sub.player_in?.number ? `#${sub.player_in.number} ` : ''}{sub.player_in?.name}</span>
+                          <span className="text-[color:var(--text)]/20">→</span>
+                          <span style={{ color: 'var(--text)' }}>{sub.player_in?.number ? `#${sub.player_in.number} ` : ''}{sub.player_in?.name}</span>
                         </div>
                       ))}
                   </div>
@@ -926,21 +926,21 @@ export default function MatchDetailPage() {
                     <div key={record.id} className="p-4" style={{ borderTop: idx > 0 ? '1px solid var(--line)' : '1px solid var(--line)' }}>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold" style={{ backgroundColor: POSITION_COLORS[record.position_type] }}>
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-[color:var(--text)] text-sm font-bold" style={{ backgroundColor: POSITION_COLORS[record.position_type] }}>
                             {record.player?.number || '?'}
                           </div>
                           <div>
-                            <p className="font-bold text-white">{record.player?.name}</p>
+                            <p className="font-bold text-[color:var(--text)]">{record.player?.name}</p>
                             <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{POSITION_LABELS[record.position_type]}</p>
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xl font-bold font-display" style={{ color: 'var(--accent)' }}>{formatRating(record.rating)}</p>
+                          <p className="text-xl font-bold font-display" style={{ color: 'var(--text)' }}>{formatRating(record.rating)}</p>
                         </div>
                       </div>
 
                       <div className="mt-2 ml-11 flex flex-wrap gap-1.5">
-                        {record.goals > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.goals} {record.goals}</span>}
+                        {record.goals > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--text)' }}>{t.goals} {record.goals}</span>}
                         {record.assists > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>{t.assistsLabel} {record.assists}</span>}
                         {record.clean_sheet && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">{t.cleanSheet}</span>}
                         {record.contribution > 0 && <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">{t.contribution}</span>}
@@ -959,20 +959,20 @@ export default function MatchDetailPage() {
                           )}
                           {record.praise_text && (
                             <div className="rounded-lg px-3 py-2" style={{ background: 'var(--chip)' }}>
-                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--accent)' }}>{t.praiseLabel}</p>
-                              <p className="text-[13px] text-white/80">{record.praise_text}</p>
+                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--text)' }}>{t.praiseLabel}</p>
+                              <p className="text-[13px] text-[color:var(--text)]/80">{record.praise_text}</p>
                             </div>
                           )}
                           {record.improvement_text && (
                             <div className="rounded-lg px-3 py-2 bg-amber-900/20">
                               <p className="text-[10px] font-bold text-amber-400 mb-0.5">{t.improvementLabel}</p>
-                              <p className="text-[13px] text-white/80">{record.improvement_text}</p>
+                              <p className="text-[13px] text-[color:var(--text)]/80">{record.improvement_text}</p>
                             </div>
                           )}
                           {record.highlight_text && (
                             <div className="rounded-lg px-3 py-2" style={{ background: 'var(--chip)' }}>
                               <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--chipText)' }}>{t.highlightLabel}</p>
-                              <p className="text-[13px] text-white/80">{record.highlight_text}</p>
+                              <p className="text-[13px] text-[color:var(--text)]/80">{record.highlight_text}</p>
                             </div>
                           )}
                         </div>
@@ -989,12 +989,12 @@ export default function MatchDetailPage() {
         {(canEditMatches || match.notes) && (
           <section className="p-4 rounded-xl" style={cardStyle}>
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-bold text-white flex items-center gap-2">
+              <h3 className="font-bold text-[color:var(--text)] flex items-center gap-2">
                 <FileText className="w-4 h-4" style={{ color: 'var(--muted2)' }} />
                 {t.matchNotes}
               </h3>
               {canEditMatches && !editingNotes && (
-                <button onClick={() => setEditingNotes(true)} className="p-1.5 text-white/40 hover:text-white rounded-lg">
+                <button onClick={() => setEditingNotes(true)} className="p-1.5 text-[color:var(--text)]/40 hover:text-[color:var(--text)] rounded-lg">
                   <Edit2 className="w-4 h-4" />
                 </button>
               )}
@@ -1006,21 +1006,21 @@ export default function MatchDetailPage() {
                   onChange={(e) => setNotes(e.target.value)}
                   rows={4}
                   placeholder={t.matchNotePlaceholder}
-                  className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none text-white"
-                  style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}
+                  className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none text-[color:var(--text)]"
+                  style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}
                   autoFocus
                 />
                 <div className="flex gap-2 mt-2">
-                  <button onClick={handleSaveNotes} disabled={savingNotes} className="flex-1 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                  <button onClick={handleSaveNotes} disabled={savingNotes} className="flex-1 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {savingNotes ? t.saving : t.save}
                   </button>
-                  <button onClick={() => { setNotes(match.notes || ''); setEditingNotes(false) }} className="px-4 py-2.5 rounded-xl font-bold text-sm text-white/60" style={{ background: '#1a1a1a' }}>
+                  <button onClick={() => { setNotes(match.notes || ''); setEditingNotes(false) }} className="px-4 py-2.5 rounded-xl font-bold text-sm text-[color:var(--text)]/60" style={{ background: 'var(--card2)' }}>
                     {t.cancel}
                   </button>
                 </div>
               </div>
             ) : match.notes ? (
-              <p className="text-[13px] text-white/70 whitespace-pre-wrap">{match.notes}</p>
+              <p className="text-[13px] text-[color:var(--text)]/70 whitespace-pre-wrap">{match.notes}</p>
             ) : (
               <button onClick={() => setEditingNotes(true)} className="w-full py-4 border-2 border-dashed rounded-xl text-[13px] transition" style={{ borderColor: 'var(--line)', color: 'var(--muted2)' }}>
                 {t.addNote}
@@ -1032,19 +1032,19 @@ export default function MatchDetailPage() {
         {/* Overall Player Stats */}
         {playerStats.length > 0 && (
           <section>
-            <h3 className="font-bold text-white mb-3">{t.overallPlayerStats}</h3>
-            <div className="rounded-xl overflow-hidden" style={{ background: '#111010', border: '1px solid var(--line)' }}>
+            <h3 className="font-bold text-[color:var(--text)] mb-3">{t.overallPlayerStats}</h3>
+            <div className="rounded-xl overflow-hidden" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
               {playerStats.map((stats, index) => (
                 <div key={stats.playerId} className="p-4 flex items-center justify-between" style={{ borderTop: index > 0 ? '1px solid var(--line)' : 'none' }}>
                   <div className="flex items-center gap-3">
                     <span className="w-6 text-center font-bold text-[13px]" style={{ color: 'var(--muted2)' }}>{index + 1}</span>
                     <div>
-                      <p className="font-bold text-white flex items-center gap-2">
+                      <p className="font-bold text-[color:var(--text)] flex items-center gap-2">
                         {stats.playerName}
-                        {index === 0 && mvp && <Star className="w-4 h-4 fill-current" style={{ color: 'var(--accent)' }} />}
+                        {index === 0 && mvp && <Star className="w-4 h-4 fill-current" style={{ color: 'var(--text)' }} />}
                       </p>
                       <div className="flex flex-wrap gap-1.5 mt-0.5">
-                        {stats.totalGoals > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.goals} {stats.totalGoals}</span>}
+                        {stats.totalGoals > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--text)' }}>{t.goals} {stats.totalGoals}</span>}
                         {stats.totalAssists > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>{t.assistsLabel} {stats.totalAssists}</span>}
                         {stats.cleanSheets > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-purple-900/50 text-purple-300">{t.cleanSheet} {stats.cleanSheets}</span>}
                         {stats.avgContribution > 0 && <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-amber-900/40 text-amber-300">{t.contribution}</span>}
@@ -1052,7 +1052,7 @@ export default function MatchDetailPage() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-xl font-bold font-display" style={{ color: 'var(--accent)' }}>{stats.averageRating.toFixed(1)}</p>
+                    <p className="text-xl font-bold font-display" style={{ color: 'var(--text)' }}>{stats.averageRating.toFixed(1)}</p>
                     <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>{t.avgRatingShort}</p>
                   </div>
                 </div>

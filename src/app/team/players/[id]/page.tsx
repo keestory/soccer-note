@@ -81,7 +81,7 @@ function RatingSparkline({ records }: { records: MatchRecord[] }) {
   const { t } = useI18n()
   const ratedRecords = [...records].reverse().filter(r => r.rating !== null)
   if (ratedRecords.length < 2) return (
-    <div className="flex items-center justify-center h-20 text-xs" style={{ color: 'var(--muted2)' }}>{t.chartNeedsData}</div>
+    <div className="light flex items-center justify-center h-20 text-xs" style={{ color: 'var(--muted2)' }}>{t.chartNeedsData}</div>
   )
 
   const W = 300, H = 80, PAD = 12
@@ -107,7 +107,7 @@ function RatingSparkline({ records }: { records: MatchRecord[] }) {
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.ratingTrend}</span>
         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-          trend > 0 ? 'bg-lime-900/40 text-lime-300' : trend < 0 ? 'bg-red-900/40 text-red-300' : 'text-white/30'
+          trend > 0 ? 'bg-lime-900/40 text-lime-300' : trend < 0 ? 'bg-red-900/40 text-red-300' : 'text-[color:var(--text)]/30'
         }`} style={{ background: trend === 0 ? '#1a1a1a' : undefined }}>
           {trend > 0 ? `▲ +${trend.toFixed(1)}` : trend < 0 ? `▼ ${trend.toFixed(1)}` : `→ ${t.maintain}`}
         </span>
@@ -228,16 +228,16 @@ export default function PlayerStatsPage() {
   const posColor = POSITION_COLORS[player.default_position as PositionType]
   const posLabel = POSITION_LABELS[player.default_position as PositionType]
 
-  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: '#0a0a0a' }}>
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/team/players" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
+          <Link href="/team/players" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-base font-black text-white">{t.playerSeasonStats}</h1>
+          <h1 className="text-base font-black text-[color:var(--text)]">{t.playerSeasonStats}</h1>
         </div>
       </header>
 
@@ -245,22 +245,22 @@ export default function PlayerStatsPage() {
 
         {/* 선수 프로필 */}
         <section className="p-5 flex items-center gap-4" style={cardStyle}>
-          <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center text-white text-xl font-black flex-shrink-0" style={{ backgroundColor: posColor }}>
+          <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center text-[color:var(--text)] text-xl font-black flex-shrink-0" style={{ backgroundColor: posColor }}>
             {player.photo_url
               ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
               : (player.number || '-')}
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-black text-white">{player.name}</h2>
+            <h2 className="text-xl font-black text-[color:var(--text)]">{player.name}</h2>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: posColor }}>{posLabel}</span>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full text-[color:var(--text)]" style={{ backgroundColor: posColor }}>{posLabel}</span>
               {player.number && <span className="text-sm" style={{ color: 'var(--muted2)' }}>#{player.number}</span>}
             </div>
           </div>
           {seasonStats?.avgRating !== null && seasonStats?.avgRating !== undefined && (
             <div className="flex flex-col items-center rounded-2xl px-4 py-3" style={{ background: 'var(--chip)' }}>
-              <Star className="w-4 h-4 mb-0.5 fill-current" style={{ color: 'var(--accent)' }} />
-              <span className="text-xl font-black" style={{ color: 'var(--accent)' }}>{seasonStats.avgRating.toFixed(1)}</span>
+              <Star className="w-4 h-4 mb-0.5 fill-current" style={{ color: 'var(--text)' }} />
+              <span className="text-xl font-black" style={{ color: 'var(--text)' }}>{seasonStats.avgRating.toFixed(1)}</span>
               <span className="text-[10px]" style={{ color: 'var(--muted2)' }}>{t.avgRatingShort}</span>
             </div>
           )}
@@ -272,7 +272,7 @@ export default function PlayerStatsPage() {
             <div className="flex items-center justify-between mb-1">
               <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.abilityCard}</p>
               <div className="flex items-baseline gap-1.5">
-                <span className="font-display text-[28px] leading-none" style={{ color: 'var(--accent)' }}>{overallRating(player.attributes)}</span>
+                <span className="font-display text-[28px] leading-none" style={{ color: 'var(--text)' }}>{overallRating(player.attributes)}</span>
                 <span className="text-[10px] font-bold uppercase" style={{ color: 'var(--muted2)' }}>{t.overall}</span>
               </div>
             </div>
@@ -302,7 +302,7 @@ export default function PlayerStatsPage() {
           <section className="p-4 space-y-3" style={cardStyle}>
             <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.memberIntro}</p>
             {player.bio && (
-              <p className="text-[14px] leading-relaxed text-white/90 whitespace-pre-wrap">{player.bio}</p>
+              <p className="text-[14px] leading-relaxed text-[color:var(--text)]/90 whitespace-pre-wrap">{player.bio}</p>
             )}
             <div className="flex flex-wrap gap-4">
               {player.preferred_positions && player.preferred_positions.length > 0 && (
@@ -318,7 +318,7 @@ export default function PlayerStatsPage() {
               {player.preferred_numbers && (
                 <div>
                   <p className="text-[10px] font-bold uppercase mb-1" style={{ color: 'var(--muted2)' }}>{t.preferredNumbers}</p>
-                  <p className="text-sm font-bold text-white">{player.preferred_numbers}</p>
+                  <p className="text-sm font-bold text-[color:var(--text)]">{player.preferred_numbers}</p>
                 </div>
               )}
             </div>
@@ -331,10 +331,10 @@ export default function PlayerStatsPage() {
             <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>{t.achievementBadges}</p>
             <div className="flex flex-wrap gap-2">
               {badges.map((b, i) => (
-                <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'var(--chipText)' }}>
+                <div key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold" style={{ background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--chipText)' }}>
                   <span>{b.emoji}</span>
                   <div>
-                    <div className="font-black text-white">{b.label}</div>
+                    <div className="font-black text-[color:var(--text)]">{b.label}</div>
                     <div className="text-[10px] opacity-60">{b.desc}</div>
                   </div>
                 </div>
@@ -349,14 +349,14 @@ export default function PlayerStatsPage() {
             <p className="text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>{t.seasonStatsTitle}</p>
             <div className="grid grid-cols-3 gap-2.5">
               {[
-                { label: t.statAppearances, value: seasonStats.matchAttendance, color: 'var(--accent)' },
+                { label: t.statAppearances, value: seasonStats.matchAttendance, color: 'var(--text)' },
                 { label: t.goals, value: seasonStats.goals, color: '#a3e635' },
                 { label: t.assistsLabel, value: seasonStats.assists, color: '#38bdf8' },
                 { label: t.cleanSheet, value: seasonStats.cleanSheets, color: '#a78bfa' },
                 { label: t.statTraining, value: seasonStats.trainingAttendance, color: '#fb923c' },
                 { label: t.statRecordedMatches, value: seasonStats.games, color: 'var(--muted2)' },
               ].map(s => (
-                <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: '#1a1a1a' }}>
+                <div key={s.label} className="rounded-xl p-3 text-center" style={{ background: 'var(--card2)' }}>
                   <p className="text-2xl font-black" style={{ color: s.color }}>{s.value}</p>
                   <p className="text-[11px] mt-0.5" style={{ color: 'var(--muted2)' }}>{s.label}</p>
                 </div>
@@ -369,7 +369,7 @@ export default function PlayerStatsPage() {
         {matchRecords.length >= 2 && (
           <section className="p-4" style={cardStyle}>
             <div className="flex items-center gap-2 mb-3">
-              <TrendingUp className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+              <TrendingUp className="w-4 h-4" style={{ color: 'var(--text)' }} />
               <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.growthChart}</p>
             </div>
             <RatingSparkline records={matchRecords} />
@@ -379,13 +379,13 @@ export default function PlayerStatsPage() {
         {/* 경기 기록 */}
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <Calendar className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+            <Calendar className="w-4 h-4" style={{ color: 'var(--text)' }} />
             <p className="text-[11px] font-black uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.matchHistory}</p>
           </div>
 
           {matchRecords.length === 0 ? (
             <div className="p-10 text-center" style={cardStyle}>
-              <Trophy className="w-12 h-12 mx-auto mb-3 opacity-20 text-white" />
+              <Trophy className="w-12 h-12 mx-auto mb-3 opacity-20 text-[color:var(--text)]" />
               <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.noMatchRecord}</p>
             </div>
           ) : (
@@ -394,27 +394,27 @@ export default function PlayerStatsPage() {
                 <Link key={record.matchId} href={`/match/${record.matchId}`} className="block p-4 active:scale-[0.99] transition" style={cardStyle}>
                   <div className="flex justify-between items-start mb-3">
                     <div>
-                      <p className="font-black text-white">{t.vs} {record.opponent}</p>
+                      <p className="font-black text-[color:var(--text)]">{t.vs} {record.opponent}</p>
                       <p className="text-xs mt-0.5" style={{ color: 'var(--muted2)' }}>{formatDate(record.matchDate)}</p>
                     </div>
                     {record.rating !== null && (
                       <div className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl" style={{ background: 'var(--chip)' }}>
-                        <Star className="w-3.5 h-3.5 fill-current" style={{ color: 'var(--accent)' }} />
-                        <span className="font-black text-sm" style={{ color: 'var(--accent)' }}>{record.rating.toFixed(1)}</span>
+                        <Star className="w-3.5 h-3.5 fill-current" style={{ color: 'var(--text)' }} />
+                        <span className="font-black text-sm" style={{ color: 'var(--text)' }}>{record.rating.toFixed(1)}</span>
                       </div>
                     )}
                   </div>
 
                   <div className="grid grid-cols-4 gap-2">
                     {[
-                      { label: t.goal, value: record.goals, active: record.goals > 0, color: 'var(--accent)' },
+                      { label: t.goal, value: record.goals, active: record.goals > 0, color: 'var(--text)' },
                       { label: t.assist, value: record.assists, active: record.assists > 0, color: '#38bdf8' },
                       { label: t.cleanSheet, value: record.cleanSheet ? '✓' : '-', active: record.cleanSheet, color: '#a78bfa' },
                       { label: t.contribution, value: record.contribution > 0 ? record.contribution : '-', active: record.contribution > 0, color: '#2dd4bf' },
                     ].map(s => (
                       <div key={s.label} className="text-center">
                         <p className="text-[10px] mb-0.5" style={{ color: 'var(--muted2)' }}>{s.label}</p>
-                        <p className="font-black text-lg" style={{ color: s.active ? s.color : '#2a2a2a' }}>{s.value}</p>
+                        <p className="font-black text-lg" style={{ color: s.active ? s.color : 'var(--line)' }}>{s.value}</p>
                       </div>
                     ))}
                   </div>
@@ -423,7 +423,7 @@ export default function PlayerStatsPage() {
                     <div className="mt-3 pt-3 space-y-1" style={{ borderTop: '1px solid var(--line)' }}>
                       {record.highlight && <p className="text-xs px-2 py-1 rounded-lg text-amber-300 bg-amber-900/30">⭐ {record.highlight}</p>}
                       {record.praise && <p className="text-xs px-2 py-1 rounded-lg" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>👍 {record.praise}</p>}
-                      {record.improvement && <p className="text-xs px-2 py-1 rounded-lg text-white/60" style={{ background: '#1a1a1a' }}>💡 {record.improvement}</p>}
+                      {record.improvement && <p className="text-xs px-2 py-1 rounded-lg text-[color:var(--text)]/60" style={{ background: 'var(--card2)' }}>💡 {record.improvement}</p>}
                     </div>
                   )}
                 </Link>

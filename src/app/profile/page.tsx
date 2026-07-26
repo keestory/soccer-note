@@ -58,13 +58,13 @@ export default function ProfilePage() {
 
   const avatarInitial = displayName.trim().charAt(0).toUpperCase() || '?'
 
-  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
-  const inputStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 12 }
+  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
+  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 12 }
 
   if (loading) {
     return (
-      <div className="min-h-screen safe-top pb-20" style={{ background: '#0a0a0a' }}>
-        <header className="safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <div className="light min-h-screen safe-top pb-20" style={{ background: 'var(--bg)' }}>
+        <header className="safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
             <Skeleton className="w-8 h-8 rounded-xl" />
             <Skeleton className="h-5 w-20" />
@@ -85,23 +85,23 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex flex-col safe-top" style={{ background: '#0a0a0a', minHeight: '100dvh' }}>
-      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+    <div className="light flex flex-col safe-top" style={{ background: 'var(--bg)', minHeight: '100dvh' }}>
+      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-base font-black text-white">{t.myProfile}</h1>
+          <h1 className="text-base font-black text-[color:var(--text)]">{t.myProfile}</h1>
         </div>
       </header>
 
       <main className="flex-1 overflow-y-auto max-w-lg mx-auto w-full px-4 py-6 space-y-5 safe-bottom">
         {/* Avatar hero */}
         <div className="flex flex-col items-center pt-2 pb-4">
-          <div className="w-20 h-20 rounded-full flex items-center justify-center text-[#0a0a0a] text-3xl font-bold mb-3" style={{ background: 'var(--accent)' }}>
+          <div className="w-20 h-20 rounded-full flex items-center justify-center text-[#0a0a0a] text-3xl font-bold mb-3" style={{ background: 'var(--navy)' }}>
             {avatarInitial}
           </div>
-          <p className="font-bold text-white text-lg">{displayName || t.noName}</p>
+          <p className="font-bold text-[color:var(--text)] text-lg">{displayName || t.noName}</p>
           <p className="text-[13px] mt-0.5" style={{ color: 'var(--muted2)' }}>{email}</p>
         </div>
 
@@ -135,7 +135,7 @@ export default function ProfilePage() {
               type="submit"
               disabled={saving}
               className="w-full py-3.5 rounded-xl font-bold text-[15px] disabled:opacity-50 transition active:scale-[0.98]"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}
             >
               {saving ? t.saving : t.save}
             </button>
@@ -150,16 +150,16 @@ export default function ProfilePage() {
             style={{ borderBottom: '1px solid var(--line)' }}
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
-                <Globe className="w-4 h-4 text-white/60" />
+              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'var(--card2)' }}>
+                <Globe className="w-4 h-4 text-[color:var(--text)]/60" />
               </div>
-              <span className="font-medium text-white">{t.language}</span>
+              <span className="font-medium text-[color:var(--text)]">{t.language}</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-[13px]" style={{ color: 'var(--muted2)' }}>
                 {currentLocale?.flag} {currentLocale?.label}
               </span>
-              <ChevronRight className="w-4 h-4 text-white/20" />
+              <ChevronRight className="w-4 h-4 text-[color:var(--text)]/20" />
             </div>
           </button>
 
@@ -169,12 +169,12 @@ export default function ProfilePage() {
             style={{ borderBottom: '1px solid var(--line)' }}
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
-                <LogOut className="w-4 h-4 text-white/60" />
+              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'var(--card2)' }}>
+                <LogOut className="w-4 h-4 text-[color:var(--text)]/60" />
               </div>
-              <span className="font-medium text-white">{t.logout}</span>
+              <span className="font-medium text-[color:var(--text)]">{t.logout}</span>
             </div>
-            <ChevronRight className="w-4 h-4 text-white/20" />
+            <ChevronRight className="w-4 h-4 text-[color:var(--text)]/20" />
           </button>
 
           <button
@@ -197,13 +197,13 @@ export default function ProfilePage() {
         <div className="fixed inset-0 bg-black/70 z-50 flex items-end" onClick={() => setShowLanguageSheet(false)}>
           <div
             className="w-full rounded-t-3xl safe-bottom"
-            style={{ background: '#111010', border: '1px solid var(--line)', maxHeight: '75dvh', display: 'flex', flexDirection: 'column' }}
+            style={{ background: 'var(--card2)', border: '1px solid var(--line)', maxHeight: '75dvh', display: 'flex', flexDirection: 'column' }}
             onClick={e => e.stopPropagation()}
           >
             <div className="flex-shrink-0 pt-3 pb-2">
-              <div className="w-10 h-1 rounded-full mx-auto" style={{ background: '#2a2a2a' }} />
+              <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--line)' }} />
             </div>
-            <h3 className="flex-shrink-0 text-lg font-bold text-center text-white pb-3">{t.selectLanguage}</h3>
+            <h3 className="flex-shrink-0 text-lg font-bold text-center text-[color:var(--text)] pb-3">{t.selectLanguage}</h3>
             <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-1.5">
               {LOCALES.map(l => (
                 <button
@@ -212,14 +212,14 @@ export default function ProfilePage() {
                   className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition active:opacity-70"
                   style={locale === l.code
                     ? { background: 'var(--chip)', border: '1px solid var(--accent)' }
-                    : { background: '#1a1a1a', border: '1px solid transparent' }}
+                    : { background: 'var(--card2)', border: '1px solid transparent' }}
                 >
                   <span className="text-xl">{l.flag}</span>
-                  <span className="font-medium text-[15px]" style={{ color: locale === l.code ? 'var(--accent)' : '#ccc' }}>
+                  <span className="font-medium text-[15px]" style={{ color: locale === l.code ? 'var(--navy)' : '#ccc' }}>
                     {l.label}
                   </span>
                   {locale === l.code && (
-                    <span className="ml-auto w-2 h-2 rounded-full" style={{ background: 'var(--accent)' }} />
+                    <span className="ml-auto w-2 h-2 rounded-full" style={{ background: 'var(--navy)' }} />
                   )}
                 </button>
               ))}
@@ -231,12 +231,12 @@ export default function ProfilePage() {
       {/* Delete confirm bottom sheet */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/70 z-50 flex items-end">
-          <div className="w-full rounded-t-3xl p-6 safe-bottom" style={{ background: '#111010', border: '1px solid var(--line)' }}>
-            <div className="w-10 h-1 rounded-full mx-auto mb-6" style={{ background: '#2a2a2a' }} />
+          <div className="w-full rounded-t-3xl p-6 safe-bottom" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
+            <div className="w-10 h-1 rounded-full mx-auto mb-6" style={{ background: 'var(--line)' }} />
             <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#2a1010' }}>
               <Trash2 className="w-7 h-7 text-red-400" />
             </div>
-            <h3 className="text-lg font-bold text-center text-white mb-2">{t.deleteAccountConfirm}</h3>
+            <h3 className="text-lg font-bold text-center text-[color:var(--text)] mb-2">{t.deleteAccountConfirm}</h3>
             <p className="text-[13px] text-center mb-6" style={{ color: 'var(--muted2)' }}>{t.deleteAccountDescription}</p>
             <div className="space-y-3">
               <button
@@ -250,14 +250,14 @@ export default function ProfilePage() {
                     setShowDeleteConfirm(false)
                   }
                 }}
-                className="w-full py-3.5 bg-red-500 text-white rounded-xl font-bold hover:bg-red-600 transition"
+                className="w-full py-3.5 bg-red-500 text-[color:var(--text)] rounded-xl font-bold hover:bg-red-600 transition"
               >
                 {t.delete}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="w-full py-3.5 rounded-xl font-bold text-white transition"
-                style={{ background: '#1a1a1a' }}
+                className="w-full py-3.5 rounded-xl font-bold text-[color:var(--text)] transition"
+                style={{ background: 'var(--card2)' }}
               >
                 {t.cancel}
               </button>

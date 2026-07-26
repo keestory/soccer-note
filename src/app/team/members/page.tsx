@@ -187,12 +187,12 @@ function TeamMembersContent() {
   if (loading) return <MembersPageSkeleton />
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex items-center justify-between">
           <div>
-            <h1 className="font-black text-[20px] text-white">{t.teamManagement}</h1>
+            <h1 className="font-black text-[20px] text-[color:var(--text)]">{t.teamManagement}</h1>
             {team?.name && <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>}
           </div>
         </div>
@@ -207,14 +207,14 @@ function TeamMembersContent() {
             style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-[11px] flex items-center justify-center" style={{ background: 'var(--chip)' }}>
-                <Globe className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+                <Globe className="w-5 h-5" style={{ color: 'var(--text)' }} />
               </div>
               <div>
-                <p className="font-bold text-white text-[14px]">{t.publicProfileTitle}</p>
+                <p className="font-bold text-[color:var(--text)] text-[14px]">{t.publicProfileTitle}</p>
                 <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{t.publicProfileDesc}</p>
               </div>
             </div>
-            <span style={{ color: '#555' }}>›</span>
+            <span style={{ color: 'var(--muted2)' }}>›</span>
           </Link>
         )}
 
@@ -223,12 +223,12 @@ function TeamMembersContent() {
           <div className="rounded-[16px] p-5" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <p className="text-[12px] font-medium mb-2" style={{ color: 'var(--muted1)' }}>{t.inviteCode}</p>
             <div className="flex items-center gap-3">
-              <span className="font-display text-[30px] flex-1" style={{ color: 'var(--accent)', letterSpacing: '0.22em' }}>
+              <span className="font-display text-[30px] flex-1" style={{ color: 'var(--text)', letterSpacing: '0.22em' }}>
                 {team.invite_code}
               </span>
               <button onClick={copyInviteLink}
                 className="flex items-center gap-1.5 px-4 py-2.5 rounded-[11px] font-black text-sm transition active:scale-95"
-                style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 {copied ? t.copied : t.share}
               </button>
@@ -246,13 +246,13 @@ function TeamMembersContent() {
               {pendingMembers.map((member, i) => (
                 <div key={member.id} className="p-4 flex items-center justify-between gap-3" style={{ borderTop: i > 0 ? '1px solid rgba(245,158,11,.15)' : 'none' }}>
                   <div className="min-w-0">
-                    <p className="font-bold text-white truncate">{member.profile?.display_name || member.profile?.email || t.noName}</p>
+                    <p className="font-bold text-[color:var(--text)] truncate">{member.profile?.display_name || member.profile?.email || t.noName}</p>
                     {isCoach && <p className="text-[12px] truncate" style={{ color: 'var(--muted2)' }}>{member.profile?.email}</p>}
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     <button onClick={() => approveMember(member)}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-[9px] text-sm font-bold active:scale-95"
-                      style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                      style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                       <CheckCircle className="w-4 h-4" /> {t.approve}
                     </button>
                     <button onClick={() => setRejectTarget(member)}
@@ -272,20 +272,20 @@ function TeamMembersContent() {
           <h2 className="font-black text-[14px] mb-3" style={{ color: 'var(--muted1)' }}>{t.memberCountN.replace('{n}', String(members.length))}</h2>
           <div className="rounded-[14px] overflow-hidden" style={{ border: '1px solid var(--line)', background: 'var(--card)' }}>
             {members.length === 0 ? (
-              <div className="p-8 text-center text-[14px]" style={{ color: '#555' }}>{t.noApprovedMembers}</div>
+              <div className="p-8 text-center text-[14px]" style={{ color: 'var(--muted2)' }}>{t.noApprovedMembers}</div>
             ) : (
               members.map((member, i) => (
                 <div key={member.id} style={{ borderTop: i > 0 ? '1px solid var(--line)' : 'none' }}>
                   <div className="p-4 flex items-center gap-3">
                     {/* Avatar */}
                     <div className="w-10 h-10 rounded-full flex items-center justify-center font-display text-[16px] flex-shrink-0"
-                      style={{ background: member.role === 'coach' ? 'var(--accent)' : '#1e1e1e', color: member.role === 'coach' ? '#0a0a0a' : '#888' }}>
+                      style={{ background: member.role === 'coach' ? 'var(--navy)' : 'var(--card2)', color: member.role === 'coach' ? 'var(--accent)' : 'var(--muted1)' }}>
                       {member.role === 'coach' ? '♛' : (member.profile?.display_name || '?').charAt(0).toUpperCase()}
                     </div>
                     {/* Name */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-white text-[14px] truncate">{member.profile?.display_name || member.profile?.email || t.noName}</p>
-                      <p className="text-[12px] truncate" style={{ color: member.role === 'coach' ? 'var(--accent)' : 'var(--muted2)' }}>
+                      <p className="font-bold text-[color:var(--text)] text-[14px] truncate">{member.profile?.display_name || member.profile?.email || t.noName}</p>
+                      <p className="text-[12px] truncate" style={{ color: member.role === 'coach' ? 'var(--navy)' : 'var(--muted2)' }}>
                         {member.role === 'coach' ? t.coach : t.member}
                         {isCoach && member.profile?.email ? ` · ${member.profile.email}` : ''}
                       </p>
@@ -294,11 +294,11 @@ function TeamMembersContent() {
                     {isCoach && member.user_id !== team?.user_id && (
                       <div className="flex gap-1 flex-shrink-0">
                         <button onClick={() => setEditingMember(editingMember === member.id ? null : member.id)}
-                          className="p-2 rounded-lg" style={{ color: '#555' }}>
+                          className="p-2 rounded-lg" style={{ color: 'var(--muted2)' }}>
                           <Settings className="w-4 h-4" />
                         </button>
                         <button onClick={() => setRemoveTarget(member)}
-                          className="p-2 rounded-lg" style={{ color: '#555' }}>
+                          className="p-2 rounded-lg" style={{ color: 'var(--muted2)' }}>
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
@@ -316,8 +316,8 @@ function TeamMembersContent() {
                             onClick={() => updateMemberPermissions(member.id, { role: r })}
                             className="flex-1 py-2 rounded-lg text-[13px] font-bold transition"
                             style={member.role === r
-                              ? { background: 'var(--accent)', color: '#0a0a0a' }
-                              : { background: '#1e1e1e', color: '#888', border: '1px solid var(--line)' }}
+                              ? { background: 'var(--navy)', color: 'var(--accent)' }
+                              : { background: 'var(--card2)', color: 'var(--muted1)', border: '1px solid var(--line)' }}
                           >
                             {r === 'coach' ? t.coach : t.member}
                           </button>
@@ -333,7 +333,7 @@ function TeamMembersContent() {
                           <input type="checkbox" checked={!!val}
                             onChange={e => updateMemberPermissions(member.id, { [key]: e.target.checked })}
                             className="w-4 h-4 rounded" />
-                          <span className="text-[13px] text-white">{label}</span>
+                          <span className="text-[13px] text-[color:var(--text)]">{label}</span>
                         </label>
                       ))}
                     </div>
@@ -391,42 +391,42 @@ function TeamMembersContent() {
           <div className="w-full max-w-md rounded-2xl p-6" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             {disbandStep === 'initial' && (
               <>
-                <h3 className="font-black text-[18px] text-white mb-4">{t.disbandTeam}</h3>
+                <h3 className="font-black text-[18px] text-[color:var(--text)] mb-4">{t.disbandTeam}</h3>
                 <p className="text-[14px] mb-6" style={{ color: 'var(--muted2)' }}>{t.selectNewCoachQuestion}</p>
                 <div className="space-y-3">
                   <button onClick={() => setDisbandStep('select-coach')} disabled={members.filter(m => m.user_id !== currentUserId).length === 0}
-                    className="w-full py-3.5 rounded-xl font-black disabled:opacity-40" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                    className="w-full py-3.5 rounded-xl font-black disabled:opacity-40" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {t.yesSelectNewCoach}
                   </button>
                   <button onClick={() => setDisbandStep('confirm-delete')}
                     className="w-full py-3.5 rounded-xl font-bold" style={{ background: 'rgba(192,90,77,.14)', color: '#e07a6d' }}>
                     {t.noDisbandTeam}
                   </button>
-                  <button onClick={closeDisbandModal} className="w-full py-3.5 rounded-xl font-bold" style={{ background: '#1a1a1a', color: '#888' }}>{t.cancel}</button>
+                  <button onClick={closeDisbandModal} className="w-full py-3.5 rounded-xl font-bold" style={{ background: 'var(--card2)', color: 'var(--muted1)' }}>{t.cancel}</button>
                 </div>
               </>
             )}
             {disbandStep === 'select-coach' && (
               <>
-                <h3 className="font-black text-[18px] text-white mb-4">{t.selectNewCoach}</h3>
+                <h3 className="font-black text-[18px] text-[color:var(--text)] mb-4">{t.selectNewCoach}</h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto mb-4">
                   {members.filter(m => m.user_id !== currentUserId).map(member => (
                     <button key={member.id} onClick={() => setSelectedNewCoach(member.user_id)}
                       className="w-full p-3 rounded-xl text-left flex items-center gap-3"
-                      style={{ background: selectedNewCoach === member.user_id ? 'var(--chip)' : '#1a1a1a', border: `1px solid ${selectedNewCoach === member.user_id ? 'var(--accent)' : 'transparent'}` }}>
-                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: '#2a2a2a', color: '#888' }}>
+                      style={{ background: selectedNewCoach === member.user_id ? 'var(--chip)' : 'var(--card2)', border: `1px solid ${selectedNewCoach === member.user_id ? 'var(--navy)' : 'transparent'}` }}>
+                      <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: 'var(--line)', color: 'var(--muted1)' }}>
                         {(member.profile?.display_name || '?').charAt(0).toUpperCase()}
                       </div>
-                      <p className="font-bold text-white">{member.profile?.display_name || member.profile?.email || t.noName}</p>
+                      <p className="font-bold text-[color:var(--text)]">{member.profile?.display_name || member.profile?.email || t.noName}</p>
                     </button>
                   ))}
                 </div>
                 <div className="space-y-3">
                   <button onClick={transferOwnership} disabled={!selectedNewCoach}
-                    className="w-full py-3.5 rounded-xl font-black disabled:opacity-40" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                    className="w-full py-3.5 rounded-xl font-black disabled:opacity-40" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {t.transferCoach}
                   </button>
-                  <button onClick={() => setDisbandStep('initial')} className="w-full py-3.5 rounded-xl font-bold" style={{ background: '#1a1a1a', color: '#888' }}>{t.back}</button>
+                  <button onClick={() => setDisbandStep('initial')} className="w-full py-3.5 rounded-xl font-bold" style={{ background: 'var(--card2)', color: 'var(--muted1)' }}>{t.back}</button>
                 </div>
               </>
             )}
@@ -436,13 +436,13 @@ function TeamMembersContent() {
                   <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'rgba(192,90,77,.14)' }}>
                     <AlertTriangle className="w-8 h-8" style={{ color: '#e07a6d' }} />
                   </div>
-                  <h3 className="font-black text-[18px] text-white mb-2">{t.disbandConfirm}</h3>
+                  <h3 className="font-black text-[18px] text-[color:var(--text)] mb-2">{t.disbandConfirm}</h3>
                   <p className="text-[14px]" style={{ color: 'var(--muted2)' }}>{t.disbandConfirmMessage.replace('{teamName}', team?.name ?? '')}</p>
                   <p className="text-[13px] mt-2" style={{ color: '#e07a6d' }}>{t.disbandWarning}</p>
                 </div>
                 <div className="space-y-3">
                   <button onClick={disbandTeam} className="w-full py-3.5 rounded-xl font-black" style={{ background: '#c05a4d', color: '#fff' }}>{t.yesDisbandTeam}</button>
-                  <button onClick={() => setDisbandStep('initial')} className="w-full py-3.5 rounded-xl font-bold" style={{ background: '#1a1a1a', color: '#888' }}>{t.backLabel}</button>
+                  <button onClick={() => setDisbandStep('initial')} className="w-full py-3.5 rounded-xl font-bold" style={{ background: 'var(--card2)', color: 'var(--muted1)' }}>{t.backLabel}</button>
                 </div>
               </>
             )}
@@ -456,7 +456,7 @@ function TeamMembersContent() {
 
 export default function TeamMembersPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}><Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent)' }} /></div>}>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}><Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--text)' }} /></div>}>
       <TeamMembersContent />
     </Suspense>
   )

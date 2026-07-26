@@ -56,14 +56,14 @@ export function ConfirmSheet({
           <button
             onClick={onConfirm}
             className="w-full py-4 rounded-2xl font-black text-base transition active:scale-[0.98]"
-            style={{ background: danger ? '#c05a4d' : 'var(--accent)', color: danger ? '#fff' : '#0a0a0a' }}
+            style={{ background: danger ? 'var(--danger)' : 'var(--navy)', color: danger ? '#fff' : 'var(--accent)' }}
           >
             {confirmLabel}
           </button>
           <button
             onClick={onCancel}
             className="w-full py-4 rounded-2xl font-bold text-base transition active:scale-[0.98]"
-            style={{ background: '#1a1a1a', color: '#888' }}
+            style={{ background: 'var(--card2)', color: '#888' }}
           >
             {cancelLabel}
           </button>

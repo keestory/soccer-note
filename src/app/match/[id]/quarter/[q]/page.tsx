@@ -747,26 +747,26 @@ export default function QuarterEditPage() {
     return <QuarterEditSkeleton />
   }
 
-  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
-  const inputStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 12 }
-  const textareaStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 10 }
+  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
+  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 12 }
+  const textareaStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 10 }
 
   return (
-    <div className="min-h-screen pb-32" style={{ background: '#0a0a0a' }}>
+    <div className="light min-h-screen pb-32" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Link href={`/match/${matchId}`} className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
+            <Link href={`/match/${matchId}`} className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-base font-black text-white">{quarterNumber}{t.quarterEditTitle.replace('{n}', String(quarterNumber))}</h1>
+            <h1 className="text-base font-black text-[color:var(--text)]">{quarterNumber}{t.quarterEditTitle.replace('{n}', String(quarterNumber))}</h1>
           </div>
           <button
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50"
-            style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}
           >
             <Save className="w-4 h-4" />
             {saving ? t.saving : t.save}
@@ -778,7 +778,7 @@ export default function QuarterEditPage() {
         {/* Soccer Field */}
         <section>
           <div className="flex justify-between items-center mb-3">
-            <h2 className="font-bold text-white text-sm">{t.formationPlacement}</h2>
+            <h2 className="font-bold text-[color:var(--text)] text-sm">{t.formationPlacement}</h2>
             <div className="flex items-center gap-2">
               <select
                 onChange={(e) => {
@@ -789,7 +789,7 @@ export default function QuarterEditPage() {
                 }}
                 defaultValue=""
                 className="px-2 py-1.5 rounded-lg text-sm outline-none"
-                style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff' }}
+                style={{ background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff' }}
               >
                 <option value="" disabled>{t.formation}</option>
                 {Object.entries(FORMATIONS).map(([key, f]) => (
@@ -800,7 +800,7 @@ export default function QuarterEditPage() {
                 <button
                   onClick={() => setShowPlayerPicker(!showPlayerPicker)}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
-                  style={{ background: 'var(--chip)', color: 'var(--accent)' }}
+                  style={{ background: 'var(--chip)', color: 'var(--text)' }}
                 >
                   <Plus className="w-4 h-4" />
                   {t.addPlayer}
@@ -813,16 +813,16 @@ export default function QuarterEditPage() {
           {showPlayerPicker && (
             <div className="mb-4 p-4 rounded-xl" style={cardStyle}>
               <div className="flex justify-between items-center mb-3">
-                <p className="text-sm text-white/60">
+                <p className="text-sm text-[color:var(--text)]/60">
                   {t.selectPlayersToAdd}
                   {selectedPickerPlayers.size > 0 && (
-                    <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
+                    <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: 'var(--chip)', color: 'var(--text)' }}>
                       {t.selectedCount.replace('{n}', String(selectedPickerPlayers.size))}
                     </span>
                   )}
                 </p>
                 <button onClick={() => { setShowPlayerPicker(false); setSelectedPickerPlayers(new Set()); }} className="p-1">
-                  <X className="w-5 h-5 text-white/40" />
+                  <X className="w-5 h-5 text-[color:var(--text)]/40" />
                 </button>
               </div>
               <div className="space-y-3 mb-3">
@@ -844,25 +844,25 @@ export default function QuarterEditPage() {
                               onClick={() => togglePickerPlayer(player.id)}
                               className="flex items-center gap-2 p-2 rounded-lg text-left transition-all"
                               style={{
-                                background: isSelected ? 'var(--chip)' : '#1a1a1a',
-                                border: isSelected ? '1px solid var(--accent)' : '1px solid #2a2a2a',
+                                background: isSelected ? 'var(--chip)' : 'var(--card2)',
+                                border: isSelected ? '1px solid var(--accent)' : '1px solid var(--line)',
                               }}
                             >
                               <div className="relative">
                                 <div
-                                  className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                                  className="w-8 h-8 rounded-full flex items-center justify-center text-[color:var(--text)] text-xs font-bold"
                                   style={{ backgroundColor: POSITION_COLORS[player.default_position] }}
                                 >
                                   {player.number || '-'}
                                 </div>
                                 {isSelected && (
-                                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: 'var(--accent)' }}>
-                                    <Check className="w-3 h-3" style={{ color: '#0a0a0a' }} />
+                                  <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center" style={{ background: 'var(--navy)' }}>
+                                    <Check className="w-3 h-3" style={{ color: 'var(--text)' }} />
                                   </div>
                                 )}
                               </div>
                               <div className="min-w-0">
-                                <p className="text-sm font-medium text-white truncate">{player.name}</p>
+                                <p className="text-sm font-medium text-[color:var(--text)] truncate">{player.name}</p>
                               </div>
                             </button>
                           )
@@ -876,7 +876,7 @@ export default function QuarterEditPage() {
                 <button
                   onClick={addSelectedPlayersToField}
                   className="w-full py-2.5 rounded-lg font-medium transition-colors"
-                  style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+                  style={{ background: 'var(--navy)', color: 'var(--accent)' }}
                 >
                   {t.addNPlayers.replace('{n}', String(selectedPickerPlayers.size))}
                 </button>
@@ -968,7 +968,7 @@ export default function QuarterEditPage() {
 
             {fieldPlayers.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <p className="px-4 py-2 rounded-lg text-sm" style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.5)' }}>{t.dragToPlace}</p>
+                <p className="px-4 py-2 rounded-lg text-sm" style={{ background: 'rgba(0,0,0,0.5)', color: 'var(--muted2)' }}>{t.dragToPlace}</p>
               </div>
             )}
           </div>
@@ -980,8 +980,8 @@ export default function QuarterEditPage() {
         {/* Substitutions Section */}
         <section style={cardStyle} className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-bold text-white text-sm flex items-center gap-2">
-              <ArrowRightLeft className="w-4 h-4 text-white/40" />
+            <h2 className="font-bold text-[color:var(--text)] text-sm flex items-center gap-2">
+              <ArrowRightLeft className="w-4 h-4 text-[color:var(--text)]/40" />
               {t.substitutionRecords} ({substitutions.length})
             </h2>
             <button
@@ -997,34 +997,34 @@ export default function QuarterEditPage() {
           {substitutions.length > 0 ? (
             <div className="space-y-2">
               {substitutions.map(sub => (
-                <div key={sub.id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: '#1a1a1a' }}>
+                <div key={sub.id} className="flex items-center justify-between py-2 px-3 rounded-lg" style={{ background: 'var(--card2)' }}>
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="px-2 py-0.5 rounded text-xs font-bold text-white/60" style={{ background: '#2a2a2a' }}>
+                    <span className="px-2 py-0.5 rounded text-xs font-bold text-[color:var(--text)]/60" style={{ background: 'var(--line)' }}>
                       {sub.minute}&apos;
                     </span>
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
+                        className="w-5 h-5 rounded-full flex items-center justify-center text-[color:var(--text)] text-[9px] font-bold"
                         style={{ backgroundColor: POSITION_COLORS[sub.player_out?.default_position || 'MF'] }}
                       >
                         {sub.player_out?.number || '?'}
                       </div>
                       <span className="text-red-400 font-medium">{sub.player_out?.name}</span>
                     </div>
-                    <span className="text-white/20">→</span>
+                    <span className="text-[color:var(--text)]/20">→</span>
                     <div className="flex items-center gap-1.5">
                       <div
-                        className="w-5 h-5 rounded-full flex items-center justify-center text-white text-[9px] font-bold"
+                        className="w-5 h-5 rounded-full flex items-center justify-center text-[color:var(--text)] text-[9px] font-bold"
                         style={{ backgroundColor: POSITION_COLORS[sub.player_in?.default_position || 'MF'] }}
                       >
                         {sub.player_in?.number || '?'}
                       </div>
-                      <span className="font-medium" style={{ color: 'var(--accent)' }}>{sub.player_in?.name}</span>
+                      <span className="font-medium" style={{ color: 'var(--text)' }}>{sub.player_in?.name}</span>
                     </div>
                   </div>
                   <button
                     onClick={() => handleDeleteSubstitution(sub.id)}
-                    className="p-1 text-white/20 hover:text-red-400 rounded"
+                    className="p-1 text-[color:var(--text)]/20 hover:text-red-400 rounded"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -1042,21 +1042,21 @@ export default function QuarterEditPage() {
             <div className="absolute inset-0 bg-black/70" />
             <div
               className="relative w-full rounded-t-3xl px-5 pt-4 pb-8 safe-bottom max-h-[90vh] flex flex-col"
-              style={{ background: '#111010', border: '1px solid var(--line)' }}
+              style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: '#2a2a2a' }} />
+              <div className="w-10 h-1 rounded-full mx-auto mb-4" style={{ background: 'var(--line)' }} />
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-white text-lg">{t.addSubstitution}</h3>
-                <button onClick={() => { setShowSubModal(false); setSubPickerMode(null) }} className="p-1 text-white/40 hover:text-white rounded">
+                <h3 className="font-bold text-[color:var(--text)] text-lg">{t.addSubstitution}</h3>
+                <button onClick={() => { setShowSubModal(false); setSubPickerMode(null) }} className="p-1 text-[color:var(--text)]/40 hover:text-[color:var(--text)] rounded">
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {subPickerMode ? (
                 <div className="flex flex-col flex-1 min-h-0">
-                  <p className="text-sm font-medium mb-3 flex items-center gap-2 text-white/70">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold`} style={subPickerMode === 'out' ? { background: '#2a0a0a', color: '#ef4444' } : { background: 'var(--chip)', color: 'var(--accent)' }}>
+                  <p className="text-sm font-medium mb-3 flex items-center gap-2 text-[color:var(--text)]/70">
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold`} style={subPickerMode === 'out' ? { background: '#2a0a0a', color: '#ef4444' } : { background: 'var(--chip)', color: 'var(--text)' }}>
                       {subPickerMode === 'out' ? 'OUT' : 'IN'}
                     </span>
                     {t.selectPlayer}
@@ -1078,18 +1078,18 @@ export default function QuarterEditPage() {
                           }}
                           className="w-full flex items-center gap-3 p-3 rounded-xl transition"
                           style={{
-                            border: isSelected ? '2px solid var(--accent)' : '2px solid #2a2a2a',
-                            background: isSelected ? 'var(--chip)' : '#1a1a1a',
+                            border: isSelected ? '2px solid var(--accent)' : '2px solid var(--line)',
+                            background: isSelected ? 'var(--chip)' : 'var(--card2)',
                           }}
                         >
                           <div
-                            className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
+                            className="w-10 h-10 rounded-full flex items-center justify-center text-[color:var(--text)] font-bold flex-shrink-0"
                             style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}
                           >
                             {fp.player.number || '?'}
                           </div>
                           <div className="text-left">
-                            <p className="font-medium text-white">{fp.player.name}</p>
+                            <p className="font-medium text-[color:var(--text)]">{fp.player.name}</p>
                             <p className="text-xs" style={{ color: 'var(--muted2)' }}>{POSITION_LABELS[fp.positionType]}</p>
                           </div>
                         </button>
@@ -1117,18 +1117,18 @@ export default function QuarterEditPage() {
                       onClick={() => setSubPickerMode('out')}
                       className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition"
                       style={{
-                        border: subOutId ? '2px solid #ef4444' : '2px solid #2a2a2a',
-                        background: subOutId ? '#2a0a0a' : '#1a1a1a',
+                        border: subOutId ? '2px solid #ef4444' : '2px solid var(--line)',
+                        background: subOutId ? '#2a0a0a' : 'var(--card2)',
                       }}
                     >
                       {subOutId ? (() => {
                         const fp = fieldPlayers.find(p => p.playerId === subOutId)
                         return fp ? (
                           <>
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-[color:var(--text)] text-xs font-bold flex-shrink-0" style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}>
                               {fp.player.number || '?'}
                             </div>
-                            <span className="font-medium text-white">{fp.player.name}</span>
+                            <span className="font-medium text-[color:var(--text)]">{fp.player.name}</span>
                           </>
                         ) : <span style={{ color: 'var(--muted2)' }}>{t.selectPlayer}</span>
                       })() : <span style={{ color: 'var(--muted2)' }}>{t.selectPlayer}</span>}
@@ -1136,23 +1136,23 @@ export default function QuarterEditPage() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>IN</label>
+                    <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--text)' }}>IN</label>
                     <button
                       onClick={() => setSubPickerMode('in')}
                       className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition"
                       style={{
-                        border: subInId ? '2px solid var(--accent)' : '2px solid #2a2a2a',
-                        background: subInId ? 'var(--chip)' : '#1a1a1a',
+                        border: subInId ? '2px solid var(--accent)' : '2px solid var(--line)',
+                        background: subInId ? 'var(--chip)' : 'var(--card2)',
                       }}
                     >
                       {subInId ? (() => {
                         const p = getSubInCandidates().find(p => p.id === subInId)
                         return p ? (
                           <>
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: POSITION_COLORS[p.default_position] }}>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center text-[color:var(--text)] text-xs font-bold flex-shrink-0" style={{ backgroundColor: POSITION_COLORS[p.default_position] }}>
                               {p.number || '?'}
                             </div>
-                            <span className="font-medium text-white">{p.name}</span>
+                            <span className="font-medium text-[color:var(--text)]">{p.name}</span>
                           </>
                         ) : <span style={{ color: 'var(--muted2)' }}>{t.selectPlayer}</span>
                       })() : <span style={{ color: 'var(--muted2)' }}>{t.selectPlayer}</span>}
@@ -1163,7 +1163,7 @@ export default function QuarterEditPage() {
                     onClick={handleAddSubstitution}
                     disabled={!subOutId || !subInId || savingSub}
                     className="w-full py-4 rounded-2xl font-bold disabled:opacity-40 text-base"
-                    style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+                    style={{ background: 'var(--navy)', color: 'var(--accent)' }}
                   >
                     {savingSub ? t.saving : t.addSubstitution}
                   </button>
@@ -1179,13 +1179,13 @@ export default function QuarterEditPage() {
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold"
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-[color:var(--text)] font-bold"
                   style={{ backgroundColor: POSITION_COLORS[selectedPlayer.positionType] }}
                 >
                   {selectedPlayer.player.number || '?'}
                 </div>
                 <div>
-                  <p className="font-bold text-white">{selectedPlayer.player.name}</p>
+                  <p className="font-bold text-[color:var(--text)]">{selectedPlayer.player.name}</p>
                   <select
                     value={selectedPlayer.positionType}
                     onChange={(e) =>
@@ -1214,7 +1214,7 @@ export default function QuarterEditPage() {
             <div className="mb-5">
               <div className="flex items-center justify-between mb-3">
                 <label className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.rating}</label>
-                <span className="font-display text-3xl tabular-nums" style={{ color: 'var(--accent)' }}>
+                <span className="font-display text-3xl tabular-nums" style={{ color: 'var(--text)' }}>
                   {selectedPlayer.rating !== null ? selectedPlayer.rating.toFixed(1) : '−'}
                 </span>
               </div>
@@ -1230,12 +1230,12 @@ export default function QuarterEditPage() {
                   })
                 }
                 className="w-full h-2 rounded-full appearance-none cursor-pointer"
-                style={{ accentColor: 'var(--accent)', background: '#2a2a2a' }}
+                style={{ accentColor: 'var(--text)', background: 'var(--line)' }}
               />
               <div className="flex justify-between text-xs mt-1.5">
                 <span className="text-red-400">0</span>
                 <span className="text-amber-400">5</span>
-                <span style={{ color: 'var(--accent)' }}>10</span>
+                <span style={{ color: 'var(--text)' }}>10</span>
               </div>
             </div>
 
@@ -1243,31 +1243,31 @@ export default function QuarterEditPage() {
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.goals}</label>
-                <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
+                <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { goals: Math.max(0, selectedPlayer.goals - 1) })}
-                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-white/40 active:bg-white/5 flex-shrink-0"
+                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-[color:var(--text)]/40 active:bg-white/5 flex-shrink-0"
                   >−</button>
-                  <span className="flex-1 text-center text-xl font-bold text-white">{selectedPlayer.goals}</span>
+                  <span className="flex-1 text-center text-xl font-bold text-[color:var(--text)]">{selectedPlayer.goals}</span>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { goals: selectedPlayer.goals + 1 })}
                     className="w-12 h-full flex items-center justify-center text-xl font-bold flex-shrink-0"
-                    style={{ color: 'var(--accent)' }}
+                    style={{ color: 'var(--text)' }}
                   >+</button>
                 </div>
               </div>
               <div>
                 <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.assistsLabel}</label>
-                <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: '#1a1a1a', border: '1px solid #2a2a2a' }}>
+                <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { assists: Math.max(0, selectedPlayer.assists - 1) })}
-                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-white/40 active:bg-white/5 flex-shrink-0"
+                    className="w-12 h-full flex items-center justify-center text-xl font-bold text-[color:var(--text)]/40 active:bg-white/5 flex-shrink-0"
                   >−</button>
-                  <span className="flex-1 text-center text-xl font-bold text-white">{selectedPlayer.assists}</span>
+                  <span className="flex-1 text-center text-xl font-bold text-[color:var(--text)]">{selectedPlayer.assists}</span>
                   <button
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { assists: selectedPlayer.assists + 1 })}
                     className="w-12 h-full flex items-center justify-center text-xl font-bold flex-shrink-0"
-                    style={{ color: 'var(--accent)' }}
+                    style={{ color: 'var(--text)' }}
                   >+</button>
                 </div>
               </div>
@@ -1279,9 +1279,9 @@ export default function QuarterEditPage() {
                 onClick={() => updateFieldPlayer(selectedPlayer.id, { cleanSheet: !selectedPlayer.cleanSheet })}
                 className="h-12 rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition"
                 style={{
-                  background: selectedPlayer.cleanSheet ? 'var(--chip)' : '#1a1a1a',
-                  border: selectedPlayer.cleanSheet ? '1px solid var(--accent)' : '1px solid #2a2a2a',
-                  color: selectedPlayer.cleanSheet ? 'var(--accent)' : 'rgba(255,255,255,0.3)',
+                  background: selectedPlayer.cleanSheet ? 'var(--chip)' : 'var(--card2)',
+                  border: selectedPlayer.cleanSheet ? '1px solid var(--accent)' : '1px solid var(--line)',
+                  color: selectedPlayer.cleanSheet ? 'var(--navy)' : 'rgba(255,255,255,0.3)',
                 }}
               >
                 <Check className="w-4 h-4" />
@@ -1291,8 +1291,8 @@ export default function QuarterEditPage() {
                 onClick={() => updateFieldPlayer(selectedPlayer.id, { contribution: selectedPlayer.contribution > 0 ? 0 : 1 })}
                 className="h-12 rounded-xl flex items-center justify-center gap-2 font-medium text-sm transition"
                 style={{
-                  background: selectedPlayer.contribution > 0 ? '#1a1200' : '#1a1a1a',
-                  border: selectedPlayer.contribution > 0 ? '1px solid #f59e0b' : '1px solid #2a2a2a',
+                  background: selectedPlayer.contribution > 0 ? '#1a1200' : 'var(--card2)',
+                  border: selectedPlayer.contribution > 0 ? '1px solid #f59e0b' : '1px solid var(--line)',
                   color: selectedPlayer.contribution > 0 ? '#f59e0b' : 'rgba(255,255,255,0.3)',
                 }}
               >
@@ -1303,7 +1303,7 @@ export default function QuarterEditPage() {
 
             {/* Review Section */}
             <div className="mt-5 pt-5" style={{ borderTop: '1px solid var(--line)' }}>
-              <h3 className="font-bold text-white mb-3">{t.playerReview}</h3>
+              <h3 className="font-bold text-[color:var(--text)] mb-3">{t.playerReview}</h3>
 
               {/* Media Upload */}
               <div className="mb-4">
@@ -1314,7 +1314,7 @@ export default function QuarterEditPage() {
                     onClick={() => mediaInputRef.current?.click()}
                     disabled={uploadingMedia}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
-                    style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}
+                    style={{ background: 'var(--card2)', color: 'var(--text2)' }}
                   >
                     <ImageIcon className="w-4 h-4" />
                     {t.gallery}
@@ -1324,19 +1324,19 @@ export default function QuarterEditPage() {
                     onClick={() => cameraInputRef.current?.click()}
                     disabled={uploadingMedia}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
-                    style={{ background: '#1a1a1a', color: 'rgba(255,255,255,0.6)' }}
+                    style={{ background: 'var(--card2)', color: 'var(--text2)' }}
                   >
                     <Camera className="w-4 h-4" />
                     {t.takePhoto}
                   </button>
-                  {uploadingMedia && <Spinner className="w-5 h-5 animate-spin self-center" style={{ color: 'var(--accent)' }} />}
+                  {uploadingMedia && <Spinner className="w-5 h-5 animate-spin self-center" style={{ color: 'var(--text)' }} />}
                 </div>
                 <input ref={mediaInputRef} type="file" accept="image/*,video/*" multiple className="hidden" onChange={(e) => handleMediaUpload(e.target.files)} />
                 <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => handleMediaUpload(e.target.files)} />
                 {selectedPlayer.mediaUrls.length > 0 && (
                   <div className="grid grid-cols-3 gap-2 mt-2">
                     {selectedPlayer.mediaUrls.map((url, idx) => (
-                      <div key={idx} className="relative group rounded-lg overflow-hidden aspect-square" style={{ background: '#1a1a1a' }}>
+                      <div key={idx} className="relative group rounded-lg overflow-hidden aspect-square" style={{ background: 'var(--card2)' }}>
                         {url.match(/\.(mp4|mov|webm)/i) ? (
                           <video src={url} className="w-full h-full object-cover" />
                         ) : (
@@ -1344,7 +1344,7 @@ export default function QuarterEditPage() {
                         )}
                         <button
                           onClick={() => removeMedia(url)}
-                          className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-[color:var(--text)] rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <X className="w-3 h-3" />
                         </button>
@@ -1355,7 +1355,7 @@ export default function QuarterEditPage() {
               </div>
 
               <div className="mb-3">
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>{t.praiseLabel}</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--text)' }}>{t.praiseLabel}</label>
                 <textarea
                   value={selectedPlayer.praiseText}
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { praiseText: e.target.value })}
@@ -1379,7 +1379,7 @@ export default function QuarterEditPage() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--accent)' }}>{t.highlightLabel}</label>
+                <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--text)' }}>{t.highlightLabel}</label>
                 <textarea
                   value={selectedPlayer.highlightText}
                   onChange={(e) => updateFieldPlayer(selectedPlayer.id, { highlightText: e.target.value })}
@@ -1398,7 +1398,7 @@ export default function QuarterEditPage() {
         {/* All Players List */}
         {fieldPlayers.length > 0 && (
           <section>
-            <h2 className="font-bold text-white text-sm mb-3">{t.placedPlayers} ({fieldPlayers.length})</h2>
+            <h2 className="font-bold text-[color:var(--text)] text-sm mb-3">{t.placedPlayers} ({fieldPlayers.length})</h2>
             <div style={{ ...cardStyle, overflow: 'hidden' }}>
               {fieldPlayers.map((fp, i) => (
                 <button
@@ -1412,13 +1412,13 @@ export default function QuarterEditPage() {
                 >
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-[color:var(--text)] text-sm font-bold"
                       style={{ backgroundColor: POSITION_COLORS[fp.positionType] }}
                     >
                       {fp.player.number || '?'}
                     </div>
                     <div>
-                      <p className="font-medium text-white">{fp.player.name}</p>
+                      <p className="font-medium text-[color:var(--text)]">{fp.player.name}</p>
                       <p className="text-sm" style={{ color: 'var(--muted2)' }}>
                         {POSITION_LABELS[fp.positionType]}
                         {fp.goals > 0 && ` | ${t.goalsCount.replace('{n}', String(fp.goals))}`}
@@ -1426,7 +1426,7 @@ export default function QuarterEditPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="font-display text-xl tabular-nums" style={{ color: 'var(--accent)' }}>
+                  <div className="font-display text-xl tabular-nums" style={{ color: 'var(--text)' }}>
                     {fp.rating?.toFixed(1) || '-'}
                   </div>
                 </button>

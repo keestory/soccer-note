@@ -110,7 +110,7 @@ export default function DashboardPage() {
   // No teams yet
   if (!selectedTeam || showCreateTeam) {
     return (
-      <div className="min-h-screen px-5 py-8" style={{ background: 'var(--bg)', color: '#fff' }}>
+      <div className="light min-h-screen px-5 py-8" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-8">
             <span className="font-display text-[30px] tracking-widest" style={{ color: 'var(--accent)' }}>SOCCERNOTE</span>
@@ -123,9 +123,9 @@ export default function DashboardPage() {
                 {teams.map(team => (
                   <button key={team.id} onClick={() => handleSelectTeam(team)}
                     className="w-full p-4 rounded-xl text-left flex items-center justify-between transition active:opacity-70"
-                    style={{ background: '#1a1a1a' }}>
+                    style={{ background: 'var(--card2)' }}>
                     <div>
-                      <p className="font-bold text-white">{team.name}</p>
+                      <p className="font-bold" style={{ color: 'var(--text)' }}>{team.name}</p>
                       <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? t.coach : t.member}</p>
                     </div>
                     <ChevronDown className="w-4 h-4 -rotate-90" style={{ color: '#555' }} />
@@ -139,17 +139,17 @@ export default function DashboardPage() {
             <h2 className="font-black text-white mb-4">{t.createTeam}</h2>
             <input type="text" value={teamName} onChange={e => setTeamName(e.target.value)} required
               className="w-full outline-none text-white placeholder-[#555] mb-3"
-              style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 12, padding: '13px 15px' }}
+              style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 12, padding: '13px 15px' }}
               placeholder={t.teamName} />
             <button type="submit" className="w-full font-black py-3.5 rounded-xl active:scale-[0.98] transition"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>{t.createTeamButton}</button>
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}>{t.createTeamButton}</button>
           </form>
 
           <div className="rounded-2xl p-5 mb-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <h2 className="font-black text-white mb-3">{t.joinTeam}</h2>
             <Link href="/team/join"
               className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold transition active:opacity-70"
-              style={{ background: '#1a1a1a', color: 'var(--accent)' }}>
+              style={{ background: 'var(--card2)', color: 'var(--accent)' }}>
               <UserPlus className="w-4 h-4" />
               {t.inviteCodeJoin}
             </Link>
@@ -169,7 +169,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
       {/* Team Picker Modal */}
       {showTeamPicker && (
@@ -183,7 +183,7 @@ export default function DashboardPage() {
             style={{ background: 'var(--card)', border: '1px solid var(--line)', maxHeight: '70dvh' }}
             onClick={e => e.stopPropagation()}
           >
-            <h3 className="font-black text-white mb-3">{t.selectTeam}</h3>
+            <h3 className="font-black mb-3" style={{ color: 'var(--text)' }}>{t.selectTeam}</h3>
             <div className="space-y-2 mb-4 overflow-y-auto flex-1">
               {teams.map(team => {
                 const active = selectedTeam?.id === team.id
@@ -191,11 +191,11 @@ export default function DashboardPage() {
                   <button key={team.id} onClick={() => handleSelectTeam(team)}
                     className="w-full p-4 rounded-xl text-left flex items-center justify-between transition active:opacity-70"
                     style={{
-                      background: active ? 'var(--chip)' : '#1a1a1a',
+                      background: active ? 'var(--chip)' : 'var(--card2)',
                       border: `1px solid ${active ? 'var(--accent)' : 'transparent'}`
                     }}>
                     <div>
-                      <p className="font-bold text-white">{team.name}</p>
+                      <p className="font-bold" style={{ color: 'var(--text)' }}>{team.name}</p>
                       <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? t.coach : t.member}</p>
                     </div>
                     {active && <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: 'var(--accent)' }} />}
@@ -204,29 +204,29 @@ export default function DashboardPage() {
               })}
             </div>
             <div className="flex gap-2">
-              <button onClick={() => setShowTeamPicker(false)} className="flex-1 py-3 rounded-xl font-bold" style={{ background: '#1a1a1a', color: '#aaa' }}>{t.close}</button>
-              <button onClick={() => { setShowTeamPicker(false); setShowCreateTeam(true) }} className="flex-1 py-3 rounded-xl font-black" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>{t.newTeamShort}</button>
-              <Link href="/team/join" className="flex-1 py-3 rounded-xl font-bold text-center" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>{t.joinShort}</Link>
+              <button onClick={() => setShowTeamPicker(false)} className="flex-1 py-3 rounded-xl font-bold" style={{ background: 'var(--card2)', color: 'var(--text2)' }}>{t.close}</button>
+              <button onClick={() => { setShowTeamPicker(false); setShowCreateTeam(true) }} className="flex-1 py-3 rounded-xl font-black" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>{t.newTeamShort}</button>
+              <Link href="/team/join" className="flex-1 py-3 rounded-xl font-bold text-center" style={{ background: 'var(--chip)', color: 'var(--text)' }}>{t.joinShort}</Link>
             </div>
           </div>
         </div>
       )}
 
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex justify-between items-center">
           <div className="min-w-0">
-            <p className="font-display text-[13px] tracking-widest" style={{ color: 'var(--accent)' }}>SOCCERNOTE</p>
+            <p className="font-display text-[13px] tracking-widest" style={{ color: 'var(--muted1)' }}>SOCCERNOTE</p>
             <button onClick={() => setShowTeamPicker(true)} className="flex items-center gap-1 mt-0.5">
-              <span className="font-black text-[19px] text-white truncate max-w-[180px]">{selectedTeam?.name || t.selectTeam}</span>
-              <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: '#555' }} />
+              <span className="font-black text-[19px] truncate max-w-[180px]" style={{ color: 'var(--text)' }}>{selectedTeam?.name || t.selectTeam}</span>
+              <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--muted2)' }} />
             </button>
           </div>
           <div className="flex items-center gap-2">
             <NotificationBadge />
             <Link href="/profile"
               className="w-[35px] h-[35px] rounded-full flex items-center justify-center font-display text-[15px]"
-              style={{ background: 'var(--accent)', color: '#0a0a0a', border: '2px solid #2a2a2a' }}>
+              style={{ background: 'var(--navy)', color: 'var(--accent)', border: '2px solid var(--line)' }}>
               {(displayName || '?').charAt(0).toUpperCase()}
             </Link>
           </div>
@@ -240,11 +240,11 @@ export default function DashboardPage() {
         {pendingCount > 0 && (
           <Link href="/team/members"
             className="flex items-center justify-between p-4 rounded-[14px] active:opacity-80 transition"
-            style={{ background: 'var(--chip)', border: '1px solid var(--accent)' }}>
-            <p className="font-bold text-[14px]" style={{ color: 'var(--accent)' }}>
+            style={{ background: 'var(--chip)', border: '1px solid var(--line2)' }}>
+            <p className="font-bold text-[14px]" style={{ color: 'var(--text)' }}>
               {t.pendingJoinBadge.replace('{n}', String(pendingCount))}
             </p>
-            <span className="text-[12px] font-bold" style={{ color: 'var(--accent)' }}>{t.checkNow}</span>
+            <span className="text-[12px] font-bold" style={{ color: 'var(--text)' }}>{t.checkNow}</span>
           </Link>
         )}
 
@@ -258,13 +258,13 @@ export default function DashboardPage() {
           return (
             <Link href={`/match/${latestMatch.id}`}
               className="block rounded-[20px] p-5 active:opacity-80 transition"
-              style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+              style={{ background: 'var(--navy)' }}>
               <div className="flex items-center justify-between mb-3">
-                <span className="font-display text-[13px]" style={{ color: 'var(--muted1)', letterSpacing: '0.08em' }}>
+                <span className="font-display text-[13px]" style={{ color: 'var(--accent)', letterSpacing: '0.08em' }}>
                   {t.lastMatch} · {formatDate(latestMatch.match_date)}
                 </span>
                 <span className="text-[12px] font-black px-3 py-1 rounded-full"
-                  style={{ background: isWin ? 'var(--accent)' : isLoss ? 'rgba(192,90,77,.14)' : '#222', color: isWin ? '#0a0a0a' : isLoss ? '#e07a6d' : '#888' }}>
+                  style={{ background: isWin ? 'var(--accent)' : isLoss ? 'rgba(240,68,56,.18)' : '#1a2437', color: isWin ? '#101828' : isLoss ? '#fda29b' : '#98a2b3' }}>
                   {result}
                 </span>
               </div>
@@ -272,13 +272,13 @@ export default function DashboardPage() {
                 <span className="font-display leading-none" style={{ fontSize: 92, color: 'var(--accent)' }}>
                   {latestMatch.home_score}
                 </span>
-                <span className="font-display text-[64px] leading-none pb-2" style={{ color: 'var(--dash)' }}>–</span>
+                <span className="font-display text-[64px] leading-none pb-2" style={{ color: '#344054' }}>–</span>
                 <span className="font-display leading-none" style={{ fontSize: 92, color: isLoss ? '#c05a4d' : 'var(--accent)' }}>
                   {latestMatch.away_score}
                 </span>
                 <div className="pb-2 ml-2">
-                  <p className="text-[11px] mb-0.5" style={{ color: 'var(--muted2)' }}>{t.opponentShort}</p>
-                  <p className="font-black text-[19px] text-white">vs {latestMatch.opponent}</p>
+                  <p className="text-[11px] mb-0.5" style={{ color: '#98a2b3' }}>{t.opponentShort}</p>
+                  <p className="font-black text-[19px]" style={{ color: '#fff' }}>vs {latestMatch.opponent}</p>
                 </div>
               </div>
               {quarters.length > 0 && (
@@ -288,7 +288,7 @@ export default function DashboardPage() {
                     const as_ = q.quarter_records?.filter((r: any) => r.is_home === false).reduce((s: number, r: any) => s + (r.goals||0), 0) ?? 0
                     return (
                       <div key={q.id} className="flex-1 text-center py-1.5 rounded-lg font-display text-[12px]"
-                        style={{ background: 'var(--chip)', color: 'var(--chipText)', letterSpacing: '0.05em' }}>
+                        style={{ background: '#1a2437', color: '#98a2b3', letterSpacing: '0.05em' }}>
                         Q{q.quarter_number} {hs}·{as_}
                       </div>
                     )
@@ -298,7 +298,7 @@ export default function DashboardPage() {
               {mvp && (
                 <div className="flex items-center gap-1.5">
                   <span style={{ color: 'var(--accent)' }}>★</span>
-                  <span className="text-[12px]" style={{ color: 'var(--muted2)' }}>MVP {mvp.playerName} · {mvp.averageRating.toFixed(1)}</span>
+                  <span className="text-[12px]" style={{ color: '#98a2b3' }}>MVP {mvp.playerName} · {mvp.averageRating.toFixed(1)}</span>
                 </div>
               )}
             </Link>
@@ -309,7 +309,7 @@ export default function DashboardPage() {
         {canEditMatches && (
           <Link href="/match/new"
             className="flex items-center justify-center w-full py-4 font-black text-[16px] rounded-[14px] active:scale-[0.98] transition"
-            style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
             {t.newMatchRecord}
           </Link>
         )}
@@ -319,15 +319,15 @@ export default function DashboardPage() {
           <div className="flex gap-4">
             <div className="flex-[1.3] border-r pr-4" style={{ borderColor: 'var(--line)' }}>
               <div className="flex items-baseline gap-1">
-                <span className="font-display text-[46px] leading-none text-white">{winRate ?? '–'}</span>
-                {winRate !== null && <span className="font-display text-[28px] leading-none" style={{ color: 'var(--accent)' }}>%</span>}
+                <span className="font-display text-[46px] leading-none" style={{ color: 'var(--text)' }}>{winRate ?? '–'}</span>
+                {winRate !== null && <span className="font-display text-[28px] leading-none" style={{ color: 'var(--text)' }}>%</span>}
               </div>
               <p className="text-[12px] mt-1" style={{ color: 'var(--muted2)' }}>{t.seasonWinRate.replace('{n}', String(total))}</p>
             </div>
             <div className="flex-1 flex flex-col gap-2 justify-center">
               <div className="flex items-center justify-between">
                 <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.win}</span>
-                <span className="font-display text-[19px] leading-none" style={{ color: 'var(--accent)' }}>{wins}</span>
+                <span className="font-display text-[19px] leading-none" style={{ color: 'var(--text)' }}>{wins}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.loss}</span>
@@ -335,7 +335,7 @@ export default function DashboardPage() {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.draw}</span>
-                <span className="font-display text-[19px] leading-none" style={{ color: '#4a4636' }}>{draws}</span>
+                <span className="font-display text-[19px] leading-none" style={{ color: 'var(--muted2)' }}>{draws}</span>
               </div>
             </div>
           </div>
@@ -344,12 +344,12 @@ export default function DashboardPage() {
         {/* Recent matches */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="font-black text-[16px] text-white">{t.recentMatches}</h2>
+            <h2 className="font-black text-[16px]" style={{ color: 'var(--text)' }}>{t.recentMatches}</h2>
           </div>
 
           {matches.length === 0 ? (
             <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <p className="text-[14px]" style={{ color: '#555' }}>{t.noMatches}</p>
+              <p className="text-[14px]" style={{ color: 'var(--muted2)' }}>{t.noMatches}</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -362,18 +362,18 @@ export default function DashboardPage() {
                     className="flex items-center justify-between p-4 rounded-[14px] active:opacity-80 transition"
                     style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
                     <div className="min-w-0">
-                      <p className="font-bold text-[14px] text-white truncate">vs {match.opponent}</p>
+                      <p className="font-bold text-[14px] truncate" style={{ color: 'var(--text)' }}>vs {match.opponent}</p>
                       {mvp && (
                         <p className="text-[12px] mt-0.5" style={{ color: 'var(--muted2)' }}>
-                          <span style={{ color: 'var(--accent)' }}>★</span> MVP {mvp.playerName} · {mvp.averageRating.toFixed(1)}
+                          <span style={{ color: 'var(--muted2)' }}>★</span> MVP {mvp.playerName} · {mvp.averageRating.toFixed(1)}
                         </p>
                       )}
                     </div>
                     <div className="text-right flex-shrink-0 ml-4">
-                      <p className="font-display text-[23px] leading-none text-white">
+                      <p className="font-display text-[23px] leading-none" style={{ color: 'var(--text)' }}>
                         {match.home_score} – {match.away_score}
                       </p>
-                      <p className="font-display text-[12px] mt-0.5" style={{ color: isWin ? 'var(--accent)' : isLoss ? '#c05a4d' : '#555', letterSpacing: '0.08em' }}>
+                      <p className="font-display text-[12px] mt-0.5" style={{ color: isWin ? '#22a06b' : isLoss ? '#c05a4d' : 'var(--muted2)', letterSpacing: '0.08em' }}>
                         {isWin ? 'WIN' : isLoss ? 'LOSS' : 'DRAW'} · {formatDate(match.match_date)}
                       </p>
                     </div>

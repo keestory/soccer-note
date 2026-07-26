@@ -87,18 +87,18 @@ export default function SignupPage() {
   }
 
   const inputStyle = {
-    background: '#1a1a1a',
-    border: '1px solid #2a2a2a',
-    color: '#ffffff',
+    background: 'var(--card)',
+    border: '1px solid var(--line)',
+    color: 'var(--text)',
     borderRadius: 12,
   }
 
   return (
-    <div className="min-h-screen flex flex-col safe-top safe-bottom" style={{ background: '#0a0a0a' }}>
+    <div className="light min-h-screen flex flex-col safe-top safe-bottom" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <div className="px-6 pt-6 pb-2">
-        <p className="font-display text-[11px] tracking-[0.18em] uppercase" style={{ color: 'var(--accent)' }}>SOCCERNOTE</p>
-        <h1 className="font-display text-[28px] text-white leading-tight mt-1"> {t.newAccountTitle}</h1>
+        <p className="font-display text-[11px] tracking-[0.18em] uppercase" style={{ color: 'var(--text)' }}>SOCCERNOTE</p>
+        <h1 className="font-display text-[28px] leading-tight mt-1" style={{ color: 'var(--text)' }}> {t.newAccountTitle}</h1>
         <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{t.newAccountSubtitle}</p>
       </div>
 
@@ -109,7 +109,7 @@ export default function SignupPage() {
           onClick={handleGoogleSignup}
           disabled={googleLoading}
           className="w-full flex items-center justify-center gap-2.5 py-3.5 rounded-[12px] font-semibold text-[14px] disabled:opacity-50 transition active:scale-[0.98] mb-4"
-          style={{ background: '#ffffff', color: '#111' }}
+          style={{ background: '#ffffff', color: '#101828', border: '1px solid #d0d5dd' }}
         >
           <GoogleIcon />
           {googleLoading ? t.connecting : t.continueWithGoogle}
@@ -168,14 +168,14 @@ export default function SignupPage() {
             type="submit"
             disabled={loading}
             className="w-full py-4 rounded-[14px] font-black text-[16px] disabled:opacity-50 active:scale-[0.98] transition"
-            style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}
           >
             {loading ? t.loading : t.getStarted}
           </button>
 
           <p className="text-center text-[13px]" style={{ color: 'var(--muted2)' }}>
             {t.hasAccount}{' '}
-            <Link href="/login" className="font-black text-white">{t.login}</Link>
+            <Link href="/login" className="font-black" style={{ color: 'var(--text)' }}>{t.login}</Link>
           </p>
         </form>
       </div>

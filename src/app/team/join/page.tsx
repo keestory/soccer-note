@@ -92,17 +92,17 @@ function JoinTeamContent() {
     setJoining(false)
   }
 
-  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
+    <div className="light min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-base font-black text-white">{t.joinTeamTitle}</h1>
+          <h1 className="text-base font-black text-[color:var(--text)]">{t.joinTeamTitle}</h1>
         </div>
       </header>
 
@@ -118,13 +118,13 @@ function JoinTeamContent() {
               placeholder={t.inviteCodePlaceholder}
               maxLength={8}
               className="w-full px-5 py-4 rounded-xl text-center font-display text-[28px] tracking-[0.3em] uppercase outline-none transition"
-              style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', color: 'var(--accent)' }}
+              style={{ background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)' }}
             />
             <button
               type="submit"
               disabled={loading || !inputCode.trim()}
               className="w-full py-3.5 rounded-xl font-bold text-[14px] flex items-center justify-center gap-2 disabled:opacity-40 transition"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
               {loading ? t.searchingTeam : t.findTeamButton}
@@ -147,7 +147,7 @@ function JoinTeamContent() {
                 <Clock className="w-5 h-5 text-amber-400" />
               </div>
               <div>
-                <p className="font-bold text-white">{t.pendingApproval}</p>
+                <p className="font-bold text-[color:var(--text)]">{t.pendingApproval}</p>
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
@@ -159,14 +159,14 @@ function JoinTeamContent() {
           <div className="p-5 rounded-2xl space-y-3" style={{ background: 'var(--chip)', border: '1px solid var(--line)' }}>
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--line)' }}>
-                <CheckCircle className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+                <CheckCircle className="w-5 h-5" style={{ color: 'var(--text)' }} />
               </div>
               <div>
-                <p className="font-bold text-white">{t.alreadyJoinedTeam}</p>
+                <p className="font-bold text-[color:var(--text)]">{t.alreadyJoinedTeam}</p>
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <button onClick={() => router.push('/dashboard')} className="w-full py-3 rounded-xl font-bold text-[14px] transition" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+            <button onClick={() => router.push('/dashboard')} className="w-full py-3 rounded-xl font-bold text-[14px] transition" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
               {t.goToDashboard}
             </button>
           </div>
@@ -179,7 +179,7 @@ function JoinTeamContent() {
                 <XCircle className="w-5 h-5 text-red-400" />
               </div>
               <div>
-                <p className="font-bold text-white">{t.joinRequestRejected}</p>
+                <p className="font-bold text-[color:var(--text)]">{t.joinRequestRejected}</p>
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
@@ -192,7 +192,7 @@ function JoinTeamContent() {
           <div style={cardStyle} className="overflow-hidden">
             <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--line)' }}>
               <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.teamName}</p>
-              <p className="text-[17px] font-bold text-white">{team.name}</p>
+              <p className="text-[17px] font-bold text-[color:var(--text)]">{team.name}</p>
               {team.description && <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{team.description}</p>}
             </div>
 
@@ -200,11 +200,11 @@ function JoinTeamContent() {
               <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--line)' }}>
                 <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.joinName}</p>
                 {displayName ? (
-                  <p className="font-semibold text-white">{displayName}</p>
+                  <p className="font-semibold text-[color:var(--text)]">{displayName}</p>
                 ) : (
                   <div>
                     <p className="text-[13px] text-red-400 mb-1">{t.nameNotSet}</p>
-                    <Link href="/profile" className="text-[13px] font-bold" style={{ color: 'var(--accent)' }}>{t.setNameLink}</Link>
+                    <Link href="/profile" className="text-[13px] font-bold" style={{ color: 'var(--text)' }}>{t.setNameLink}</Link>
                   </div>
                 )}
               </div>
@@ -215,7 +215,7 @@ function JoinTeamContent() {
                 onClick={handleJoinRequest}
                 disabled={joining || !displayName}
                 className="w-full py-4 rounded-xl font-bold text-[15px] flex items-center justify-center gap-2 disabled:opacity-40 transition active:scale-[0.98]"
-                style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}
               >
                 {joining ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
                 {joining ? t.requesting : t.requestJoin}
@@ -232,8 +232,8 @@ function JoinTeamContent() {
 export default function JoinTeamPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
-        <header className="safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+        <header className="safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
             <Skeleton className="w-8 h-8 rounded-xl" />
             <Skeleton className="h-5 w-20" />

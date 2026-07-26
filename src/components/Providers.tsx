@@ -15,7 +15,7 @@ export function Providers({ children }: { children: ReactNode }) {
         <Toaster
           position="bottom-center"
           toastOptions={{
-            style: { background: '#111010', color: '#fff', border: '1px solid var(--line)' },
+            style: { background: 'var(--card)', color: 'var(--text)', border: '1px solid var(--line)' },
           }}
         />
       </I18nProvider>
