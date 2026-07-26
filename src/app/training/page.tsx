@@ -37,19 +37,19 @@ export default function TrainingListPage() {
   const teamName = data.selectedTeam?.name || ''
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex justify-between items-center">
           <div>
-            <h1 className="font-black text-[20px] text-white">{t.trainingLabel}</h1>
+            <h1 className="font-black text-[20px] text-[color:var(--text)]">{t.trainingLabel}</h1>
             <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {t.trainingCountN.replace('{n}', String(trainings.length))}</p>
           </div>
           {canEdit && (
             <Link href="/training/new"
               className="w-9 h-9 flex items-center justify-center rounded-[11px] font-black active:scale-95 transition"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+              style={{ background: 'var(--navy)', color: 'var(--text)' }}>
               <Plus className="w-5 h-5" />
             </Link>
           )}
@@ -60,10 +60,10 @@ export default function TrainingListPage() {
         <div className="max-w-4xl mx-auto px-5 py-4">
           {trainings.length === 0 ? (
             <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <p className="text-[14px] mb-1" style={{ color: '#555' }}>{t.noTrainings}</p>
+              <p className="text-[14px] mb-1" style={{ color: 'var(--muted2)' }}>{t.noTrainings}</p>
               {canEdit && (
                 <Link href="/training/new" className="inline-block mt-3 px-5 py-2.5 rounded-xl font-black text-sm"
-                  style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                  style={{ background: 'var(--navy)', color: 'var(--text)' }}>
                   {t.firstTraining}
                 </Link>
               )}
@@ -82,7 +82,7 @@ export default function TrainingListPage() {
                       <span className="w-2.5 h-2.5 rounded-full" style={{ background: color }} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-[14px] text-white">
+                      <p className="font-bold text-[14px] text-[color:var(--text)]">
                         {TYPE_LABELS[tr.training_type as TrainingType] || tr.training_type}
                       </p>
                       <div className="flex items-center gap-2 text-[12px] mt-0.5" style={{ color: 'var(--muted2)' }}>
@@ -91,7 +91,7 @@ export default function TrainingListPage() {
                         {attendeeCount > 0 && <span>{t.attendCountN.replace('{n}', String(attendeeCount))}</span>}
                       </div>
                     </div>
-                    <p className="text-[12px] flex-shrink-0" style={{ color: '#555' }}>{formatDate(tr.training_date)}</p>
+                    <p className="text-[12px] flex-shrink-0" style={{ color: 'var(--muted2)' }}>{formatDate(tr.training_date)}</p>
                   </Link>
                 )
               })}
