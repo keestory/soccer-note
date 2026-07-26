@@ -10,7 +10,6 @@ import { formatDate } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n/context'
 import { PlayerDetailSkeleton } from '@/components/Skeleton'
 import { BottomNav } from '@/components/BottomNav'
-import { AbilityHexagon, overallRating } from '@/components/AbilityHexagon'
 
 interface MatchRecord {
   matchId: string
@@ -269,22 +268,6 @@ export default function PlayerStatsPage() {
         {/* 4. 경기별 공격 포인트 차트 */}
         {matchRecords.length > 0 && (
           <AttackPointsChart records={matchRecords} total={attackPoints} />
-        )}
-
-        {/* 능력치 (선수 자가 능력 — 경기 평점과 무관) */}
-        {player.attributes && (
-          <section style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14 }}>
-            <div className="flex items-center justify-between" style={{ marginBottom: 4 }}>
-              <span style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em' }}>{t.abilityCard}</span>
-              <div className="flex items-baseline" style={{ gap: 6 }}>
-                <span style={{ fontFamily: BEBAS, fontSize: 28, lineHeight: 1, color: '#101828' }}>{overallRating(player.attributes)}</span>
-                <span style={{ fontSize: 10, fontWeight: 600, color: '#98a2b3' }}>{t.overall}</span>
-              </div>
-            </div>
-            <div className="flex justify-center">
-              <AbilityHexagon attributes={player.attributes} />
-            </div>
-          </section>
         )}
 
         {/* 강점 태그 */}
