@@ -752,7 +752,7 @@ export default function QuarterEditPage() {
   const textareaStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 10 }
 
   return (
-    <div className="min-h-screen pb-32" style={{ background: 'var(--text)' }}>
+    <div className="light min-h-screen pb-32" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">

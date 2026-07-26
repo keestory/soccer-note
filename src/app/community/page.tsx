@@ -126,7 +126,7 @@ export default function CommunityPage() {
 
         {/* Filter chips */}
         {showFilters && (
-          <div className="border-t px-5 py-3 space-y-2.5" style={{ borderColor: 'var(--card2)', background: 'var(--text)' }}>
+          <div className="border-t px-5 py-3 space-y-2.5" style={{ borderColor: 'var(--line)', background: 'var(--card2)' }}>
             <FilterRow label={t.region} options={REGIONS} value={filterRegion} onChange={setFilterRegion} />
             <FilterRow label={t.playType} options={FORMATS} value={filterFormat} onChange={setFilterFormat} />
             <FilterRow label={t.levelLabel} options={LEVELS} value={filterLevel} onChange={setFilterLevel} />
