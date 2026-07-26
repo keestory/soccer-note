@@ -32,7 +32,7 @@ function applyAccent(accent: string) {
   const root = document.documentElement
   root.style.setProperty('--accent', accent)
   root.style.setProperty('--muted1', mixHex(accent, '#141414', 0.55))
-  root.style.setProperty('--muted2', mixHex(accent, '#0f0f0f', 0.66))
+  root.style.setProperty('--muted2', mixHex(accent, 'var(--card2)', 0.66))
   root.style.setProperty('--chip',   mixHex(accent, '#0a0a0a', 0.90))
   root.style.setProperty('--chipText', mixHex(accent, '#1c1c1c', 0.32))
   root.style.setProperty('--line',   mixHex(accent, '#0a0a0a', 0.86))

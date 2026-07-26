@@ -37,7 +37,7 @@ const LEVEL_ACTIVE: Record<string, { bg: string; color: string }> = {
   '입문': { bg: '#334155', color: '#94a3b8' },
   '초급': { bg: '#0c3d5e', color: '#38bdf8' },
   '중급': { bg: '#052e16', color: '#4ade80' },
-  '고급': { bg: '#451a03', color: '#fbbf24' },
+  '고급': { bg: 'var(--card2)', color: '#fbbf24' },
 }
 
 export default function NewPostPage() {
@@ -92,7 +92,7 @@ export default function NewPostPage() {
   const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
   const labelStyle = { color: 'rgba(255,255,255,0.3)' }
   const inputStyle = { background: 'transparent', color: 'rgba(255,255,255,0.9)', caretColor: 'var(--text)', outline: 'none' as const }
-  const chipInactive = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'rgba(255,255,255,0.5)' }
+  const chipInactive = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--muted2)' }
   const chipActive = { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--text)' }
 
   return (
@@ -104,7 +104,7 @@ export default function NewPostPage() {
           <div className="h-full transition-all duration-500" style={{ width: `${progress}%`, background: 'var(--navy)' }} />
         </div>
         <div className="px-4 py-3 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'var(--text2)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
@@ -115,7 +115,7 @@ export default function NewPostPage() {
             onClick={handleSubmit}
             disabled={saving || filled < fields.length}
             className="px-4 py-2 rounded-xl text-sm font-black disabled:opacity-40 active:scale-95 transition"
-            style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
             {saving ? t.registering2 : t.register}
           </button>
         </div>
@@ -207,7 +207,7 @@ export default function NewPostPage() {
                     <button key={d} onClick={() => set('district', d)}
                       className="px-2.5 py-1 rounded-lg text-xs font-semibold transition"
                       style={form.district === d
-                        ? { background: 'var(--navy)', color: 'var(--text)', border: '1px solid var(--accent)' }
+                        ? { background: 'var(--navy)', color: 'var(--accent)', border: '1px solid var(--accent)' }
                         : chipInactive}>
                       {d}
                     </button>

@@ -121,7 +121,7 @@ export default function NewMatchPage() {
               type="submit"
               disabled={loading || !opponent.trim()}
               className="w-full py-4 rounded-xl font-black text-[15px] active:scale-[0.99] disabled:opacity-40 transition"
-              style={{ background: 'var(--navy)', color: 'var(--text)' }}
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}
             >
               {loading ? t.creating : t.createMatch}
             </button>

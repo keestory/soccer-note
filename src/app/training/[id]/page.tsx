@@ -416,7 +416,7 @@ export default function TrainingDetailPage() {
               <input type="number" value={editDuration} onChange={(e) => setEditDuration(Math.max(1, parseInt(e.target.value) || 1))} min={1} max={480} className="w-full px-3 py-2 rounded-lg text-sm outline-none text-[color:var(--text)]" style={inputStyle} />
               <textarea value={editNotes} onChange={(e) => setEditNotes(e.target.value)} rows={2} placeholder={t.trainingNotesPlaceholder} className="w-full px-3 py-2 rounded-lg text-sm outline-none resize-none text-[color:var(--text)] placeholder:text-[color:var(--text)]/20" style={inputStyle} />
               <div className="flex gap-2">
-                <button onClick={handleSaveInfo} className="flex-1 py-2 rounded-lg text-sm font-bold" style={{ background: 'var(--navy)', color: 'var(--text)' }}>{t.save}</button>
+                <button onClick={handleSaveInfo} className="flex-1 py-2 rounded-lg text-sm font-bold" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>{t.save}</button>
                 <button onClick={() => setEditingInfo(false)} className="px-4 py-2 rounded-lg text-sm font-bold text-[color:var(--text)]/50" style={{ background: 'var(--card2)' }}>{t.cancel}</button>
               </div>
             </div>
@@ -510,7 +510,7 @@ export default function TrainingDetailPage() {
                   )
                 })}
 
-                <button onClick={handleSaveEvaluation} disabled={savingEval} className="w-full py-3.5 rounded-2xl text-sm font-black disabled:opacity-50 transition active:scale-[0.98]" style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                <button onClick={handleSaveEvaluation} disabled={savingEval} className="w-full py-3.5 rounded-2xl text-sm font-black disabled:opacity-50 transition active:scale-[0.98]" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                   {savingEval ? t.saving : `${t.save} 💾`}
                 </button>
               </div>
@@ -604,7 +604,7 @@ export default function TrainingDetailPage() {
             </div>
 
             <div className="p-4" style={{ borderTop: '1px solid var(--line)' }}>
-              <button onClick={saveAttendees} className="w-full py-3 rounded-lg font-bold" style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+              <button onClick={saveAttendees} className="w-full py-3 rounded-lg font-bold" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                 {t.save} ({selectedAttendees.size}{t.persons})
               </button>
             </div>

@@ -17,7 +17,7 @@ const LEVEL_STYLE: Record<string, { bg: string; color: string }> = {
   '입문': { bg: '#334155', color: '#94a3b8' },
   '초급': { bg: '#0c3d5e', color: '#38bdf8' },
   '중급': { bg: '#052e16', color: '#4ade80' },
-  '고급': { bg: '#451a03', color: '#fbbf24' },
+  '고급': { bg: 'var(--card2)', color: '#fbbf24' },
 }
 
 function formatDate(dateStr: string, t: any) {
@@ -152,7 +152,7 @@ export default function PostDetailPage() {
         </svg>
 
         <div className="relative px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'var(--text2)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
@@ -180,10 +180,10 @@ export default function PostDetailPage() {
                   style={{ background: levelStyle.bg, color: levelStyle.color }}>
                   {post.level}
                 </span>
-                <span className="text-xs font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>{post.format}</span>
+                <span className="text-xs font-semibold" style={{ color: 'var(--muted2)' }}>{post.format}</span>
                 {matchedOrClosed && (
                   <span className="text-xs font-bold px-2 py-0.5 rounded-lg"
-                    style={{ background: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }}>
+                    style={{ background: 'rgba(255,255,255,0.1)', color: 'var(--muted2)' }}>
                     {post.status === 'matched' ? t.matchedDone : t.closedLabel}
                   </span>
                 )}
@@ -204,7 +204,7 @@ export default function PostDetailPage() {
             <div>
               <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.dateLabel}</p>
               <p className="text-sm font-bold text-[color:var(--text)]">{formatDate(post.match_date, t)}</p>
-              {post.match_time && <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{post.match_time}</p>}
+              {post.match_time && <p className="text-xs" style={{ color: 'var(--muted2)' }}>{post.match_time}</p>}
             </div>
           </div>
           <div style={cardStyle} className="p-3.5 flex items-center gap-2.5">
@@ -214,7 +214,7 @@ export default function PostDetailPage() {
             <div>
               <p className="text-[10px] font-bold uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.placeLabel}</p>
               <p className="text-sm font-bold text-[color:var(--text)] truncate">{post.region}</p>
-              <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.5)' }}>{post.location}</p>
+              <p className="text-xs truncate" style={{ color: 'var(--muted2)' }}>{post.location}</p>
             </div>
           </div>
         </div>
@@ -238,7 +238,7 @@ export default function PostDetailPage() {
               </div>
               <div>
                 <p className="font-black text-[color:var(--text)]">{t.viewApplications}</p>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <p className="text-xs" style={{ color: 'var(--muted2)' }}>
                   {applicationCount > 0 ? t.nTeamsApplied.replace('{n}', String(applicationCount)) : t.noApplicationsYet}
                 </p>
               </div>
@@ -246,7 +246,7 @@ export default function PostDetailPage() {
             <div className="flex items-center gap-2">
               {applicationCount > 0 && (
                 <span className="w-6 h-6 text-xs font-black rounded-full flex items-center justify-center"
-                  style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                  style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                   {applicationCount}
                 </span>
               )}
@@ -259,7 +259,7 @@ export default function PostDetailPage() {
         {!isMyPost && myApplication && (
           <div className="rounded-2xl p-4" style={{
             background: myApplication.status === 'accepted' ? '#052e16' :
-                        myApplication.status === 'rejected' ? '#1a1a1a' : '#451a03',
+                        myApplication.status === 'rejected' ? '#1a1a1a' : 'var(--card2)',
             border: `1px solid ${myApplication.status === 'accepted' ? '#166534' : myApplication.status === 'rejected' ? 'var(--line)' : '#92400e'}`,
           }}>
             <div className="flex items-center gap-3">
@@ -271,14 +271,14 @@ export default function PostDetailPage() {
                 <p className="font-black text-[color:var(--text)]">
                   {myApplication.status === 'accepted' ? t.matchAcceptedMsg : myApplication.status === 'rejected' ? t.matchRejectedMsg : t.matchPendingMsg}
                 </p>
-                <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--muted2)' }}>
                   {myApplication.status === 'accepted' ? t.checkMatchTab : myApplication.status === 'rejected' ? t.findOtherMatch : t.waitingResponse}
                 </p>
               </div>
               {myApplication.status === 'pending' && (
                 <button onClick={() => setShowWithdrawConfirm(true)}
                   className="text-xs px-3 py-1.5 rounded-xl transition"
-                  style={{ color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.2)' }}>
+                  style={{ color: 'var(--muted2)', border: '1px solid rgba(255,255,255,0.2)' }}>
                   {t.cancel}
                 </button>
               )}
@@ -294,7 +294,7 @@ export default function PostDetailPage() {
           <button
             onClick={() => setShowApplySheet(true)}
             className="w-full max-w-4xl mx-auto py-4 rounded-2xl font-black text-base active:scale-[0.98] transition flex items-center justify-center gap-2"
-            style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
             <Swords className="w-5 h-5" />
             {t.applyButton}
           </button>
@@ -314,7 +314,7 @@ export default function PostDetailPage() {
                 style={{ background: 'var(--chip)' }}>{emoji}</div>
               <div>
                 <h3 className="font-black text-[color:var(--text)]">{post.team?.name}에 신청</h3>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>짧은 팀 소개를 남겨보세요</p>
+                <p className="text-xs" style={{ color: 'var(--muted2)' }}>짧은 팀 소개를 남겨보세요</p>
               </div>
             </div>
             <textarea
@@ -332,12 +332,12 @@ export default function PostDetailPage() {
             <div className="space-y-2">
               <button onClick={handleApply} disabled={submitting}
                 className="w-full py-4 rounded-2xl font-black text-base disabled:opacity-50 active:scale-[0.98] transition"
-                style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                 {submitting ? '신청 중...' : '신청 완료 🎯'}
               </button>
               <button onClick={() => setShowApplySheet(false)}
                 className="w-full py-4 rounded-2xl font-semibold"
-                style={{ background: 'var(--card2)', color: 'rgba(255,255,255,0.6)' }}>
+                style={{ background: 'var(--card2)', color: 'var(--text2)' }}>
                 취소
               </button>
             </div>

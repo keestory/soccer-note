@@ -107,7 +107,7 @@ export default function ApplicationsPage() {
           <line x1="380" y1="-10" x2="260" y2="110" stroke="rgba(204,255,0,0.04)" strokeWidth="1" />
         </svg>
         <div className="relative px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'var(--text2)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
@@ -115,7 +115,7 @@ export default function ApplicationsPage() {
             {post && <p className="text-sm font-black text-[color:var(--text)] truncate">{post.title}</p>}
           </div>
           {pending.length > 0 && (
-            <div className="text-sm font-black px-3 py-1.5 rounded-xl" style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+            <div className="text-sm font-black px-3 py-1.5 rounded-xl" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
               {t.nWaiting.replace('{n}', String(pending.length))}
             </div>
           )}
@@ -131,7 +131,7 @@ export default function ApplicationsPage() {
           <div className="text-center py-16">
             <div className="w-16 h-16 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-3" style={{ background: 'var(--card2)' }}>📭</div>
             <p className="font-bold text-[color:var(--text)]">{t.noApplicationsYet}</p>
-            <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>{t.noApplyDesc}</p>
+            <p className="text-sm mt-1" style={{ color: 'var(--muted2)' }}>{t.noApplyDesc}</p>
           </div>
         ) : (
           <>
@@ -204,8 +204,8 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
 
   const statusConfig = {
     accepted: { label: t.acceptedLabel, bg: '#052e16', color: '#4ade80' },
-    rejected: { label: t.rejectedLabel, bg: 'var(--card2)', color: 'rgba(255,255,255,0.4)' },
-    pending: { label: t.waitingLabel, bg: '#451a03', color: '#fbbf24' },
+    rejected: { label: t.rejectedLabel, bg: 'var(--card2)', color: 'var(--muted2)' },
+    pending: { label: t.waitingLabel, bg: 'var(--card2)', color: '#fbbf24' },
   }[app.status]
 
   const accentLine = app.status === 'accepted' ? '#166534' : app.status === 'rejected' ? 'var(--line)' : 'var(--text)'
@@ -234,7 +234,7 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
               </span>
             </div>
             {profile?.level && (
-              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--muted2)' }}>
                 {profile.level}{profile.region ? ` · ${profile.region}` : ''}
               </p>
             )}
@@ -255,12 +255,12 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
           <div className="flex gap-2">
             <button onClick={onReject} disabled={loading}
               className="flex-1 py-2.5 rounded-xl text-sm font-bold active:scale-95 transition disabled:opacity-50"
-              style={{ background: 'var(--card2)', color: 'rgba(255,255,255,0.6)' }}>
+              style={{ background: 'var(--card2)', color: 'var(--text2)' }}>
               {t.reject}
             </button>
             <button onClick={onAccept} disabled={loading}
               className="flex-[2] py-2.5 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50 flex items-center justify-center gap-1.5"
-              style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
               <Swords className="w-4 h-4" />
               {loading ? t.processing : t.acceptLabel}
             </button>

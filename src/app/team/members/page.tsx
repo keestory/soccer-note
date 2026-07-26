@@ -228,7 +228,7 @@ function TeamMembersContent() {
               </span>
               <button onClick={copyInviteLink}
                 className="flex items-center gap-1.5 px-4 py-2.5 rounded-[11px] font-black text-sm transition active:scale-95"
-                style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 {copied ? t.copied : t.share}
               </button>
@@ -252,7 +252,7 @@ function TeamMembersContent() {
                   <div className="flex gap-2 flex-shrink-0">
                     <button onClick={() => approveMember(member)}
                       className="flex items-center gap-1 px-3 py-1.5 rounded-[9px] text-sm font-bold active:scale-95"
-                      style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                      style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                       <CheckCircle className="w-4 h-4" /> {t.approve}
                     </button>
                     <button onClick={() => setRejectTarget(member)}
@@ -316,7 +316,7 @@ function TeamMembersContent() {
                             onClick={() => updateMemberPermissions(member.id, { role: r })}
                             className="flex-1 py-2 rounded-lg text-[13px] font-bold transition"
                             style={member.role === r
-                              ? { background: 'var(--navy)', color: 'var(--text)' }
+                              ? { background: 'var(--navy)', color: 'var(--accent)' }
                               : { background: 'var(--card2)', color: 'var(--muted1)', border: '1px solid var(--line)' }}
                           >
                             {r === 'coach' ? t.coach : t.member}
@@ -395,7 +395,7 @@ function TeamMembersContent() {
                 <p className="text-[14px] mb-6" style={{ color: 'var(--muted2)' }}>{t.selectNewCoachQuestion}</p>
                 <div className="space-y-3">
                   <button onClick={() => setDisbandStep('select-coach')} disabled={members.filter(m => m.user_id !== currentUserId).length === 0}
-                    className="w-full py-3.5 rounded-xl font-black disabled:opacity-40" style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                    className="w-full py-3.5 rounded-xl font-black disabled:opacity-40" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {t.yesSelectNewCoach}
                   </button>
                   <button onClick={() => setDisbandStep('confirm-delete')}
@@ -423,7 +423,7 @@ function TeamMembersContent() {
                 </div>
                 <div className="space-y-3">
                   <button onClick={transferOwnership} disabled={!selectedNewCoach}
-                    className="w-full py-3.5 rounded-xl font-black disabled:opacity-40" style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                    className="w-full py-3.5 rounded-xl font-black disabled:opacity-40" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {t.transferCoach}
                   </button>
                   <button onClick={() => setDisbandStep('initial')} className="w-full py-3.5 rounded-xl font-bold" style={{ background: 'var(--card2)', color: 'var(--muted1)' }}>{t.back}</button>

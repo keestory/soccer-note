@@ -766,7 +766,7 @@ export default function QuarterEditPage() {
             onClick={handleSave}
             disabled={saving}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50"
-            style={{ background: 'var(--navy)', color: 'var(--text)' }}
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}
           >
             <Save className="w-4 h-4" />
             {saving ? t.saving : t.save}
@@ -876,7 +876,7 @@ export default function QuarterEditPage() {
                 <button
                   onClick={addSelectedPlayersToField}
                   className="w-full py-2.5 rounded-lg font-medium transition-colors"
-                  style={{ background: 'var(--navy)', color: 'var(--text)' }}
+                  style={{ background: 'var(--navy)', color: 'var(--accent)' }}
                 >
                   {t.addNPlayers.replace('{n}', String(selectedPickerPlayers.size))}
                 </button>
@@ -968,7 +968,7 @@ export default function QuarterEditPage() {
 
             {fieldPlayers.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <p className="px-4 py-2 rounded-lg text-sm" style={{ background: 'rgba(0,0,0,0.5)', color: 'rgba(255,255,255,0.5)' }}>{t.dragToPlace}</p>
+                <p className="px-4 py-2 rounded-lg text-sm" style={{ background: 'rgba(0,0,0,0.5)', color: 'var(--muted2)' }}>{t.dragToPlace}</p>
               </div>
             )}
           </div>
@@ -1163,7 +1163,7 @@ export default function QuarterEditPage() {
                     onClick={handleAddSubstitution}
                     disabled={!subOutId || !subInId || savingSub}
                     className="w-full py-4 rounded-2xl font-bold disabled:opacity-40 text-base"
-                    style={{ background: 'var(--navy)', color: 'var(--text)' }}
+                    style={{ background: 'var(--navy)', color: 'var(--accent)' }}
                   >
                     {savingSub ? t.saving : t.addSubstitution}
                   </button>
@@ -1314,7 +1314,7 @@ export default function QuarterEditPage() {
                     onClick={() => mediaInputRef.current?.click()}
                     disabled={uploadingMedia}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
-                    style={{ background: 'var(--card2)', color: 'rgba(255,255,255,0.6)' }}
+                    style={{ background: 'var(--card2)', color: 'var(--text2)' }}
                   >
                     <ImageIcon className="w-4 h-4" />
                     {t.gallery}
@@ -1324,7 +1324,7 @@ export default function QuarterEditPage() {
                     onClick={() => cameraInputRef.current?.click()}
                     disabled={uploadingMedia}
                     className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium disabled:opacity-50"
-                    style={{ background: 'var(--card2)', color: 'rgba(255,255,255,0.6)' }}
+                    style={{ background: 'var(--card2)', color: 'var(--text2)' }}
                   >
                     <Camera className="w-4 h-4" />
                     {t.takePhoto}

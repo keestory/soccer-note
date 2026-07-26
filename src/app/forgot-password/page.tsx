@@ -60,7 +60,7 @@ export default function ForgotPasswordPage() {
             type="submit"
             disabled={loading}
             className="w-full font-black text-[16px] disabled:opacity-50 active:scale-[0.98] transition"
-            style={{ background: 'var(--navy)', color: 'var(--text)', borderRadius: 13, padding: '15px' }}
+            style={{ background: 'var(--navy)', color: 'var(--accent)', borderRadius: 13, padding: '15px' }}
           >
             {loading ? t.loading : t.sendResetLink}
           </button>

@@ -124,7 +124,7 @@ function JoinTeamContent() {
               type="submit"
               disabled={loading || !inputCode.trim()}
               className="w-full py-3.5 rounded-xl font-bold text-[14px] flex items-center justify-center gap-2 disabled:opacity-40 transition"
-              style={{ background: 'var(--navy)', color: 'var(--text)' }}
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Search className="w-5 h-5" />}
               {loading ? t.searchingTeam : t.findTeamButton}
@@ -166,7 +166,7 @@ function JoinTeamContent() {
                 <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>
               </div>
             </div>
-            <button onClick={() => router.push('/dashboard')} className="w-full py-3 rounded-xl font-bold text-[14px] transition" style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+            <button onClick={() => router.push('/dashboard')} className="w-full py-3 rounded-xl font-bold text-[14px] transition" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
               {t.goToDashboard}
             </button>
           </div>
@@ -215,7 +215,7 @@ function JoinTeamContent() {
                 onClick={handleJoinRequest}
                 disabled={joining || !displayName}
                 className="w-full py-4 rounded-xl font-bold text-[15px] flex items-center justify-center gap-2 disabled:opacity-40 transition active:scale-[0.98]"
-                style={{ background: 'var(--navy)', color: 'var(--text)' }}
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}
               >
                 {joining ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
                 {joining ? t.requesting : t.requestJoin}

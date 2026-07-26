@@ -301,7 +301,7 @@ export default function InboxPage() {
                         <button
                           onClick={() => confirmNotification(notification.receipt_id)}
                           className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg font-bold transition"
-                          style={{ background: 'var(--navy)', color: 'var(--text)' }}
+                          style={{ background: 'var(--navy)', color: 'var(--accent)' }}
                         >
                           <Check className="w-4 h-4" />
                           확인 완료!

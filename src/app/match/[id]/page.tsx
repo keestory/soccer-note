@@ -331,7 +331,7 @@ export default function MatchDetailPage() {
               <span>{t.lineupShortcutQ}</span>
               <Link
                 href={`/match/${matchId}/quarter/1`}
-                className="px-2 py-1 text-xs rounded-lg font-medium" style={{ background: 'var(--navy)', color: 'var(--text)' }}
+                className="px-2 py-1 text-xs rounded-lg font-medium" style={{ background: 'var(--navy)', color: 'var(--accent)' }}
                 onClick={() => toast.dismiss(toastInst.id)}
               >
                 {t.shortcut}
@@ -487,7 +487,7 @@ export default function MatchDetailPage() {
               <button
                 onClick={handleSaveMatchInfo}
                 className="w-full py-3 rounded-lg font-bold text-sm"
-                style={{ background: 'var(--navy)', color: 'var(--text)' }}
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}
               >
                 {t.editDone}
               </button>
@@ -677,7 +677,7 @@ export default function MatchDetailPage() {
               <button
                 onClick={saveAttendees}
                 className="w-full py-3 rounded-lg font-bold"
-                style={{ background: 'var(--navy)', color: 'var(--text)' }}
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}
               >
                 {t.saveNPlayers.replace('{n}', String(selectedAttendees.size))}
               </button>
@@ -735,7 +735,7 @@ export default function MatchDetailPage() {
                           style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}
                         />
                       </div>
-                      <button onClick={handleSaveQuarterScore} className="px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--navy)', color: 'var(--text)' }}>{t.save}</button>
+                      <button onClick={handleSaveQuarterScore} className="px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>{t.save}</button>
                       <button onClick={() => setEditingQuarterScore(null)} className="px-2 py-1 rounded text-xs text-[color:var(--text)]/50" style={{ background: 'var(--card2)' }}>{t.cancel}</button>
                     </div>
                   ) : canEditQuarters ? (
@@ -1011,7 +1011,7 @@ export default function MatchDetailPage() {
                   autoFocus
                 />
                 <div className="flex gap-2 mt-2">
-                  <button onClick={handleSaveNotes} disabled={savingNotes} className="flex-1 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50" style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                  <button onClick={handleSaveNotes} disabled={savingNotes} className="flex-1 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {savingNotes ? t.saving : t.save}
                   </button>
                   <button onClick={() => { setNotes(match.notes || ''); setEditingNotes(false) }} className="px-4 py-2.5 rounded-xl font-bold text-sm text-[color:var(--text)]/60" style={{ background: 'var(--card2)' }}>

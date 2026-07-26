@@ -89,7 +89,7 @@ export default function PublicProfilePage() {
         </svg>
 
         <div className="relative px-4 py-4 flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'rgba(255,255,255,0.6)' }}>
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-xl" style={{ color: 'var(--text2)' }}>
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
@@ -98,7 +98,7 @@ export default function PublicProfilePage() {
           </div>
           <button onClick={handleSave} disabled={saving}
             className="px-4 py-2 rounded-xl text-sm font-black disabled:opacity-40 active:scale-95 transition"
-            style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
             {saving ? '저장 중...' : '저장'}
           </button>
         </div>
@@ -111,7 +111,7 @@ export default function PublicProfilePage() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-black text-[color:var(--text)] truncate">{teamName}</p>
-              <p className="text-xs truncate" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              <p className="text-xs truncate" style={{ color: 'var(--muted2)' }}>
                 {[form.level, form.region, form.preferred_format].filter(Boolean).join(' · ') || '프로필을 완성해주세요'}
               </p>
             </div>
@@ -136,7 +136,7 @@ export default function PublicProfilePage() {
                 <p className="font-black text-[color:var(--text)]">
                   {form.is_public ? '커뮤니티 공개' : '비공개'}
                 </p>
-                <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                <p className="text-xs" style={{ color: 'var(--muted2)' }}>
                   {form.is_public ? '다른 팀이 프로필을 볼 수 있어요' : '신청 시 기본 정보만 공개돼요'}
                 </p>
               </div>
@@ -146,7 +146,7 @@ export default function PublicProfilePage() {
               className="relative w-12 h-7 rounded-full transition-colors"
               style={{ background: form.is_public ? 'var(--navy)' : 'var(--line)' }}>
               <div className={`absolute top-1 w-5 h-5 rounded-full shadow transition-transform ${form.is_public ? 'translate-x-6' : 'translate-x-1'}`}
-                style={{ background: form.is_public ? '#0a0a0a' : 'var(--muted2)' }} />
+                style={{ background: form.is_public ? 'var(--accent)' : 'var(--muted2)' }} />
             </button>
           </div>
         </div>
@@ -193,7 +193,7 @@ export default function PublicProfilePage() {
                 className="px-3 py-1.5 rounded-xl text-xs font-bold transition"
                 style={form.region === r
                   ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--text)' }
-                  : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'rgba(255,255,255,0.5)' }}>
+                  : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--muted2)' }}>
                 {r}
               </button>
             ))}
@@ -210,7 +210,7 @@ export default function PublicProfilePage() {
                   className="px-3 py-2 rounded-xl text-xs font-black flex-1 transition"
                   style={form.preferred_format === f
                     ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--text)' }
-                    : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'rgba(255,255,255,0.5)' }}>
+                    : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--muted2)' }}>
                   {f}
                 </button>
               ))}
@@ -224,7 +224,7 @@ export default function PublicProfilePage() {
                   className="px-4 py-2 rounded-xl text-xs font-black flex-1 transition"
                   style={form.level === l
                     ? { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--text)' }
-                    : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'rgba(255,255,255,0.5)' }}>
+                    : { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--muted2)' }}>
                   {l}
                 </button>
               ))}

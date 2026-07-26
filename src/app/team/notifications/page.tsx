@@ -489,7 +489,7 @@ function NotificationsContent() {
                       </div>
                       <span className="text-xs px-2 py-0.5 rounded-full" style={{
                         background: member.role === 'coach' ? 'var(--chip)' : member.role === 'parent' ? '#002a1a' : 'var(--line)',
-                        color: member.role === 'coach' ? 'var(--navy)' : member.role === 'parent' ? '#2dd4bf' : 'rgba(255,255,255,0.4)',
+                        color: member.role === 'coach' ? 'var(--navy)' : member.role === 'parent' ? '#2dd4bf' : 'var(--muted2)',
                       }}>
                         {member.role === 'coach' ? t.coach : member.role === 'parent' ? t.parentLabel : t.member}
                       </span>
@@ -516,7 +516,7 @@ function NotificationsContent() {
             onClick={handleSend}
             disabled={sending || !title.trim() || !body.trim()}
             className="w-full py-3 rounded-xl font-bold disabled:opacity-40 flex items-center justify-center gap-2"
-            style={{ background: 'var(--navy)', color: 'var(--text)' }}
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}
           >
             {sending ? (
               <>
@@ -562,7 +562,7 @@ function NotificationsContent() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'var(--line)', color: 'rgba(255,255,255,0.5)' }}>
+                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'var(--line)', color: 'var(--muted2)' }}>
                               {getNotificationTypeLabel(notification.notification_type)}
                             </span>
                             <span className="text-xs" style={{ color: 'var(--muted2)' }}>

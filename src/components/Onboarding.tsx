@@ -188,7 +188,7 @@ export default function Onboarding() {
       {/* Title + description */}
       <div className="px-6 pt-2 pb-4">
         <h2 className="text-2xl font-bold text-[color:var(--text)] mb-2">{slide.title}</h2>
-        <p className="text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>{slide.description}</p>
+        <p className="text-base leading-relaxed" style={{ color: 'var(--muted2)' }}>{slide.description}</p>
       </div>
 
       {/* Mock UI */}
@@ -243,7 +243,7 @@ function MockDashboard() {
     <div className="p-4 h-full overflow-y-auto" style={{ background: 'var(--card)' }}>
       <div className="rounded-xl p-4 mb-4" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-semibold" style={{ color: 'rgba(255,255,255,0.5)' }}>팀 전적</span>
+          <span className="text-sm font-semibold" style={{ color: 'var(--muted2)' }}>팀 전적</span>
           <span className="text-sm font-bold" style={{ color: 'var(--text)' }}>승률 67%</span>
         </div>
         <div className="grid grid-cols-4 gap-2 text-center">
@@ -339,7 +339,7 @@ function MockPlayerRecord() {
     <div className="p-4 h-full overflow-y-auto" style={{ background: 'var(--card)' }}>
       <div className="flex items-center justify-between mb-4">
         <p className="font-semibold text-[color:var(--text)]">1쿼터 선수 평가</p>
-        <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>우리팀 <span className="font-bold" style={{ color: 'var(--text)' }}>3</span> : <span className="font-bold text-[color:var(--text)]">1</span></span>
+        <span className="text-sm" style={{ color: 'var(--muted2)' }}>우리팀 <span className="font-bold" style={{ color: 'var(--text)' }}>3</span> : <span className="font-bold text-[color:var(--text)]">1</span></span>
       </div>
       <div className="space-y-3">
         {records.map((r, i) => (
@@ -354,7 +354,7 @@ function MockPlayerRecord() {
                 </div>
               </div>
               <span className="text-lg font-bold px-3 py-1 rounded-lg"
-                style={r.rating >= 8 ? { background: 'var(--chip)', color: 'var(--text)' } : { background: '#2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
+                style={r.rating >= 8 ? { background: 'var(--chip)', color: 'var(--text)' } : { background: '#2a2a2a', color: 'var(--muted2)' }}>
                 {r.rating}.0
               </span>
             </div>
@@ -437,18 +437,18 @@ function MockChildStats() {
         <p className="font-semibold text-[color:var(--text)] mb-3">최근 경기 활약</p>
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>vs FC 레드스타</span>
+            <span className="text-sm" style={{ color: 'var(--muted2)' }}>vs FC 레드스타</span>
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>2골</span>
               <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
             </div>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>vs 블루윙즈 FC</span>
+            <span className="text-sm" style={{ color: 'var(--muted2)' }}>vs 블루윙즈 FC</span>
             <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>1도움</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-sm" style={{ color: 'rgba(255,255,255,0.5)' }}>vs 드래곤 시티</span>
+            <span className="text-sm" style={{ color: 'var(--muted2)' }}>vs 드래곤 시티</span>
             <div className="flex items-center gap-2">
               <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>1골</span>
               <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>1도움</span>

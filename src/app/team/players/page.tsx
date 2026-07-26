@@ -327,7 +327,7 @@ export default function PlayersPage() {
             {canEdit && (
               <button onClick={() => { resetForm(); setShowAddSheet(true) }}
                 className="w-9 h-9 flex items-center justify-center rounded-[11px] font-black active:scale-95 transition"
-                style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                 <Plus className="w-5 h-5" />
               </button>
             )}
@@ -394,7 +394,7 @@ export default function PlayersPage() {
                 <button key={tab.key} onClick={() => setRankStat(tab.key)}
                   className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-bold transition"
                   style={rankStat === tab.key
-                    ? { background: 'var(--navy)', color: 'var(--text)' }
+                    ? { background: 'var(--navy)', color: 'var(--accent)' }
                     : { background: 'var(--card)', color: 'var(--muted1)', border: '1px solid var(--line)' }}>
                   {tab.label}
                 </button>
@@ -458,7 +458,7 @@ export default function PlayersPage() {
                     : <Users className="w-7 h-7" style={{ color: 'var(--muted2)' }} />}
                 </div>
                 <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center"
-                  style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                  style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                   {uploading ? <span className="text-[10px] font-bold">…</span> : <Plus className="w-4 h-4" />}
                 </span>
                 <input type="file" accept="image/*" className="hidden"
@@ -518,7 +518,7 @@ export default function PlayersPage() {
               })}
             </div>
             <button type="submit" className="w-full py-3 rounded-xl font-black text-sm active:scale-[0.98] transition"
-              style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
               {t.editDone}
             </button>
           </form>
@@ -659,7 +659,7 @@ export default function PlayersPage() {
                               className="w-full flex items-center gap-3 p-3.5 rounded-[13px] active:opacity-70 transition"
                               style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
                               <div className="w-9 h-9 rounded-full flex items-center justify-center font-black text-[14px] flex-shrink-0"
-                                style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                                 {initial}
                               </div>
                               <div className="flex-1 text-left">
@@ -677,7 +677,7 @@ export default function PlayersPage() {
                       {/* Selected member chip */}
                       <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: 'rgba(163,230,53,0.1)', border: '1px solid rgba(163,230,53,0.2)' }}>
                         <div className="w-8 h-8 rounded-full flex items-center justify-center font-black text-[13px]"
-                          style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                          style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                           {(selectedMember.profile?.display_name || '?').charAt(0).toUpperCase()}
                         </div>
                         <p className="flex-1 font-bold text-[14px]" style={{ color: '#a3e635' }}>
@@ -707,7 +707,7 @@ export default function PlayersPage() {
                         ))}
                       </div>
                       <button type="submit" disabled={saving} className="w-full py-3.5 rounded-xl font-black text-sm active:scale-[0.98] transition disabled:opacity-40"
-                        style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                        style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                         {saving ? t.registering : t.registerAsPlayer}
                       </button>
                     </form>

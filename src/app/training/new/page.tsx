@@ -99,7 +99,7 @@ export default function NewTrainingPage() {
           </div>
           <button form="training-form" type="submit" disabled={loading}
             className="px-4 py-2.5 rounded-[11px] font-black text-sm disabled:opacity-40 active:scale-95 transition"
-            style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+            style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
             {loading ? t.saving : t.save}
           </button>
         </div>
@@ -149,7 +149,7 @@ export default function NewTrainingPage() {
               {DURATION_PRESETS.map(d => (
                 <button key={d} type="button" onClick={() => setDuration(d)}
                   className="flex-1 py-2.5 rounded-xl text-sm font-black transition"
-                  style={{ background: duration === d ? 'var(--navy)' : 'var(--card2)', color: duration === d ? '#0a0a0a' : 'var(--muted2)', border: '1px solid transparent' }}>
+                  style={{ background: duration === d ? 'var(--navy)' : 'var(--card2)', color: duration === d ? 'var(--accent)' : 'var(--muted2)', border: '1px solid transparent' }}>
                   {t.minutesN.replace('{n}', String(d))}
                 </button>
               ))}

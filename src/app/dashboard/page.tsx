@@ -123,7 +123,7 @@ export default function DashboardPage() {
                 {teams.map(team => (
                   <button key={team.id} onClick={() => handleSelectTeam(team)}
                     className="w-full p-4 rounded-xl text-left flex items-center justify-between transition active:opacity-70"
-                    style={{ background: '#1a1a1a' }}>
+                    style={{ background: 'var(--card2)' }}>
                     <div>
                       <p className="font-bold" style={{ color: 'var(--text)' }}>{team.name}</p>
                       <p className="text-sm" style={{ color: 'var(--muted2)' }}>{team.role === 'coach' ? t.coach : t.member}</p>
@@ -139,17 +139,17 @@ export default function DashboardPage() {
             <h2 className="font-black text-white mb-4">{t.createTeam}</h2>
             <input type="text" value={teamName} onChange={e => setTeamName(e.target.value)} required
               className="w-full outline-none text-white placeholder-[#555] mb-3"
-              style={{ background: '#1a1a1a', border: '1px solid var(--line)', borderRadius: 12, padding: '13px 15px' }}
+              style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 12, padding: '13px 15px' }}
               placeholder={t.teamName} />
             <button type="submit" className="w-full font-black py-3.5 rounded-xl active:scale-[0.98] transition"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}>{t.createTeamButton}</button>
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}>{t.createTeamButton}</button>
           </form>
 
           <div className="rounded-2xl p-5 mb-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <h2 className="font-black text-white mb-3">{t.joinTeam}</h2>
             <Link href="/team/join"
               className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold transition active:opacity-70"
-              style={{ background: '#1a1a1a', color: 'var(--accent)' }}>
+              style={{ background: 'var(--card2)', color: 'var(--accent)' }}>
               <UserPlus className="w-4 h-4" />
               {t.inviteCodeJoin}
             </Link>

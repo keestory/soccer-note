@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     <div className="light min-h-screen" style={{ background: 'var(--bg)' }}>
       <div className="max-w-3xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-[color:var(--text)] mb-2">개인정보 처리방침</h1>
-        <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.4)' }}>최종 수정일: 2026년 3월 22일</p>
+        <p className="text-sm mb-8" style={{ color: 'var(--muted2)' }}>최종 수정일: 2026년 3월 22일</p>
 
         <div className="max-w-none space-y-8 leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>
           <section>

@@ -49,7 +49,7 @@ export default function TrainingListPage() {
           {canEdit && (
             <Link href="/training/new"
               className="w-9 h-9 flex items-center justify-center rounded-[11px] font-black active:scale-95 transition"
-              style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
               <Plus className="w-5 h-5" />
             </Link>
           )}
@@ -63,7 +63,7 @@ export default function TrainingListPage() {
               <p className="text-[14px] mb-1" style={{ color: 'var(--muted2)' }}>{t.noTrainings}</p>
               {canEdit && (
                 <Link href="/training/new" className="inline-block mt-3 px-5 py-2.5 rounded-xl font-black text-sm"
-                  style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                  style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                   {t.firstTraining}
                 </Link>
               )}

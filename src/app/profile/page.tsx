@@ -135,7 +135,7 @@ export default function ProfilePage() {
               type="submit"
               disabled={saving}
               className="w-full py-3.5 rounded-xl font-bold text-[15px] disabled:opacity-50 transition active:scale-[0.98]"
-              style={{ background: 'var(--navy)', color: 'var(--text)' }}
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}
             >
               {saving ? t.saving : t.save}
             </button>

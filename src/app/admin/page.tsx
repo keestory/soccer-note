@@ -189,7 +189,7 @@ export default function AdminPage() {
               type="submit"
               disabled={loginLoading}
               className="w-full py-3 rounded-xl font-bold disabled:opacity-50 flex items-center justify-center gap-2"
-              style={{ background: 'var(--navy)', color: 'var(--text)' }}
+              style={{ background: 'var(--navy)', color: 'var(--accent)' }}
             >
               {loginLoading ? (
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
@@ -269,7 +269,7 @@ export default function AdminPage() {
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition"
             style={{
               background: activeTab === 'users' ? 'var(--navy)' : 'var(--card2)',
-              color: activeTab === 'users' ? '#0a0a0a' : 'rgba(255,255,255,0.5)',
+              color: activeTab === 'users' ? 'var(--accent)' : 'var(--muted2)',
             }}
           >
             <Users className="w-4 h-4" />
@@ -280,7 +280,7 @@ export default function AdminPage() {
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition"
             style={{
               background: activeTab === 'teams' ? 'var(--navy)' : 'var(--card2)',
-              color: activeTab === 'teams' ? '#0a0a0a' : 'rgba(255,255,255,0.5)',
+              color: activeTab === 'teams' ? 'var(--accent)' : 'var(--muted2)',
             }}
           >
             <Trophy className="w-4 h-4" />

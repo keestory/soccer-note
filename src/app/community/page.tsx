@@ -115,7 +115,7 @@ export default function CommunityPage() {
               {isCoach && (
                 <Link href="/community/new"
                   className="px-3.5 py-2 rounded-[9px] text-sm font-black flex items-center gap-1.5 transition active:scale-95"
-                  style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                  style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                   <Plus className="w-4 h-4" />
                   {t.writePost}
                 </Link>
@@ -144,8 +144,8 @@ export default function CommunityPage() {
                 }}
                 className="px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition"
                 style={{
-                  background: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? 'var(--navy)' : '#191919',
-                  color: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? '#0a0a0a' : 'var(--text2)',
+                  background: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? 'var(--navy)' : 'var(--card2)',
+                  color: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? 'var(--accent)' : 'var(--text2)',
                   border: '1px solid var(--line)',
                 }}>
                 {chip}
@@ -177,7 +177,7 @@ export default function CommunityPage() {
             {isCoach && (
               <Link href="/community/new"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-[12px] font-black text-sm transition active:scale-95"
-                style={{ background: 'var(--navy)', color: 'var(--text)' }}>
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                 <Plus className="w-4 h-4" /> 매칭 요청 올리기
               </Link>
             )}
@@ -209,7 +209,7 @@ export default function CommunityPage() {
                     <p className="font-bold text-[13px] text-[color:var(--text)] leading-snug line-clamp-2 mb-2">{post.title}</p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[11px] font-bold px-2 py-0.5 rounded-[6px]"
-                        style={{ background: dateInfo.urgent ? 'rgba(192,90,77,.14)' : '#191919', color: dateInfo.urgent ? '#e07a6d' : 'var(--text2)', border: dateInfo.urgent ? '1px solid rgba(192,90,77,.2)' : '1px solid transparent' }}>
+                        style={{ background: dateInfo.urgent ? 'rgba(192,90,77,.14)' : 'var(--card2)', color: dateInfo.urgent ? '#e07a6d' : 'var(--text2)', border: dateInfo.urgent ? '1px solid rgba(192,90,77,.2)' : '1px solid transparent' }}>
                         {dateInfo.label}{post.match_time ? ` ${post.match_time}` : ''}
                       </span>
                       {(isMyPost || hasApplied) && (
@@ -228,7 +228,7 @@ export default function CommunityPage() {
                       {post.level}
                     </span>
                     <span className="text-[11px] font-medium px-2 py-0.5 rounded-[7px]"
-                      style={{ background: '#191919', color: 'var(--text2)', border: '1px solid var(--line)' }}>
+                      style={{ background: 'var(--card2)', color: 'var(--text2)', border: '1px solid var(--line)' }}>
                       {post.format}
                     </span>
                   </div>
@@ -254,7 +254,7 @@ function FilterRow({ label, options, value, onChange }: {
         {options.map(opt => (
           <button key={opt} onClick={() => onChange(opt)}
             className="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition"
-            style={{ background: value === opt ? 'var(--navy)' : '#191919', color: value === opt ? '#0a0a0a' : 'var(--text2)', border: `1px solid ${value === opt ? 'transparent' : 'var(--line)'}` }}>
+            style={{ background: value === opt ? 'var(--navy)' : 'var(--card2)', color: value === opt ? 'var(--accent)' : 'var(--text2)', border: `1px solid ${value === opt ? 'transparent' : 'var(--line)'}` }}>
             {opt}
           </button>
         ))}
