@@ -31,16 +31,16 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center safe-top" style={{ background: 'var(--bg)', padding: '0 30px' }}>
+    <div className="light min-h-screen flex flex-col justify-center safe-top" style={{ background: 'var(--bg)', padding: '0 30px' }}>
       <div className="mb-8">
-        <h1 className="font-display text-[28px] leading-none text-white mb-2" style={{ letterSpacing: '0.04em' }}>{t.resetPasswordTitle}</h1>
+        <h1 className="font-display text-[28px] leading-none text-[color:var(--text)] mb-2" style={{ letterSpacing: '0.04em' }}>{t.resetPasswordTitle}</h1>
         <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.resetPasswordDesc}</p>
       </div>
 
       {sent ? (
         <div
           className="text-[14px] leading-relaxed mb-6"
-          style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 13, padding: '18px 16px', color: '#d5d5d5' }}
+          style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 13, padding: '18px 16px', color: 'var(--text2)' }}
         >
           {t.resetLinkSent}
         </div>
@@ -53,14 +53,14 @@ export default function ForgotPasswordPage() {
             required
             autoComplete="email"
             placeholder={t.email}
-            className="w-full outline-none text-base text-white placeholder-[#555] transition"
+            className="w-full outline-none text-base text-[color:var(--text)] placeholder-[#98a2b3] transition"
             style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 13, padding: '15px 16px' }}
           />
           <button
             type="submit"
             disabled={loading}
             className="w-full font-black text-[16px] disabled:opacity-50 active:scale-[0.98] transition"
-            style={{ background: 'var(--accent)', color: '#0a0a0a', borderRadius: 13, padding: '15px' }}
+            style={{ background: 'var(--navy)', color: 'var(--text)', borderRadius: 13, padding: '15px' }}
           >
             {loading ? t.loading : t.sendResetLink}
           </button>
@@ -68,7 +68,7 @@ export default function ForgotPasswordPage() {
       )}
 
       <p className="text-center mt-6 text-[14px]">
-        <Link href="/login" className="font-bold" style={{ color: 'var(--accent)' }}>{t.backToLogin}</Link>
+        <Link href="/login" className="font-bold" style={{ color: 'var(--text)' }}>{t.backToLogin}</Link>
       </p>
     </div>
   )

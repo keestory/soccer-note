@@ -35,14 +35,14 @@ export default function TeamIntroPage() {
   const teamName = data.selectedTeam?.name || ''
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
-      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #1a1a1a' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-5 py-3.5 flex items-center gap-3">
-          <Link href="/team/players" className="p-2 -ml-2 rounded-xl" style={{ color: '#555' }}>
+          <Link href="/team/players" className="p-2 -ml-2 rounded-xl" style={{ color: 'var(--muted2)' }}>
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="font-black text-[20px] text-white">{t.teamIntro}</h1>
+            <h1 className="font-black text-[20px] text-[color:var(--text)]">{t.teamIntro}</h1>
             <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {t.playersN.replace('{n}', String(players.length))}</p>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function TeamIntroPage() {
         <div className="max-w-4xl mx-auto px-5 py-4">
           {players.length === 0 ? (
             <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <p className="text-[14px]" style={{ color: '#555' }}>{t.noPlayers}</p>
+              <p className="text-[14px]" style={{ color: 'var(--muted2)' }}>{t.noPlayers}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -72,12 +72,12 @@ export default function TeamIntroPage() {
                       </div>
                       {p.attributes && (
                         <div className="flex flex-col items-center px-2 py-1 rounded-lg flex-shrink-0" style={{ background: 'var(--chip)' }}>
-                          <span className="font-display text-[17px] leading-none" style={{ color: 'var(--accent)' }}>{overallRating(p.attributes)}</span>
+                          <span className="font-display text-[17px] leading-none" style={{ color: 'var(--text)' }}>{overallRating(p.attributes)}</span>
                           <span className="text-[8px] font-bold uppercase" style={{ color: 'var(--muted2)' }}>{t.overall}</span>
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-[15px] text-white truncate">{p.name}</p>
+                        <p className="font-bold text-[15px] text-[color:var(--text)] truncate">{p.name}</p>
                         <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: color, color: textColor }}>
                             {p.default_position}
@@ -91,7 +91,7 @@ export default function TeamIntroPage() {
                     {p.bio ? (
                       <p className="text-[12px] mt-2.5 leading-relaxed line-clamp-2" style={{ color: 'var(--muted2)' }}>{p.bio}</p>
                     ) : (
-                      <p className="text-[12px] mt-2.5 italic" style={{ color: '#444' }}>{t.noBio}</p>
+                      <p className="text-[12px] mt-2.5 italic" style={{ color: 'var(--text-faint)' }}>{t.noBio}</p>
                     )}
                   </Link>
                 )

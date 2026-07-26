@@ -360,19 +360,19 @@ function NotificationsContent() {
     return <NotificationsPageSkeleton />
   }
 
-  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
-  const inputStyle = { background: '#1a1a1a', border: '1px solid #2a2a2a', color: '#fff', borderRadius: 10 }
+  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
+  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 10 }
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: '#0a0a0a' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-base font-black text-white">{t.notifications}</h1>
+            <h1 className="text-base font-black text-[color:var(--text)]">{t.notifications}</h1>
             {team && <p className="text-xs" style={{ color: 'var(--muted2)' }}>{team.name}</p>}
           </div>
         </div>
@@ -381,8 +381,8 @@ function NotificationsContent() {
       <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Send Notification Form */}
         <section className="p-5 space-y-4" style={cardStyle}>
-          <h2 className="font-bold text-white flex items-center gap-2">
-            <Send className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+          <h2 className="font-bold text-[color:var(--text)] flex items-center gap-2">
+            <Send className="w-4 h-4" style={{ color: 'var(--text)' }} />
             {t.sendNotification}
           </h2>
 
@@ -418,7 +418,7 @@ function NotificationsContent() {
 
             {/* 검색창 */}
             <div className="relative mb-3">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[color:var(--text)]/30" />
               <input
                 type="text"
                 value={searchQuery}
@@ -431,13 +431,13 @@ function NotificationsContent() {
 
             {/* 전체 선택 & 나에게도 보내기 */}
             <div className="flex items-center justify-between mb-2 pb-2" style={{ borderBottom: '1px solid var(--line)' }}>
-              <button type="button" onClick={toggleSelectAll} className="flex items-center gap-2 text-sm" style={{ color: 'var(--accent)' }}>
+              <button type="button" onClick={toggleSelectAll} className="flex items-center gap-2 text-sm" style={{ color: 'var(--text)' }}>
                 <div className="w-5 h-5 rounded flex items-center justify-center" style={{
-                  background: selectedUserIds.length === members.length && members.length > 0 ? 'var(--accent)' : 'transparent',
-                  border: `2px solid ${selectedUserIds.length === members.length && members.length > 0 ? 'var(--accent)' : '#3a3a3a'}`,
+                  background: selectedUserIds.length === members.length && members.length > 0 ? 'var(--navy)' : 'transparent',
+                  border: `2px solid ${selectedUserIds.length === members.length && members.length > 0 ? 'var(--navy)' : '#3a3a3a'}`,
                 }}>
                   {selectedUserIds.length === members.length && members.length > 0 && (
-                    <Check className="w-3 h-3" style={{ color: '#0a0a0a' }} />
+                    <Check className="w-3 h-3" style={{ color: 'var(--text)' }} />
                   )}
                 </div>
                 {t.selectAll} ({selectedUserIds.length}/{members.length})
@@ -450,13 +450,13 @@ function NotificationsContent() {
                 }}>
                   {includeSelf && <Check className="w-3 h-3 text-black" />}
                 </div>
-                <span className="text-sm text-white/60">{t.sendToMeToo}</span>
+                <span className="text-sm text-[color:var(--text)]/60">{t.sendToMeToo}</span>
                 <input type="checkbox" checked={includeSelf} onChange={(e) => setIncludeSelf(e.target.checked)} className="sr-only" />
               </label>
             </div>
 
             {/* 멤버 목록 */}
-            <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg p-2" style={{ background: '#1a1a1a' }}>
+            <div className="max-h-48 overflow-y-auto space-y-1 rounded-lg p-2" style={{ background: 'var(--card2)' }}>
               {filteredMembers.length === 0 ? (
                 <p className="text-center text-sm py-4" style={{ color: 'var(--muted2)' }}>
                   {searchQuery ? t.noPlayers : t.noMembers}
@@ -474,22 +474,22 @@ function NotificationsContent() {
                       style={{ background: isSelected ? 'var(--chip)' : 'transparent' }}
                     >
                       <div className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0" style={{
-                        background: isSelected ? 'var(--accent)' : 'transparent',
-                        border: `2px solid ${isSelected ? 'var(--accent)' : '#3a3a3a'}`,
+                        background: isSelected ? 'var(--navy)' : 'transparent',
+                        border: `2px solid ${isSelected ? 'var(--navy)' : '#3a3a3a'}`,
                       }}>
-                        {isSelected && <Check className="w-3 h-3" style={{ color: '#0a0a0a' }} />}
+                        {isSelected && <Check className="w-3 h-3" style={{ color: 'var(--text)' }} />}
                       </div>
                       <div className="flex-1 text-left">
-                        <span className="text-sm font-medium text-white">
+                        <span className="text-sm font-medium text-[color:var(--text)]">
                           {member.profile?.display_name || t.noName}
                         </span>
                         {isSelf && (
-                          <span className="ml-2 text-xs" style={{ color: 'var(--accent)' }}>({t.meLabel})</span>
+                          <span className="ml-2 text-xs" style={{ color: 'var(--text)' }}>({t.meLabel})</span>
                         )}
                       </div>
                       <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                        background: member.role === 'coach' ? 'var(--chip)' : member.role === 'parent' ? '#002a1a' : '#2a2a2a',
-                        color: member.role === 'coach' ? 'var(--accent)' : member.role === 'parent' ? '#2dd4bf' : 'rgba(255,255,255,0.4)',
+                        background: member.role === 'coach' ? 'var(--chip)' : member.role === 'parent' ? '#002a1a' : 'var(--line)',
+                        color: member.role === 'coach' ? 'var(--navy)' : member.role === 'parent' ? '#2dd4bf' : 'rgba(255,255,255,0.4)',
                       }}>
                         {member.role === 'coach' ? t.coach : member.role === 'parent' ? t.parentLabel : t.member}
                       </span>
@@ -516,7 +516,7 @@ function NotificationsContent() {
             onClick={handleSend}
             disabled={sending || !title.trim() || !body.trim()}
             className="w-full py-3 rounded-xl font-bold disabled:opacity-40 flex items-center justify-center gap-2"
-            style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+            style={{ background: 'var(--navy)', color: 'var(--text)' }}
           >
             {sending ? (
               <>
@@ -534,14 +534,14 @@ function NotificationsContent() {
 
         {/* Notification History */}
         <section className="p-5" style={cardStyle}>
-          <h2 className="font-bold text-white mb-4 flex items-center gap-2">
-            <MessageSquare className="w-4 h-4" style={{ color: 'var(--accent)' }} />
+          <h2 className="font-bold text-[color:var(--text)] mb-4 flex items-center gap-2">
+            <MessageSquare className="w-4 h-4" style={{ color: 'var(--text)' }} />
             {t.notificationHistory}
           </h2>
 
           {notifications.length === 0 ? (
             <div className="text-center py-12" style={{ color: 'var(--muted2)' }}>
-              <Bell className="w-12 h-12 mx-auto mb-3 text-white/10" />
+              <Bell className="w-12 h-12 mx-auto mb-3 text-[color:var(--text)]/10" />
               <p className="font-medium">{t.noNotifications}</p>
               <p className="text-sm mt-1">{t.noNotificationsDescription}</p>
             </div>
@@ -557,25 +557,25 @@ function NotificationsContent() {
                     <button
                       onClick={() => toggleNotificationExpand(notification.id)}
                       className="w-full p-4 text-left"
-                      style={{ background: '#1a1a1a' }}
+                      style={{ background: 'var(--card2)' }}
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: '#2a2a2a', color: 'rgba(255,255,255,0.5)' }}>
+                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'var(--line)', color: 'rgba(255,255,255,0.5)' }}>
                               {getNotificationTypeLabel(notification.notification_type)}
                             </span>
                             <span className="text-xs" style={{ color: 'var(--muted2)' }}>
                               {formatDate(notification.created_at)}
                             </span>
                           </div>
-                          <h3 className="font-medium text-white truncate">{notification.title}</h3>
+                          <h3 className="font-medium text-[color:var(--text)] truncate">{notification.title}</h3>
                           <p className="text-sm mt-1 line-clamp-2" style={{ color: 'var(--muted2)' }}>{notification.body}</p>
                         </div>
 
                         <div className="flex items-center gap-3">
                           <div className="flex flex-col items-end gap-1 text-sm">
-                            <div className="flex items-center gap-1 text-white/40">
+                            <div className="flex items-center gap-1 text-[color:var(--text)]/40">
                               <Users className="w-4 h-4" />
                               <span>{notification.recipients_count}</span>
                             </div>
@@ -592,7 +592,7 @@ function NotificationsContent() {
                               )}
                             </div>
                           </div>
-                          <div className="text-white/30">
+                          <div className="text-[color:var(--text)]/30">
                             {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                           </div>
                         </div>
@@ -600,15 +600,15 @@ function NotificationsContent() {
                     </button>
 
                     {isExpanded && (
-                      <div className="p-4" style={{ borderTop: '1px solid var(--line)', background: '#111010' }}>
+                      <div className="p-4" style={{ borderTop: '1px solid var(--line)', background: 'var(--card2)' }}>
                         {isLoadingStats ? (
                           <div className="flex items-center justify-center py-4">
-                            <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--accent)' }} />
+                            <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'var(--text)' }} />
                           </div>
                         ) : stats ? (
                           <div className="space-y-4">
                             <div className="flex items-center gap-3 text-sm">
-                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
+                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: 'var(--chip)', color: 'var(--text)' }}>
                                 <Eye className="w-4 h-4" />
                                 <span>{t.readCount} {stats.read_count}/{stats.total_sent}</span>
                               </div>
@@ -618,11 +618,11 @@ function NotificationsContent() {
                               </div>
                             </div>
                             <div>
-                              <h4 className="text-sm font-medium text-white/60 mb-2">{t.recipientStatus}</h4>
+                              <h4 className="text-sm font-medium text-[color:var(--text)]/60 mb-2">{t.recipientStatus}</h4>
                               <div className="space-y-2 max-h-48 overflow-y-auto">
                                 {stats.recipients.map((recipient) => (
-                                  <div key={recipient.user_id} className="flex items-center justify-between rounded-lg p-2 text-sm" style={{ background: '#1a1a1a' }}>
-                                    <span className="font-medium text-white">{recipient.display_name || t.noName}</span>
+                                  <div key={recipient.user_id} className="flex items-center justify-between rounded-lg p-2 text-sm" style={{ background: 'var(--card2)' }}>
+                                    <span className="font-medium text-[color:var(--text)]">{recipient.display_name || t.noName}</span>
                                     <div className="flex items-center gap-2">
                                       {recipient.confirmed_at ? (
                                         <span className="flex items-center gap-1 text-teal-400">
@@ -630,12 +630,12 @@ function NotificationsContent() {
                                           <span className="text-xs">{formatShortDate(recipient.confirmed_at)}</span>
                                         </span>
                                       ) : recipient.read_at ? (
-                                        <span className="flex items-center gap-1" style={{ color: 'var(--accent)' }}>
+                                        <span className="flex items-center gap-1" style={{ color: 'var(--text)' }}>
                                           <Eye className="w-4 h-4" />
                                           <span className="text-xs">{formatShortDate(recipient.read_at)}</span>
                                         </span>
                                       ) : (
-                                        <span className="text-xs text-white/30">{t.unconfirmed}</span>
+                                        <span className="text-xs text-[color:var(--text)]/30">{t.unconfirmed}</span>
                                       )}
                                     </div>
                                   </div>
@@ -663,8 +663,8 @@ function NotificationsContent() {
 export default function NotificationsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent)' }} />
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--text)' }} />
       </div>
     }>
       <NotificationsContent />

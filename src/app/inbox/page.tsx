@@ -166,34 +166,34 @@ export default function InboxPage() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'new_match':
-        return <Calendar className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+        return <Calendar className="w-5 h-5" style={{ color: 'var(--text)' }} />
       case 'match_update':
         return <Calendar className="w-5 h-5 text-amber-400" />
       default:
-        return <Bell className="w-5 h-5 text-white/40" />
+        return <Bell className="w-5 h-5 text-[color:var(--text)]/40" />
     }
   }
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0a0a0a' }}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--accent)' }} />
+      <div className="light min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: 'var(--text)' }} />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen" style={{ background: '#0a0a0a' }}>
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div className="flex-1 flex items-center gap-2">
-            <h1 className="text-base font-black text-white">알림함</h1>
+            <h1 className="text-base font-black text-[color:var(--text)]">알림함</h1>
             {unreadCount > 0 && (
-              <span className="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded-full">
+              <span className="px-2 py-0.5 bg-red-500 text-[color:var(--text)] text-xs font-bold rounded-full">
                 {unreadCount}
               </span>
             )}
@@ -221,8 +221,8 @@ export default function InboxPage() {
               onClick={() => setFilter(f)}
               className="py-3 px-1 border-b-2 text-sm font-medium transition-colors"
               style={{
-                borderColor: filter === f ? 'var(--accent)' : 'transparent',
-                color: filter === f ? 'var(--accent)' : 'var(--muted2)',
+                borderColor: filter === f ? 'var(--navy)' : 'transparent',
+                color: filter === f ? 'var(--navy)' : 'var(--muted2)',
               }}
             >
               {f === 'all' ? '전체' : `안읽음${unreadCount > 0 ? ` (${unreadCount})` : ''}`}
@@ -236,7 +236,7 @@ export default function InboxPage() {
         {notifications.length === 0 ? (
           <div className="text-center py-16" style={{ color: 'var(--muted2)' }}>
             <Inbox className="w-16 h-16 mx-auto mb-4 opacity-30" />
-            <p className="font-medium text-white">
+            <p className="font-medium text-[color:var(--text)]">
               {filter === 'unread' ? '읽지 않은 알림이 없습니다' : '알림이 없습니다'}
             </p>
             <p className="text-sm mt-1">새로운 알림이 오면 여기에 표시됩니다</p>
@@ -251,7 +251,7 @@ export default function InboxPage() {
                   key={notification.receipt_id}
                   className="border-l-[3px] transition-colors"
                   style={{
-                    borderLeftColor: isUnread ? 'var(--accent)' : 'transparent',
+                    borderLeftColor: isUnread ? 'var(--navy)' : 'transparent',
                     borderBottom: '1px solid var(--line)',
                   }}
                 >
@@ -261,7 +261,7 @@ export default function InboxPage() {
                     style={{ background: isUnread ? 'rgba(204,255,0,0.03)' : 'transparent' }}
                   >
                     <div className="flex-shrink-0 mt-1.5">
-                      <div className="w-2 h-2 rounded-full" style={{ background: isUnread ? 'var(--accent)' : 'transparent' }} />
+                      <div className="w-2 h-2 rounded-full" style={{ background: isUnread ? 'var(--navy)' : 'transparent' }} />
                     </div>
 
                     <div className="flex-shrink-0 mt-0.5">
@@ -277,7 +277,7 @@ export default function InboxPage() {
                           {formatDate(notification.sent_at)}
                         </span>
                       </div>
-                      <h3 className={`font-medium text-[14px] ${isExpanded ? '' : 'truncate'} ${isUnread ? 'text-white' : 'text-white/60'}`}>
+                      <h3 className={`font-medium text-[14px] ${isExpanded ? '' : 'truncate'} ${isUnread ? 'text-[color:var(--text)]' : 'text-[color:var(--text)]/60'}`}>
                         {notification.title}
                       </h3>
                       <p className={`text-[13px] mt-0.5 ${isExpanded ? 'whitespace-pre-wrap' : 'line-clamp-2'}`} style={{ color: 'var(--muted2)' }}>
@@ -293,7 +293,7 @@ export default function InboxPage() {
                   {isExpanded && (
                     <div className="px-4 pb-4 pl-14">
                       {notification.confirmed_at ? (
-                        <div className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg" style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
+                        <div className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg" style={{ background: 'var(--chip)', color: 'var(--text)' }}>
                           <CheckCircle2 className="w-4 h-4" />
                           확인 완료됨
                         </div>
@@ -301,7 +301,7 @@ export default function InboxPage() {
                         <button
                           onClick={() => confirmNotification(notification.receipt_id)}
                           className="flex items-center gap-1.5 px-4 py-2 text-sm rounded-lg font-bold transition"
-                          style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+                          style={{ background: 'var(--navy)', color: 'var(--text)' }}
                         >
                           <Check className="w-4 h-4" />
                           확인 완료!

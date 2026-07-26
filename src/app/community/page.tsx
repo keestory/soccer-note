@@ -90,15 +90,15 @@ export default function CommunityPage() {
   const activeFilters = [filterRegion, filterFormat, filterLevel].filter(f => f !== '전체').length
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
       {/* Hero Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#0e0e0e', borderBottom: '1px solid #1a1a1a' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: '#0e0e0e', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-5 py-4">
           <div className="flex items-start justify-between">
             <div>
-              <p className="font-display text-[13px] tracking-widest mb-1" style={{ color: 'var(--accent)' }}>MATCH COMMUNITY</p>
-              <h1 className="font-black text-[23px] text-white leading-none">{t.navMatching}</h1>
+              <p className="font-display text-[13px] tracking-widest mb-1" style={{ color: 'var(--text)' }}>MATCH COMMUNITY</p>
+              <h1 className="font-black text-[23px] text-[color:var(--text)] leading-none">{t.navMatching}</h1>
               <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{t.findTeamsTagline}</p>
             </div>
             <div className="flex items-center gap-2 mt-1">
@@ -106,16 +106,16 @@ export default function CommunityPage() {
                 onClick={() => setShowFilters(v => !v)}
                 className="px-3 py-2 rounded-[9px] text-sm font-medium transition"
                 style={{
-                  border: '1px solid #2a2a2a',
+                  border: '1px solid var(--line)',
                   background: showFilters || activeFilters > 0 ? 'var(--chip)' : 'transparent',
-                  color: showFilters || activeFilters > 0 ? 'var(--accent)' : '#aaa',
+                  color: showFilters || activeFilters > 0 ? 'var(--navy)' : 'var(--text2)',
                 }}>
                 {t.filter}{activeFilters > 0 ? ` (${activeFilters})` : ''}
               </button>
               {isCoach && (
                 <Link href="/community/new"
                   className="px-3.5 py-2 rounded-[9px] text-sm font-black flex items-center gap-1.5 transition active:scale-95"
-                  style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                  style={{ background: 'var(--navy)', color: 'var(--text)' }}>
                   <Plus className="w-4 h-4" />
                   {t.writePost}
                 </Link>
@@ -126,7 +126,7 @@ export default function CommunityPage() {
 
         {/* Filter chips */}
         {showFilters && (
-          <div className="border-t px-5 py-3 space-y-2.5" style={{ borderColor: '#1a1a1a', background: '#0a0a0a' }}>
+          <div className="border-t px-5 py-3 space-y-2.5" style={{ borderColor: 'var(--card2)', background: 'var(--text)' }}>
             <FilterRow label={t.region} options={REGIONS} value={filterRegion} onChange={setFilterRegion} />
             <FilterRow label={t.playType} options={FORMATS} value={filterFormat} onChange={setFilterFormat} />
             <FilterRow label={t.levelLabel} options={LEVELS} value={filterLevel} onChange={setFilterLevel} />
@@ -144,9 +144,9 @@ export default function CommunityPage() {
                 }}
                 className="px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition"
                 style={{
-                  background: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? 'var(--accent)' : '#191919',
-                  color: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? '#0a0a0a' : '#aaa',
-                  border: '1px solid #2a2a2a',
+                  background: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? 'var(--navy)' : '#191919',
+                  color: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? '#0a0a0a' : 'var(--text2)',
+                  border: '1px solid var(--line)',
                 }}>
                 {chip}
               </button>
@@ -161,10 +161,10 @@ export default function CommunityPage() {
             {[1,2,3].map(i => (
               <div key={i} className="rounded-[16px] p-4 animate-pulse" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
                 <div className="flex gap-3">
-                  <div className="w-12 h-12 rounded-[12px] flex-shrink-0" style={{ background: '#1a1a1a' }} />
+                  <div className="w-12 h-12 rounded-[12px] flex-shrink-0" style={{ background: 'var(--card2)' }} />
                   <div className="flex-1 space-y-2">
-                    <div className="h-3 rounded w-1/3" style={{ background: '#1a1a1a' }} />
-                    <div className="h-4 rounded w-2/3" style={{ background: '#1a1a1a' }} />
+                    <div className="h-3 rounded w-1/3" style={{ background: 'var(--card2)' }} />
+                    <div className="h-4 rounded w-2/3" style={{ background: 'var(--card2)' }} />
                   </div>
                 </div>
               </div>
@@ -172,12 +172,12 @@ export default function CommunityPage() {
           </div>
         ) : posts.length === 0 ? (
           <div className="text-center py-20">
-            <p className="font-black text-[18px] text-white mb-2">매칭 요청이 없어요</p>
-            <p className="text-[13px] mb-6" style={{ color: '#555' }}>필터를 바꾸거나 먼저 글을 올려보세요</p>
+            <p className="font-black text-[18px] text-[color:var(--text)] mb-2">매칭 요청이 없어요</p>
+            <p className="text-[13px] mb-6" style={{ color: 'var(--muted2)' }}>필터를 바꾸거나 먼저 글을 올려보세요</p>
             {isCoach && (
               <Link href="/community/new"
                 className="inline-flex items-center gap-2 px-5 py-3 rounded-[12px] font-black text-sm transition active:scale-95"
-                style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
+                style={{ background: 'var(--navy)', color: 'var(--text)' }}>
                 <Plus className="w-4 h-4" /> 매칭 요청 올리기
               </Link>
             )}
@@ -199,22 +199,22 @@ export default function CommunityPage() {
                   {/* Region tile */}
                   <div className="w-12 h-12 rounded-[12px] flex-col items-center justify-center flex flex-shrink-0"
                     style={{ background: '#161616', border: '1px solid #262626' }}>
-                    <p className="text-[10px] leading-none" style={{ color: '#888' }}>{regionParts[0] || '–'}</p>
-                    <p className="text-[13px] font-black leading-tight text-white">{regionParts[1] || regionParts[0] || '–'}</p>
+                    <p className="text-[10px] leading-none" style={{ color: 'var(--muted1)' }}>{regionParts[0] || '–'}</p>
+                    <p className="text-[13px] font-black leading-tight text-[color:var(--text)]">{regionParts[1] || regionParts[0] || '–'}</p>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] mb-0.5" style={{ color: '#888' }}>{post.team?.name}</p>
-                    <p className="font-bold text-[13px] text-white leading-snug line-clamp-2 mb-2">{post.title}</p>
+                    <p className="text-[11px] mb-0.5" style={{ color: 'var(--muted1)' }}>{post.team?.name}</p>
+                    <p className="font-bold text-[13px] text-[color:var(--text)] leading-snug line-clamp-2 mb-2">{post.title}</p>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-[11px] font-bold px-2 py-0.5 rounded-[6px]"
-                        style={{ background: dateInfo.urgent ? 'rgba(192,90,77,.14)' : '#191919', color: dateInfo.urgent ? '#e07a6d' : '#aaa', border: dateInfo.urgent ? '1px solid rgba(192,90,77,.2)' : '1px solid transparent' }}>
+                        style={{ background: dateInfo.urgent ? 'rgba(192,90,77,.14)' : '#191919', color: dateInfo.urgent ? '#e07a6d' : 'var(--text2)', border: dateInfo.urgent ? '1px solid rgba(192,90,77,.2)' : '1px solid transparent' }}>
                         {dateInfo.label}{post.match_time ? ` ${post.match_time}` : ''}
                       </span>
                       {(isMyPost || hasApplied) && (
                         <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px]"
-                          style={{ background: 'var(--chip)', color: 'var(--accent)' }}>
+                          style={{ background: 'var(--chip)', color: 'var(--text)' }}>
                           {isMyPost ? '내 글' : '신청함'}
                         </span>
                       )}
@@ -228,7 +228,7 @@ export default function CommunityPage() {
                       {post.level}
                     </span>
                     <span className="text-[11px] font-medium px-2 py-0.5 rounded-[7px]"
-                      style={{ background: '#191919', color: '#aaa', border: '1px solid #2a2a2a' }}>
+                      style={{ background: '#191919', color: 'var(--text2)', border: '1px solid var(--line)' }}>
                       {post.format}
                     </span>
                   </div>
@@ -249,12 +249,12 @@ function FilterRow({ label, options, value, onChange }: {
 }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-[11px] font-bold w-7 flex-shrink-0" style={{ color: '#666' }}>{label}</span>
+      <span className="text-[11px] font-bold w-7 flex-shrink-0" style={{ color: 'var(--muted2)' }}>{label}</span>
       <div className="flex gap-1.5 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
         {options.map(opt => (
           <button key={opt} onClick={() => onChange(opt)}
             className="px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition"
-            style={{ background: value === opt ? 'var(--accent)' : '#191919', color: value === opt ? '#0a0a0a' : '#aaa', border: `1px solid ${value === opt ? 'transparent' : '#2a2a2a'}` }}>
+            style={{ background: value === opt ? 'var(--navy)' : '#191919', color: value === opt ? '#0a0a0a' : 'var(--text2)', border: `1px solid ${value === opt ? 'transparent' : 'var(--line)'}` }}>
             {opt}
           </button>
         ))}

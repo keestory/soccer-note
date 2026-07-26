@@ -59,16 +59,16 @@ export default function NewMatchPage() {
     }
   }
 
-  const cardStyle = { background: '#111010', border: '1px solid var(--line)', borderRadius: 16 }
+  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
 
   return (
-    <div className="flex flex-col safe-top" style={{ background: '#0a0a0a', minHeight: '100dvh' }}>
-      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+    <div className="light flex flex-col safe-top" style={{ background: 'var(--bg)', minHeight: '100dvh' }}>
+      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-white/50 hover:text-white">
+          <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-base font-black text-white">{t.newMatch}</h1>
+          <h1 className="text-base font-black text-[color:var(--text)]">{t.newMatch}</h1>
         </div>
       </header>
 
@@ -78,14 +78,14 @@ export default function NewMatchPage() {
           <div className="flex items-center gap-3">
             <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: 'var(--chip)' }}>
               <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.homeTeam}</p>
-              <p className="font-bold text-[15px] truncate" style={{ color: 'var(--accent)' }}>{teamName || '…'}</p>
+              <p className="font-bold text-[15px] truncate" style={{ color: 'var(--text)' }}>{teamName || '…'}</p>
             </div>
-            <div className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#1a1a1a' }}>
-              <Swords className="w-4 h-4 text-white/30" />
+            <div className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'var(--card2)' }}>
+              <Swords className="w-4 h-4 text-[color:var(--text)]/30" />
             </div>
-            <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: '#1a1a1a' }}>
+            <div className="flex-1 rounded-xl px-4 py-3 text-center" style={{ background: 'var(--card2)' }}>
               <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.opponent}</p>
-              <p className="font-bold text-[15px] text-white/60 truncate">{opponent || '?'}</p>
+              <p className="font-bold text-[15px] text-[color:var(--text)]/60 truncate">{opponent || '?'}</p>
             </div>
           </div>
         </div>
@@ -93,12 +93,12 @@ export default function NewMatchPage() {
         {/* Form */}
         <form onSubmit={handleSubmit} style={cardStyle} className="overflow-hidden">
           {[
-            { icon: <Swords className="w-4 h-4 text-white/40" />, label: t.opponentNameRequired, type: 'text', value: opponent, onChange: setOpponent, placeholder: t.opponentPlaceholder, required: true, autoFocus: false },
-            { icon: <Calendar className="w-4 h-4 text-white/40" />, label: t.matchDateRequired, type: 'date', value: matchDate, onChange: setMatchDate, placeholder: '', required: true, autoFocus: false },
-            { icon: <MapPin className="w-4 h-4 text-white/40" />, label: t.location, type: 'text', value: location, onChange: setLocation, placeholder: t.locationPlaceholder, required: false, autoFocus: false },
+            { icon: <Swords className="w-4 h-4 text-[color:var(--text)]/40" />, label: t.opponentNameRequired, type: 'text', value: opponent, onChange: setOpponent, placeholder: t.opponentPlaceholder, required: true, autoFocus: false },
+            { icon: <Calendar className="w-4 h-4 text-[color:var(--text)]/40" />, label: t.matchDateRequired, type: 'date', value: matchDate, onChange: setMatchDate, placeholder: '', required: true, autoFocus: false },
+            { icon: <MapPin className="w-4 h-4 text-[color:var(--text)]/40" />, label: t.location, type: 'text', value: location, onChange: setLocation, placeholder: t.locationPlaceholder, required: false, autoFocus: false },
           ].map((field, i) => (
             <div key={i} className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: i < 2 ? '1px solid var(--line)' : 'none' }}>
-              <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#1a1a1a' }}>
+              <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--card2)' }}>
                 {field.icon}
               </div>
               <div className="flex-1">
@@ -109,7 +109,7 @@ export default function NewMatchPage() {
                   onChange={(e) => field.onChange(e.target.value)}
                   required={field.required}
                   autoFocus={field.autoFocus}
-                  className="w-full text-[15px] font-medium text-white outline-none bg-transparent placeholder:text-white/20"
+                  className="w-full text-[15px] font-medium text-[color:var(--text)] outline-none bg-transparent placeholder:text-[color:var(--text)]/20"
                   placeholder={field.placeholder}
                 />
               </div>
@@ -121,7 +121,7 @@ export default function NewMatchPage() {
               type="submit"
               disabled={loading || !opponent.trim()}
               className="w-full py-4 rounded-xl font-black text-[15px] active:scale-[0.99] disabled:opacity-40 transition"
-              style={{ background: 'var(--accent)', color: '#0a0a0a' }}
+              style={{ background: 'var(--navy)', color: 'var(--text)' }}
             >
               {loading ? t.creating : t.createMatch}
             </button>
