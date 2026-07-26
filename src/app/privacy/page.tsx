@@ -173,7 +173,7 @@ export default function PrivacyPage() {
             <p>
               개인정보 처리에 관한 문의사항이 있으시면 아래로 연락해 주세요.
             </p>
-            <div className="rounded-xl p-4 mt-3" style={{ background: "#1a1a1a" }}>
+            <div className="rounded-xl p-4 mt-3" style={{ background: "var(--card2)" }}>
               <p><strong>서비스명:</strong> SoccerNote</p>
               <p><strong>이메일:</strong> keestory91@gmail.com</p>
             </div>

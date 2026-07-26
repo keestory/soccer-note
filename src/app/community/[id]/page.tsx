@@ -259,7 +259,7 @@ export default function PostDetailPage() {
         {!isMyPost && myApplication && (
           <div className="rounded-2xl p-4" style={{
             background: myApplication.status === 'accepted' ? '#052e16' :
-                        myApplication.status === 'rejected' ? '#1a1a1a' : 'var(--card2)',
+                        myApplication.status === 'rejected' ? 'var(--card2)' : 'var(--card2)',
             border: `1px solid ${myApplication.status === 'accepted' ? '#166534' : myApplication.status === 'rejected' ? 'var(--line)' : '#92400e'}`,
           }}>
             <div className="flex items-center gap-3">
@@ -290,7 +290,7 @@ export default function PostDetailPage() {
       {/* Apply CTA */}
       {!isMyPost && !myApplication && !matchedOrClosed && isCoach && (
         <div className="fixed bottom-0 left-0 right-0 safe-bottom pt-4 px-4 pb-3"
-          style={{ background: 'linear-gradient(to top, #0a0a0a 60%, transparent)' }}>
+          style={{ background: 'linear-gradient(to top, var(--bg) 60%, transparent)' }}>
           <button
             onClick={() => setShowApplySheet(true)}
             className="w-full max-w-4xl mx-auto py-4 rounded-2xl font-black text-base active:scale-[0.98] transition flex items-center justify-center gap-2"
