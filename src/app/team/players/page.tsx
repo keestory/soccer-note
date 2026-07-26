@@ -22,6 +22,7 @@ const POS_COLOR: Record<PositionType, string> = {
 const POS_TEXT: Record<PositionType, string> = {
   GK: '#3a2600', DF: '#fff', MF: '#06231d', FW: '#fff',
 }
+const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
 
 interface PlayerStats {
   attendance: number
@@ -50,6 +51,7 @@ export default function PlayersPage() {
   const [showAddSheet, setShowAddSheet] = useState(false)
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
   const [search, setSearch] = useState('')
+  const [posFilter, setPosFilter] = useState<'ALL' | PositionType>('ALL')
   const [view, setView] = useState<'roster' | 'ranking'>('roster')
   const [rankStat, setRankStat] = useState<RankStatKey>('goals')
   const [rankStart, setRankStart] = useState('')
@@ -257,9 +259,9 @@ export default function PlayersPage() {
   if (data.loading) return <PlayersListSkeleton />
 
   const teamName = data.selectedTeam?.name || ''
-  const filtered = search.trim()
-    ? playersWithStats.filter(p => p.name.includes(search.trim()))
-    : playersWithStats
+  const filtered = playersWithStats
+    .filter(p => posFilter === 'ALL' || p.default_position === posFilter)
+    .filter(p => !search.trim() || p.name.includes(search.trim()))
 
   // Roster / ranking view
   const statTabs: { key: RankStatKey; label: string; suffix: string }[] = [
@@ -313,22 +315,21 @@ export default function PlayersPage() {
 
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
-        <div className="max-w-4xl mx-auto px-5 py-3.5 flex justify-between items-center">
-          <div>
-            <h1 className="font-black text-[20px] text-[color:var(--text)]">{t.playersLabel}</h1>
-            <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{teamName} · {t.playersN.replace('{n}', String(playersWithStats.length))}</p>
+        <div className="max-w-md mx-auto flex justify-between items-center" style={{ padding: '10px 22px 14px' }}>
+          <div style={{ fontSize: 21, fontWeight: 700, color: '#101828' }}>
+            {t.playersLabel} <span style={{ fontSize: 14, color: '#98a2b3', fontWeight: 500 }}>{t.playersN.replace('{n}', String(playersWithStats.length))}</span>
           </div>
           <div className="flex items-center gap-2">
             <Link href="/team/intro"
-              className="h-9 px-3 flex items-center gap-1.5 rounded-[11px] text-sm font-bold transition active:scale-95"
-              style={{ background: 'var(--chip)', color: 'var(--text)' }}>
-              <Users className="w-4 h-4" /> {t.introTab}
+              className="flex items-center justify-center active:scale-95 transition"
+              style={{ width: 36, height: 36, borderRadius: 11, background: '#fff', border: '1px solid #eaecf0', color: '#475467' }}>
+              <Users className="w-4 h-4" />
             </Link>
             {canEdit && (
               <button onClick={() => { resetForm(); setShowAddSheet(true) }}
-                className="w-9 h-9 flex items-center justify-center rounded-[11px] font-black active:scale-95 transition"
-                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
-                <Plus className="w-5 h-5" />
+                className="flex items-center justify-center active:scale-95 transition"
+                style={{ width: 36, height: 36, borderRadius: 11, background: '#101828', color: '#c8f542', fontSize: 20 }}>
+                +
               </button>
             )}
           </div>
@@ -336,7 +337,7 @@ export default function PlayersPage() {
       </header>
 
       <PullToRefresh onRefresh={async () => { setLocalPlayers(null); setLocalMemberLinks({}); await data.refresh() }}>
-      <div className="max-w-4xl mx-auto px-5 py-4 space-y-4">
+      <div className="max-w-md mx-auto px-5 py-4 space-y-4">
 
         {/* Roster / Ranking toggle */}
         <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'var(--card2)' }}>
@@ -351,14 +352,31 @@ export default function PlayersPage() {
           ))}
         </div>
 
-        {/* Search (roster only) */}
+        {/* Search + position filter (roster only) */}
         {view === 'roster' && (
+        <>
         <input
           type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder={t.searchPlayer}
-          className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-[14px]"
-          style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 12, padding: '12px 14px' }}
+          className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-[13px]"
+          style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 14, padding: '12px 16px' }}
         />
+        <div className="flex" style={{ gap: 7 }}>
+          {(['ALL', 'FW', 'MF', 'DF', 'GK'] as const).map(pos => {
+            const active = posFilter === pos
+            return (
+              <button key={pos} onClick={() => setPosFilter(pos)}
+                style={{
+                  fontSize: 12, fontWeight: active ? 600 : 500, padding: '7px 14px', borderRadius: 20,
+                  background: active ? '#101828' : '#fff', color: active ? '#c8f542' : '#475467',
+                  border: active ? 'none' : '1px solid #eaecf0',
+                }}>
+                {pos === 'ALL' ? t.allLabel : pos}
+              </button>
+            )
+          })}
+        </div>
+        </>
         )}
 
         {/* Ranking view */}
@@ -537,55 +555,56 @@ export default function PlayersPage() {
             )}
           </div>
         ) : (
-          <div className="space-y-2">
-            {filtered.map(player => (
-              <Link key={player.id} href={`/team/players/${player.id}`}
-                className="flex items-center gap-3 p-4 rounded-[14px] active:opacity-80 transition"
-                style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-                <div className="w-[34px] h-[34px] rounded-[9px] overflow-hidden flex items-center justify-center flex-shrink-0 font-black text-[10px]"
-                  style={{ background: POS_COLOR[player.default_position], color: POS_TEXT[player.default_position] }}>
-                  {player.photo_url
-                    ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
-                    : player.default_position}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="font-bold text-[14px] text-[color:var(--text)]">
-                      {player.name} <span style={{ color: 'var(--muted2)' }}>#{player.number || '–'}</span>
-                    </p>
-                    {player.linkedMember && (
-                      <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
-                        style={{ background: 'rgba(163,230,53,0.15)', color: '#a3e635' }}>
-                        {t.appLinked}
-                      </span>
+          <div className="flex flex-col" style={{ gap: 9 }}>
+            {(() => {
+              const topScorerId = filtered.reduce<{ id: string | null; g: number }>((best, p) =>
+                p.stats.goals > best.g ? { id: p.id, g: p.stats.goals } : best, { id: null, g: 0 }).id
+              return filtered.map(player => {
+                const isTop = player.id === topScorerId
+                const isKeeperLine = player.default_position === 'GK' || player.default_position === 'DF'
+                return (
+                  <Link key={player.id} href={`/team/players/${player.id}`}
+                    className="flex items-center active:opacity-80 transition"
+                    style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '14px 18px', gap: 13 }}>
+                    <span className="overflow-hidden flex items-center justify-center flex-shrink-0"
+                      style={{ fontFamily: BEBAS, fontSize: 22, width: 40, height: 40, borderRadius: 10,
+                        background: isTop ? '#c8f542' : '#f2f4f7', color: isTop ? '#101828' : '#475467' }}>
+                      {player.photo_url
+                        ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
+                        : (player.number ?? '-')}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-bold truncate" style={{ fontSize: 14, color: '#101828' }}>{player.name}</span>
+                        {player.linkedMember && (
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 999, background: '#eef7d6', color: '#5a7a12' }}>
+                            {t.appLinked}
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ fontSize: 11.5, color: '#98a2b3', marginTop: 2 }}>{player.default_position}</div>
+                    </div>
+                    <span style={{ fontFamily: BEBAS, fontSize: 19, color: '#101828' }}>
+                      {isKeeperLine
+                        ? <>{player.stats.cleanSheets}<span style={{ fontSize: 13, color: '#98a2b3' }}>CS</span></>
+                        : <>{player.stats.goals}<span style={{ fontSize: 13, color: '#98a2b3' }}>G</span> {player.stats.assists}<span style={{ fontSize: 13, color: '#98a2b3' }}>A</span></>}
+                    </span>
+                    {canEdit && (
+                      <div className="flex gap-1 ml-1" onClick={e => e.preventDefault()}>
+                        <button onClick={e => { e.preventDefault(); startEditing(player) }}
+                          className="p-2 rounded-lg" style={{ color: '#98a2b3' }}>
+                          <Edit2 className="w-3.5 h-3.5" />
+                        </button>
+                        <button onClick={e => { e.preventDefault(); setDeleteTarget(player.id) }}
+                          className="p-2 rounded-lg" style={{ color: '#98a2b3' }}>
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     )}
-                  </div>
-                  <p className="text-[12px] mt-0.5" style={{ color: 'var(--muted2)' }}>
-                    {player.default_position === 'GK'
-                      ? `${t.cleanSheet} ${player.stats.cleanSheets}`
-                      : `${t.goalsCount.replace('{n}', String(player.stats.goals))} ${t.assistsCount.replace('{n}', String(player.stats.assists))}`}
-                  </p>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="font-display text-[22px] leading-none" style={{ color: 'var(--text)' }}>
-                    {player.stats.avgRating !== null ? player.stats.avgRating.toFixed(1) : '–'}
-                  </p>
-                  <p className="text-[9px] mt-0.5" style={{ color: 'var(--muted2)' }}>{t.avgRatingShort}</p>
-                </div>
-                {canEdit && (
-                  <div className="flex gap-1 ml-1" onClick={e => e.preventDefault()}>
-                    <button onClick={e => { e.preventDefault(); startEditing(player) }}
-                      className="p-2 rounded-lg" style={{ color: 'var(--muted2)' }}>
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                    <button onClick={e => { e.preventDefault(); setDeleteTarget(player.id) }}
-                      className="p-2 rounded-lg" style={{ color: 'var(--muted2)' }}>
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                )}
-              </Link>
-            ))}
+                  </Link>
+                )
+              })
+            })()}
           </div>
         ))}
       </div>
@@ -597,12 +616,12 @@ export default function PlayersPage() {
           <div className="absolute inset-0 bg-black/60" />
           <div
             className="absolute bottom-0 left-0 right-0 rounded-t-3xl safe-bottom"
-            style={{ background: 'var(--card2)', border: '1px solid #1e1e1e', maxHeight: '85dvh', display: 'flex', flexDirection: 'column' }}
+            style={{ background: 'var(--card)', border: '1px solid var(--line)', maxHeight: '85dvh', display: 'flex', flexDirection: 'column' }}
             onClick={e => e.stopPropagation()}
           >
             {/* Sheet handle */}
             <div className="flex-shrink-0 pt-3 pb-1 px-5 flex items-center justify-between">
-              <div className="w-10 h-1 rounded-full mx-auto" style={{ background: '#2a2a2a' }} />
+              <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--line2)' }} />
             </div>
 
             <div className="flex-shrink-0 px-5 pb-3 flex items-center justify-between">
@@ -739,7 +758,7 @@ export default function PlayersPage() {
                     ))}
                   </div>
                   <button type="submit" disabled={saving} className="w-full py-3.5 rounded-xl font-black text-sm active:scale-[0.98] transition disabled:opacity-40"
-                    style={{ background: '#2a2a2a', color: 'var(--muted1)' }}>
+                    style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {saving ? t.adding : t.manualAddButton}
                   </button>
                 </form>
