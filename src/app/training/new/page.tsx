@@ -137,7 +137,7 @@ export default function NewTrainingPage() {
               <Calendar className="w-3.5 h-3.5" /> {t.trainingDate}
             </label>
             <input type="date" value={trainingDate} onChange={e => setTrainingDate(e.target.value)} required
-              className="w-full font-bold text-base outline-none" style={{ background: 'transparent', color: '#fff', colorScheme: 'dark' }} />
+              className="w-full font-bold text-base outline-none" style={{ background: 'transparent', color: 'var(--text)' }} />
           </div>
 
           {/* Duration */}
@@ -172,7 +172,7 @@ export default function NewTrainingPage() {
             </label>
             <input type="text" value={locationVal} onChange={e => setLocationVal(e.target.value)}
               className="w-full font-bold text-base outline-none placeholder-[#98a2b3]"
-              style={{ background: 'transparent', color: '#fff' }}
+              style={{ background: 'transparent', color: 'var(--text)' }}
               placeholder={t.locationPlaceholder} />
           </div>
 

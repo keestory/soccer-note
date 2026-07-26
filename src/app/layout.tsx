@@ -36,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className={`${notoSansKR.variable} ${bebasNeue.variable}`}>
-      <body className="min-h-screen font-sans" style={{ background: 'var(--bg)', color: '#fff' }}>
+      <body className="min-h-screen font-sans" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
         <Providers>{children}</Providers>
       </body>
     </html>

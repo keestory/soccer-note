@@ -748,8 +748,8 @@ export default function QuarterEditPage() {
   }
 
   const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
-  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 12 }
-  const textareaStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 10 }
+  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 12 }
+  const textareaStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 10 }
 
   return (
     <div className="light min-h-screen pb-32" style={{ background: 'var(--bg)' }}>
@@ -789,7 +789,7 @@ export default function QuarterEditPage() {
                 }}
                 defaultValue=""
                 className="px-2 py-1.5 rounded-lg text-sm outline-none"
-                style={{ background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff' }}
+                style={{ background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)' }}
               >
                 <option value="" disabled>{t.formation}</option>
                 {Object.entries(FORMATIONS).map(([key, f]) => (
@@ -987,7 +987,7 @@ export default function QuarterEditPage() {
             <button
               onClick={openSubModal}
               className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
-              style={{ background: '#1a1200', color: '#f59e0b' }}
+              style={{ background: '#fef0c7', color: '#b54708' }}
             >
               <Plus className="w-4 h-4" />
               {t.addSubstitution}

@@ -141,7 +141,7 @@ function JoinTeamContent() {
 
         {/* Status cards */}
         {existingStatus === 'pending' && team && (
-          <div className="p-5 rounded-2xl" style={{ background: '#1a1500', border: '1px solid #3a3000' }}>
+          <div className="p-5 rounded-2xl" style={{ background: '#fef0c7', border: '1px solid #fde68a' }}>
             <div className="flex items-center gap-3 mb-2">
               <div className="w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#2a2000' }}>
                 <Clock className="w-5 h-5 text-amber-400" />

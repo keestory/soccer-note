@@ -361,7 +361,7 @@ function NotificationsContent() {
   }
 
   const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
-  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 10 }
+  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 10 }
 
   return (
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
