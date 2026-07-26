@@ -84,17 +84,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-center safe-top" style={{ background: 'var(--bg)', padding: '0 30px' }}>
+    <div className="light min-h-screen flex flex-col justify-center safe-top" style={{ background: 'var(--bg)', padding: '0 30px' }}>
 
       {/* Logo + app name */}
       <div className="flex flex-col items-center mb-8">
         <div
           className="w-16 h-16 flex items-center justify-center mb-4"
-          style={{ background: 'var(--accent)', borderRadius: 20 }}
+          style={{ background: 'var(--navy)', borderRadius: 20 }}
         >
-          <span className="font-display text-4xl leading-none" style={{ color: '#0a0a0a', letterSpacing: '0.05em' }}>S</span>
+          <span className="font-display text-4xl leading-none" style={{ color: 'var(--accent)', letterSpacing: '0.05em' }}>S</span>
         </div>
-        <span className="font-display text-[34px] leading-none text-white mb-2" style={{ letterSpacing: '0.08em' }}>SOCCERNOTE</span>
+        <span className="font-display text-[34px] leading-none mb-2" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>SOCCERNOTE</span>
         <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.appTagline}</p>
       </div>
 
@@ -105,11 +105,12 @@ export default function LoginPage() {
         className="w-full flex items-center justify-center gap-2.5 mb-5 disabled:opacity-50 active:scale-[0.98] transition"
         style={{
           background: '#fff',
-          color: '#1a1a1a',
+          color: '#101828',
           fontWeight: 700,
           fontSize: 15,
           borderRadius: 13,
           padding: '15px',
+          border: '1px solid #d0d5dd',
         }}
       >
         <GoogleIcon />
@@ -118,9 +119,9 @@ export default function LoginPage() {
 
       {/* Divider */}
       <div className="flex items-center gap-3 mb-5">
-        <div className="flex-1 h-px" style={{ background: '#1c1c1c' }} />
-        <span className="text-[11px]" style={{ color: '#555' }}>{t.orEmail}</span>
-        <div className="flex-1 h-px" style={{ background: '#1c1c1c' }} />
+        <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
+        <span className="text-[11px]" style={{ color: 'var(--muted2)' }}>{t.orEmail}</span>
+        <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
       </div>
 
       {/* Email / Password form */}
@@ -132,12 +133,13 @@ export default function LoginPage() {
           required
           autoComplete="email"
           placeholder={t.email}
-          className="w-full outline-none text-base text-white placeholder-[#555] transition"
+          className="w-full outline-none text-base placeholder-[#98a2b3] transition"
           style={{
             background: 'var(--card)',
             border: '1px solid var(--line)',
             borderRadius: 13,
             padding: '15px 16px',
+            color: 'var(--text)',
           }}
         />
 
@@ -149,12 +151,13 @@ export default function LoginPage() {
             required
             autoComplete="current-password"
             placeholder={t.password}
-            className="w-full outline-none text-base text-white placeholder-[#555] transition"
+            className="w-full outline-none text-base placeholder-[#98a2b3] transition"
             style={{
               background: 'var(--card)',
               border: '1px solid var(--line)',
               borderRadius: 13,
               padding: '15px 48px 15px 16px',
+              color: 'var(--text)',
             }}
           />
           <button
@@ -168,7 +171,7 @@ export default function LoginPage() {
         </div>
 
         <div className="flex justify-end -mt-1">
-          <Link href="/forgot-password" className="text-[13px] font-semibold" style={{ color: 'var(--accent)' }}>
+          <Link href="/forgot-password" className="text-[13px] font-semibold" style={{ color: 'var(--text)' }}>
             {t.forgotPassword}
           </Link>
         </div>
@@ -178,8 +181,8 @@ export default function LoginPage() {
           disabled={loading}
           className="w-full font-black text-[16px] disabled:opacity-50 active:scale-[0.98] transition"
           style={{
-            background: 'var(--accent)',
-            color: '#0a0a0a',
+            background: 'var(--navy)',
+            color: 'var(--accent)',
             borderRadius: 13,
             padding: '15px',
           }}
@@ -188,9 +191,9 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <p className="text-center mt-6 text-[14px]" style={{ color: '#888' }}>
+      <p className="text-center mt-6 text-[14px]" style={{ color: 'var(--muted1)' }}>
         {t.noAccount}{' '}
-        <Link href="/signup" className="font-bold" style={{ color: 'var(--accent)' }}>{t.signup}</Link>
+        <Link href="/signup" className="font-bold" style={{ color: 'var(--text)' }}>{t.signup}</Link>
       </p>
     </div>
   )
