@@ -361,7 +361,7 @@ function NotificationsContent() {
   }
 
   const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
-  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: '#fff', borderRadius: 10 }
+  const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 10 }
 
   return (
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
@@ -488,7 +488,7 @@ function NotificationsContent() {
                         )}
                       </div>
                       <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                        background: member.role === 'coach' ? 'var(--chip)' : member.role === 'parent' ? '#002a1a' : 'var(--line)',
+                        background: member.role === 'coach' ? 'var(--chip)' : member.role === 'parent' ? '#e0f5f2' : 'var(--line)',
                         color: member.role === 'coach' ? 'var(--navy)' : member.role === 'parent' ? '#2dd4bf' : 'var(--muted2)',
                       }}>
                         {member.role === 'coach' ? t.coach : member.role === 'parent' ? t.parentLabel : t.member}
@@ -612,7 +612,7 @@ function NotificationsContent() {
                                 <Eye className="w-4 h-4" />
                                 <span>{t.readCount} {stats.read_count}/{stats.total_sent}</span>
                               </div>
-                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#002a1a', color: '#2dd4bf' }}>
+                              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#e0f5f2', color: '#0e9384' }}>
                                 <CheckCircle2 className="w-4 h-4" />
                                 <span>{t.confirmedCount} {stats.confirmed_count}/{stats.total_sent}</span>
                               </div>

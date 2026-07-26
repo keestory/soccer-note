@@ -2,7 +2,7 @@ import type { Translations } from '../types'
 
 export const translations: Translations = {
   // Common
-  appName: 'SoccerNote',
+  appName: 'Football Note',
   appDescription: '축구 경기 기록 앱',
   loading: '로딩 중...',
   save: '저장',
@@ -378,6 +378,9 @@ export const translations: Translations = {
 
   // Team management
   teamManagement: '팀 관리',
+  memberLabel: '멤버',
+  adminBadge: '관리자',
+  disbandShort: '해체',
   matchesLabel: '경기',
   playersLabel: '선수',
 
@@ -405,6 +408,10 @@ export const translations: Translations = {
 
   // Training Session
   trainingLabel: '훈련',
+  thisWeek: 'THIS WEEK',
+  sessionsLabel: '세션',
+  cumulativeTrainingTime: '누적 훈련 시간',
+  recentTraining: '최근 훈련',
   newTraining: '새 훈련 기록',
   newTrainingRecord: '훈련 기록하기',
   trainingDate: '훈련 날짜',
@@ -518,6 +525,8 @@ export const translations: Translations = {
   lastMatch: '지난 경기',
   opponentShort: '상대',
   seasonWinRate: '시즌 승률 · {n}경기',
+  winRateLabel: '승률',
+  nextMatch: '다음 경기',
   membersFromTeam: '팀원에서 추가',
   addManually: '직접 추가',
   selectMemberPrompt: '선수로 등록할 팀원 선택 · {n}명',
@@ -538,6 +547,7 @@ export const translations: Translations = {
   firstTraining: '첫 훈련 기록하기',
   attendCountN: '참석 {n}명',
   minutesN: '{n}분',
+  minUnit: '분',
   selectLanguage: '언어 선택',
   logoutConfirmTitle: '로그아웃할까요?',
   logoutConfirmDesc: '다시 로그인하면 데이터는 그대로 유지됩니다.',
@@ -561,6 +571,9 @@ export const translations: Translations = {
   show: '보기',
   hide: '숨기기',
   findTeamsTagline: '함께 뛸 팀을 구해보세요',
+  findOpponentTitle: '상대팀 찾기',
+  myPostBadge: '내 글',
+  appliedBadge: '신청함',
   filter: '필터',
   writePost: '글쓰기',
   region: '지역',

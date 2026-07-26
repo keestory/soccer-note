@@ -2,7 +2,7 @@ import type { Translations } from '../types'
 
 export const translations: Translations = {
   // Common
-  appName: 'SoccerNote',
+  appName: 'Football Note',
   appDescription: 'サッカー試合記録アプリ',
   loading: '読み込み中...',
   save: '保存',
@@ -378,6 +378,9 @@ export const translations: Translations = {
 
   // Team management
   teamManagement: 'チーム管理',
+  memberLabel: 'メンバー',
+  adminBadge: '管理者',
+  disbandShort: '解体',
   matchesLabel: '試合',
   playersLabel: '選手',
 
@@ -405,6 +408,10 @@ export const translations: Translations = {
 
   // Training Session
   trainingLabel: 'トレーニング',
+  thisWeek: 'THIS WEEK',
+  sessionsLabel: 'セッション',
+  cumulativeTrainingTime: '累計トレーニング時間',
+  recentTraining: '最近のトレーニング',
   newTraining: '新しいトレーニング',
   newTrainingRecord: 'トレーニングを記録',
   trainingDate: 'トレーニング日',
@@ -518,6 +525,8 @@ export const translations: Translations = {
   lastMatch: '前回の試合',
   opponentShort: '相手',
   seasonWinRate: 'シーズン勝率 · {n}試合',
+  winRateLabel: '勝率',
+  nextMatch: '次の試合',
   membersFromTeam: 'チームメンバーから追加',
   addManually: '手動で追加',
   selectMemberPrompt: '選手登録するメンバーを選択 · {n}名',
@@ -538,6 +547,7 @@ export const translations: Translations = {
   firstTraining: '最初のトレーニングを記録',
   attendCountN: '参加 {n}名',
   minutesN: '{n}分',
+  minUnit: '分',
   selectLanguage: '言語を選択',
   logoutConfirmTitle: 'ログアウトしますか？',
   logoutConfirmDesc: '再ログインすればデータはそのまま残ります。',
@@ -561,6 +571,9 @@ export const translations: Translations = {
   show: '表示',
   hide: '非表示',
   findTeamsTagline: '一緒に戦うチームを探そう',
+  findOpponentTitle: '対戦相手を探す',
+  myPostBadge: '自分の投稿',
+  appliedBadge: '応募済み',
   filter: 'フィルター',
   writePost: '投稿',
   region: '地域',

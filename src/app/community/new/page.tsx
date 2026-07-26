@@ -35,8 +35,8 @@ const TIMES = ['06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','
 
 const LEVEL_ACTIVE: Record<string, { bg: string; color: string }> = {
   '입문': { bg: '#334155', color: '#94a3b8' },
-  '초급': { bg: '#0c3d5e', color: '#38bdf8' },
-  '중급': { bg: '#052e16', color: '#4ade80' },
+  '초급': { bg: '#e0f2fe', color: '#026aa2' },
+  '중급': { bg: '#e0f5f2', color: '#0e9384' },
   '고급': { bg: 'var(--card2)', color: '#fbbf24' },
 }
 
@@ -90,8 +90,8 @@ export default function NewPostPage() {
   const progress = Math.round((filled / fields.length) * 100)
 
   const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
-  const labelStyle = { color: 'rgba(255,255,255,0.3)' }
-  const inputStyle = { background: 'transparent', color: 'rgba(255,255,255,0.9)', caretColor: 'var(--text)', outline: 'none' as const }
+  const labelStyle = { color: 'var(--muted2)' }
+  const inputStyle = { background: 'transparent', color: 'var(--text)', caretColor: 'var(--text)', outline: 'none' as const }
   const chipInactive = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--muted2)' }
   const chipActive = { background: 'var(--chip)', border: '1px solid var(--accent)', color: 'var(--text)' }
 
@@ -109,7 +109,7 @@ export default function NewPostPage() {
           </button>
           <div className="flex-1">
             <h1 className="text-base font-black text-[color:var(--text)]">{t.postMatchRequest}</h1>
-            <p className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.requiredFieldsDone.replace('{n}', String(filled)).replace('{m}', String(fields.length))}</p>
+            <p className="text-[11px]" style={{ color: 'var(--muted2)' }}>{t.requiredFieldsDone.replace('{n}', String(filled)).replace('{m}', String(fields.length))}</p>
           </div>
           <button
             onClick={handleSubmit}
@@ -159,7 +159,7 @@ export default function NewPostPage() {
           </div>
           <div className="px-4 py-3">
             <label className="flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>
-              <Clock className="w-3.5 h-3.5" /> {t.matchTimeLabel} <span className="normal-case font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>{t.optional}</span>
+              <Clock className="w-3.5 h-3.5" /> {t.matchTimeLabel} <span className="normal-case font-medium" style={{ color: 'var(--text-faint)' }}>{t.optional}</span>
             </label>
             <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-1 px-1">
               {TIMES.map(t => (
@@ -201,7 +201,7 @@ export default function NewPostPage() {
             </div>
             {form.region && (
               <div className="mt-2">
-                <p className="text-[10px] font-bold mb-1.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{form.region} · {t.subRegion}</p>
+                <p className="text-[10px] font-bold mb-1.5" style={{ color: 'var(--muted2)' }}>{form.region} · {t.subRegion}</p>
                 <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
                   {(DISTRICTS[form.region] || []).map(d => (
                     <button key={d} onClick={() => set('district', d)}
@@ -253,7 +253,7 @@ export default function NewPostPage() {
         {/* Description */}
         <div style={cardStyle} className="px-4 py-4">
           <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={labelStyle}>
-            {t.extraDesc} <span className="normal-case font-medium" style={{ color: 'rgba(255,255,255,0.2)' }}>{t.optional}</span>
+            {t.extraDesc} <span className="normal-case font-medium" style={{ color: 'var(--text-faint)' }}>{t.optional}</span>
           </label>
           <textarea
             value={form.description}

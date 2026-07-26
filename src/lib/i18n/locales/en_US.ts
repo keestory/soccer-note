@@ -2,7 +2,7 @@ import type { Translations } from '../types'
 
 export const translations: Translations = {
   // Common
-  appName: 'SoccerNote',
+  appName: 'Football Note',
   appDescription: 'Soccer match recording app',
   loading: 'Loading...',
   save: 'Save',
@@ -378,6 +378,9 @@ export const translations: Translations = {
 
   // Team management
   teamManagement: 'Team Management',
+  memberLabel: 'Members',
+  adminBadge: 'Admin',
+  disbandShort: 'Disband',
   matchesLabel: 'Matches',
   playersLabel: 'Players',
 
@@ -405,6 +408,10 @@ export const translations: Translations = {
 
   // Training Session
   trainingLabel: 'Training',
+  thisWeek: 'THIS WEEK',
+  sessionsLabel: 'sessions',
+  cumulativeTrainingTime: 'Total training time',
+  recentTraining: 'Recent training',
   newTraining: 'New Training Session',
   newTrainingRecord: 'Record Training',
   trainingDate: 'Training Date',
@@ -518,6 +525,8 @@ export const translations: Translations = {
   lastMatch: 'Last Match',
   opponentShort: 'Opponent',
   seasonWinRate: 'Season win rate · {n} games',
+  winRateLabel: 'Win rate',
+  nextMatch: 'Next match',
   membersFromTeam: 'From team members',
   addManually: 'Add manually',
   selectMemberPrompt: 'Select a member to register · {n}',
@@ -538,6 +547,7 @@ export const translations: Translations = {
   firstTraining: 'Record first training',
   attendCountN: '{n} attending',
   minutesN: '{n} min',
+  minUnit: 'min',
   selectLanguage: 'Select Language',
   logoutConfirmTitle: 'Log out?',
   logoutConfirmDesc: 'Your data will be kept when you log back in.',
@@ -561,6 +571,9 @@ export const translations: Translations = {
   show: 'Show',
   hide: 'Hide',
   findTeamsTagline: 'Find teams to play with',
+  findOpponentTitle: 'Find opponents',
+  myPostBadge: 'My post',
+  appliedBadge: 'Applied',
   filter: 'Filter',
   writePost: 'Post',
   region: 'Region',

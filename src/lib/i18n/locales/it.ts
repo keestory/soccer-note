@@ -2,7 +2,7 @@ import type { Translations } from '../types'
 
 export const translations: Translations = {
   // Common
-  appName: 'SoccerNote',
+  appName: 'Football Note',
   appDescription: 'App di registrazione partite di calcio',
   loading: 'Caricamento...',
   save: 'Salva',
@@ -378,6 +378,9 @@ export const translations: Translations = {
 
   // Team management
   teamManagement: 'Gestione squadra',
+  memberLabel: 'Membri',
+  adminBadge: 'Admin',
+  disbandShort: 'Sciogli',
   matchesLabel: 'Partite',
   playersLabel: 'Giocatori',
 
@@ -405,6 +408,10 @@ export const translations: Translations = {
 
   // Training Session
   trainingLabel: 'Allenamento',
+  thisWeek: 'QUESTA SETTIMANA',
+  sessionsLabel: 'sessioni',
+  cumulativeTrainingTime: 'Tempo totale di allenamento',
+  recentTraining: 'Allenamenti recenti',
   newTraining: 'Nuovo allenamento',
   newTrainingRecord: 'Registra allenamento',
   trainingDate: 'Data allenamento',
@@ -518,6 +525,8 @@ export const translations: Translations = {
   lastMatch: 'Ultima partita',
   opponentShort: 'Avversario',
   seasonWinRate: 'Percentuale vittorie · {n} partite',
+  winRateLabel: 'Vittorie',
+  nextMatch: 'Prossima partita',
   membersFromTeam: 'Dai membri del team',
   addManually: 'Aggiungi manualmente',
   selectMemberPrompt: 'Scegli un membro da registrare · {n}',
@@ -538,6 +547,7 @@ export const translations: Translations = {
   firstTraining: 'Registra il primo allenamento',
   attendCountN: '{n} presenti',
   minutesN: '{n} min',
+  minUnit: 'min',
   selectLanguage: 'Seleziona lingua',
   logoutConfirmTitle: 'Uscire?',
   logoutConfirmDesc: 'I tuoi dati saranno conservati al prossimo accesso.',
@@ -561,6 +571,9 @@ export const translations: Translations = {
   show: 'Mostra',
   hide: 'Nascondi',
   findTeamsTagline: 'Trova squadre con cui giocare',
+  findOpponentTitle: 'Trova avversari',
+  myPostBadge: 'Il mio annuncio',
+  appliedBadge: 'Candidato',
   filter: 'Filtra',
   writePost: 'Pubblica',
   region: 'Regione',

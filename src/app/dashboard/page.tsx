@@ -18,6 +18,8 @@ import { useI18n } from '@/lib/i18n/context'
 import { loadTeamData, updateStore } from '@/lib/dataStore'
 import type { TeamWithRole } from '@/lib/dataStore'
 
+const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
+
 function primeTeamCache(userId: string, team: TeamWithRole) {
   const isCoach = team.role === 'coach' || team.user_id === userId
   cacheResolvedTeam(userId, {
@@ -100,12 +102,21 @@ export default function DashboardPage() {
   const canEditMatches = isCoach || selectedTeam?.membership?.can_edit_matches
   const pendingCount = isCoach ? data.members.filter(m => m.status === 'pending' && !m.is_removed).length : 0
 
-  const wins   = matches.filter(m => m.home_score >  m.away_score).length
-  const losses = matches.filter(m => m.home_score <  m.away_score).length
-  const draws  = matches.filter(m => m.home_score === m.away_score).length
-  const total  = matches.length
+  const now = Date.now()
+  const played = matches.filter(m => new Date(m.match_date).getTime() <= now)
+  const upcoming = matches
+    .filter(m => new Date(m.match_date).getTime() > now)
+    .sort((a, b) => new Date(a.match_date).getTime() - new Date(b.match_date).getTime())
+  const wins   = played.filter(m => m.home_score >  m.away_score).length
+  const losses = played.filter(m => m.home_score <  m.away_score).length
+  const draws  = played.filter(m => m.home_score === m.away_score).length
+  const total  = played.length
   const winRate = total > 0 ? Math.round((wins / total) * 100) : null
-  const latestMatch = matches[0] ?? null
+  const latestMatch = played[0] ?? null
+  const nextMatch = upcoming[0] ?? null
+  const nextMatchDday = nextMatch
+    ? Math.max(0, Math.ceil((new Date(nextMatch.match_date).getTime() - now) / 86400000))
+    : null
 
   // No teams yet
   if (!selectedTeam || showCreateTeam) {
@@ -113,12 +124,12 @@ export default function DashboardPage() {
       <div className="light min-h-screen px-5 py-8" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
         <div className="max-w-lg mx-auto">
           <div className="text-center mb-8">
-            <span className="font-display text-[30px] tracking-widest" style={{ color: 'var(--accent)' }}>SOCCERNOTE</span>
+            <span className="font-display text-[30px] tracking-widest" style={{ color: 'var(--accent)' }}>FOOTBALL NOTE</span>
           </div>
 
           {teams.length > 0 && (
             <div className="rounded-2xl p-5 mb-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <h2 className="font-black text-white mb-4">{t.myTeams} ({teams.length})</h2>
+              <h2 className="font-black text-[color:var(--text)] mb-4">{t.myTeams} ({teams.length})</h2>
               <div className="space-y-2 max-h-[40vh] overflow-y-auto">
                 {teams.map(team => (
                   <button key={team.id} onClick={() => handleSelectTeam(team)}
@@ -136,9 +147,9 @@ export default function DashboardPage() {
           )}
 
           <form onSubmit={handleCreateTeam} className="rounded-2xl p-5 mb-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <h2 className="font-black text-white mb-4">{t.createTeam}</h2>
+            <h2 className="font-black text-[color:var(--text)] mb-4">{t.createTeam}</h2>
             <input type="text" value={teamName} onChange={e => setTeamName(e.target.value)} required
-              className="w-full outline-none text-white placeholder-[#555] mb-3"
+              className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] mb-3"
               style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 12, padding: '13px 15px' }}
               placeholder={t.teamName} />
             <button type="submit" className="w-full font-black py-3.5 rounded-xl active:scale-[0.98] transition"
@@ -146,7 +157,7 @@ export default function DashboardPage() {
           </form>
 
           <div className="rounded-2xl p-5 mb-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <h2 className="font-black text-white mb-3">{t.joinTeam}</h2>
+            <h2 className="font-black text-[color:var(--text)] mb-3">{t.joinTeam}</h2>
             <Link href="/team/join"
               className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl font-bold transition active:opacity-70"
               style={{ background: 'var(--card2)', color: 'var(--accent)' }}>
@@ -214,19 +225,16 @@ export default function DashboardPage() {
 
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
-        <div className="max-w-4xl mx-auto px-5 py-3.5 flex justify-between items-center">
-          <div className="min-w-0">
-            <p className="font-display text-[13px] tracking-widest" style={{ color: 'var(--muted1)' }}>SOCCERNOTE</p>
-            <button onClick={() => setShowTeamPicker(true)} className="flex items-center gap-1 mt-0.5">
-              <span className="font-black text-[19px] truncate max-w-[180px]" style={{ color: 'var(--text)' }}>{selectedTeam?.name || t.selectTeam}</span>
-              <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--muted2)' }} />
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="max-w-md mx-auto flex justify-between items-center" style={{ padding: '10px 24px 14px' }}>
+          <button onClick={() => setShowTeamPicker(true)} className="flex items-center gap-1.5 min-w-0">
+            <span className="font-bold text-[21px] truncate max-w-[200px]" style={{ color: '#101828' }}>{selectedTeam?.name || t.selectTeam}</span>
+            <ChevronDown className="w-4 h-4 flex-shrink-0" style={{ color: '#98a2b3' }} />
+          </button>
+          <div className="flex items-center gap-2.5">
             <NotificationBadge />
             <Link href="/profile"
-              className="w-[35px] h-[35px] rounded-full flex items-center justify-center font-display text-[15px]"
-              style={{ background: 'var(--navy)', color: 'var(--accent)', border: '2px solid var(--line)' }}>
+              className="rounded-full flex items-center justify-center font-bold text-[13px]"
+              style={{ width: 34, height: 34, background: '#101828', color: '#c8f542' }}>
               {(displayName || '?').charAt(0).toUpperCase()}
             </Link>
           </div>
@@ -234,7 +242,7 @@ export default function DashboardPage() {
       </header>
 
       <PullToRefresh onRefresh={data.refresh}>
-      <main className="max-w-4xl mx-auto px-5 py-5 space-y-4">
+      <main className="max-w-md mx-auto flex flex-col" style={{ gap: 13, padding: '0 20px 16px' }}>
 
         {/* Pending join requests banner (coach only) */}
         {pendingCount > 0 && (
@@ -253,136 +261,131 @@ export default function DashboardPage() {
           const isWin = latestMatch.home_score > latestMatch.away_score
           const isLoss = latestMatch.home_score < latestMatch.away_score
           const result = isWin ? 'WIN' : isLoss ? 'LOSS' : 'DRAW'
-          const mvp = calculateMVP(latestMatch)
-          const quarters = (latestMatch as any).quarters ?? []
+          const quarters = (latestMatch.quarters ?? []).slice().sort((a, b) => a.quarter_number - b.quarter_number)
           return (
             <Link href={`/match/${latestMatch.id}`}
-              className="block rounded-[20px] p-5 active:opacity-80 transition"
-              style={{ background: 'var(--navy)' }}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-display text-[13px]" style={{ color: 'var(--accent)', letterSpacing: '0.08em' }}>
+              className="block active:opacity-90 transition" style={{ background: '#101828', borderRadius: 22, padding: 22 }}>
+              <div className="flex items-center justify-between">
+                <span style={{ fontFamily: BEBAS, fontSize: 13, letterSpacing: '.22em', color: '#c8f542' }}>
                   {t.lastMatch} · {formatDate(latestMatch.match_date)}
                 </span>
-                <span className="text-[12px] font-black px-3 py-1 rounded-full"
-                  style={{ background: isWin ? 'var(--accent)' : isLoss ? 'rgba(240,68,56,.18)' : '#1a2437', color: isWin ? '#101828' : isLoss ? '#fda29b' : '#98a2b3' }}>
-                  {result}
-                </span>
+                <span style={{
+                  fontFamily: BEBAS, fontSize: 12, letterSpacing: '.1em', padding: '3px 11px', borderRadius: 6,
+                  color: isWin ? '#101828' : '#fff',
+                  background: isWin ? '#c8f542' : isLoss ? 'rgba(240,68,56,.9)' : '#1a2437',
+                }}>{result}</span>
               </div>
-              <div className="flex items-end gap-4 mb-3">
-                <span className="font-display leading-none" style={{ fontSize: 92, color: 'var(--accent)' }}>
-                  {latestMatch.home_score}
+              <div className="flex items-end" style={{ gap: 16, marginTop: 16 }}>
+                <span style={{ fontFamily: BEBAS, fontSize: 76, lineHeight: 0.75, color: '#fff' }}>
+                  {latestMatch.home_score}<span style={{ color: '#344054' }}>–</span>{latestMatch.away_score}
                 </span>
-                <span className="font-display text-[64px] leading-none pb-2" style={{ color: '#344054' }}>–</span>
-                <span className="font-display leading-none" style={{ fontSize: 92, color: isLoss ? '#c05a4d' : 'var(--accent)' }}>
-                  {latestMatch.away_score}
-                </span>
-                <div className="pb-2 ml-2">
-                  <p className="text-[11px] mb-0.5" style={{ color: '#98a2b3' }}>{t.opponentShort}</p>
-                  <p className="font-black text-[19px]" style={{ color: '#fff' }}>vs {latestMatch.opponent}</p>
+                <div style={{ paddingBottom: 4 }}>
+                  <div style={{ fontSize: 11, color: '#667085' }}>{t.opponentShort}</div>
+                  <div style={{ fontSize: 17, fontWeight: 700, color: '#fff', lineHeight: 1.2 }}>vs {latestMatch.opponent}</div>
                 </div>
               </div>
               {quarters.length > 0 && (
-                <div className="flex gap-2 mb-3">
-                  {quarters.map((q: any) => {
-                    const hs = q.quarter_records?.filter((r: any) => r.is_home !== false).reduce((s: number, r: any) => s + (r.goals||0), 0) ?? 0
-                    const as_ = q.quarter_records?.filter((r: any) => r.is_home === false).reduce((s: number, r: any) => s + (r.goals||0), 0) ?? 0
+                <div className="flex" style={{ gap: 6, marginTop: 18 }}>
+                  {quarters.map((q) => {
+                    const recs = (q as any).quarter_records ?? []
+                    const hs = recs.filter((r: any) => r.is_home !== false).reduce((s: number, r: any) => s + (r.goals || 0), 0)
+                    const as_ = recs.filter((r: any) => r.is_home === false).reduce((s: number, r: any) => s + (r.goals || 0), 0)
                     return (
-                      <div key={q.id} className="flex-1 text-center py-1.5 rounded-lg font-display text-[12px]"
-                        style={{ background: '#1a2437', color: '#98a2b3', letterSpacing: '0.05em' }}>
-                        Q{q.quarter_number} {hs}·{as_}
-                      </div>
+                      <span key={q.id} style={{ flex: 1, textAlign: 'center', fontFamily: BEBAS, fontSize: 13, color: '#98a2b3', background: '#1a2437', padding: '6px 0', borderRadius: 7 }}>
+                        {q.quarter_number}Q {hs}:{as_}
+                      </span>
                     )
                   })}
-                </div>
-              )}
-              {mvp && (
-                <div className="flex items-center gap-1.5">
-                  <span style={{ color: 'var(--accent)' }}>★</span>
-                  <span className="text-[12px]" style={{ color: '#98a2b3' }}>MVP {mvp.playerName} · {mvp.averageRating.toFixed(1)}</span>
                 </div>
               )}
             </Link>
           )
         })()}
 
+        {/* Next match D-day card */}
+        {nextMatch && (
+          <Link href={`/match/${nextMatch.id}`}
+            className="flex items-center active:opacity-80 transition"
+            style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '14px 18px', gap: 12 }}>
+            <span style={{ background: '#101828', color: '#c8f542', fontFamily: BEBAS, fontSize: 14, letterSpacing: '.06em', padding: '4px 10px', borderRadius: 8 }}>
+              D-{nextMatchDday}
+            </span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="truncate" style={{ fontSize: 13.5, fontWeight: 600, color: '#101828' }}>{t.nextMatch} vs {nextMatch.opponent}</div>
+              <div style={{ fontSize: 11.5, color: '#98a2b3', marginTop: 2 }}>
+                {formatDate(nextMatch.match_date)}{nextMatch.location ? ` · ${nextMatch.location}` : ''}
+              </div>
+            </div>
+            <span style={{ color: '#98a2b3' }}>›</span>
+          </Link>
+        )}
+
         {/* New match button */}
         {canEditMatches && (
           <Link href="/match/new"
-            className="flex items-center justify-center w-full py-4 font-black text-[16px] rounded-[14px] active:scale-[0.98] transition"
-            style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
+            className="block text-center active:scale-[0.98] transition"
+            style={{ background: '#101828', color: '#c8f542', fontWeight: 700, fontSize: 15, padding: 15, borderRadius: 14 }}>
             {t.newMatchRecord}
           </Link>
         )}
 
         {/* Season stats card */}
-        <div className="rounded-[20px] p-5" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-          <div className="flex gap-4">
-            <div className="flex-[1.3] border-r pr-4" style={{ borderColor: 'var(--line)' }}>
-              <div className="flex items-baseline gap-1">
-                <span className="font-display text-[46px] leading-none" style={{ color: 'var(--text)' }}>{winRate ?? '–'}</span>
-                {winRate !== null && <span className="font-display text-[28px] leading-none" style={{ color: 'var(--text)' }}>%</span>}
-              </div>
-              <p className="text-[12px] mt-1" style={{ color: 'var(--muted2)' }}>{t.seasonWinRate.replace('{n}', String(total))}</p>
+        <div className="flex items-center" style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '16px 18px' }}>
+          <div style={{ flex: 1.2 }}>
+            <div style={{ fontSize: 11, color: '#98a2b3' }}>{t.seasonWinRate.replace('{n}', String(total))}</div>
+            <div className="flex items-baseline" style={{ gap: 8, marginTop: 6 }}>
+              <span style={{ fontFamily: BEBAS, fontSize: 44, lineHeight: 0.8, color: '#101828' }}>
+                {winRate ?? '–'}{winRate !== null && <span style={{ fontSize: 24 }}>%</span>}
+              </span>
+              <span style={{ fontSize: 11, color: '#667085' }}>{t.winRateLabel}</span>
             </div>
-            <div className="flex-1 flex flex-col gap-2 justify-center">
-              <div className="flex items-center justify-between">
-                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.win}</span>
-                <span className="font-display text-[19px] leading-none" style={{ color: 'var(--text)' }}>{wins}</span>
+          </div>
+          <div className="flex" style={{ gap: 14 }}>
+            {[
+              { k: t.win, v: wins, c: '#101828' },
+              { k: t.draw, v: draws, c: '#98a2b3' },
+              { k: t.loss, v: losses, c: '#f04438' },
+            ].map(s => (
+              <div key={s.k} style={{ textAlign: 'center' }}>
+                <div style={{ fontFamily: BEBAS, fontSize: 22, color: s.v === 0 ? '#d0d5dd' : s.c }}>{s.v}</div>
+                <div style={{ fontSize: 10, color: '#98a2b3' }}>{s.k}</div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.loss}</span>
-                <span className="font-display text-[19px] leading-none" style={{ color: '#c05a4d' }}>{losses}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[12px]" style={{ color: 'var(--muted1)' }}>{t.draw}</span>
-                <span className="font-display text-[19px] leading-none" style={{ color: 'var(--muted2)' }}>{draws}</span>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
 
         {/* Recent matches */}
-        <section>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-black text-[16px]" style={{ color: 'var(--text)' }}>{t.recentMatches}</h2>
+        <div className="flex items-center justify-between" style={{ marginTop: 2 }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#101828' }}>{t.recentMatches}</span>
+        </div>
+        {played.length === 0 ? (
+          <div style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 32, textAlign: 'center', fontSize: 14, color: '#98a2b3' }}>
+            {t.noMatches}
           </div>
-
-          {matches.length === 0 ? (
-            <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <p className="text-[14px]" style={{ color: 'var(--muted2)' }}>{t.noMatches}</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {matches.map((match: any) => {
-                const mvp = calculateMVP(match)
-                const isWin = match.home_score > match.away_score
-                const isLoss = match.home_score < match.away_score
-                return (
-                  <Link key={match.id} href={`/match/${match.id}`}
-                    className="flex items-center justify-between p-4 rounded-[14px] active:opacity-80 transition"
-                    style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-                    <div className="min-w-0">
-                      <p className="font-bold text-[14px] truncate" style={{ color: 'var(--text)' }}>vs {match.opponent}</p>
-                      {mvp && (
-                        <p className="text-[12px] mt-0.5" style={{ color: 'var(--muted2)' }}>
-                          <span style={{ color: 'var(--muted2)' }}>★</span> MVP {mvp.playerName} · {mvp.averageRating.toFixed(1)}
-                        </p>
-                      )}
+        ) : (
+          <div className="flex flex-col" style={{ gap: 9 }}>
+            {played.map((match) => {
+              const mvp = calculateMVP(match as any)
+              const isWin = match.home_score > match.away_score
+              return (
+                <Link key={match.id} href={`/match/${match.id}`}
+                  className="flex items-center active:opacity-80 transition"
+                  style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '15px 18px', gap: 13 }}>
+                  <span style={{ width: 4, height: 34, borderRadius: 2, background: isWin ? '#c8f542' : '#d0d5dd', flexShrink: 0 }} />
+                  <span style={{ fontFamily: BEBAS, fontSize: 24, color: isWin ? '#101828' : '#667085', minWidth: 44 }}>
+                    {match.home_score}:{match.away_score}
+                  </span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="truncate" style={{ fontSize: 13.5, fontWeight: 600, color: '#101828' }}>vs {match.opponent}</div>
+                    <div style={{ fontSize: 11.5, color: '#98a2b3', marginTop: 2 }}>
+                      {formatDate(match.match_date)}{mvp ? ` · MVP ${mvp.playerName}` : match.location ? ` · ${match.location}` : ''}
                     </div>
-                    <div className="text-right flex-shrink-0 ml-4">
-                      <p className="font-display text-[23px] leading-none" style={{ color: 'var(--text)' }}>
-                        {match.home_score} – {match.away_score}
-                      </p>
-                      <p className="font-display text-[12px] mt-0.5" style={{ color: isWin ? '#22a06b' : isLoss ? '#c05a4d' : 'var(--muted2)', letterSpacing: '0.08em' }}>
-                        {isWin ? 'WIN' : isLoss ? 'LOSS' : 'DRAW'} · {formatDate(match.match_date)}
-                      </p>
-                    </div>
-                  </Link>
-                )
-              })}
-            </div>
-          )}
-        </section>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
+        )}
 
       </main>
       </PullToRefresh>

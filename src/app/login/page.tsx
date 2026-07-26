@@ -92,9 +92,9 @@ export default function LoginPage() {
           className="w-16 h-16 flex items-center justify-center mb-4"
           style={{ background: 'var(--navy)', borderRadius: 20 }}
         >
-          <span className="font-display text-4xl leading-none" style={{ color: 'var(--accent)', letterSpacing: '0.05em' }}>S</span>
+          <span className="font-display text-4xl leading-none" style={{ color: 'var(--accent)', letterSpacing: '0.05em' }}>F</span>
         </div>
-        <span className="font-display text-[34px] leading-none mb-2" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>SOCCERNOTE</span>
+        <span className="font-display text-[34px] leading-none mb-2" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>FOOTBALL NOTE</span>
         <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.appTagline}</p>
       </div>
 

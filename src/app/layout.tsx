@@ -18,7 +18,7 @@ const bebasNeue = Bebas_Neue({
 })
 
 export const metadata: Metadata = {
-  title: 'SoccerNote - 축구팀 경기 기록',
+  title: 'Football Note - 축구팀 경기 기록',
   description: '축구팀 경기 결과와 선수 평가를 기록하고 MVP를 선정하세요',
 }
 
@@ -36,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko" className={`${notoSansKR.variable} ${bebasNeue.variable}`}>
-      <body className="min-h-screen font-sans" style={{ background: 'var(--bg)', color: '#fff' }}>
+      <body className="min-h-screen font-sans" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
         <Providers>{children}</Providers>
       </body>
     </html>

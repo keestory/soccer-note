@@ -119,11 +119,11 @@ export default function NewTrainingPage() {
                   <button key={key} type="button" onClick={() => setTrainingType(key)}
                     className="flex flex-col items-center gap-1.5 py-3 rounded-[12px] text-xs font-bold transition"
                     style={{
-                      background: active ? `${c}1f` : 'var(--card2)',
-                      border: `1px solid ${active ? c : 'transparent'}`,
-                      color: active ? c : 'var(--muted2)',
+                      background: active ? '#101828' : 'var(--card2)',
+                      border: '1px solid transparent',
+                      color: active ? '#fff' : 'var(--muted2)',
                     }}>
-                    <span className="w-2 h-2 rounded-full" style={{ background: c }} />
+                    <span className="w-2 h-2 rounded-full" style={{ background: active ? 'var(--accent)' : c }} />
                     {label}
                   </button>
                 )
@@ -137,7 +137,7 @@ export default function NewTrainingPage() {
               <Calendar className="w-3.5 h-3.5" /> {t.trainingDate}
             </label>
             <input type="date" value={trainingDate} onChange={e => setTrainingDate(e.target.value)} required
-              className="w-full font-bold text-base outline-none" style={{ background: 'transparent', color: '#fff', colorScheme: 'dark' }} />
+              className="w-full font-bold text-base outline-none" style={{ background: 'transparent', color: 'var(--text)' }} />
           </div>
 
           {/* Duration */}
@@ -157,11 +157,11 @@ export default function NewTrainingPage() {
             <div className="flex items-center gap-3 rounded-xl px-3 py-2.5" style={{ background: 'var(--card2)' }}>
               <button type="button" onClick={() => setDuration(Math.max(10, duration - 10))}
                 className="w-9 h-9 flex items-center justify-center rounded-xl font-bold text-lg"
-                style={{ background: 'var(--card2)', color: 'var(--muted1)' }}>−</button>
+                style={{ background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--text2)' }}>−</button>
               <span className="flex-1 text-center text-xl font-black text-[color:var(--text)]">{t.minutesN.replace('{n}', String(duration))}</span>
               <button type="button" onClick={() => setDuration(Math.min(480, duration + 10))}
                 className="w-9 h-9 flex items-center justify-center rounded-xl font-bold text-lg"
-                style={{ background: 'var(--card2)', color: 'var(--text)' }}>+</button>
+                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>+</button>
             </div>
           </div>
 
@@ -172,7 +172,7 @@ export default function NewTrainingPage() {
             </label>
             <input type="text" value={locationVal} onChange={e => setLocationVal(e.target.value)}
               className="w-full font-bold text-base outline-none placeholder-[#98a2b3]"
-              style={{ background: 'transparent', color: '#fff' }}
+              style={{ background: 'transparent', color: 'var(--text)' }}
               placeholder={t.locationPlaceholder} />
           </div>
 
@@ -183,7 +183,7 @@ export default function NewTrainingPage() {
             </label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3}
               className="w-full text-sm outline-none resize-none leading-relaxed placeholder-[#98a2b3]"
-              style={{ background: 'transparent', color: '#ccc' }}
+              style={{ background: 'transparent', color: 'var(--text)' }}
               placeholder={t.trainingNotesPlaceholder} />
           </div>
         </form>

@@ -13,6 +13,9 @@ import { useI18n } from '@/lib/i18n/context'
 import { MatchDetailSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
+import { getStore } from '@/lib/dataStore'
+
+const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
 
 export default function MatchDetailPage() {
   const { t } = useI18n()
@@ -415,6 +418,7 @@ export default function MatchDetailPage() {
   const mvp = calculateMVP(match)
   const playerStats = getPlayerStatsFromMatch(match)
   const currentQuarter = match.quarters?.find(q => q.quarter_number === activeQuarter)
+  const homeTeamName = getStore().teams.find(tm => tm.id === (match as any).team_id)?.name || t.homeTeam
 
   const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
 
@@ -496,55 +500,62 @@ export default function MatchDetailPage() {
         </div>
       )}
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-        {/* Score Section */}
-        <section className="p-6 text-center" style={{ background: 'var(--navy)', borderRadius: 16 }}>
-          {(() => {
-            const total = getTotalScore()
-            const isWin = total.home > total.away
-            const isDraw = total.home === total.away
-            return (
-              <>
-                <div className="font-display text-[56px] leading-none mb-2 flex items-center justify-center gap-4">
-                  <span style={{ color: 'var(--accent)' }}>{total.home}</span>
-                  <span className="text-white/20 text-[32px]">:</span>
-                  <span className="text-white/60">{total.away}</span>
+      <main className="max-w-md mx-auto flex flex-col" style={{ gap: 13, padding: '0 20px 16px' }}>
+        {/* Score Section (navy scoreboard) */}
+        {(() => {
+          const total = getTotalScore()
+          const isWin = total.home > total.away
+          const isLoss = total.home < total.away
+          const isDraw = total.home === total.away
+          const quarters = (match.quarters ?? []).slice().sort((a, b) => a.quarter_number - b.quarter_number)
+          return (
+            <>
+              <section style={{ background: '#101828', borderRadius: 22, padding: 22 }}>
+                <div style={{ textAlign: 'center', fontSize: 11, color: '#98a2b3' }}>
+                  {formatDate(match.match_date)}{match.location ? ` · ${match.location}` : ''}
                 </div>
-                {!isDraw && (
-                  <span className="inline-block px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-widest mb-2"
-                    style={{ background: isWin ? 'rgba(200,245,66,0.15)' : 'rgba(240,68,56,0.18)', color: isWin ? 'var(--accent)' : '#fda29b' }}>
-                    {isWin ? 'WIN' : 'LOSS'}
+                <div className="flex items-center justify-between" style={{ marginTop: 14 }}>
+                  <div style={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
+                    <div className="truncate" style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{homeTeamName}</div>
+                    <div style={{ fontSize: 10, color: '#667085', letterSpacing: '.12em', marginTop: 3 }}>HOME</div>
+                  </div>
+                  <div style={{ fontFamily: BEBAS, fontSize: 60, lineHeight: 0.78, color: '#c8f542', flexShrink: 0 }}>
+                    {total.home}<span style={{ color: '#344054', padding: '0 6px' }}>:</span>{total.away}
+                  </div>
+                  <div style={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
+                    <div className="truncate" style={{ fontSize: 14, fontWeight: 700, color: '#98a2b3' }}>{match.opponent}</div>
+                    <div style={{ fontSize: 10, color: '#667085', letterSpacing: '.12em', marginTop: 3 }}>AWAY</div>
+                  </div>
+                </div>
+                <div className="flex justify-center" style={{ marginTop: 16 }}>
+                  <span style={{ fontFamily: BEBAS, fontSize: 12, letterSpacing: '.1em', padding: '3px 10px', borderRadius: 6,
+                    color: isWin ? '#101828' : '#fff', background: isWin ? '#c8f542' : isLoss ? 'rgba(240,68,56,.9)' : '#1a2437' }}>
+                    {isWin ? 'WIN' : isLoss ? 'LOSS' : 'DRAW'}
                   </span>
-                )}
-              </>
-            )
-          })()}
-          <div className="flex justify-center gap-6 text-[12px] mb-3" style={{ color: 'var(--muted2)' }}>
-            <span>{t.homeTeam}</span>
-            <span>{match.opponent}</span>
-          </div>
-          <div className="flex justify-center gap-3 text-[11px]" style={{ color: 'var(--muted2)' }}>
-            {match.quarters?.sort((a, b) => a.quarter_number - b.quarter_number).map(q => (
-              <span key={q.id}>{q.quarter_number}Q {q.home_score || 0}:{q.away_score || 0}</span>
-            ))}
-          </div>
-        </section>
+                </div>
+              </section>
+              {quarters.length > 0 && (
+                <div className="flex" style={{ gap: 8 }}>
+                  {quarters.map((q, i) => (
+                    <button key={q.id} onClick={() => canEditQuarters && startEditQuarterScore(q.quarter_number)}
+                      style={{ flex: 1, textAlign: 'center', fontFamily: BEBAS, fontSize: 15, padding: '10px 0', borderRadius: 12,
+                        background: i === 0 ? '#101828' : '#fff', color: i === 0 ? '#c8f542' : '#475467',
+                        border: i === 0 ? 'none' : '1px solid #eaecf0' }}>
+                      {q.quarter_number}Q {q.home_score || 0}:{q.away_score || 0}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )
+        })()}
 
         {/* MVP Section */}
         {mvp && (
-          <section className="p-4 rounded-2xl flex items-center gap-4" style={{ background: 'var(--chip)', border: '1px solid var(--line)' }}>
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: 'var(--navy)' }}>
-              <Star className="w-6 h-6 fill-current" style={{ color: 'var(--text)' }} />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: 'var(--text)' }}>{t.coachMvp}</p>
-              <p className="text-[17px] font-black text-[color:var(--text)]">
-                {mvp.playerName}
-                <span className="font-normal text-[13px] ml-2" style={{ color: 'var(--muted2)' }}>
-                  {t.avgPoints.replace('{n}', mvp.averageRating.toFixed(1))}
-                </span>
-              </p>
-            </div>
+          <section className="flex items-center" style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '15px 18px', gap: 12 }}>
+            <span style={{ fontFamily: BEBAS, fontSize: 13, letterSpacing: '.14em', color: '#101828', background: '#c8f542', padding: '4px 10px', borderRadius: 8 }}>MVP</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: '#101828' }}>{mvp.playerName}</span>
+            <span style={{ fontSize: 12, color: '#98a2b3' }}>{t.avgPoints.replace('{n}', mvp.averageRating.toFixed(1))}</span>
           </section>
         )}
 

@@ -16,12 +16,12 @@ const REGIONS = ['전체', '서울', '경기', '인천', '부산', '대구', '�
 const FORMATS = ['전체', '5vs5', '6vs6', '7vs7', '8vs8', '11vs11']
 const LEVELS = ['전체', '입문', '초급', '중급', '고급']
 
-// Dark-theme level badge
-const LEVEL_STYLE: Record<string, { color: string }> = {
-  '입문': { color: '#94a3b8' },
-  '초급': { color: '#38bdf8' },
-  '중급': { color: '#2dd4bf' },
-  '고급': { color: '#f59e0b' },
+// Navy Board level badge (text / bg) — matches reference match-level chips
+const LEVEL_STYLE: Record<string, { color: string; bg: string }> = {
+  '입문': { color: '#475467', bg: '#f2f4f7' },
+  '초급': { color: '#026aa2', bg: '#e0f2fe' },
+  '중급': { color: '#0e9384', bg: '#e0f5f2' },
+  '고급': { color: '#b54708', bg: '#fef0c7' },
 }
 
 function formatMatchDate(dateStr: string) {
@@ -92,67 +92,59 @@ export default function CommunityPage() {
   return (
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
-      {/* Hero Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#0e0e0e', borderBottom: '1px solid var(--line)' }}>
-        <div className="max-w-4xl mx-auto px-5 py-4">
+      {/* Header */}
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #eaecf0' }}>
+        <div className="max-w-md mx-auto" style={{ padding: '8px 22px 14px' }}>
           <div className="flex items-start justify-between">
             <div>
-              <p className="font-display text-[13px] tracking-widest mb-1" style={{ color: 'var(--text)' }}>MATCH COMMUNITY</p>
-              <h1 className="font-black text-[23px] text-[color:var(--text)] leading-none">{t.navMatching}</h1>
-              <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{t.findTeamsTagline}</p>
+              <div style={{ fontSize: 21, fontWeight: 700, color: '#101828' }}>{t.findOpponentTitle}</div>
+              <div style={{ fontSize: 12, color: '#98a2b3', marginTop: 2 }}>{t.findTeamsTagline}</div>
             </div>
-            <div className="flex items-center gap-2 mt-1">
-              <button
-                onClick={() => setShowFilters(v => !v)}
-                className="px-3 py-2 rounded-[9px] text-sm font-medium transition"
-                style={{
-                  border: '1px solid var(--line)',
-                  background: showFilters || activeFilters > 0 ? 'var(--chip)' : 'transparent',
-                  color: showFilters || activeFilters > 0 ? 'var(--navy)' : 'var(--text2)',
-                }}>
+            <div className="flex" style={{ gap: 8 }}>
+              <button onClick={() => setShowFilters(v => !v)}
+                style={{ border: '1px solid #eaecf0', background: showFilters || activeFilters > 0 ? '#f2f4f7' : '#fff', fontSize: 12, fontWeight: 600, color: '#475467', padding: '8px 12px', borderRadius: 10 }}>
                 {t.filter}{activeFilters > 0 ? ` (${activeFilters})` : ''}
               </button>
               {isCoach && (
                 <Link href="/community/new"
-                  className="px-3.5 py-2 rounded-[9px] text-sm font-black flex items-center gap-1.5 transition active:scale-95"
-                  style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
-                  <Plus className="w-4 h-4" />
+                  className="active:scale-95 transition"
+                  style={{ fontSize: 12, fontWeight: 700, color: '#c8f542', background: '#101828', padding: '8px 12px', borderRadius: 10 }}>
                   {t.writePost}
                 </Link>
               )}
             </div>
           </div>
+
+          {/* Filter chips */}
+          {showFilters ? (
+            <div className="space-y-2.5" style={{ marginTop: 14 }}>
+              <FilterRow label={t.region} options={REGIONS} value={filterRegion} onChange={setFilterRegion} />
+              <FilterRow label={t.playType} options={FORMATS} value={filterFormat} onChange={setFilterFormat} />
+              <FilterRow label={t.levelLabel} options={LEVELS} value={filterLevel} onChange={setFilterLevel} />
+            </div>
+          ) : (
+            <div className="flex overflow-x-auto" style={{ gap: 7, marginTop: 14, scrollbarWidth: 'none' }}>
+              {['전체', '서울', '경기', '6vs6'].map(chip => {
+                const active = chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip
+                return (
+                  <button key={chip}
+                    onClick={() => {
+                      if (chip === '6vs6') setFilterFormat(filterFormat === '6vs6' ? '전체' : '6vs6')
+                      else setFilterRegion(filterRegion === chip ? '전체' : chip)
+                    }}
+                    className="whitespace-nowrap flex-shrink-0"
+                    style={{
+                      fontSize: 11, fontWeight: active ? 600 : 500, padding: '5px 12px', borderRadius: 20,
+                      background: active ? '#101828' : '#fff', color: active ? '#c8f542' : '#475467',
+                      border: active ? 'none' : '1px solid #eaecf0',
+                    }}>
+                    {chip === '전체' ? t.allLabel : chip}
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
-
-        {/* Filter chips */}
-        {showFilters && (
-          <div className="border-t px-5 py-3 space-y-2.5" style={{ borderColor: 'var(--line)', background: 'var(--card2)' }}>
-            <FilterRow label={t.region} options={REGIONS} value={filterRegion} onChange={setFilterRegion} />
-            <FilterRow label={t.playType} options={FORMATS} value={filterFormat} onChange={setFilterFormat} />
-            <FilterRow label={t.levelLabel} options={LEVELS} value={filterLevel} onChange={setFilterLevel} />
-          </div>
-        )}
-
-        {/* Quick region chips */}
-        {!showFilters && (
-          <div className="flex gap-2 overflow-x-auto px-5 pb-3" style={{ scrollbarWidth: 'none' }}>
-            {['전체', '서울', '경기', '6vs6'].map(chip => (
-              <button key={chip}
-                onClick={() => {
-                  if (chip === '6vs6') setFilterFormat(filterFormat === '6vs6' ? '전체' : '6vs6')
-                  else setFilterRegion(filterRegion === chip ? '전체' : chip)
-                }}
-                className="px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap flex-shrink-0 transition"
-                style={{
-                  background: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? 'var(--navy)' : 'var(--card2)',
-                  color: (chip === '6vs6' ? filterFormat === '6vs6' : filterRegion === chip) ? 'var(--accent)' : 'var(--text2)',
-                  border: '1px solid var(--line)',
-                }}>
-                {chip}
-              </button>
-            ))}
-          </div>
-        )}
       </header>
 
       <main className="max-w-4xl mx-auto px-5 pt-4">
@@ -188,7 +180,7 @@ export default function CommunityPage() {
               const isMyPost = myPostIds.has(post.id)
               const hasApplied = appliedPostIds.has(post.id)
               const dateInfo = formatMatchDate(post.match_date)
-              const levelColor = (LEVEL_STYLE[post.level] || LEVEL_STYLE['입문']).color
+              const levelStyle = LEVEL_STYLE[post.level] || LEVEL_STYLE['입문']
               const regionParts = post.region?.split(' ') || []
 
               return (
@@ -197,25 +189,24 @@ export default function CommunityPage() {
                   style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
 
                   {/* Region tile */}
-                  <div className="w-12 h-12 rounded-[12px] flex-col items-center justify-center flex flex-shrink-0"
-                    style={{ background: '#161616', border: '1px solid #262626' }}>
-                    <p className="text-[10px] leading-none" style={{ color: 'var(--muted1)' }}>{regionParts[0] || '–'}</p>
-                    <p className="text-[13px] font-black leading-tight text-[color:var(--text)]">{regionParts[1] || regionParts[0] || '–'}</p>
+                  <div className="flex flex-col items-center justify-center flex-shrink-0"
+                    style={{ width: 48, height: 48, borderRadius: 12, background: '#f2f4f7' }}>
+                    <span style={{ fontSize: 10, color: '#98a2b3' }}>{regionParts[0] || '–'}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#101828' }}>{regionParts[1] || regionParts[0] || '–'}</span>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] mb-0.5" style={{ color: 'var(--muted1)' }}>{post.team?.name}</p>
-                    <p className="font-bold text-[13px] text-[color:var(--text)] leading-snug line-clamp-2 mb-2">{post.title}</p>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3' }}>{post.team?.name}</div>
+                    <div className="line-clamp-2" style={{ fontSize: 13, fontWeight: 600, color: '#101828', lineHeight: 1.35, margin: '2px 0 8px' }}>{post.title}</div>
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-[6px]"
-                        style={{ background: dateInfo.urgent ? 'rgba(192,90,77,.14)' : 'var(--card2)', color: dateInfo.urgent ? '#e07a6d' : 'var(--text2)', border: dateInfo.urgent ? '1px solid rgba(192,90,77,.2)' : '1px solid transparent' }}>
+                      <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 7,
+                        background: dateInfo.urgent ? '#fdecec' : '#f2f4f7', color: dateInfo.urgent ? '#f04438' : '#475467' }}>
                         {dateInfo.label}{post.match_time ? ` ${post.match_time}` : ''}
                       </span>
                       {(isMyPost || hasApplied) && (
-                        <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px]"
-                          style={{ background: 'var(--chip)', color: 'var(--text)' }}>
-                          {isMyPost ? '내 글' : '신청함'}
+                        <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 7, background: '#f2f4f7', color: '#101828' }}>
+                          {isMyPost ? t.myPostBadge : t.appliedBadge}
                         </span>
                       )}
                     </div>
@@ -223,12 +214,10 @@ export default function CommunityPage() {
 
                   {/* Right badges */}
                   <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-[7px]"
-                      style={{ color: levelColor, background: `${levelColor}1f` }}>
+                    <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 9, color: levelStyle.color, background: levelStyle.bg }}>
                       {post.level}
                     </span>
-                    <span className="text-[11px] font-medium px-2 py-0.5 rounded-[7px]"
-                      style={{ background: 'var(--card2)', color: 'var(--text2)', border: '1px solid var(--line)' }}>
+                    <span style={{ fontSize: 11, color: '#98a2b3', padding: '2px 8px', borderRadius: 7, background: '#f2f4f7' }}>
                       {post.format}
                     </span>
                   </div>

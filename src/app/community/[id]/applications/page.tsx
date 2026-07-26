@@ -111,7 +111,7 @@ export default function ApplicationsPage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.receivedApplications}</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.receivedApplications}</p>
             {post && <p className="text-sm font-black text-[color:var(--text)] truncate">{post.title}</p>}
           </div>
           {pending.length > 0 && (
@@ -160,7 +160,7 @@ export default function ApplicationsPage() {
             {decided.length > 0 && (
               <section>
                 <div className="flex items-center gap-2 mb-2 px-1">
-                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'rgba(255,255,255,0.3)' }}>{t.processedLabel}</span>
+                  <span className="text-xs font-black uppercase tracking-wider" style={{ color: 'var(--muted2)' }}>{t.processedLabel}</span>
                 </div>
                 <div className="space-y-3">
                   {decided.map(app => (
@@ -203,7 +203,7 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
   const team = (app as any).applying_team
 
   const statusConfig = {
-    accepted: { label: t.acceptedLabel, bg: '#052e16', color: '#4ade80' },
+    accepted: { label: t.acceptedLabel, bg: '#ecfdf3', color: '#027a48' },
     rejected: { label: t.rejectedLabel, bg: 'var(--card2)', color: 'var(--muted2)' },
     pending: { label: t.waitingLabel, bg: 'var(--card2)', color: '#fbbf24' },
   }[app.status]
@@ -239,15 +239,15 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
               </p>
             )}
           </div>
-          <span className="text-[11px] flex-shrink-0" style={{ color: 'rgba(255,255,255,0.3)' }}>
+          <span className="text-[11px] flex-shrink-0" style={{ color: 'var(--muted2)' }}>
             {format(parseISO(app.created_at), 'M/d HH:mm', { locale: ko })}
           </span>
         </div>
 
         {app.message && (
           <div className="rounded-xl p-3 mb-3 flex gap-2" style={{ background: 'var(--card2)' }}>
-            <MessageCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }} />
-            <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.7)' }}>{app.message}</p>
+            <MessageCircle className="w-4 h-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--muted2)' }} />
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--text2)' }}>{app.message}</p>
           </div>
         )}
 
@@ -268,7 +268,7 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
         )}
 
         {app.status === 'accepted' && (
-          <div className="flex items-center gap-2 rounded-xl p-2.5" style={{ background: '#052e16' }}>
+          <div className="flex items-center gap-2 rounded-xl p-2.5" style={{ background: '#ecfdf3' }}>
             <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: '#4ade80' }} />
             <p className="text-xs font-bold" style={{ color: '#4ade80' }}>{t.matchAutoCreated}</p>
           </div>
