@@ -518,6 +518,8 @@ export const translations: Translations = {
   lastMatch: 'Ultima partita',
   opponentShort: 'Avversario',
   seasonWinRate: 'Percentuale vittorie · {n} partite',
+  winRateLabel: 'Vittorie',
+  nextMatch: 'Prossima partita',
   membersFromTeam: 'Dai membri del team',
   addManually: 'Aggiungi manualmente',
   selectMemberPrompt: 'Scegli un membro da registrare · {n}',

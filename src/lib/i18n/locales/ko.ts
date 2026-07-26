@@ -518,6 +518,8 @@ export const translations: Translations = {
   lastMatch: '지난 경기',
   opponentShort: '상대',
   seasonWinRate: '시즌 승률 · {n}경기',
+  winRateLabel: '승률',
+  nextMatch: '다음 경기',
   membersFromTeam: '팀원에서 추가',
   addManually: '직접 추가',
   selectMemberPrompt: '선수로 등록할 팀원 선택 · {n}명',

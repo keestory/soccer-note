@@ -518,6 +518,8 @@ export const translations: Translations = {
   lastMatch: 'Last Match',
   opponentShort: 'Opponent',
   seasonWinRate: 'Season win rate · {n} games',
+  winRateLabel: 'Win rate',
+  nextMatch: 'Next match',
   membersFromTeam: 'From team members',
   addManually: 'Add manually',
   selectMemberPrompt: 'Select a member to register · {n}',

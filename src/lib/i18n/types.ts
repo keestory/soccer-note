@@ -537,6 +537,8 @@ export interface Translations {
   lastMatch: string
   opponentShort: string
   seasonWinRate: string
+  winRateLabel: string
+  nextMatch: string
   membersFromTeam: string
   addManually: string
   selectMemberPrompt: string

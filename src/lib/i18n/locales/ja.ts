@@ -518,6 +518,8 @@ export const translations: Translations = {
   lastMatch: '前回の試合',
   opponentShort: '相手',
   seasonWinRate: 'シーズン勝率 · {n}試合',
+  winRateLabel: '勝率',
+  nextMatch: '次の試合',
   membersFromTeam: 'チームメンバーから追加',
   addManually: '手動で追加',
   selectMemberPrompt: '選手登録するメンバーを選択 · {n}名',
