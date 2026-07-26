@@ -6,13 +6,15 @@ import Link from 'next/link'
 import { createClient, getSessionUser, authHeader } from '@/lib/supabase'
 import { resolveTeam, clearResolvedTeam } from '@/lib/team-resolver'
 import { getStore } from '@/lib/dataStore'
-import { Copy, Check, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle, Globe, Settings, Users } from 'lucide-react'
+import { Copy, Check, UserCog, Trash2, Crown, Loader2, Clock, CheckCircle, XCircle, LogOut, AlertTriangle, Settings, Users } from 'lucide-react'
 import type { Team, TeamMember, Profile } from '@/types/database'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 import { MembersPageSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
+
+const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
 
 interface MemberWithProfile extends TeamMember {
   profile: Profile | undefined
@@ -189,51 +191,43 @@ function TeamMembersContent() {
   return (
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
-        <div className="max-w-4xl mx-auto px-5 py-3.5 flex items-center justify-between">
-          <div>
-            <h1 className="font-black text-[20px] text-[color:var(--text)]">{t.teamManagement}</h1>
-            {team?.name && <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{team.name}</p>}
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #eaecf0' }}>
+        <div className="max-w-md mx-auto" style={{ padding: '10px 22px 14px' }}>
+          <div style={{ fontSize: 21, fontWeight: 700, color: '#101828' }}>
+            {t.teamManagement}{team?.name && <span style={{ fontSize: 14, color: '#98a2b3', fontWeight: 500 }}> {team.name}</span>}
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-5 py-5 space-y-4">
+      <main className="max-w-md mx-auto flex flex-col" style={{ gap: 13, padding: '0 20px 16px' }}>
+
+        {/* Invite code (navy card) */}
+        {isCoach && team?.invite_code && (
+          <div style={{ background: '#101828', borderRadius: 18, padding: 18 }}>
+            <div style={{ fontSize: 11, color: '#667085', letterSpacing: '.08em' }}>{t.inviteCode}</div>
+            <div className="flex justify-between items-center" style={{ marginTop: 6 }}>
+              <span style={{ fontFamily: BEBAS, fontSize: 30, letterSpacing: '.22em', color: '#c8f542' }}>{team.invite_code}</span>
+              <button onClick={copyInviteLink}
+                className="flex items-center gap-1 active:scale-95 transition"
+                style={{ fontSize: 12, fontWeight: 700, color: '#101828', background: '#c8f542', padding: '6px 14px', borderRadius: 8 }}>
+                {copied ? <Check className="w-3.5 h-3.5" /> : null}
+                {copied ? t.copied : t.copy}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Community profile link */}
         {isCoach && (
           <Link href="/team/public-profile"
-            className="flex items-center justify-between p-4 rounded-[14px] active:opacity-80 transition"
-            style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-[11px] flex items-center justify-center" style={{ background: 'var(--chip)' }}>
-                <Globe className="w-5 h-5" style={{ color: 'var(--text)' }} />
-              </div>
-              <div>
-                <p className="font-bold text-[color:var(--text)] text-[14px]">{t.publicProfileTitle}</p>
-                <p className="text-[12px]" style={{ color: 'var(--muted2)' }}>{t.publicProfileDesc}</p>
-              </div>
+            className="flex items-center justify-between active:opacity-80 transition"
+            style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 14, padding: '14px 16px' }}>
+            <div>
+              <div style={{ fontSize: 13, fontWeight: 600, color: '#101828' }}>{t.publicProfileTitle}</div>
+              <div style={{ fontSize: 11, color: '#98a2b3', marginTop: 2 }}>{t.publicProfileDesc}</div>
             </div>
-            <span style={{ color: 'var(--muted2)' }}>›</span>
+            <span style={{ color: '#98a2b3' }}>›</span>
           </Link>
-        )}
-
-        {/* Invite code */}
-        {isCoach && team?.invite_code && (
-          <div className="rounded-[16px] p-5" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-            <p className="text-[12px] font-medium mb-2" style={{ color: 'var(--muted1)' }}>{t.inviteCode}</p>
-            <div className="flex items-center gap-3">
-              <span className="font-display text-[30px] flex-1" style={{ color: 'var(--text)', letterSpacing: '0.22em' }}>
-                {team.invite_code}
-              </span>
-              <button onClick={copyInviteLink}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-[11px] font-black text-sm transition active:scale-95"
-                style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                {copied ? t.copied : t.share}
-              </button>
-            </div>
-          </div>
         )}
 
         {/* Pending requests */}
@@ -269,40 +263,47 @@ function TeamMembersContent() {
 
         {/* Members list */}
         <section>
-          <h2 className="font-black text-[14px] mb-3" style={{ color: 'var(--muted1)' }}>{t.memberCountN.replace('{n}', String(members.length))}</h2>
-          <div className="rounded-[14px] overflow-hidden" style={{ border: '1px solid var(--line)', background: 'var(--card)' }}>
+          <h2 style={{ fontSize: 14, fontWeight: 700, color: '#101828', marginBottom: 12 }}>
+            {t.memberLabel} <span style={{ color: '#98a2b3' }}>{members.length}</span>
+          </h2>
+          <div className="flex flex-col" style={{ gap: 9 }}>
             {members.length === 0 ? (
-              <div className="p-8 text-center text-[14px]" style={{ color: 'var(--muted2)' }}>{t.noApprovedMembers}</div>
+              <div style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 14, padding: 32, textAlign: 'center', fontSize: 14, color: '#98a2b3' }}>{t.noApprovedMembers}</div>
             ) : (
-              members.map((member, i) => (
-                <div key={member.id} style={{ borderTop: i > 0 ? '1px solid var(--line)' : 'none' }}>
-                  <div className="p-4 flex items-center gap-3">
+              members.map((member) => {
+                const isOwnerRow = member.user_id === team?.user_id
+                return (
+                <div key={member.id} style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 14 }}>
+                  <div className="flex items-center" style={{ padding: '12px 14px', gap: 12 }}>
                     {/* Avatar */}
-                    <div className="w-10 h-10 rounded-full flex items-center justify-center font-display text-[16px] flex-shrink-0"
-                      style={{ background: member.role === 'coach' ? 'var(--navy)' : 'var(--card2)', color: member.role === 'coach' ? 'var(--accent)' : 'var(--muted1)' }}>
-                      {member.role === 'coach' ? '♛' : (member.profile?.display_name || '?').charAt(0).toUpperCase()}
+                    <div className="flex items-center justify-center flex-shrink-0"
+                      style={{ width: 38, height: 38, borderRadius: '50%', fontSize: 13, fontWeight: 700,
+                        background: isOwnerRow ? '#101828' : '#f2f4f7', color: isOwnerRow ? '#c8f542' : '#475467' }}>
+                      {(member.profile?.display_name || '?').charAt(0).toUpperCase()}
                     </div>
                     {/* Name */}
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-[color:var(--text)] text-[14px] truncate">{member.profile?.display_name || member.profile?.email || t.noName}</p>
-                      <p className="text-[12px] truncate" style={{ color: member.role === 'coach' ? 'var(--navy)' : 'var(--muted2)' }}>
+                      <div className="truncate" style={{ fontSize: 14, fontWeight: 600, color: '#101828' }}>{member.profile?.display_name || member.profile?.email || t.noName}</div>
+                      <div className="truncate" style={{ fontSize: 11, fontWeight: member.role === 'coach' ? 600 : 400, color: member.role === 'coach' ? '#475467' : '#98a2b3' }}>
                         {member.role === 'coach' ? t.coach : t.member}
                         {isCoach && member.profile?.email ? ` · ${member.profile.email}` : ''}
-                      </p>
+                      </div>
                     </div>
-                    {/* Coach actions — available for every member except the team owner */}
-                    {isCoach && member.user_id !== team?.user_id && (
+                    {/* Badge / actions */}
+                    {isOwnerRow ? (
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#101828', background: '#c8f542', padding: '3px 9px', borderRadius: 6 }}>{t.adminBadge}</span>
+                    ) : isCoach ? (
                       <div className="flex gap-1 flex-shrink-0">
                         <button onClick={() => setEditingMember(editingMember === member.id ? null : member.id)}
-                          className="p-2 rounded-lg" style={{ color: 'var(--muted2)' }}>
+                          className="p-2 rounded-lg" style={{ color: '#98a2b3' }}>
                           <Settings className="w-4 h-4" />
                         </button>
                         <button onClick={() => setRemoveTarget(member)}
-                          className="p-2 rounded-lg" style={{ color: 'var(--muted2)' }}>
+                          className="p-2 rounded-lg" style={{ color: '#98a2b3' }}>
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                    )}
+                    ) : null}
                   </div>
                   {/* Permission editor */}
                   {editingMember === member.id && (
@@ -339,38 +340,38 @@ function TeamMembersContent() {
                     </div>
                   )}
                 </div>
-              ))
+                )
+              })
             )}
           </div>
         </section>
 
         {/* Danger zone */}
-        <section className="space-y-3">
+        <section>
           {!isOwner && (
-            <div className="rounded-[14px] p-4 flex items-center justify-between"
-              style={{ border: '1px solid rgba(192,90,77,.35)', background: 'rgba(192,90,77,.08)' }}>
+            <div className="flex items-center justify-between"
+              style={{ border: '1px solid #fecdca', background: '#fef3f2', borderRadius: 14, padding: '13px 15px' }}>
               <div>
-                <p className="font-black text-[14px]" style={{ color: '#e07a6d' }}>{t.leaveTeam}</p>
-                <p className="text-[12px] mt-0.5" style={{ color: '#a06058' }}>{t.leaveTeamDescription}</p>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#b42318' }}>{t.leaveTeam}</div>
+                <div style={{ fontSize: 11, color: '#d92d20', marginTop: 2 }}>{t.leaveTeamDescription}</div>
               </div>
               <button onClick={() => setShowLeaveConfirm(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-[10px] font-bold text-sm"
-                style={{ background: '#c05a4d', color: '#fff' }}>
-                <LogOut className="w-4 h-4" /> {t.leaveTeam}
+                className="flex items-center gap-1.5"
+                style={{ fontSize: 12, fontWeight: 600, color: '#fff', background: '#d92d20', padding: '7px 13px', borderRadius: 9 }}>
+                <LogOut className="w-3.5 h-3.5" /> {t.leaveTeam}
               </button>
             </div>
           )}
           {isOwner && (
-            <div className="rounded-[14px] p-4 flex items-center justify-between"
-              style={{ border: '1px solid rgba(192,90,77,.35)', background: 'rgba(192,90,77,.08)' }}>
+            <div className="flex items-center justify-between"
+              style={{ border: '1px solid #fecdca', background: '#fef3f2', borderRadius: 14, padding: '13px 15px' }}>
               <div>
-                <p className="font-black text-[14px]" style={{ color: '#e07a6d' }}>{t.disbandTeam}</p>
-                <p className="text-[12px] mt-0.5" style={{ color: '#a06058' }}>{t.disbandDescription}</p>
+                <div style={{ fontSize: 13, fontWeight: 700, color: '#b42318' }}>{t.disbandTeam}</div>
+                <div style={{ fontSize: 11, color: '#d92d20', marginTop: 2 }}>{t.disbandDescription}</div>
               </div>
               <button onClick={() => { setShowDisbandModal(true); setDisbandStep('initial') }}
-                className="px-3.5 py-2 rounded-[10px] font-bold text-sm"
-                style={{ background: '#c05a4d', color: '#fff' }}>
-                {t.disbandTeam}
+                style={{ fontSize: 12, fontWeight: 600, color: '#fff', background: '#d92d20', padding: '7px 13px', borderRadius: 9 }}>
+                {t.disbandShort}
               </button>
             </div>
           )}

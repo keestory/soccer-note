@@ -378,6 +378,9 @@ export const translations: Translations = {
 
   // Team management
   teamManagement: 'Gestione squadra',
+  memberLabel: 'Membri',
+  adminBadge: 'Admin',
+  disbandShort: 'Sciogli',
   matchesLabel: 'Partite',
   playersLabel: 'Giocatori',
 

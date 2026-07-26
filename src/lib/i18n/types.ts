@@ -395,6 +395,9 @@ export interface Translations {
 
   // Team management
   teamManagement: string
+  memberLabel: string
+  adminBadge: string
+  disbandShort: string
   matchesLabel: string
   playersLabel: string
 
