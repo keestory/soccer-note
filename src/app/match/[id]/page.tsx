@@ -421,7 +421,7 @@ export default function MatchDetailPage() {
   return (
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
             <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">

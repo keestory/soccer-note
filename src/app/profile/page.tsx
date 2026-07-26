@@ -64,7 +64,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="light min-h-screen safe-top pb-20" style={{ background: 'var(--bg)' }}>
-        <header className="safe-top" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+        <header className="safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
           <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
             <Skeleton className="w-8 h-8 rounded-xl" />
             <Skeleton className="h-5 w-20" />
@@ -86,7 +86,7 @@ export default function ProfilePage() {
 
   return (
     <div className="light flex flex-col safe-top" style={{ background: 'var(--bg)', minHeight: '100dvh' }}>
-      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: '#050505', borderBottom: '1px solid var(--line)' }}>
+      <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
             <ArrowLeft className="w-5 h-5" />
