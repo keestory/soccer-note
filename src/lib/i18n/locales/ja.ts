@@ -405,6 +405,10 @@ export const translations: Translations = {
 
   // Training Session
   trainingLabel: 'トレーニング',
+  thisWeek: 'THIS WEEK',
+  sessionsLabel: 'セッション',
+  cumulativeTrainingTime: '累計トレーニング時間',
+  recentTraining: '最近のトレーニング',
   newTraining: '新しいトレーニング',
   newTrainingRecord: 'トレーニングを記録',
   trainingDate: 'トレーニング日',
@@ -540,6 +544,7 @@ export const translations: Translations = {
   firstTraining: '最初のトレーニングを記録',
   attendCountN: '参加 {n}名',
   minutesN: '{n}分',
+  minUnit: '分',
   selectLanguage: '言語を選択',
   logoutConfirmTitle: 'ログアウトしますか？',
   logoutConfirmDesc: '再ログインすればデータはそのまま残ります。',

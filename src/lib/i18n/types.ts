@@ -422,6 +422,10 @@ export interface Translations {
 
   // Training Session
   trainingLabel: string
+  thisWeek: string
+  sessionsLabel: string
+  cumulativeTrainingTime: string
+  recentTraining: string
   newTraining: string
   newTrainingRecord: string
   trainingDate: string
@@ -559,6 +563,7 @@ export interface Translations {
   firstTraining: string
   attendCountN: string
   minutesN: string
+  minUnit: string
   selectLanguage: string
   logoutConfirmTitle: string
   logoutConfirmDesc: string

@@ -405,6 +405,10 @@ export const translations: Translations = {
 
   // Training Session
   trainingLabel: '훈련',
+  thisWeek: 'THIS WEEK',
+  sessionsLabel: '세션',
+  cumulativeTrainingTime: '누적 훈련 시간',
+  recentTraining: '최근 훈련',
   newTraining: '새 훈련 기록',
   newTrainingRecord: '훈련 기록하기',
   trainingDate: '훈련 날짜',
@@ -540,6 +544,7 @@ export const translations: Translations = {
   firstTraining: '첫 훈련 기록하기',
   attendCountN: '참석 {n}명',
   minutesN: '{n}분',
+  minUnit: '분',
   selectLanguage: '언어 선택',
   logoutConfirmTitle: '로그아웃할까요?',
   logoutConfirmDesc: '다시 로그인하면 데이터는 그대로 유지됩니다.',

@@ -405,6 +405,10 @@ export const translations: Translations = {
 
   // Training Session
   trainingLabel: 'Training',
+  thisWeek: 'DIESE WOCHE',
+  sessionsLabel: 'Einheiten',
+  cumulativeTrainingTime: 'Gesamte Trainingszeit',
+  recentTraining: 'Letztes Training',
   newTraining: 'Neues Training',
   newTrainingRecord: 'Training aufzeichnen',
   trainingDate: 'Trainingsdatum',
@@ -540,6 +544,7 @@ export const translations: Translations = {
   firstTraining: 'Erstes Training aufzeichnen',
   attendCountN: '{n} anwesend',
   minutesN: '{n} Min.',
+  minUnit: 'Min',
   selectLanguage: 'Sprache wählen',
   logoutConfirmTitle: 'Abmelden?',
   logoutConfirmDesc: 'Deine Daten bleiben beim erneuten Anmelden erhalten.',
