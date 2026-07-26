@@ -107,27 +107,27 @@ function RatingSparkline({ records }: { records: MatchRecord[] }) {
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.ratingTrend}</span>
         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-          trend > 0 ? 'bg-lime-900/40 text-lime-300' : trend < 0 ? 'bg-red-900/40 text-red-300' : 'text-[color:var(--text)]/30'
-        }`} style={{ background: trend === 0 ? '#1a1a1a' : undefined }}>
+          trend > 0 ? 'bg-lime-100 text-lime-700' : trend < 0 ? 'bg-red-100 text-red-600' : 'text-[color:var(--muted2)]'
+        }`} style={{ background: trend === 0 ? 'var(--chip)' : undefined }}>
           {trend > 0 ? `▲ +${trend.toFixed(1)}` : trend < 0 ? `▼ ${trend.toFixed(1)}` : `→ ${t.maintain}`}
         </span>
       </div>
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 80 }}>
         <defs>
           <linearGradient id="ratingGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#ccff00" stopOpacity="0.25" />
-            <stop offset="100%" stopColor="#ccff00" stopOpacity="0.0" />
+            <stop offset="0%" stopColor="#101828" stopOpacity="0.25" />
+            <stop offset="100%" stopColor="#101828" stopOpacity="0.0" />
           </linearGradient>
         </defs>
         <path d={areaD} fill="url(#ratingGrad)" />
-        <path d={pathD} fill="none" stroke="#ccff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d={pathD} fill="none" stroke="#101828" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         {pts.map((p, i) => (
           <circle key={i} cx={p.x} cy={p.y} r={i === pts.length - 1 ? 5 : 3}
-            fill={i === pts.length - 1 ? '#ccff00' : '#1a2a00'}
-            stroke="#ccff00" strokeWidth="1.5"
+            fill={i === pts.length - 1 ? '#101828' : '#ffffff'}
+            stroke="#101828" strokeWidth="1.5"
           />
         ))}
-        <text x={last.x} y={last.y - 8} textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ccff00">
+        <text x={last.x} y={last.y - 8} textAnchor="middle" fontSize="10" fontWeight="bold" fill="#101828">
           {last.v.toFixed(1)}
         </text>
       </svg>
@@ -231,7 +231,7 @@ export default function PlayerStatsPage() {
   const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/team/players" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
@@ -421,7 +421,7 @@ export default function PlayerStatsPage() {
 
                   {(record.highlight || record.praise || record.improvement) && (
                     <div className="mt-3 pt-3 space-y-1" style={{ borderTop: '1px solid var(--line)' }}>
-                      {record.highlight && <p className="text-xs px-2 py-1 rounded-lg text-amber-300 bg-amber-900/30">⭐ {record.highlight}</p>}
+                      {record.highlight && <p className="text-xs px-2 py-1 rounded-lg text-amber-700 bg-amber-100">⭐ {record.highlight}</p>}
                       {record.praise && <p className="text-xs px-2 py-1 rounded-lg" style={{ background: 'var(--chip)', color: 'var(--chipText)' }}>👍 {record.praise}</p>}
                       {record.improvement && <p className="text-xs px-2 py-1 rounded-lg text-[color:var(--text)]/60" style={{ background: 'var(--card2)' }}>💡 {record.improvement}</p>}
                     </div>
