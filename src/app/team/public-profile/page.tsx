@@ -77,7 +77,7 @@ export default function PublicProfilePage() {
   }
 
   return (
-    <div className="min-h-screen pb-12" style={{ background: 'var(--bg)' }}>
+    <div className="light min-h-screen pb-12" style={{ background: 'var(--bg)' }}>
 
       {/* Hero header */}
       <div className="relative overflow-hidden safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
@@ -85,7 +85,7 @@ export default function PublicProfilePage() {
         <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 110" preserveAspectRatio="xMidYMid slice">
           <line x1="340" y1="-10" x2="200" y2="120" stroke="rgba(204,255,0,0.08)" strokeWidth="1.5" />
           <line x1="375" y1="-10" x2="235" y2="120" stroke="rgba(204,255,0,0.04)" strokeWidth="1" />
-          <circle cx="50" cy="80" r="45" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
+          <circle cx="50" cy="80" r="45" fill="none" stroke="var(--line)" strokeWidth="1" />
         </svg>
 
         <div className="relative px-4 py-4 flex items-center gap-3">
@@ -93,7 +93,7 @@ export default function PublicProfilePage() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'rgba(255,255,255,0.3)' }}>매칭 커뮤니티</p>
+            <p className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>매칭 커뮤니티</p>
             <h1 className="text-base font-black text-[color:var(--text)]">팀 프로필 설정</h1>
           </div>
           <button onClick={handleSave} disabled={saving}
@@ -105,8 +105,8 @@ export default function PublicProfilePage() {
 
         {/* Preview card in hero */}
         <div className="relative px-4 pb-6">
-          <div className="rounded-2xl p-3.5 flex items-center gap-3" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style={{ background: 'rgba(255,255,255,0.1)' }}>
+          <div className="rounded-2xl p-3.5 flex items-center gap-3" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" style={{ background: 'var(--line)' }}>
               {form.emoji}
             </div>
             <div className="flex-1 min-w-0">
@@ -115,7 +115,7 @@ export default function PublicProfilePage() {
                 {[form.level, form.region, form.preferred_format].filter(Boolean).join(' · ') || '프로필을 완성해주세요'}
               </p>
             </div>
-            <div className="w-2 h-2 rounded-full" style={{ background: form.is_public ? 'var(--navy)' : 'rgba(255,255,255,0.2)' }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: form.is_public ? 'var(--navy)' : 'var(--text-faint)' }} />
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@ export default function PublicProfilePage() {
                 style={{ background: form.is_public ? 'var(--chip)' : 'var(--card2)' }}>
                 {form.is_public
                   ? <Globe className="w-5 h-5" style={{ color: 'var(--text)' }} />
-                  : <EyeOff className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.3)' }} />}
+                  : <EyeOff className="w-5 h-5" style={{ color: 'var(--muted2)' }} />}
               </div>
               <div>
                 <p className="font-black text-[color:var(--text)]">
@@ -153,7 +153,7 @@ export default function PublicProfilePage() {
 
         {/* Emoji */}
         <div style={cardStyle} className="p-4">
-          <label className="block text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>팀 이모지</label>
+          <label className="block text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>팀 이모지</label>
           <div className="flex flex-wrap gap-2">
             {EMOJIS.map(e => (
               <button key={e} onClick={() => set('emoji', e)}
@@ -169,7 +169,7 @@ export default function PublicProfilePage() {
 
         {/* Bio */}
         <div style={cardStyle} className="p-4">
-          <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'rgba(255,255,255,0.3)' }}>팀 소개</label>
+          <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'var(--muted2)' }}>팀 소개</label>
           <textarea
             value={form.bio}
             onChange={e => set('bio', e.target.value)}
@@ -177,16 +177,16 @@ export default function PublicProfilePage() {
             rows={3}
             maxLength={200}
             className="w-full text-sm outline-none resize-none leading-relaxed"
-            style={{ background: 'transparent', color: 'rgba(255,255,255,0.8)', caretColor: 'var(--text)' }}
+            style={{ background: 'transparent', color: 'var(--text)', caretColor: 'var(--text)' }}
           />
           <div className="flex justify-end">
-            <span className="text-[11px]" style={{ color: 'rgba(255,255,255,0.3)' }}>{form.bio.length}/200</span>
+            <span className="text-[11px]" style={{ color: 'var(--muted2)' }}>{form.bio.length}/200</span>
           </div>
         </div>
 
         {/* Region */}
         <div style={cardStyle} className="p-4">
-          <label className="block text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.3)' }}>주 활동 지역</label>
+          <label className="block text-[11px] font-black uppercase tracking-widest mb-3" style={{ color: 'var(--muted2)' }}>주 활동 지역</label>
           <div className="flex flex-wrap gap-2">
             {REGIONS.map(r => (
               <button key={r} onClick={() => set('region', form.region === r ? '' : r)}
@@ -203,7 +203,7 @@ export default function PublicProfilePage() {
         {/* Format & Level */}
         <div style={{ ...cardStyle, overflow: 'hidden', padding: 0 }}>
           <div className="px-4 pt-4 pb-3" style={{ borderBottom: '1px solid var(--line)' }}>
-            <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'rgba(255,255,255,0.3)' }}>선호 경기 방식</label>
+            <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'var(--muted2)' }}>선호 경기 방식</label>
             <div className="flex gap-2">
               {FORMATS.map(f => (
                 <button key={f} onClick={() => set('preferred_format', form.preferred_format === f ? '' : f)}
@@ -217,7 +217,7 @@ export default function PublicProfilePage() {
             </div>
           </div>
           <div className="px-4 py-3">
-            <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'rgba(255,255,255,0.3)' }}>팀 수준</label>
+            <label className="block text-[11px] font-black uppercase tracking-widest mb-2.5" style={{ color: 'var(--muted2)' }}>팀 수준</label>
             <div className="flex gap-2">
               {LEVELS.map(l => (
                 <button key={l} onClick={() => set('level', form.level === l ? '' : l)}
