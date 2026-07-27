@@ -600,6 +600,7 @@ export const translations: Translations = {
   attackPointsLabel: '공격 포인트',
   defensePointsLabel: '수비 포인트',
   matchAttackPoints: '경기별 공격 포인트',
+  matchDefensePoints: '경기별 수비 포인트',
   seasonTotal: '시즌 합계',
   matchRecordSection: '경기 기록',
   growthChart: '성장 그래프',

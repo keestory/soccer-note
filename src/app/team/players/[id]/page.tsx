@@ -111,6 +111,47 @@ function AttackPointsChart({ records, total }: { records: MatchRecord[]; total: 
   )
 }
 
+// 경기별 수비 포인트 — flex bars, navy=contribution gray=clean sheet, 28px per point.
+function DefensePointsChart({ records, total }: { records: MatchRecord[]; total: number }) {
+  const { t } = useI18n()
+  const games = [...records].reverse().slice(-6)
+
+  return (
+    <div style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14 }}>
+      <div className="flex justify-between items-center" style={{ marginBottom: 14 }}>
+        <span style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em' }}>{t.matchDefensePoints}</span>
+        <div className="flex items-center" style={{ gap: 10 }}>
+          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: '#98a2b3' }}>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: '#101828' }} />{t.contribution}
+          </span>
+          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: '#98a2b3' }}>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: '#d0d5dd' }} />{t.cleanSheet}
+          </span>
+        </div>
+      </div>
+      <div className="flex items-end" style={{ gap: 22, minHeight: 88, padding: '0 8px', overflowX: 'auto' }}>
+        {games.map((g, i) => {
+          const cs = g.cleanSheet ? 1 : 0
+          return (
+            <div key={i} className="flex flex-col items-center justify-end" style={{ flex: 1, minWidth: 54, gap: 6 }}>
+              <div className="flex items-end" style={{ gap: 5 }}>
+                <div style={{ width: 22, height: Math.max(g.contribution * 28, g.contribution > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: '#101828' }} />
+                <div style={{ width: 22, height: Math.max(cs * 28, cs > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: '#d0d5dd' }} />
+              </div>
+              <span style={{ fontSize: 10, color: '#98a2b3', whiteSpace: 'nowrap' }}>{shortDate(g.matchDate)} {g.opponent}</span>
+            </div>
+          )
+        })}
+        <div style={{ width: 1, alignSelf: 'stretch', background: '#eaecf0' }} />
+        <div className="flex flex-col items-center justify-end" style={{ gap: 2, paddingBottom: 16 }}>
+          <div style={{ fontFamily: BEBAS, fontSize: 28, lineHeight: 1, color: '#101828' }}>{total}</div>
+          <span style={{ fontSize: 10, color: '#98a2b3', whiteSpace: 'nowrap' }}>{t.seasonTotal}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function PlayerStatsPage() {
   const router = useRouter()
   const params = useParams()
@@ -283,6 +324,11 @@ export default function PlayerStatsPage() {
         {/* 4. 경기별 공격 포인트 차트 */}
         {matchRecords.length > 0 && (
           <AttackPointsChart records={matchRecords} total={attackPoints} />
+        )}
+
+        {/* 5. 경기별 수비 포인트 차트 */}
+        {matchRecords.length > 0 && (
+          <DefensePointsChart records={matchRecords} total={defensePoints} />
         )}
 
         {/* 강점 태그 */}

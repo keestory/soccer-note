@@ -600,6 +600,7 @@ export const translations: Translations = {
   attackPointsLabel: 'Ataque',
   defensePointsLabel: 'Defensa',
   matchAttackPoints: 'Puntos de ataque por partido',
+  matchDefensePoints: 'Puntos de defensa por partido',
   seasonTotal: 'Total de temporada',
   matchRecordSection: 'Registros de partidos',
   growthChart: 'Curva de progreso',

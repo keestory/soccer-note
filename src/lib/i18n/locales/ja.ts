@@ -600,6 +600,7 @@ export const translations: Translations = {
   attackPointsLabel: '攻撃ポイント',
   defensePointsLabel: '守備ポイント',
   matchAttackPoints: '試合別攻撃ポイント',
+  matchDefensePoints: '試合別守備ポイント',
   seasonTotal: 'シーズン合計',
   matchRecordSection: '試合記録',
   growthChart: '成長グラフ',

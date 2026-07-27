@@ -619,6 +619,7 @@ export interface Translations {
   attackPointsLabel: string
   defensePointsLabel: string
   matchAttackPoints: string
+  matchDefensePoints: string
   seasonTotal: string
   matchRecordSection: string
   growthChart: string
