@@ -154,6 +154,11 @@ export async function loadAppData(): Promise<void> {
       try { localStorage.removeItem(CACHE_KEY) } catch {}
     }
 
+    // 저장된 팀 ID가 있으면 팀 상세 데이터를 기본 조회와 동시에 시작한다
+    // (팀 목록이 돌아올 때까지 기다리지 않아 왕복 한 번을 절약).
+    const cachedTeamId = typeof window !== 'undefined' ? localStorage.getItem('selectedTeamId') : null
+    const eagerTeamDataPromise = cachedTeamId ? loadTeamData(cachedTeamId).catch(() => {}) : null
+
     // 병렬로 모든 기본 데이터 로드
     const [profileResult, ownedTeamsResult, membershipsResult] = await Promise.all([
       supabase.from('profiles').select('display_name').eq('id', user.id).single(),
@@ -213,9 +218,13 @@ export async function loadAppData(): Promise<void> {
 
     persistSnapshot()
 
-    // 선택된 팀의 데이터 로드
+    // 선택된 팀의 데이터 로드 (이미 병렬로 받은 팀이면 그 결과를 재사용)
     if (selectedTeamId) {
-      await loadTeamData(selectedTeamId)
+      if (selectedTeamId === cachedTeamId && eagerTeamDataPromise) {
+        await eagerTeamDataPromise
+      } else {
+        await loadTeamData(selectedTeamId)
+      }
     }
 
     loadPromise = null
@@ -231,13 +240,26 @@ export async function loadTeamData(teamId: string): Promise<void> {
   const supabase = createClient()
 
   const [matchesResult, trainingsResult, playersResult, visibilityResult, membersResult, profilesResponse] = await Promise.all([
-    supabase.from('matches').select('*, quarters (*, quarter_records (*, player:players (*))  ), match_attendees (id, player_id)').eq('team_id', teamId).order('match_date', { ascending: false }),
+    // 쿼터 기록에 선수 전체를 조인하지 않는다 (기록마다 중복돼 페이로드가 커짐).
+    // 아래에서 players 목록으로 record.player를 클라이언트에서 붙여 같은 형태를 유지한다.
+    supabase.from('matches').select('*, quarters (*, quarter_records (*)), match_attendees (id, player_id)').eq('team_id', teamId).order('match_date', { ascending: false }),
     supabase.from('training_sessions').select('*, training_attendees (id, player_id)').eq('team_id', teamId).order('training_date', { ascending: false }),
     supabase.from('players').select('*').eq('team_id', teamId).order('number'),
     supabase.from('team_visibility_settings').select('*').eq('team_id', teamId).single(),
     supabase.from('team_members').select('*').eq('team_id', teamId).or('is_removed.is.null,is_removed.eq.false').order('joined_at'),
     fetch(`/api/team-members-profiles?teamId=${teamId}`, { headers: await authHeader(supabase) })
   ])
+
+  // record.player를 players 목록에서 붙여 기존 코드와 호환되는 형태로 복원
+  const players = playersResult.data || []
+  const playerById = new Map<string, Player>(players.map((p: Player) => [p.id, p]))
+  const matches = (matchesResult.data || []).map((m: any) => ({
+    ...m,
+    quarters: (m.quarters || []).map((q: any) => ({
+      ...q,
+      quarter_records: (q.quarter_records || []).map((r: any) => ({ ...r, player: playerById.get(r.player_id) })),
+    })),
+  }))
 
   // 멤버 프로필 매핑
   let membersWithProfiles: MemberWithProfile[] = (membersResult.data || []).map((m: TeamMember) => ({ ...m, profile: undefined }))
@@ -256,9 +278,9 @@ export async function loadTeamData(teamId: string): Promise<void> {
 
   updateStore({
     selectedTeamId: teamId,
-    matches: matchesResult.data || [],
+    matches,
     trainings: trainingsResult.data || [],
-    players: playersResult.data || [],
+    players,
     members: membersWithProfiles,
     visibilitySettings: visibilityResult.data || null
   })
