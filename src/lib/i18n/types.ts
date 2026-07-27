@@ -786,6 +786,7 @@ export interface Translations {
   rosterTab: string
   rankingTab: string
   startDate: string
+  periodLabel: string
   endDate: string
   allPeriod: string
 }

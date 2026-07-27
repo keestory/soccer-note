@@ -384,29 +384,30 @@ export default function PlayersPage() {
         {/* Ranking view */}
         {view === 'ranking' && (
           <div className="space-y-3">
-            {/* Date range filter */}
-            <div className="rounded-xl p-3" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <div className="flex items-center" style={{ gap: 8 }}>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.startDate}</p>
-                  <input type="date" value={rankStart} max={rankEnd || undefined} onChange={e => setRankStart(e.target.value)}
-                    className="w-full outline-none text-[color:var(--text)] text-[13px]"
-                    style={{ colorScheme: 'light', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '9px 11px' }} />
-                </div>
-                <span className="pt-4 flex-shrink-0" style={{ color: 'var(--muted2)' }}>~</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.endDate}</p>
-                  <input type="date" value={rankEnd} min={rankStart || undefined} onChange={e => setRankEnd(e.target.value)}
-                    className="w-full outline-none text-[color:var(--text)] text-[13px]"
-                    style={{ colorScheme: 'light', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '9px 11px' }} />
-                </div>
+            {/* Date range filter — stacked rows so nothing overflows the frame */}
+            <div className="flex flex-col" style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 14, padding: 12, gap: 8 }}>
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.periodLabel}</span>
+                {(rankStart || rankEnd) && (
+                  <button onClick={() => { setRankStart(''); setRankEnd('') }}
+                    className="text-[12px] font-bold px-2.5 py-1 rounded-full"
+                    style={{ background: 'var(--chip)', color: 'var(--text)' }}>
+                    {t.allPeriod}
+                  </button>
+                )}
               </div>
-              {(rankStart || rankEnd) && (
-                <button onClick={() => { setRankStart(''); setRankEnd('') }}
-                  className="mt-2 text-[12px] font-bold" style={{ color: 'var(--text)' }}>
-                  {t.allPeriod}
-                </button>
-              )}
+              <label className="flex items-center" style={{ gap: 10 }}>
+                <span className="flex-shrink-0 text-[12px] font-bold" style={{ width: 44, color: 'var(--muted1)' }}>{t.startDate}</span>
+                <input type="date" value={rankStart} max={rankEnd || undefined} onChange={e => setRankStart(e.target.value)}
+                  className="flex-1 min-w-0 outline-none text-[color:var(--text)] text-[13px]"
+                  style={{ colorScheme: 'light', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '10px 12px' }} />
+              </label>
+              <label className="flex items-center" style={{ gap: 10 }}>
+                <span className="flex-shrink-0 text-[12px] font-bold" style={{ width: 44, color: 'var(--muted1)' }}>{t.endDate}</span>
+                <input type="date" value={rankEnd} min={rankStart || undefined} onChange={e => setRankEnd(e.target.value)}
+                  className="flex-1 min-w-0 outline-none text-[color:var(--text)] text-[13px]"
+                  style={{ colorScheme: 'light', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '10px 12px' }} />
+              </label>
             </div>
             {/* Stat tabs */}
             <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
