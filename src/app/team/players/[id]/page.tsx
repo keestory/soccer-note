@@ -396,11 +396,13 @@ export default function PlayerStatsPage() {
                     background: isTop ? '#c8f542' : '#f2f4f7',
                   }}>{p}P</span>
                 </div>
-                <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: 6 }}>
+                <div className="grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
                   {[
                     { label: t.goal, value: record.goals, active: record.goals > 0 },
                     { label: t.assistShort, value: record.assists, active: record.assists > 0 },
+                    { label: t.contribution, value: record.contribution > 0 ? record.contribution : '-', active: record.contribution > 0 },
                     { label: t.cleanSheet, value: record.cleanSheet ? '✓' : '-', active: record.cleanSheet },
+                    { label: t.statAppearances, value: '✓', active: true },
                   ].map(s => (
                     <div key={s.label} style={{ textAlign: 'center' }}>
                       <div style={{ fontSize: 10, color: '#98a2b3' }}>{s.label}</div>
