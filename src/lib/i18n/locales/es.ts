@@ -767,6 +767,7 @@ export const translations: Translations = {
   rosterTab: 'Plantilla',
   rankingTab: 'Clasificación',
   startDate: 'Fecha inicio',
+  periodLabel: 'Periodo',
   endDate: 'Fecha fin',
   allPeriod: 'Todo',
 }

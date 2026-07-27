@@ -767,6 +767,7 @@ export const translations: Translations = {
   rosterTab: '名簿',
   rankingTab: 'ランキング',
   startDate: '開始日',
+  periodLabel: '期間',
   endDate: '終了日',
   allPeriod: '全期間',
 }
