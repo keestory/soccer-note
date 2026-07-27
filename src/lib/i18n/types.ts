@@ -618,6 +618,8 @@ export interface Translations {
   seasonAttackPoints: string
   attackPointsLabel: string
   defensePointsLabel: string
+  attackShort: string
+  defenseShort: string
   matchAttackPoints: string
   matchDefensePoints: string
   seasonTotal: string

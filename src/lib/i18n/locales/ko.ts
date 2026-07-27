@@ -599,6 +599,8 @@ export const translations: Translations = {
   seasonAttackPoints: '시즌 공격 포인트',
   attackPointsLabel: '공격 포인트',
   defensePointsLabel: '수비 포인트',
+  attackShort: '공격',
+  defenseShort: '수비',
   matchAttackPoints: '경기별 공격 포인트',
   matchDefensePoints: '경기별 수비 포인트',
   seasonTotal: '시즌 합계',
