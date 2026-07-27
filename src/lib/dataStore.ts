@@ -78,6 +78,48 @@ export function getStore(): Readonly<DataStore> {
   return store
 }
 
+// ── 영속 캐시 (stale-while-revalidate) ────────────────────────────
+// 로그인/새로고침/탭 전환 시 마지막으로 본 데이터를 즉시 그려주고,
+// 백그라운드에서 최신 데이터로 갱신한다. 네트워크 왕복을 기다리지 않는다.
+const CACHE_KEY = 'fn-appcache-v2'
+
+function persistSnapshot() {
+  if (typeof window === 'undefined' || !store.userId) return
+  try {
+    const snapshot = {
+      userId: store.userId,
+      displayName: store.displayName,
+      teams: store.teams,
+      selectedTeamId: store.selectedTeamId,
+      matches: store.matches,
+      trainings: store.trainings,
+      players: store.players,
+      members: store.members,
+      visibilitySettings: store.visibilitySettings,
+    }
+    localStorage.setItem(CACHE_KEY, JSON.stringify(snapshot))
+  } catch {
+    // 용량 초과 등은 무시 (캐시는 최적화일 뿐 필수 아님)
+  }
+}
+
+function hydrateFromCache() {
+  if (typeof window === 'undefined') return
+  try {
+    const raw = localStorage.getItem(CACHE_KEY)
+    if (!raw) return
+    const s = JSON.parse(raw)
+    if (!s?.userId) return
+    // 즉시 그릴 수 있도록 isLoaded=true, 단 lastFetch=0으로 두어 곧바로 재검증
+    store = { ...store, ...s, isLoaded: true, lastFetch: 0 }
+  } catch {
+    // 파싱 실패 시 캐시 무시
+  }
+}
+
+// 모듈 로드 시 1회 하이드레이트 (클라이언트 전용)
+hydrateFromCache()
+
 // 데이터 로드 상태
 let loadPromise: Promise<void> | null = null
 
@@ -96,12 +138,20 @@ export async function loadAppData(): Promise<void> {
   loadPromise = (async () => {
     const supabase = createClient()
 
-    // 인증 확인
-    const { data: { user } } = await supabase.auth.getUser()
+    // 인증 확인 — getSession()은 로컬 저장소에서 즉시 읽어 네트워크 왕복이 없다
+    // (getUser()는 매번 서버에 토큰 검증 요청을 보내 느리다).
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
     if (!user) {
-      updateStore({ isLoaded: true, lastFetch: Date.now() })
+      // 로그아웃 상태 — 남아있는 캐시 제거
+      if (typeof window !== 'undefined') { try { localStorage.removeItem(CACHE_KEY) } catch {} }
+      updateStore({ isLoaded: true, lastFetch: Date.now(), userId: null, teams: [], matches: [], trainings: [], players: [], members: [] })
       loadPromise = null
       return
+    }
+    // 캐시가 다른 사용자 것이면 폐기
+    if (store.userId && store.userId !== user.id && typeof window !== 'undefined') {
+      try { localStorage.removeItem(CACHE_KEY) } catch {}
     }
 
     // 병렬로 모든 기본 데이터 로드
@@ -161,6 +211,8 @@ export async function loadAppData(): Promise<void> {
       lastFetch: Date.now()
     })
 
+    persistSnapshot()
+
     // 선택된 팀의 데이터 로드
     if (selectedTeamId) {
       await loadTeamData(selectedTeamId)
@@ -215,6 +267,7 @@ export async function loadTeamData(teamId: string): Promise<void> {
   if (typeof window !== 'undefined') {
     localStorage.setItem('selectedTeamId', teamId)
   }
+  persistSnapshot()
 }
 
 /**

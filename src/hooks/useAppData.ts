@@ -15,12 +15,11 @@ export function useAppData() {
   const [isInitializing, setIsInitializing] = useState(!store.isLoaded)
 
   useEffect(() => {
-    if (!store.isLoaded) {
-      loadAppData().finally(() => setIsInitializing(false))
-    } else {
-      setIsInitializing(false)
-    }
-  }, [store.isLoaded])
+    // 항상 로드를 시도한다. loadAppData는 내부적으로 중복/신선도(60초)를 검사하므로
+    // 캐시가 신선하면 즉시 반환하고, 하이드레이트된 오래된 캐시는 백그라운드에서 갱신한다.
+    loadAppData().finally(() => setIsInitializing(false))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return {
     // 상태
