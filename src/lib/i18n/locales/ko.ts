@@ -597,6 +597,8 @@ export const translations: Translations = {
   statTraining: '훈련',
   statRecordedMatches: '기록 경기',
   seasonAttackPoints: '시즌 공격 포인트',
+  attackPointsLabel: '공격 포인트',
+  defensePointsLabel: '수비 포인트',
   matchAttackPoints: '경기별 공격 포인트',
   seasonTotal: '시즌 합계',
   matchRecordSection: '경기 기록',

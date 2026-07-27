@@ -597,6 +597,8 @@ export const translations: Translations = {
   statTraining: 'トレーニング',
   statRecordedMatches: '記録試合',
   seasonAttackPoints: 'シーズン攻撃ポイント',
+  attackPointsLabel: '攻撃ポイント',
+  defensePointsLabel: '守備ポイント',
   matchAttackPoints: '試合別攻撃ポイント',
   seasonTotal: 'シーズン合計',
   matchRecordSection: '試合記録',

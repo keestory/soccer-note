@@ -196,6 +196,7 @@ export default function PlayerStatsPage() {
 
   const posLabel = POSITION_LABELS[player.default_position as PositionType]
   const attackPoints = (seasonStats?.goals || 0) + (seasonStats?.assists || 0)
+  const defensePoints = (seasonStats?.contribution || 0) + (seasonStats?.cleanSheets || 0)
   const maxMatchPoints = matchRecords.reduce((m, r) => Math.max(m, r.goals + r.assists), 0)
 
   return (
@@ -221,11 +222,20 @@ export default function PlayerStatsPage() {
             <div style={{ fontSize: 19, fontWeight: 700, color: '#fff' }}>{player.name}</div>
             <div style={{ fontSize: 12, color: '#98a2b3', marginTop: 3 }}>{player.default_position} · {posLabel}</div>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontFamily: BEBAS, fontSize: 34, lineHeight: 0.9, color: '#c8f542' }}>
-              {attackPoints}<span style={{ fontSize: 18 }}>P</span>
+          <div className="flex items-start" style={{ gap: 16 }}>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: BEBAS, fontSize: 30, lineHeight: 0.9, color: '#c8f542' }}>
+                {attackPoints}<span style={{ fontSize: 15 }}>P</span>
+              </div>
+              <div style={{ fontSize: 10, color: '#667085', marginTop: 3 }}>{t.attackPointsLabel}</div>
             </div>
-            <div style={{ fontSize: 10, color: '#667085', marginTop: 2 }}>{t.seasonAttackPoints}</div>
+            <div style={{ width: 1, alignSelf: 'stretch', background: '#344054' }} />
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: BEBAS, fontSize: 30, lineHeight: 0.9, color: '#fff' }}>
+                {defensePoints}<span style={{ fontSize: 15 }}>P</span>
+              </div>
+              <div style={{ fontSize: 10, color: '#667085', marginTop: 3 }}>{t.defensePointsLabel}</div>
+            </div>
           </div>
         </section>
 
@@ -253,12 +263,13 @@ export default function PlayerStatsPage() {
             <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em', marginBottom: 12 }}>{t.seasonStatsTitle}</div>
             <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: 9 }}>
               {[
-                { label: t.contribution, value: seasonStats.contribution },
+                { label: t.attendance, value: seasonStats.matchAttendance },
+                { label: t.statAppearances, value: seasonStats.games },
                 { label: t.goals, value: seasonStats.goals },
                 { label: t.assistsLabel, value: seasonStats.assists },
+                { label: t.contribution, value: seasonStats.contribution },
                 { label: t.cleanSheet, value: seasonStats.cleanSheets },
                 { label: t.statTraining, value: seasonStats.trainingAttendance },
-                { label: t.statRecordedMatches, value: seasonStats.games },
               ].map(s => (
                 <div key={s.label} style={{ background: '#f2f4f7', borderRadius: 11, padding: 11, textAlign: 'center' }}>
                   <div style={{ fontFamily: BEBAS, fontSize: 24, color: s.value === 0 ? '#d0d5dd' : '#101828' }}>{s.value}</div>
