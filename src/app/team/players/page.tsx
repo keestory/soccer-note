@@ -386,19 +386,19 @@ export default function PlayersPage() {
           <div className="space-y-3">
             {/* Date range filter */}
             <div className="rounded-xl p-3" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
+              <div className="flex items-center" style={{ gap: 8 }}>
+                <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.startDate}</p>
                   <input type="date" value={rankStart} max={rankEnd || undefined} onChange={e => setRankStart(e.target.value)}
                     className="w-full outline-none text-[color:var(--text)] text-[13px]"
-                    style={{ colorScheme: 'dark', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '9px 11px' }} />
+                    style={{ colorScheme: 'light', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '9px 11px' }} />
                 </div>
-                <span className="pt-4" style={{ color: 'var(--muted2)' }}>~</span>
-                <div className="flex-1">
+                <span className="pt-4 flex-shrink-0" style={{ color: 'var(--muted2)' }}>~</span>
+                <div className="flex-1 min-w-0">
                   <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--muted2)' }}>{t.endDate}</p>
                   <input type="date" value={rankEnd} min={rankStart || undefined} onChange={e => setRankEnd(e.target.value)}
                     className="w-full outline-none text-[color:var(--text)] text-[13px]"
-                    style={{ colorScheme: 'dark', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '9px 11px' }} />
+                    style={{ colorScheme: 'light', minWidth: 0, maxWidth: '100%', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '9px 11px' }} />
                 </div>
               </div>
               {(rankStart || rankEnd) && (
