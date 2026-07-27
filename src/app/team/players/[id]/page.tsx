@@ -379,8 +379,9 @@ export default function PlayerStatsPage() {
           </div>
         ) : (
           matchRecords.map((record) => {
-            const p = record.goals + record.assists
-            const isTop = p > 0 && p === maxMatchPoints
+            const ap = record.goals + record.assists
+            const dp = record.contribution + (record.cleanSheet ? 1 : 0)
+            const isTop = ap > 0 && ap === maxMatchPoints
             return (
               <Link key={record.matchId} href={`/match/${record.matchId}`}
                 className="block active:scale-[0.99] transition"
@@ -390,11 +391,16 @@ export default function PlayerStatsPage() {
                     <div style={{ fontSize: 14, fontWeight: 700, color: '#101828' }}>{t.vs} {record.opponent}</div>
                     <div style={{ fontSize: 11, color: '#98a2b3', marginTop: 2 }}>{formatDate(record.matchDate)}</div>
                   </div>
-                  <span style={{
-                    fontFamily: BEBAS, fontSize: 15, padding: '4px 10px', borderRadius: 8,
-                    color: isTop ? '#101828' : '#475467',
-                    background: isTop ? '#c8f542' : '#f2f4f7',
-                  }}>{p}P</span>
+                  <div className="flex items-center flex-shrink-0" style={{ gap: 6 }}>
+                    <span className="flex items-center" style={{ gap: 4, padding: '4px 9px', borderRadius: 8, background: isTop ? '#c8f542' : '#f2f4f7' }}>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: isTop ? '#101828' : '#98a2b3' }}>{t.attackShort}</span>
+                      <span style={{ fontFamily: BEBAS, fontSize: 15, color: isTop ? '#101828' : '#475467' }}>{ap}P</span>
+                    </span>
+                    <span className="flex items-center" style={{ gap: 4, padding: '4px 9px', borderRadius: 8, background: '#f2f4f7' }}>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: '#98a2b3' }}>{t.defenseShort}</span>
+                      <span style={{ fontFamily: BEBAS, fontSize: 15, color: '#475467' }}>{dp}P</span>
+                    </span>
+                  </div>
                 </div>
                 <div className="grid" style={{ gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
                   {[

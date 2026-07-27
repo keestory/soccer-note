@@ -599,6 +599,8 @@ export const translations: Translations = {
   seasonAttackPoints: 'Angriffspunkte Saison',
   attackPointsLabel: 'Angriff',
   defensePointsLabel: 'Abwehr',
+  attackShort: 'ANG',
+  defenseShort: 'ABW',
   matchAttackPoints: 'Angriffspunkte pro Spiel',
   matchDefensePoints: 'Abwehrpunkte pro Spiel',
   seasonTotal: 'Saisonsumme',

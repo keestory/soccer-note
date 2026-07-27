@@ -599,6 +599,8 @@ export const translations: Translations = {
   seasonAttackPoints: "Punti d'attacco stagionali",
   attackPointsLabel: 'Attacco',
   defensePointsLabel: 'Difesa',
+  attackShort: 'ATT',
+  defenseShort: 'DIF',
   matchAttackPoints: "Punti d'attacco per partita",
   matchDefensePoints: 'Punti difesa per partita',
   seasonTotal: 'Totale stagione',
