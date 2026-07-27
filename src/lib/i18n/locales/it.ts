@@ -597,6 +597,8 @@ export const translations: Translations = {
   statTraining: 'Allenamento',
   statRecordedMatches: 'Registrate',
   seasonAttackPoints: "Punti d'attacco stagionali",
+  attackPointsLabel: 'Attacco',
+  defensePointsLabel: 'Difesa',
   matchAttackPoints: "Punti d'attacco per partita",
   seasonTotal: 'Totale stagione',
   matchRecordSection: 'Cronologia partite',

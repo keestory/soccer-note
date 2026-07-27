@@ -616,6 +616,8 @@ export interface Translations {
   statTraining: string
   statRecordedMatches: string
   seasonAttackPoints: string
+  attackPointsLabel: string
+  defensePointsLabel: string
   matchAttackPoints: string
   seasonTotal: string
   matchRecordSection: string
