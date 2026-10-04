@@ -383,6 +383,13 @@ export const translations: Translations = {
   disbandShort: 'Dissoudre',
   matchesLabel: 'Matchs',
   playersLabel: 'Joueurs',
+  homeLabel: 'Accueil',
+  teamLabel: 'Équipe',
+  homeSeasonSummary: 'Cette saison {n} matchs · {rate}% de victoires',
+  homeAllMatchesLabel: 'Voir tous les matchs',
+  homeAllMatchesDescription: 'Consultez tous les matchs disputés.',
+  homeTeamOperationsLabel: "Gérer l'équipe",
+  homeTeamOperationsDescription: 'Préparez votre équipe pour le prochain match.',
 
   // Landing page
   getStarted: 'Commencer',

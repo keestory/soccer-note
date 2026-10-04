@@ -383,6 +383,13 @@ export const translations: Translations = {
   disbandShort: '解体',
   matchesLabel: '試合',
   playersLabel: '選手',
+  homeLabel: 'ホーム',
+  teamLabel: 'チーム',
+  homeSeasonSummary: '今シーズン {n}試合 · 勝率 {rate}%',
+  homeAllMatchesLabel: '全試合を見る',
+  homeAllMatchesDescription: 'これまでの全試合を確認できます。',
+  homeTeamOperationsLabel: 'チーム運営を見る',
+  homeTeamOperationsDescription: '次の試合に向けてチームを準備しましょう。',
 
   // Landing page
   getStarted: '始める',

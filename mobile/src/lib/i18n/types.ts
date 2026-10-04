@@ -397,6 +397,13 @@ export interface Translations {
   teamManagement: string
   matchesLabel: string
   playersLabel: string
+  homeLabel: string
+  teamLabel: string
+  homeSeasonSummary: string
+  homeAllMatchesLabel: string
+  homeAllMatchesDescription: string
+  homeTeamOperationsLabel: string
+  homeTeamOperationsDescription: string
 
   // Landing page
   getStarted: string

@@ -380,6 +380,13 @@ export const translations: Translations = {
   teamManagement: 'Gestione squadra',
   matchesLabel: 'Partite',
   playersLabel: 'Giocatori',
+  homeLabel: 'Home',
+  teamLabel: 'Squadra',
+  homeSeasonSummary: 'Questa stagione {n} partite · {rate}% vittorie',
+  homeAllMatchesLabel: 'Vedi tutte le partite',
+  homeAllMatchesDescription: 'Rivedi tutte le partite giocate finora.',
+  homeTeamOperationsLabel: 'Gestione squadra',
+  homeTeamOperationsDescription: 'Prepara la squadra per la prossima partita.',
 
   // Landing page
   getStarted: 'Inizia',

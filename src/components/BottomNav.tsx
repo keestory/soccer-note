@@ -2,20 +2,18 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Home, UsersRound, Trophy } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
+
+export const PRIMARY_NAV_ITEMS = [
+  { href: '/dashboard', key: 'home', labelKey: 'homeLabel', icon: Home, match: (path: string) => path === '/dashboard' },
+  { href: '/matches', key: 'matches', labelKey: 'matchesLabel', icon: Trophy, match: (path: string) => path === '/matches' || path.startsWith('/match/') },
+  { href: '/team', key: 'team', labelKey: 'teamLabel', icon: UsersRound, match: (path: string) => path === '/team' || path.startsWith('/team/') || path.startsWith('/training') || path.startsWith('/community') },
+] as const
 
 export function BottomNav() {
   const pathname = usePathname()
   const { t } = useI18n()
-
-  const TABS = [
-    { href: '/dashboard', label: t.matchesLabel,   match: (p: string) => p === '/dashboard' || p.startsWith('/match') },
-    { href: '/team/players', label: t.playersLabel, match: (p: string) => p.startsWith('/team/players') },
-    { href: '/training', label: t.trainingLabel, match: (p: string) => p.startsWith('/training') },
-    { href: '/community',    label: t.navMatching, match: (p: string) => p.startsWith('/community') },
-    { href: '/team/members', label: t.teamManagement, match: (p: string) =>
-        p.startsWith('/team/members') || p.startsWith('/team/notifications') || p.startsWith('/team/public-profile') },
-  ]
 
   return (
     <nav
@@ -23,18 +21,19 @@ export function BottomNav() {
       style={{ background: 'var(--nav)', borderTop: '1px solid var(--line)' }}
     >
       <div className="flex justify-around" style={{ padding: '10px 8px 16px' }}>
-        {TABS.map(tab => {
+        {PRIMARY_NAV_ITEMS.map(tab => {
           const active = tab.match(pathname)
+          const Icon = tab.icon
+          const label = t[tab.labelKey]
           return (
             <Link
               key={tab.href}
               href={tab.href}
-              className="flex flex-col items-center gap-1 min-w-[56px] transition"
+              className="flex min-w-[72px] flex-col items-center gap-1 rounded-xl py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]"
+              style={{ color: active ? 'var(--nav-active)' : 'var(--text3)' }}
+              aria-current={active ? 'page' : undefined}
             >
-              <span
-                className="h-[3px] w-[22px] rounded-full transition-colors"
-                style={{ background: active ? 'var(--nav-active)' : 'transparent' }}
-              />
+              <Icon aria-hidden="true" size={21} strokeWidth={active ? 2.8 : 2} />
               <span
                 className="text-[14px] transition-colors"
                 style={{
@@ -42,7 +41,7 @@ export function BottomNav() {
                   fontWeight: active ? 900 : 600,
                 }}
               >
-                {tab.label}
+                {label}
               </span>
             </Link>
           )
