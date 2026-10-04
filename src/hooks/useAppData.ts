@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { getStore, subscribe, loadAppData, selectTeam, refreshData, type TeamWithRole } from '@/lib/dataStore'
+import { getServerSnapshot, getStore, subscribe, loadAppData, selectTeam, refreshData, type TeamWithRole } from '@/lib/dataStore'
 import type { Match, Player, TeamVisibilitySettings, TrainingSession } from '@/types/database'
 import type { MemberWithProfile } from '@/lib/dataStore'
 
@@ -11,7 +11,7 @@ import type { MemberWithProfile } from '@/lib/dataStore'
  * - 백그라운드에서 자동 로드
  */
 export function useAppData() {
-  const store = useSyncExternalStore(subscribe, getStore, getStore)
+  const store = useSyncExternalStore(subscribe, getStore, getServerSnapshot)
   const [isInitializing, setIsInitializing] = useState(!store.isLoaded)
 
   useEffect(() => {

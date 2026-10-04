@@ -30,6 +30,34 @@ interface DataStore {
   isLoaded: boolean
 }
 
+const EMPTY_TEAMS = Object.freeze([]) as unknown as TeamWithRole[]
+const EMPTY_MATCHES = Object.freeze([]) as unknown as Match[]
+const EMPTY_TRAININGS = Object.freeze([]) as unknown as TrainingSession[]
+const EMPTY_PLAYERS = Object.freeze([]) as unknown as Player[]
+const EMPTY_MEMBERS = Object.freeze([]) as unknown as MemberWithProfile[]
+
+/**
+ * SSR와 최초 hydration이 공유하는 고정 스냅샷.
+ *
+ * 브라우저 캐시는 모듈 초기화 시 live store를 채울 수 있지만, React의
+ * useSyncExternalStore는 서버 렌더와 최초 hydration에서 동일한
+ * getServerSnapshot 결과를 요구한다. 이 값은 live store와 분리되어 있으며
+ * 이후 store가 갱신되어도 같은 참조를 유지한다.
+ */
+export const EMPTY_SERVER_SNAPSHOT: Readonly<DataStore> = Object.freeze({
+  userId: null,
+  displayName: null,
+  teams: EMPTY_TEAMS,
+  selectedTeamId: null,
+  matches: EMPTY_MATCHES,
+  trainings: EMPTY_TRAININGS,
+  players: EMPTY_PLAYERS,
+  members: EMPTY_MEMBERS,
+  visibilitySettings: null,
+  lastFetch: 0,
+  isLoaded: false,
+})
+
 export interface TeamWithRole extends Team {
   role: 'coach' | 'member' | 'parent'
   membership: TeamMember
@@ -76,6 +104,10 @@ export function updateStore(partial: Partial<DataStore>) {
 // 스토어 읽기
 export function getStore(): Readonly<DataStore> {
   return store
+}
+
+export function getServerSnapshot(): Readonly<DataStore> {
+  return EMPTY_SERVER_SNAPSHOT
 }
 
 // ── 영속 캐시 (stale-while-revalidate) ────────────────────────────
