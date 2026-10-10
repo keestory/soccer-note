@@ -17,7 +17,7 @@
 
 ### 2단계: 코드-문서 일관성 검증 (DocGardener)
 - AGENTS.md와 실제 디렉토리 구조 비교
-- ARCHITECTURE.md와 실제 레이어 구조 비교
+- SYSTEM_DESIGN.md와 실제 레이어 구조 비교
 - 품질 등급과 실제 상태 비교
 
 ### 3단계: 수정 PR 생성 (DocGardener)

@@ -1,6 +1,6 @@
-# TIPLOOP Codex Harness
+# Soccer Note Codex Harness
 
-TIPLOOP의 기본 에이전트 시스템은 Codex 네이티브 멀티에이전트 설정을 사용한다. 라우팅의 핵심은 **기본 호출 0개, 조건이 맞을 때만 전문 에이전트 추가**다.
+Soccer Note의 기본 에이전트 시스템은 Codex 네이티브 멀티에이전트 설정을 사용한다. 라우팅의 핵심은 **기본 호출 0개, 조건이 맞을 때만 전문 에이전트 추가**다.
 
 ## 실행
 
@@ -34,7 +34,7 @@ Codex는 `AGENTS.md`, `.codex/config.toml`, `.codex/agents/*.toml`을 읽는다.
 Research
   → Business Planning + Strategy
   → Product Gate
-  → UX/UI Design System + Tech Architecture + Measurement
+  → UX/UI Design System + Tech Architecture + Discoverability + Store impact + Measurement
   → Build-ready Gate
   → Coding → QA → Fix → Re-QA
   → Independent Review
@@ -50,6 +50,9 @@ Research
 - QA 또는 review가 실패하면 한 명의 `engineer`에게 돌아가며, 수정 후 영향 범위 QA와 필요한 re-review를 수행한다.
 - Release는 배포 버튼이 아니라 버전·대상·롤백·모니터링·live smoke까지 포함한다.
 - 출시 후 `analyst`가 합의된 관측 기간과 기준으로 iterate/hold/expand/pause/rollback 판단을 만든다.
+- 신규 제품·중요한 사용자 여정은 `market_researcher`의 현재 차트 근거 뒤 `competitive_pattern_researcher`가 제품·UX·디자인 패턴을 비교한다. 순위는 성공 증명이 아니며 결과는 `Adopt / Adapt / Avoid / Test`로 분류한다.
+- 모든 작업은 discoverability, store compliance, competitive benchmark 적용 여부를 먼저 판정하지만 영향이 없는 S0·내부 변경에는 전문 에이전트를 호출하지 않는다.
+- 공개 검색·콘텐츠·딥링크 영향이 있으면 `discoverability`, 모바일 스토어 정책 영향이 있으면 `store_compliance`를 Solution과 Release 게이트에 추가한다.
 
 `architect`는 기술 경계·계약·ADR을, `planner`는 승인된 설계를 구현 순서와 vertical slice로 바꾸는 일을 맡는다. 둘은 책임이 다르며 복잡한 작업에서만 함께 호출한다. `gtm_lead`는 marketing·business development·analytics·ops 입력을 하나의 launch plan으로 통합한다.
 
@@ -78,6 +81,21 @@ business_development를 추가해줘. architect와 ui_ux는 필요한 경우 병
 gtm_lead는 Product Gate 이후 launch plan을 시작해줘. 구현 후에는 위험 기준에 따라 reviewer/security/ops를 선택해줘.
 ```
 
+공개 웹·앱과 모바일 제출이 함께 있는 제품은 다음처럼 요청한다.
+
+```text
+현재 한국 앱스토어 차트와 직접·인접 제품을 조사하고 competitive_pattern_researcher가
+제품/온보딩/신뢰/수익화/리텐션/디자인 패턴을 비교해줘. 그대로 복제하지 말고
+Adopt/Adapt/Avoid/Test로 분류해줘. discoverability가 SEO/AEO/GEO와 Universal/App Links
+계약을 만들고, store_compliance가 Apple/Google requirement matrix를 만든 뒤 구현에 반영해줘.
+QA 후 실제 렌더링과 제출할 IPA/AAB·현재 콘솔 상태까지 각각 재검증해줘.
+```
+
+상세 기준은 [`DISCOVERABILITY.md`](./DISCOVERABILITY.md),
+네이버가 범위에 있으면 [`NAVER_DISCOVERABILITY.md`](./NAVER_DISCOVERABILITY.md),
+[`STORE_COMPLIANCE.md`](./STORE_COMPLIANCE.md),
+[`COMPETITIVE_RESEARCH.md`](./COMPETITIVE_RESEARCH.md)를 따른다.
+
 ## 호출하지 않는 기본값
 
 - 문구·주석·명확한 설정 변경: PM, planner, QA, reviewer 생략 가능
@@ -86,6 +104,7 @@ gtm_lead는 Product Gate 이후 launch plan을 시작해줘. 구현 후에는 �
 - 보안 경계가 없는 변경: `security_reviewer` 생략
 - 실제 배포가 없는 로컬 구현: `ops` 생략
 - 일반 작업: `release_council` 금지
+- 내부 변경: 적용 판정은 남기되 `discoverability`, `store_compliance`, `competitive_pattern_researcher` 자동 호출 금지
 
 상세 조건과 작업 등급은 루트 `AGENTS.md`를 따른다.
 
@@ -97,6 +116,13 @@ gtm_lead는 Product Gate 이후 launch plan을 시작해줘. 구현 후에는 �
 
 ## 검증
 
+새 클론에서는 먼저 테스트 환경을 만든다.
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-dev.txt
+```
+
 ```bash
 codex --version
 codex --strict-config -C . doctor --summary --ascii
@@ -105,3 +131,5 @@ codex -C . debug prompt-input "라우팅 규칙과 조건부 에이전트를 요
 python3 run.py --lint
 git diff --check
 ```
+
+하네스만 바뀐 경우에도 위 검증을 모두 통과해야 한다. 제품 코드가 바뀌면 `npm test`와 `npm run build`를 추가한다. iOS/Android/Watch 변경은 웹 검증과 별개로 native artifact, signing, entitlement, simulator 또는 실기기 증거를 남긴다. 웹 배포, 네이티브 빌드, 스토어 제출, 승인과 공개 상태는 같은 완료 상태가 아니다.

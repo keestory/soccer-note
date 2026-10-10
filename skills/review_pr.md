@@ -16,9 +16,9 @@ gh pr diff <PR_NUMBER>
 
 ### 2단계: 관련 문서 로드
 - AGENTS.md (프로젝트 맵)
-- ARCHITECTURE.md (아키텍처 규칙)
-- docs/DESIGN.md (설계 원칙)
-- docs/SECURITY.md (보안 정책)
+- SYSTEM_DESIGN.md (시스템·데이터 아키텍처)
+- DESIGN.md와 UX-CONTRACT.md (설계·상호작용 원칙)
+- AGENTS.md의 Soccer Note 보안·스토어 경계
 
 ### 3단계: 린터 실행
 ```bash

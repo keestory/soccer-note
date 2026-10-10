@@ -1,6 +1,6 @@
-# AGENTS.md — TIPLOOP Codex Harness
+# AGENTS.md — Soccer Note Codex Harness
 
-이 파일은 TIPLOOP에서 Codex가 작업 난이도와 위험에 따라 에이전트를 선택하는 라우팅 규칙이다. 역할별 모델과 상세 지침의 단일 원본은 `.codex/agents/*.toml`이다.
+이 파일은 Soccer Note에서 Codex가 작업 난이도와 위험에 따라 에이전트를 선택하는 라우팅 규칙이다. 역할별 모델과 상세 지침의 단일 원본은 `.codex/agents/*.toml`이다.
 
 ## 기본 원칙
 
@@ -8,8 +8,20 @@
 2. 짧고 의존적인 작업은 메인 에이전트가 직접 처리한다. 에이전트 호출 자체를 완료 조건으로 삼지 않는다.
 3. 서로 독립적인 조사·검토만 병렬화한다. 한 시점의 제품 코드 writer는 한 명으로 제한한다.
 4. 하위 에이전트는 부모가 명시하지 않는 한 다른 하위 에이전트를 만들지 않는다.
-5. 작업 전 `ARCHITECTURE.md`, 관련 `docs/`, 현재 작업 트리와 실제 구현을 확인한다. 문서나 배포 주장을 현재 상태의 증거로 간주하지 않는다.
+5. 작업 전 `SYSTEM_DESIGN.md`, `DESIGN.md`, `UX-CONTRACT.md`, 관련 `docs/`, 현재 작업 트리와 실제 구현을 확인한다. 문서나 배포 주장을 현재 상태의 증거로 간주하지 않는다.
 6. 사용자가 요청한 산출물과 위험에 비례한 검증까지 완료한다. 계획만 전달하고 멈추지 않는다.
+7. 모든 작업의 intake에서 `discoverability: required | not-applicable`, `store_compliance: required | not-applicable`, `competitive_benchmark: required | not-applicable`을 판정한다. 이는 모든 작업에 하위 에이전트를 호출한다는 뜻이 아니다. 영향이 없는 S0·내부 작업은 적용 제외 사유만 남긴다.
+
+## Soccer Note 제품 경계
+
+- Soccer Note는 Next.js/Vercel 웹·API, Supabase Auth/Postgres/Storage, Firebase 푸시, Capacitor iOS/Android 셸로 구성된다. 웹 배포, 네이티브 빌드, TestFlight/Play 테스트, 스토어 제출, 승인, 공개 상태를 각각 별도 증거로 확인한다.
+- 현재 Capacitor 셸은 원격 웹 URL을 표시하므로 웹 배포가 설치 앱 동작에 영향을 줄 수 있다. 반대로 native plugin, entitlement, deep link, signing 또는 bundle 설정 변경은 새 네이티브 artifact와 기기 검증이 필요하다.
+- 인증 callback, service-role API, 계정 삭제, 팀 역할, Supabase migration/RLS는 보안 경계다. 대상 Supabase 프로젝트와 적용 상태를 확인하지 않고 migration 또는 RLS가 배포됐다고 주장하지 않는다.
+- 선수·유소년·보호자 관계, 사진·영상, 위치·HealthKit, 운동 기록, 푸시 토큰은 민감 데이터로 취급한다. 관련 변경에는 `security_reviewer`와 `store_compliance` 적용 여부를 반드시 검토한다.
+- `ios/App/SoccerNote Watch App` 파일이 존재한다는 사실만으로 Watch target, embed, signing 또는 실기기 동작이 완성됐다고 판단하지 않는다. 실제 target/build phase, entitlement, 권한, 운동 종료·저장, 백그라운드와 동기화를 별도로 검증한다.
+- 공개 community·profile·privacy surface와 앱 deep link는 discoverability 대상이 될 수 있다. dashboard·team·match 등 인증 화면은 검색 비노출과 개인정보 누출 방지를 우선하며, custom scheme과 Universal Links/Android App Links를 동일한 것으로 간주하지 않는다.
+- 웹 테스트나 production build만으로 iOS/Android/Watch 완료를 주장하지 않는다. 390x844 주요 화면, 접근성, OAuth callback, 권한 거부·철회, 불안정 네트워크, 푸시, 계정 삭제, 역할별 RLS와 실제 artifact/기기 상태를 변경 범위에 맞게 검증한다.
+- 저장소의 인증서, 키, keystore, plist와 환경 설정은 출력하거나 임의 교체하지 않는다. 추적 중인 민감 자산이 발견되면 별도 보안 finding으로 보고하고 사용자 승인 없이 회전·삭제하지 않는다.
 
 ## 먼저 작업 등급을 정한다
 
@@ -27,9 +39,12 @@
 | 에이전트 | 모델 / effort | 호출해야 할 때 | 호출하지 않을 때 |
 |---|---|---|---|
 | `market_researcher` | `gpt-5.6-terra` / high | 신규 제품·시장·가격·경쟁·ASO·앱스토어 순위 판단 | 내부 버그, 이미 확정된 기능 구현 |
+| `competitive_pattern_researcher` | `gpt-5.6-terra` / high | 신규 제품·핵심 플로우의 현재 상위 제품, 패턴, 디자인, 리뷰 근거를 비교할 때 | 작은 수정, 경쟁 근거가 제품 결정을 바꾸지 않는 작업 |
 | `strategy` | `gpt-5.6-sol` / high | 큰 제품 선택, 포지셔닝, 우선순위 충돌 | 수용 기준이 명확한 기능 |
 | `business_development` | `gpt-5.6-terra` / high | 수익화, 파트너십, 유통, B2B, 단위경제 | 사업모델과 무관한 제품 수정 |
 | `marketing` | `gpt-5.6-terra` / high | 출시 메시지, ASO, 획득 채널, 캠페인 실험 | 백엔드·인프라 단독 변경 |
+| `discoverability` | `gpt-5.6-terra` / high | 신규 제품, 공개 URL·콘텐츠·렌더링·canonical·structured data·검색 랜딩·Universal/App Links 변경 | 인증 뒤 전용 화면, 순수 내부 API·리팩터링, 검색·딥링크 영향이 없는 수정 |
+| `store_compliance` | `gpt-5.6-sol` / high | 모바일 앱 신규 개발, 로그인·데이터·권한·결제·SDK·UGC 변경, App Store/Google Play 제출 | 모바일 스토어와 무관한 웹·백엔드 작업 |
 | `gtm_lead` | `gpt-5.6-sol` / high | 실제 출시의 타깃·포지셔닝·채널·가격·준비도·측정을 하나로 통합 | 출시가 없는 내부 구현, 작은 패치 |
 | `product_manager` | `gpt-5.6-terra` / high | 사용자·범위·수용 기준이 모호한 기능 | 요구와 수용 기준이 이미 명확한 작업 |
 | `ui_ux` | `gpt-5.6-terra` / high | 사용자 흐름, 화면 상태, 디자인 토큰·컴포넌트, 접근성, 시각 계층 변경 | UI에 영향 없는 코드 변경 |
@@ -53,11 +68,11 @@
 ```text
 Intake / task grading
         ↓
-Research ──→ Opportunity Gate
+Current market + benchmark research ──→ Opportunity Gate
         ↓
 Business Planning + Product Strategy ──→ Product Gate
         ↓
-UX/UI & Design System  ║  Tech Architecture  ║  Measurement Plan
+UX/UI & Design System  ║  Tech Architecture  ║  Discoverability / Store impact / Measurement
         └────────────── Solution Gate ──────────────┘
                                ↓
                     Incremental Coding
@@ -78,8 +93,10 @@ GTM track (starts after Product Gate) ──→ Release Readiness Gate
 ### Gate 1 — Opportunity
 
 - `market_researcher`가 최신 시장, 고객 문제, 앱스토어 비즈니스 순위, 경쟁·가격 근거를 수집한다.
+- `competitive_pattern_researcher`는 신규 제품과 핵심 사용자 플로우에서 대상 국가·플랫폼·카테고리·관측일이 명시된 비교군을 만들고, 상위권·직접 경쟁·인접 우수 제품의 제품 패턴과 디자인 패턴을 분리해 분석한다.
+- 순위는 발견 신호일 뿐 품질·매출·유지율의 증거가 아니다. 스크린샷, 실제 플로우, 리뷰, 공식 상품 설명 등 서로 다른 근거를 교차 확인하고 사실·해석·가설을 구분한다.
 - 신규 서비스와 시장 진입에서는 필수다. 기존 제품의 명확한 구현에서는 생략한다.
-- 산출물: evidence pack, 고객 문제, 기회 크기 가설, 사실/가설 구분, 중단 조건.
+- 산출물: 날짜가 있는 evidence pack, 고객 문제, 비교 행렬, 패턴·반패턴, 우리 제품에 적용할 원칙과 적용하지 않을 복제 요소, 기회 크기 가설, 사실/가설 구분, 중단 조건.
 
 ### Gate 2 — Product and Business
 
@@ -93,6 +110,8 @@ GTM track (starts after Product Gate) ──→ Release Readiness Gate
 - 사용자 화면이 있으면 `ui_ux`, 새로운 경계·계약·데이터 모델이 있으면 `architect`, 측정이 필요하면 `analyst`를 최대 3개까지 병렬 실행한다.
 - `ui_ux`는 화면만 그리지 않고 흐름, 정보구조, 모든 상태, 접근성, 토큰, 재사용 컴포넌트와 interaction contract를 정의한다.
 - `architect`는 시스템 경계, API·데이터 계약, NFR, 보안 가정, 관측성, 마이그레이션과 롤백을 정의한다.
+- 공개 웹·앱 surface가 있으면 `discoverability`가 SEO·AEO·GEO 관점의 URL, crawl/index, answerability, structured data, Universal/App Links, web fallback과 측정 계약을 정의한다. `AEG`는 사용자 입력 별칭으로만 인식하고 표준명으로 발명하지 않는다.
+- 모바일 앱 신규 개발이나 스토어 영향 변경이면 `store_compliance`가 개인정보, 계정 삭제, 결제, 권한, SDK, 연령·콘텐츠, 리뷰어 접근과 플랫폼 차이를 `store requirement matrix`로 만든다.
 - `planner`는 승인된 product brief, UX contract, architecture decision을 구현 가능한 vertical slice로 바꿀 때만 호출한다.
 - 통과 조건: 수용 기준, 디자인 시스템 delta, 계약·ADR, 테스트 전략, 계측, rollout 제약이 서로 모순되지 않는다.
 
@@ -105,6 +124,8 @@ GTM track (starts after Product Gate) ──→ Release Readiness Gate
 5. QA가 통과한 안정된 diff만 `reviewer`가 correctness·architecture·regression 관점에서 검토한다.
 6. review blocker는 `engineer → qa → reviewer`의 좁은 루프로 되돌린다. 스타일 의견만으로 전체 루프를 반복하지 않는다.
 
+공개 discovery contract가 있는 변경은 구현 후 `discoverability`가 실제 렌더링, 대표 URL, 구조화 데이터, association file과 fallback을 읽기 전용으로 확인한다. 모바일 store requirement matrix가 있는 변경은 실제 코드·SDK·네트워크 동작과 개인정보처리방침, Apple App Privacy, Google Data safety, 권한 설명, 계정 삭제, 결제와 스토어 메타데이터가 일치하는지 `qa`와 `store_compliance`가 검증한다. 실패는 좁은 `engineer → qa → 전문 재검증` 루프로 되돌린다.
+
 `security_reviewer`는 보안 트리거가 있을 때 Build–Verify 또는 Release Readiness에 추가한다. 여러 coding agent가 같은 작업 트리를 동시에 수정하지 않는다.
 
 ### GTM 병렬 트랙과 Release Readiness
@@ -113,6 +134,8 @@ GTM track (starts after Product Gate) ──→ Release Readiness Gate
 - `gtm_lead`는 타깃, 포지셔닝, 채널 순서, 가격·파트너 의존성, 출시 자산, 지원 준비, KPI·guardrail, 중단 기준과 담당자를 하나의 launch plan으로 통합한다.
 - 안정된 review 결과를 반영해 약속·메시지·스크린샷·지원 문서를 실제 제품과 다시 맞춘다.
 - 출시 게이트는 QA 통과, blocker 없는 review, 필요한 security 승인, `ops`의 버전·롤백·모니터링·smoke plan, GTM 자산과 계측 준비를 모두 요구한다.
+- 검색·딥링크 영향이 있으면 대표 URL, crawl/index 정책, canonical, sitemap, structured data, Universal/App Links, web fallback과 계측을 확인한다. 등록 요청 성공을 색인·순위·AI 인용 성공으로 간주하지 않는다.
+- App Store·Google Play 제출 직전에는 `store_compliance`가 제출할 실제 IPA/AAB(정확한 version/build/signing)와 현재 콘솔 상태를 기준으로 Pre-submission Hard Gate를 수행한다. 콘솔 전용 항목을 직접 확인하지 못하면 GO가 아니라 CONDITIONAL GO 또는 NO-GO다. 어떤 체크리스트도 승인을 보장하지 않는다.
 - `ops`는 read-only로 release readiness를 검증한다. 실제 외부 배포·제출은 메인 에이전트가 사용자의 대상·계정·권한을 다시 확인한 후 수행한다. `release_council`은 비가역 고위험 판단에만 사용한다.
 - release 후 `analyst`가 KPI와 guardrail을 읽고 `product_manager`·`strategy`에 학습을 돌려준다.
 
@@ -128,17 +151,17 @@ GTM track (starts after Product Gate) ──→ Release Readiness Gate
 
 ### S2 — 여러 계층의 기능
 
-요구가 모호하면 `product_manager`, 사용자 화면이 바뀌면 `ui_ux`, 기술 경계가 바뀌면 `architect`, 구현 순서가 복잡하면 `planner`를 선택적으로 호출한다. 읽기 전용 결과는 최대 3개까지 병렬화할 수 있다. 메인 에이전트가 결론을 통합한 후 `engineer` 한 명이 구현하고 `qa`가 검증한다. 핵심 경계 또는 큰 diff일 때만 `reviewer`를 추가한다.
+요구가 모호하면 `product_manager`, 사용자 화면이 바뀌면 `ui_ux`, 기술 경계가 바뀌면 `architect`, 공개 검색·딥링크에 영향이 있으면 `discoverability`, 모바일 정책 영향이 있으면 `store_compliance`, 구현 순서가 복잡하면 `planner`를 선택적으로 호출한다. 읽기 전용 결과는 최대 3개까지 병렬화할 수 있다. 메인 에이전트가 결론을 통합한 후 `engineer` 한 명이 구현하고 `qa`가 검증한다. 핵심 경계 또는 큰 diff일 때만 `reviewer`를 추가한다.
 
 ### S3 — 신규 서비스·시장·수익화·출시
 
-1. `market_researcher`가 2026년 현재 대상 국가의 앱스토어 비즈니스 순위, 경쟁 제품, 가격, 공식 자료를 조사한다.
+1. `market_researcher`가 2026년 현재 대상 국가의 앱스토어 비즈니스 순위, 경쟁 제품, 가격, 공식 자료를 조사하고 `competitive_pattern_researcher`가 상위·직접·인접 제품의 제품/UX/디자인 패턴을 비교한다.
 2. `strategy`와 `business_development` 중 문제에 해당하는 역할을 호출하고 `product_manager`가 product brief로 통합한다.
-3. `ui_ux`, `architect`, `analyst` 중 필요한 읽기 역할만 병렬 호출하고, 복잡한 delivery면 `planner`가 vertical slice를 만든다.
+3. `ui_ux`, `architect`, `analyst`, `discoverability`, `store_compliance` 중 영향 판정상 필요한 읽기 역할만 최대 3개씩 호출하고, 복잡한 delivery면 `planner`가 vertical slice를 만든다.
 4. Product Gate 이후 실제 출시가 예정됐으면 `gtm_lead`가 GTM 병렬 트랙을 시작한다. `marketing`, `business_development`, `analyst`는 필요한 입력만 제공한다.
 5. `engineer → qa ↔ engineer` 루프로 수용 기준을 통과시킨 뒤 안정된 diff를 `reviewer`가 독립 검토한다.
 6. 보안 트리거가 있을 때만 `security_reviewer`를 추가한다.
-7. 실제 배포가 범위일 때만 `ops`가 release readiness와 rollback을 검토한다.
+7. 실제 배포가 범위일 때만 `ops`가 release readiness와 rollback을 검토한다. 모바일 스토어 제출이면 `store_compliance`의 Pre-submission Hard Gate를 추가한다.
 8. 출시 후 `analyst`가 결과를 측정한다. 남은 고위험 충돌이 있을 때만 `release_council`로 에스컬레이션한다.
 
 ## 병렬화와 handoff 계약
@@ -152,8 +175,12 @@ GTM track (starts after Product Gate) ──→ Release Readiness Gate
 ## 품질 게이트
 
 - 아키텍처 의존성: Types → Config → Providers → Repo → Service → Runtime → UI.
-- 변경 후 관련 테스트와 필요한 경우 `python3 run.py --lint`를 실행한다.
+- 하네스 변경 후 `.venv/bin/python -m pytest -q tests/test_codex_harness_config.py`, `python3 run.py --lint`, `git diff --check`를 실행한다. 제품 코드 변경은 관련 `npm test`와 `npm run build`를 추가하고, 네이티브 변경은 해당 플랫폼 artifact와 기기 검증을 별도로 수행한다.
 - 테스트 통과, 배포 완료, 공개 확인을 서로 구분한다. 로컬·시뮬레이터 성공은 출시 승인이 아니다.
+- 벤치마크는 관측일·국가·플랫폼·카테고리·출처를 남긴다. 상위 순위를 제품 품질이나 성과의 인과 증거로 해석하거나 경쟁 UI를 그대로 복제하지 않는다.
+- SEO·AEO·GEO는 현재 공식 검색엔진 지침과 렌더된 결과로 검증하고 순위·색인·AI 인용을 보장하지 않는다.
+- GitHub 별 수와 커뮤니티 문서는 발견 신호일 뿐 정책 근거가 아니다. 관측일·검색 cohort·누적 별과 기간 내 증가를 구분해 기록하고, 공식 원문과 실제 렌더링이 우선한다.
+- 스토어 정책은 제출 시점에 공식 원문을 다시 확인한다. 저장소 검사, release artifact, 콘솔 선언, 제출, 승인, 공개 상태를 서로 구분한다.
 - 실패·미검증 항목을 숨기지 않는다.
 - 외부 게시, 배포, 결제, 제출처럼 되돌리기 어려운 행동은 대상 계정과 현재 상태를 확인한 뒤 수행한다.
 
@@ -162,7 +189,9 @@ GTM track (starts after Product Gate) ──→ Release Readiness Gate
 ```text
 .codex/config.toml       Codex 멀티에이전트 기본값
 .codex/agents/*.toml     조건부 전문 역할의 모델·effort·sandbox·지침
-ARCHITECTURE.md          코드 경계와 의존성
+SYSTEM_DESIGN.md         코드 경계와 데이터 모델
+DESIGN.md                현재 UI 설계 방향
+UX-CONTRACT.md           사용자 흐름과 상호작용 계약
 docs/                    제품·설계·운영 기록
 linters/                 기계적 구조 검증
 ```

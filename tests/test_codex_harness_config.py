@@ -12,7 +12,8 @@ CODEX_DIR = ROOT / ".codex"
 AGENTS_DIR = CODEX_DIR / "agents"
 
 EXPECTED_AGENTS = {
-    "market_researcher", "strategy", "business_development", "marketing", "product_manager",
+    "market_researcher", "competitive_pattern_researcher", "strategy",
+    "business_development", "marketing", "discoverability", "store_compliance", "product_manager",
     "ui_ux", "architect", "planner", "engineer", "qa",
     "reviewer", "security_reviewer", "ops", "analyst", "doc_gardener",
     "gtm_lead", "release_council",
@@ -105,11 +106,30 @@ def test_agents_map_points_to_codex_native_configuration():
     assert "부모가 명시하지 않는 한 다른 하위 에이전트를 만들지 않는다" in agents_md
 
 
+def test_harness_is_soccer_note_specific_and_references_existing_core_docs():
+    agents_md = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    harness_doc = (ROOT / "docs" / "CODEX_HARNESS.md").read_text(encoding="utf-8")
+    planner = load_toml(AGENTS_DIR / "planner.toml")["developer_instructions"]
+
+    assert "Soccer Note" in agents_md
+    assert "Soccer Note" in harness_doc
+    assert "TIPLOOP" not in agents_md
+    assert "TIPLOOP" not in harness_doc
+    for document in ("SYSTEM_DESIGN.md", "DESIGN.md", "UX-CONTRACT.md"):
+        assert (ROOT / document).is_file()
+        assert document in agents_md
+        assert document in planner
+    assert "ARCHITECTURE.md" not in planner
+
+
 def test_harness_docs_use_project_venv_and_conditional_routing():
+    agents_md = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     harness_doc = (ROOT / "docs" / "CODEX_HARNESS.md").read_text(encoding="utf-8")
 
     assert ".venv/bin/python -m pytest" in harness_doc
+    assert ".venv/bin/python -m pytest" in agents_md
     assert "python3 -m pytest" not in harness_doc
+    assert "python3 -m pytest" not in agents_md
     assert "필요한 역할만 선택" in harness_doc
 
 
@@ -160,3 +180,89 @@ def test_qa_fix_retest_and_post_release_learning_are_required():
 
     analyst_instructions = configs["analyst"]["developer_instructions"]
     assert all(term in analyst_instructions for term in ("baseline", "observation window", "rollback"))
+
+
+def test_cross_cutting_agents_are_live_read_only_and_evidence_driven():
+    configs = {
+        config["name"]: config
+        for config in (load_toml(path) for path in sorted(AGENTS_DIR.glob("*.toml")))
+    }
+
+    discoverability = configs["discoverability"]
+    assert discoverability["sandbox_mode"] == "read-only"
+    assert discoverability["web_search"] == "live"
+    assert all(term in discoverability["developer_instructions"] for term in (
+        "AEO", "canonical", "structured data", "Universal Links",
+        "Android App Links", "web fallback", "Search Console", "Never promise",
+        "GitHub repositories", "total stars observed", "immutable commit",
+        "officially-supported", "experimental", "untrusted input",
+        "NAVER_DISCOVERABILITY.md", "Naver Search Advisor", "Yeti",
+        "nosourceinfo", "AI Briefing", "Creator Advisor",
+    ))
+
+    store = configs["store_compliance"]
+    assert store["sandbox_mode"] == "read-only"
+    assert store["web_search"] == "live"
+    assert all(term in store["developer_instructions"] for term in (
+        "App Store", "Google Play", "account deletion", "demo", "payments",
+        "permissions", "SDK", "release artifact", "claim approval",
+    ))
+
+    benchmark = configs["competitive_pattern_researcher"]
+    assert benchmark["sandbox_mode"] == "read-only"
+    assert benchmark["web_search"] == "live"
+    assert all(term in benchmark["developer_instructions"] for term in (
+        "observed_at", "source URL", "observed fact", "inference",
+        "Adopt", "Adapt", "Avoid", "Test", "Never copy",
+    ))
+
+
+def test_cross_cutting_gates_are_conditional_and_release_aware():
+    agents_md = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    harness_doc = (ROOT / "docs" / "CODEX_HARNESS.md").read_text(encoding="utf-8")
+
+    assert all(term in agents_md for term in (
+        "discoverability: required | not-applicable",
+        "store_compliance: required | not-applicable",
+        "competitive_benchmark: required | not-applicable",
+        "competitive_pattern_researcher",
+        "Pre-submission Hard Gate",
+        "실제 IPA/AAB",
+        "CONDITIONAL GO",
+        "순위·색인·AI 인용",
+    ))
+    assert all(term in harness_doc for term in (
+        "DISCOVERABILITY.md", "STORE_COMPLIANCE.md", "COMPETITIVE_RESEARCH.md",
+        "NAVER_DISCOVERABILITY.md", "Adopt/Adapt/Avoid/Test", "제출할 IPA/AAB",
+    ))
+
+
+def test_discoverability_research_is_reproducible_and_not_star_driven():
+    standard = (ROOT / "docs" / "DISCOVERABILITY.md").read_text(encoding="utf-8")
+    template = (
+        ROOT / "docs" / "references" / "discoverability" / "TEMPLATE.md"
+    ).read_text(encoding="utf-8")
+    assert all(term in standard for term in (
+        "근거 우선순위", "누적 stars", "기간별 증가량",
+        "officially-supported", "단일 GEO 점수", "신뢰할 수 없는 입력",
+    ))
+    assert all(term in template for term in (
+        "observed_at", "Cohort and search queries", "total stars observed",
+        "Immutable ref", "Official corroboration", "Adopt / Adapt / Test / Avoid",
+    ))
+    assert "Soccer Note 전용 evidence pack" in standard
+
+
+def test_naver_discoverability_has_surface_contract_and_verifiable_gates():
+    naver = (ROOT / "docs" / "NAVER_DISCOVERABILITY.md").read_text(
+        encoding="utf-8"
+    )
+
+    assert all(term in naver for term in (
+        "Surface contract", "Owned website", "Naver Blog",
+        "SmartPlace / Map", "SmartStore / Shopping", "AI Briefing / AI Tab",
+        "Yeti", "robots.txt", "sitemap", "RSS", "canonical", "URL 검사",
+        "핵심 사용자 질문", "조건, 예외", "nosourceinfo",
+        "Measurement contract", "검색 노출·AI 인용·전환",
+        "Release acceptance criteria", "미확인 콘솔·플랫폼 내부 상태",
+    ))

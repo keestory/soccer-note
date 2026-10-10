@@ -150,8 +150,8 @@ class BaseAgent(ABC):
         return self.read_file(f"docs/{doc_name}")
 
     def get_architecture(self) -> str:
-        """ARCHITECTURE.md 읽기"""
-        return self.read_file("ARCHITECTURE.md")
+        """SYSTEM_DESIGN.md 읽기"""
+        return self.read_file("SYSTEM_DESIGN.md")
 
     # ── AI 호출 ──
 

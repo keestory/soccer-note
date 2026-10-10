@@ -21,29 +21,26 @@ except ModuleNotFoundError:  # 직접 ``python linters/structure_validator.py`` 
 # 필수 파일 정의
 REQUIRED_FILES = [
     "AGENTS.md",
-    "ARCHITECTURE.md",
-    "docs/DESIGN.md",
+    "SYSTEM_DESIGN.md",
+    "DESIGN.md",
+    "DESIGN_SPEC.md",
+    "UX-CONTRACT.md",
+    "QA_CHECKLIST.md",
+    "docs/CODEX_HARNESS.md",
     "docs/QUALITY_SCORE.md",
-    "docs/SECURITY.md",
-    "docs/RELIABILITY.md",
-    "docs/PLANS.md",
-    "docs/PRODUCT_SENSE.md",
-    "docs/design-docs/index.md",
-    "docs/design-docs/core-beliefs.md",
-    "docs/product-specs/index.md",
-    "docs/exec-plans/tech-debt-tracker.md",
+    "docs/USAGE_GUIDE.md",
+    "docs/COMPETITIVE_RESEARCH.md",
+    "docs/DISCOVERABILITY.md",
+    "docs/NAVER_DISCOVERABILITY.md",
+    "docs/STORE_COMPLIANCE.md",
+    "docs/references/discoverability/TEMPLATE.md",
 ]
 
 # 필수 디렉토리
 REQUIRED_DIRS = [
     "docs",
-    "docs/design-docs",
-    "docs/exec-plans",
-    "docs/exec-plans/active",
-    "docs/exec-plans/completed",
-    "docs/product-specs",
     "docs/references",
-    "docs/generated",
+    "docs/references/discoverability",
 ]
 
 

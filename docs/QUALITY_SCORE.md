@@ -23,4 +23,4 @@
 
 ## 기술 부채 추적
 
-→ [exec-plans/tech-debt-tracker.md](./exec-plans/tech-debt-tracker.md) 참조
+기술 부채는 실제 검증 결과와 함께 [`PROJECT_PLAN.md`](../PROJECT_PLAN.md)에 기록한다.

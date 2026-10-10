@@ -5,6 +5,13 @@ node_modules
 
 # Testing
 coverage
+.pytest_cache/
+__pycache__/
+*.py[cod]
+.harness/
+
+# Python tooling
+.venv/
 
 # Next.js
 .next
