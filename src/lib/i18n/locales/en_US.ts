@@ -387,6 +387,7 @@ export const translations: Translations = {
   teamLabel: 'Team',
   homeSeasonSummary: 'This season {n} matches · {rate}% win rate',
   homeAllMatchesLabel: 'View all matches',
+  viewAll: 'View all',
   homeAllMatchesDescription: 'Review every match so far.',
   homeTeamOperationsLabel: 'Team operations',
   homeTeamOperationsDescription: 'Prepare your team for the next match.',

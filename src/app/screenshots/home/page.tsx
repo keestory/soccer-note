@@ -1,23 +1,30 @@
-import { Bell, ChevronDown } from 'lucide-react'
 import { BottomNavShell } from '@/components/BottomNav'
 import { HomeFocus } from '@/components/home/HomeFocus'
+import { HomeHeader } from '@/components/home/HomeHeader'
+import { NotificationBadgeShell } from '@/components/NotificationBadge'
+import { getTranslations, LOCALES, type Locale } from '@/lib/i18n'
+import { formatDate } from '@/lib/utils'
 
-export default function HomeScreenshotPage() {
+export default async function HomeScreenshotPage({ searchParams }: { searchParams: Promise<{ locale?: string; scenario?: string; result?: string }> }) {
+  const params = await searchParams
+  const locale = LOCALES.some(item => item.code === params.locale) ? params.locale as Locale : 'ko'
+  const t = getTranslations(locale)
+  const long = params.scenario === 'long'
+  const quarters = (long ? [[3, 2], [3, 3], [3, 3], [3, 3]] : [[0, 0], [1, 1], [1, 0], [1, 1]])
+    .map(([home, away], index) => ({ label: `${index + 1}Q`, home, away: params.result === 'loss' ? home + 1 : params.result === 'draw' ? home : away }))
+  const homeScore = quarters.reduce((sum, quarter) => sum + quarter.home, 0)
+  const awayScore = quarters.reduce((sum, quarter) => sum + quarter.away, 0)
+  const result = homeScore > awayScore ? 'WIN' : homeScore < awayScore ? 'LOSS' : 'DRAW'
   return (
-    <div className="light app-shell relative min-h-screen w-[390px] max-w-full overflow-hidden pb-nav">
-      <header className="w-[390px] max-w-full px-5 pb-3 pt-10">
-        <div className="flex items-center justify-between">
-          <h1 className="flex items-center gap-2 text-[29px] font-black tracking-[-0.055em]">FC 행구 <ChevronDown aria-hidden="true" size={19} className="text-[color:var(--text3)]" /></h1>
-          <div className="flex items-center gap-2">
-            <span aria-label="알림" className="flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--line)] bg-[color:var(--card)] text-[color:var(--navy)]"><Bell aria-hidden="true" size={20} /></span>
-            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--line)] bg-white font-black text-[color:var(--navy)]">김</span>
-          </div>
-        </div>
-      </header>
-      <main className="w-[390px] max-w-full px-5 pb-10 pt-1">
-        <HomeFocus seasonLine="27경기 · 승률 48%" latestLabel="가장 최근 경기" opponentLabel="상대" match={{ id: 'preview', opponent: '김수빈 FC', score: '3-2', date: '2026. 09. 11', location: '살곶이 축구장', result: 'WIN', resultLabel: '승리', quarters: [{ label: '1Q', home: 0, away: 0 }, { label: '2Q', home: 1, away: 0 }, { label: '3Q', home: 1, away: 0 }, { label: '4Q', home: 1, away: 0 }] }} canCreateMatch newMatchLabel="새 경기 기록하기" allMatchesLabel="전체 경기" allMatchesDescription="시즌의 모든 경기를 한눈에 확인하세요." teamOperationsLabel="팀 운영" teamOperationsDescription="선수와 훈련, 팀 일정을 관리하세요." noMatchesLabel="아직 경기 기록이 없습니다" />
+    <div className="light app-shell pb-nav" lang={locale.replace('_', '-')}>
+      <HomeHeader teamName={long ? 'FC 서울숲 함께뛰는축구동호회' : 'FC 행구'} displayName="김" teamPickerLabel={t.selectTeam} profileLabel={t.myProfile} notification={<NotificationBadgeShell label={t.notifications} />} />
+      <main className="mx-auto max-w-md px-5 pb-8 pt-1">
+        <HomeFocus seasonLine={t.homeSeasonSummary.replace('{n}', '27').replace('{rate}', '48')} latestLabel={t.lastMatch} opponentLabel={t.opponentShort}
+          match={params.scenario === 'empty' ? null : { id: 'preview', opponent: long ? 'InternationalFootballCommunityUnited' : '김수빈 FC', score: `${homeScore}-${awayScore}`, date: formatDate('2026-09-11', locale), location: '살곶이 축구장', result, resultLabel: result === 'WIN' ? t.win : result === 'LOSS' ? t.loss : t.draw, quarters }}
+          upcoming={params.scenario === 'upcoming' ? { id: 'preview-next', opponent: '서울 유나이티드', date: formatDate('2026-10-18', locale), location: '서울숲 축구장' } : undefined} upcomingLabel={t.upcomingMatches}
+          canCreateMatch={params.scenario !== 'viewer'} newMatchLabel={t.newMatchRecord} allMatchesLabel={t.viewAll} teamOperationsLabel={t.homeTeamOperationsLabel} teamOperationsDescription={t.homeTeamOperationsDescription} noMatchesLabel={t.noMatches} />
       </main>
-      <BottomNavShell activeKey="home" labels={{ home: '홈', matches: '경기', team: '팀' }} preview />
+      <BottomNavShell activeKey="home" labels={{ home: t.homeLabel, matches: t.matchesLabel, team: t.teamLabel }} />
     </div>
   )
 }

@@ -34,13 +34,17 @@ export function NotificationBadge({ className = '' }: NotificationBadgeProps) {
     return () => clearInterval(interval)
   }, [fetchUnreadCount])
 
+  return <NotificationBadgeShell label={t.notifications} unreadCount={unreadCount} className={className} />
+}
+
+export function NotificationBadgeShell({ label, unreadCount = 0, className = '' }: { label: string; unreadCount?: number; className?: string }) {
   return (
     <Link
       href="/inbox"
-      aria-label={t.notifications}
-      className={`focus-ring relative flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--line)] bg-[color:var(--card)] transition ${className}`}
+      aria-label={label}
+      className={`focus-ring relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[color:var(--line-strong)] bg-[color:var(--card)] transition ${className}`}
     >
-      <Bell aria-hidden="true" className="h-5 w-5 text-[color:var(--navy)]" />
+      <Bell aria-hidden="true" size={20} strokeWidth={1.7} className="text-[color:var(--text)]" />
       {unreadCount > 0 && (
         <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full px-1">
           {unreadCount > 99 ? '99+' : unreadCount}

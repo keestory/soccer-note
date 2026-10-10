@@ -404,6 +404,7 @@ export interface Translations {
   teamLabel: string
   homeSeasonSummary: string
   homeAllMatchesLabel: string
+  viewAll: string
   homeAllMatchesDescription: string
   homeTeamOperationsLabel: string
   homeTeamOperationsDescription: string

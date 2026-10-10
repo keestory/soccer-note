@@ -31,8 +31,8 @@ export function BottomNavShell({ activeKey, labels, preview = false }: { activeK
           const Icon = tab.icon
           const content = (
             <>
-              <Icon aria-hidden="true" size={21} strokeWidth={1.7} />
-              <span className="text-[11px] font-semibold">{labels[tab.key]}</span>
+              <Icon aria-hidden="true" size={20} strokeWidth={1.7} />
+              <span className="text-xs font-semibold leading-[18px]">{labels[tab.key]}</span>
             </>
           )
           const className = `focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-[12px] px-2 transition-colors ${active ? 'bg-[color:var(--chip)] text-[color:var(--brand)]' : 'text-[color:var(--text3)] hover:text-[color:var(--text)]'}`

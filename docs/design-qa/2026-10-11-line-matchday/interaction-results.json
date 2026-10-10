@@ -1,0 +1,59 @@
+{
+  "checks": [
+    {
+      "name": "Sheet opens and focuses name",
+      "passed": true
+    },
+    {
+      "name": "Name-only entry enables submit",
+      "passed": true
+    },
+    {
+      "name": "Player addition updates in-memory roster",
+      "passed": true
+    },
+    {
+      "name": "Name search finds added player",
+      "passed": true
+    },
+    {
+      "name": "Sheet contains forward Tab focus",
+      "passed": true
+    },
+    {
+      "name": "Escape closes Sheet and returns focus",
+      "passed": true
+    },
+    {
+      "name": "Keyboard moves selected player",
+      "passed": true
+    },
+    {
+      "name": "Undo restores formation position",
+      "passed": true
+    },
+    {
+      "name": "Formation confirmation shown",
+      "passed": true
+    },
+    {
+      "name": "Quarter update aggregates total",
+      "passed": true
+    },
+    {
+      "name": "Record confirmation shown",
+      "passed": true
+    },
+    {
+      "name": "Home reflects updated match and quarters",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "viewport": {
+    "width": 390,
+    "height": 844,
+    "dpr": 1
+  },
+  "scope": "Fictional in-memory design-system; no real API writes"
+}

@@ -387,6 +387,7 @@ export const translations: Translations = {
   teamLabel: 'Team',
   homeSeasonSummary: 'Diese Saison {n} Spiele · {rate}% Siegquote',
   homeAllMatchesLabel: 'Alle Spiele ansehen',
+  viewAll: 'Alle ansehen',
   homeAllMatchesDescription: 'Alle bisherigen Spiele im Überblick.',
   homeTeamOperationsLabel: 'Team verwalten',
   homeTeamOperationsDescription: 'Bereite dein Team auf das nächste Spiel vor.',

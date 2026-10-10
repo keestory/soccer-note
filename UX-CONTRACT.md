@@ -36,7 +36,10 @@ Native tabs mirror this model. `players`, `training`, and `community` remain rou
 - Existing player, training, community, match detail, and team administration URLs still resolve.
 - Home contains one primary CTA and no full recent-match list.
 - Complete match history lives under Matches.
-- The auth-free `/screenshots/home` route renders the same Home hero component for deterministic visual QA.
+- The auth-free `/screenshots/home` route renders the same HomeHeader, HomeFocus and BottomNavShell for deterministic visual QA; only data and the team-switch handler differ.
+- The recent-match heading owns one localized View all link to Matches. Home keeps one compact Team operations row and does not repeat a large Matches menu row.
+- Long team/opponent names wrap. Two-digit scores remain fully visible. Outcome labels remain readable independently of color.
+- Responsive evidence records the true CSS viewport and device pixel ratio at 320, 360, 390 and 430px; screenshot dimensions alone are insufficient.
 
 ## Line Matchday interaction delta (2026-10-10)
 

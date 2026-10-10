@@ -1,0 +1,98 @@
+[
+  {
+    "path": "/tmp/soccer-note-design-refinement.a2LrZS/final-home-320x844.png",
+    "innerWidth": 320,
+    "innerHeight": 844,
+    "dpr": 1,
+    "scrollWidth": 320,
+    "bodyWidth": 320,
+    "font": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+    "url": "http://127.0.0.1:3989/screenshots/home",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "path": "/tmp/soccer-note-design-refinement.a2LrZS/final-design-home-320x844.png",
+    "innerWidth": 320,
+    "innerHeight": 844,
+    "dpr": 1,
+    "scrollWidth": 320,
+    "bodyWidth": 320,
+    "font": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+    "url": "http://127.0.0.1:3989/design-system",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "path": "/tmp/soccer-note-design-refinement.a2LrZS/final-home-360x844.png",
+    "innerWidth": 360,
+    "innerHeight": 844,
+    "dpr": 1,
+    "scrollWidth": 360,
+    "bodyWidth": 360,
+    "font": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+    "url": "http://127.0.0.1:3989/screenshots/home",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "path": "/tmp/soccer-note-design-refinement.a2LrZS/final-design-home-360x844.png",
+    "innerWidth": 360,
+    "innerHeight": 844,
+    "dpr": 1,
+    "scrollWidth": 360,
+    "bodyWidth": 360,
+    "font": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+    "url": "http://127.0.0.1:3989/design-system",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "path": "/tmp/soccer-note-design-refinement.a2LrZS/final-home-390x844.png",
+    "innerWidth": 390,
+    "innerHeight": 844,
+    "dpr": 1,
+    "scrollWidth": 390,
+    "bodyWidth": 390,
+    "font": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+    "url": "http://127.0.0.1:3989/screenshots/home",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "path": "/tmp/soccer-note-design-refinement.a2LrZS/final-design-home-390x844.png",
+    "innerWidth": 390,
+    "innerHeight": 844,
+    "dpr": 1,
+    "scrollWidth": 390,
+    "bodyWidth": 390,
+    "font": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+    "url": "http://127.0.0.1:3989/design-system",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "path": "/tmp/soccer-note-design-refinement.a2LrZS/final-home-430x844.png",
+    "innerWidth": 430,
+    "innerHeight": 844,
+    "dpr": 1,
+    "scrollWidth": 430,
+    "bodyWidth": 430,
+    "font": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+    "url": "http://127.0.0.1:3989/screenshots/home",
+    "overflow": [],
+    "errors": []
+  },
+  {
+    "path": "/tmp/soccer-note-design-refinement.a2LrZS/final-design-home-430x844.png",
+    "innerWidth": 430,
+    "innerHeight": 844,
+    "dpr": 1,
+    "scrollWidth": 430,
+    "bodyWidth": 430,
+    "font": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+    "url": "http://127.0.0.1:3989/design-system",
+    "overflow": [],
+    "errors": []
+  }
+]

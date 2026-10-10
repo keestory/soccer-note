@@ -387,6 +387,7 @@ export const translations: Translations = {
   teamLabel: '팀',
   homeSeasonSummary: '이번 시즌 {n}경기 · 승률 {rate}%',
   homeAllMatchesLabel: '전체 경기 보기',
+  viewAll: '전체 보기',
   homeAllMatchesDescription: '지금까지의 모든 경기를 확인하세요.',
   homeTeamOperationsLabel: '팀 운영 보기',
   homeTeamOperationsDescription: '우리 팀의 다음 경기를 준비하세요.',
