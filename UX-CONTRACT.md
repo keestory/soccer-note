@@ -27,6 +27,7 @@ Native tabs mirror this model. `players`, `training`, and `community` remain rou
 - No session redirects to login.
 - No selected team returns to team selection on Home.
 - Empty match history explains the state and keeps the authorized create action available.
+- Home explicitly states when no upcoming match is scheduled. When one exists, it is visually primary and the latest result becomes secondary.
 - Pull to refresh remains available on data-heavy Home and Matches screens.
 - Switching teams updates the shared store and cached permission resolution before rendering team data.
 
@@ -35,6 +36,7 @@ Native tabs mirror this model. `players`, `training`, and `community` remain rou
 - Exactly three primary destinations appear on web and native.
 - Existing player, training, community, match detail, and team administration URLs still resolve.
 - Home contains one primary CTA and no full recent-match list.
+- Home state hierarchy is conditional: next match first when scheduled; otherwise no-upcoming status followed by the latest result or empty-history explanation.
 - Complete match history lives under Matches.
 - The auth-free `/screenshots/home` route renders the same HomeHeader, HomeFocus and BottomNavShell for deterministic visual QA; only data and the team-switch handler differ.
 - The recent-match heading owns one localized View all link to Matches. Home keeps one compact Team operations row and does not repeat a large Matches menu row.

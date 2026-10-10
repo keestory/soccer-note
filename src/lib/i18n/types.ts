@@ -408,6 +408,8 @@ export interface Translations {
   homeAllMatchesDescription: string
   homeTeamOperationsLabel: string
   homeTeamOperationsDescription: string
+  homeNoUpcoming: string
+  homeEmptyDescription: string
 
   // Landing page
   getStarted: string

@@ -385,12 +385,14 @@ export const translations: Translations = {
   playersLabel: 'Giocatori',
   homeLabel: 'Home',
   teamLabel: 'Squadra',
-  homeSeasonSummary: 'Questa stagione {n} partite · {rate}% vittorie',
+  homeSeasonSummary: '{n} partite totali · {rate}% vittorie',
   homeAllMatchesLabel: 'Vedi tutte le partite',
   viewAll: 'Vedi tutto',
   homeAllMatchesDescription: 'Rivedi tutte le partite giocate finora.',
-  homeTeamOperationsLabel: 'Gestione squadra',
-  homeTeamOperationsDescription: 'Prepara la squadra per la prossima partita.',
+  homeTeamOperationsLabel: 'Gestisci squadra',
+  homeTeamOperationsDescription: 'Giocatori · Allenamenti · Membri',
+  homeNoUpcoming: 'Nessuna partita in programma',
+  homeEmptyDescription: 'Il calendario e i risultati della squadra appariranno qui.',
 
   // Landing page
   getStarted: 'Inizia',

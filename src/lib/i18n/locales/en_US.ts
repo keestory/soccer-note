@@ -385,12 +385,14 @@ export const translations: Translations = {
   playersLabel: 'Players',
   homeLabel: 'Home',
   teamLabel: 'Team',
-  homeSeasonSummary: 'This season {n} matches · {rate}% win rate',
+  homeSeasonSummary: 'Total {n} matches · {rate}% win rate',
   homeAllMatchesLabel: 'View all matches',
   viewAll: 'View all',
   homeAllMatchesDescription: 'Review every match so far.',
-  homeTeamOperationsLabel: 'Team operations',
-  homeTeamOperationsDescription: 'Prepare your team for the next match.',
+  homeTeamOperationsLabel: 'Manage team',
+  homeTeamOperationsDescription: 'Players · Training · Members',
+  homeNoUpcoming: 'No upcoming match scheduled',
+  homeEmptyDescription: "Your team's match schedule and results will appear here.",
 
   // Landing page
   getStarted: 'Get Started',

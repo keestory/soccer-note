@@ -61,10 +61,10 @@ export default function DesignSystemPage() {
             <h1 className="sn-page-title mt-6">{title}</h1>
           </header>
           {page === 'home' && <div onClick={e => { const link = (e.target as HTMLElement).closest('a'); if (!link) return; e.preventDefault(); switchPage(link.getAttribute('href') === '/team' ? 'players' : 'record') }}>
-            <HomeFocus seasonLine="2026 시즌 · 12경기 · 8승 2무 2패" latestLabel="지난 경기" opponentLabel="상대" upcomingLabel="다음 경기"
+            <HomeFocus seasonLine="총 12경기 · 승률 67%" latestLabel="지난 경기" opponentLabel="상대" upcomingLabel="다음 경기"
               upcoming={{ id: 'demo-next', opponent: '서울 유나이티드', date: '10월 18일 (일) · 09:00', location: '서울숲 축구장' }}
               match={{ id: 'demo', opponent: '마포 FC', score: total.join('-'), date: '10월 4일 (일)', location: '살곶이 축구장', result: total[0] > total[1] ? 'WIN' : total[0] < total[1] ? 'LOSS' : 'DRAW', resultLabel: total[0] > total[1] ? t.win : total[0] < total[1] ? t.loss : t.draw, quarters: scores.map((q, i) => ({ label: `${i + 1}Q`, home: q[0], away: q[1] })) }}
-              canCreateMatch newMatchLabel="경기 기록하기" allMatchesLabel={t.viewAll} teamOperationsLabel="우리 팀 관리" teamOperationsDescription={`선수 ${players.length}명 · 선수 명단과 개인 순위`} noMatchesLabel="첫 경기를 기록해 보세요." />
+              canCreateMatch newMatchLabel="경기 기록하기" allMatchesLabel={t.viewAll} teamOperationsLabel="팀 관리" teamOperationsDescription={`선수 ${players.length}명 · 선수 명단과 개인 순위`} noMatchesLabel="첫 경기를 기록해 보세요." noUpcomingLabel="예정된 경기가 없어요" emptyDescription="팀의 경기 일정과 결과가 여기에 모여요." />
           </div>}
           {page === 'players' && <>
             <div className="sn-tabs mb-5"><button aria-pressed={!ranking} onClick={() => setRanking(false)}>선수 {players.length}</button><button aria-pressed={ranking} onClick={() => setRanking(true)}>시즌 랭킹</button></div>

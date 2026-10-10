@@ -158,12 +158,22 @@ input, textarea, [contenteditable] {
 .sn-opponent { font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .sn-kicker { font-size: 12px; line-height: 18px; font-weight: 600; letter-spacing: .01em; color: var(--text3); }
 .sn-kicker--latin { letter-spacing: .1em; text-transform: uppercase; }
+.sn-home-status { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -.01em; color: var(--text); }
+.sn-home-section-title { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -.01em; color: var(--text); }
+.sn-home-upcoming { padding: 20px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--chip); }
+.sn-home-upcoming-date { font-size: 14px; line-height: 21px; font-weight: 600; color: var(--text); }
+.sn-home-upcoming-opponent { font-size: 22px; line-height: 30px; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.sn-home-upcoming-meta { font-size: 12px; line-height: 18px; color: var(--text3); }
 .sn-result { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; font-size: 12px; line-height: 18px; font-weight: 500; background: var(--card2); color: var(--text2); }
 .sn-result[data-result=WIN] { color: var(--brand); background: var(--chip); border-color: var(--line-strong); }
 .sn-result[data-result=LOSS] { color: var(--result-loss); background: var(--result-loss-bg); border-color: #e5c7c3; }
 .sn-match-card { container-type: inline-size; }
 .sn-match-summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 20px; }
 .sn-match-score { font-size: 48px; line-height: 1; white-space: nowrap; }
+.sn-match-card[data-secondary=true] { border-color: var(--line); }
+.sn-match-card[data-secondary=true] .sn-match-summary { padding: 16px; }
+.sn-match-card[data-secondary=true] .sn-opponent { font-size: 16px; line-height: 24px; }
+.sn-match-card[data-secondary=true] .sn-match-score { font-size: 32px; }
 .sn-match-summary[data-wide-score=true] { grid-template-columns: minmax(0, 1fr); }
 @container (max-width: 260px) { .sn-match-summary { grid-template-columns: minmax(0, 1fr); } }
 .sn-field { display: grid; gap: 8px; font-size: 13px; font-weight: 500; }

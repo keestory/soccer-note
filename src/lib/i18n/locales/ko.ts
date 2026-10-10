@@ -385,12 +385,14 @@ export const translations: Translations = {
   playersLabel: '선수',
   homeLabel: '홈',
   teamLabel: '팀',
-  homeSeasonSummary: '이번 시즌 {n}경기 · 승률 {rate}%',
+  homeSeasonSummary: '총 {n}경기 · 승률 {rate}%',
   homeAllMatchesLabel: '전체 경기 보기',
   viewAll: '전체 보기',
   homeAllMatchesDescription: '지금까지의 모든 경기를 확인하세요.',
-  homeTeamOperationsLabel: '팀 운영 보기',
-  homeTeamOperationsDescription: '우리 팀의 다음 경기를 준비하세요.',
+  homeTeamOperationsLabel: '팀 관리',
+  homeTeamOperationsDescription: '선수 명단 · 훈련 · 팀원 관리',
+  homeNoUpcoming: '예정된 경기가 없어요',
+  homeEmptyDescription: '팀의 경기 일정과 결과가 여기에 모여요.',
 
   // Landing page
   getStarted: '시작하기',

@@ -385,12 +385,14 @@ export const translations: Translations = {
   playersLabel: '選手',
   homeLabel: 'ホーム',
   teamLabel: 'チーム',
-  homeSeasonSummary: '今シーズン {n}試合 · 勝率 {rate}%',
+  homeSeasonSummary: '通算 {n}試合 · 勝率 {rate}%',
   homeAllMatchesLabel: '全試合を見る',
   viewAll: 'すべて見る',
   homeAllMatchesDescription: 'これまでの全試合を確認できます。',
-  homeTeamOperationsLabel: 'チーム運営を見る',
-  homeTeamOperationsDescription: '次の試合に向けてチームを準備しましょう。',
+  homeTeamOperationsLabel: 'チーム管理',
+  homeTeamOperationsDescription: '選手名簿 · トレーニング · メンバー管理',
+  homeNoUpcoming: '予定されている試合はありません',
+  homeEmptyDescription: 'チームの試合日程と結果がここに表示されます。',
 
   // Landing page
   getStarted: '始める',
