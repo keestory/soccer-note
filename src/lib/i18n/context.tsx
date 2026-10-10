@@ -48,6 +48,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, newLocale)
   }
 
+  useEffect(() => { document.documentElement.lang = locale.replace('_', '-') }, [locale])
+
   const t = getTranslations(locale)
 
   if (!mounted) {

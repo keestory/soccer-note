@@ -108,10 +108,10 @@ export function getPlayerStatsFromMatch(match: Match): PlayerStats[] {
   return results.sort((a, b) => b.averageRating - a.averageRating)
 }
 
-// Format date in Korean
-export function formatDate(dateStr: string): string {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('ko-KR', {
+// Date-only match values represent a local calendar date, not midnight UTC.
+export function formatDate(dateStr: string, locale = 'ko-KR'): string {
+  const date = new Date(/^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? `${dateStr}T12:00:00` : dateStr)
+  return date.toLocaleDateString(locale.replace('_', '-'), {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

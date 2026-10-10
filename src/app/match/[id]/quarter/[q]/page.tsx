@@ -9,6 +9,8 @@ import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType 
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
+import { LinePitch } from '@/components/design/LinePitch'
+import { getDesignCopy } from '@/lib/design-copy'
 import { QuarterEditSkeleton } from '@/components/Skeleton'
 
 // Formation presets: positions as [x%, y%] for each role
@@ -114,7 +116,9 @@ function getRatingStyle(rating: number | null): { textClass: string; accentClass
 }
 
 export default function QuarterEditPage() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const copy = getDesignCopy(locale)
+  const [positionPlayerId, setPositionPlayerId] = useState<string | null>(null)
   const router = useRouter()
   const params = useParams()
   const matchId = params.id as string
@@ -137,19 +141,26 @@ export default function QuarterEditPage() {
   const [subInId, setSubInId] = useState('')
   const [allTeamPlayers, setAllTeamPlayers] = useState<Player[]>([])
   const [savingSub, setSavingSub] = useState(false)
-  const [draggingId, setDraggingId] = useState<string | null>(null)
   const [subPickerMode, setSubPickerMode] = useState<'out' | 'in' | null>(null)
 
-  const fieldRef = useRef<HTMLDivElement>(null)
   const mediaInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
+  const recordRef = useRef<HTMLElement>(null)
   const supabase = createClient()
+
+  useEffect(() => {
+    if (selectedPlayer) {
+      recordRef.current?.scrollIntoView({ block: 'start' })
+      recordRef.current?.focus({ preventScroll: true })
+    }
+  }, [selectedPlayer?.id])
 
   useEffect(() => {
     loadData()
   }, [matchId, quarterNumber])
 
   const loadData = async () => {
+    setPositionPlayerId(null)
     // Check permissions first
     const user = await getSessionUser(supabase)
     if (!user) {
@@ -286,19 +297,6 @@ export default function QuarterEditPage() {
     }
 
     setLoading(false)
-  }
-
-  const handleFieldClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!showPlayerPicker) return
-
-    const rect = fieldRef.current?.getBoundingClientRect()
-    if (!rect) return
-
-    const x = ((e.clientX - rect.left) / rect.width) * 100
-    const y = ((e.clientY - rect.top) / rect.height) * 100
-
-    // Show player picker at this position
-    setShowPlayerPicker(false)
   }
 
   const togglePickerPlayer = (playerId: string) => {
@@ -536,54 +534,10 @@ export default function QuarterEditPage() {
   }
 
   const removePlayerFromField = (fieldPlayer: FieldPlayer) => {
+    setPositionPlayerId(null)
     setFieldPlayers(fieldPlayers.filter(fp => fp.id !== fieldPlayer.id))
     setAvailablePlayers([...availablePlayers, fieldPlayer.player])
     setSelectedPlayer(null)
-  }
-
-  const handlePlayerDrag = (fieldPlayerId: string, e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault()
-    const rect = fieldRef.current?.getBoundingClientRect()
-    if (!rect) return
-
-    setDraggingId(fieldPlayerId)
-
-    const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
-      let clientX: number, clientY: number
-
-      if ('touches' in moveEvent) {
-        moveEvent.preventDefault()
-        clientX = moveEvent.touches[0].clientX
-        clientY = moveEvent.touches[0].clientY
-      } else {
-        clientX = moveEvent.clientX
-        clientY = moveEvent.clientY
-      }
-
-      // Portrait pitch: horizontal drag maps to across-field (positionY),
-      // vertical drag maps to along-field (positionX), inverted so own goal is at the bottom.
-      const posY = Math.max(5, Math.min(95, ((clientX - rect.left) / rect.width) * 100))
-      const posX = Math.max(5, Math.min(95, 100 - ((clientY - rect.top) / rect.height) * 100))
-
-      setFieldPlayers(prev =>
-        prev.map(fp =>
-          fp.id === fieldPlayerId ? { ...fp, positionX: posX, positionY: posY } : fp
-        )
-      )
-    }
-
-    const handleEnd = () => {
-      setDraggingId(null)
-      document.removeEventListener('mousemove', handleMove)
-      document.removeEventListener('mouseup', handleEnd)
-      document.removeEventListener('touchmove', handleMove)
-      document.removeEventListener('touchend', handleEnd)
-    }
-
-    document.addEventListener('mousemove', handleMove)
-    document.addEventListener('mouseup', handleEnd)
-    document.addEventListener('touchmove', handleMove, { passive: false })
-    document.addEventListener('touchend', handleEnd)
   }
 
   const updateFieldPlayer = (id: string, updates: Partial<FieldPlayer>) => {
@@ -728,6 +682,7 @@ export default function QuarterEditPage() {
           prev.map(p => p.id === fp.id ? { ...p, id: data.id } : p)
         )
         setSelectedPlayer(prev => prev?.id === fp.id ? { ...prev, id: data.id } : prev)
+        setPositionPlayerId(prev => prev === fp.id ? data.id : prev)
       } else {
         const { error } = await supabase
           .from('quarter_records')
@@ -749,7 +704,7 @@ export default function QuarterEditPage() {
     return <QuarterEditSkeleton />
   }
 
-  const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
+  const cardStyle = { background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16 }
   const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 12 }
   const textareaStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 10 }
 
@@ -762,7 +717,7 @@ export default function QuarterEditPage() {
             <Link href={`/match/${matchId}`} className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
               <ArrowLeft className="w-5 h-5" />
             </Link>
-            <h1 className="text-base font-black text-[color:var(--text)]">{quarterNumber}{t.quarterEditTitle.replace('{n}', String(quarterNumber))}</h1>
+            <h1 className="text-base font-black text-[color:var(--text)]">{t.quarterEditTitle.replace('{n}', String(quarterNumber))}</h1>
           </div>
           <button
             onClick={handleSave}
@@ -776,7 +731,7 @@ export default function QuarterEditPage() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+      <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
         {/* Soccer Field */}
         <section>
           <div className="flex justify-between items-center mb-3">
@@ -790,6 +745,7 @@ export default function QuarterEditPage() {
                   }
                 }}
                 defaultValue=""
+                aria-label={t.formation}
                 className="px-2 py-1.5 rounded-lg text-sm outline-none"
                 style={{ background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)' }}
               >
@@ -837,7 +793,7 @@ export default function QuarterEditPage() {
                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: POSITION_COLORS[posType] }} />
                         <span className="text-xs font-semibold" style={{ color: 'var(--muted2)' }}>{POSITION_LABELS[posType]}</span>
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 gap-2">
                         {posPlayers.map(player => {
                           const isSelected = selectedPickerPlayers.has(player.id)
                           return (
@@ -886,97 +842,19 @@ export default function QuarterEditPage() {
             </div>
           )}
 
-          {/* Field */}
-          <div
-            ref={fieldRef}
-            className="relative w-full aspect-[3/4] rounded-xl overflow-hidden touch-none select-none"
-            style={{ background: 'linear-gradient(180deg,#12724a,#0e5e3d)', border: '1px solid #143325' }}
-          >
-            {/* Grass stripe pattern */}
-            <div className="absolute inset-0" style={{
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.015) 20px, rgba(255,255,255,0.015) 40px)',
-            }} />
-
-            {/* Field outline */}
-            <div className="absolute inset-3 border border-white/20 rounded" />
-            {/* Center line (horizontal — portrait pitch) */}
-            <div className="absolute top-1/2 left-3 right-3 h-px bg-white/20" />
-            {/* Center circle */}
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-28 h-28 rounded-full border border-white/20" />
-            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white/20" />
-            {/* Top penalty area */}
-            <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border border-white/20 border-t-0" />
-            <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border border-white/20 border-t-0" />
-            <div className="absolute top-[14%] left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 h-3 w-[18%] border border-white/20 border-t-0 rounded-b" style={{ background: 'rgba(255,255,255,0.04)' }} />
-            {/* Bottom penalty area */}
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border border-white/20 border-b-0" />
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border border-white/20 border-b-0" />
-            <div className="absolute bottom-[14%] left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-white/20" />
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-3 w-[18%] border border-white/20 border-b-0 rounded-t" style={{ background: 'rgba(255,255,255,0.04)' }} />
-            {/* Corner arcs */}
-            <div className="absolute left-3 top-3 w-6 h-6 border-b border-r border-white/20 rounded-br-full" />
-            <div className="absolute right-3 top-3 w-6 h-6 border-b border-l border-white/20 rounded-bl-full" />
-            <div className="absolute left-3 bottom-3 w-6 h-6 border-t border-r border-white/20 rounded-tr-full" />
-            <div className="absolute right-3 bottom-3 w-6 h-6 border-t border-l border-white/20 rounded-tl-full" />
-
-            {/* Players */}
-            {fieldPlayers.map(fp => {
-              const subOut = substitutions.find(s => s.player_out_id === fp.playerId)
-              const subIn = substitutions.find(s => s.player_in_id === fp.playerId)
-              return (
-                <div
-                  key={fp.id}
-                  className={`absolute flex flex-col items-center cursor-grab active:cursor-grabbing touch-none transition-transform ${draggingId === fp.id ? 'z-20' : ''}`}
-                  style={{
-                    left: `${fp.positionY}%`,
-                    top: `${100 - fp.positionX}%`,
-                    transform: draggingId === fp.id
-                      ? 'translate(-50%, calc(-50% - 28px)) scale(1.15)'
-                      : 'translate(-50%, -50%)',
-                  }}
-                  onMouseDown={(e) => handlePlayerDrag(fp.id, e)}
-                  onTouchStart={(e) => handlePlayerDrag(fp.id, e)}
-                  onClick={() => setSelectedPlayer(fp)}
-                >
-                  {subIn && (
-                    <span className="absolute -top-1.5 -left-2 px-1 py-0.5 text-[7px] font-bold text-black rounded shadow z-10" style={{ background: 'var(--accent)' }}>
-                      IN {subIn.minute}&apos;
-                    </span>
-                  )}
-                  {subOut && (
-                    <span className="absolute -top-1.5 -right-2 px-1 py-0.5 bg-red-500 text-[7px] font-bold text-white rounded shadow z-10">
-                      OUT {subOut.minute}&apos;
-                    </span>
-                  )}
-                  <div
-                    className={`w-11 h-11 rounded-full flex items-center justify-center text-white font-bold shadow-lg transition-transform ${
-                      draggingId === fp.id ? 'shadow-2xl' : ''
-                    } ${subOut ? 'opacity-60' : ''}`}
-                    style={{
-                      backgroundColor: POSITION_COLORS[fp.positionType],
-                      outline: draggingId === fp.id ? '3px solid rgba(255,255,255,0.8)' : selectedPlayer?.id === fp.id ? '3px solid var(--accent)' : 'none',
-                      transform: selectedPlayer?.id === fp.id ? 'scale(1.1)' : 'scale(1)',
-                    }}
-                  >
-                    {fp.player.number || '?'}
-                  </div>
-                  <span className={`mt-1 px-1.5 py-0.5 bg-black/70 text-white text-xs rounded font-medium whitespace-nowrap ${subOut ? 'line-through opacity-70' : ''}`}>
-                    {fp.player.name}
-                  </span>
-                </div>
-              )
+          <LinePitch
+            players={fieldPlayers.map(fp => {
+              const outgoing = substitutions.find(sub => sub.player_out_id === fp.playerId)
+              const incoming = substitutions.find(sub => sub.player_in_id === fp.playerId)
+              return { id: fp.id, name: fp.player.name, number: fp.player.number, x: fp.positionX, y: fp.positionY, substitutedOut: !!outgoing, substitution: [incoming ? `IN ${incoming.minute}′` : '', outgoing ? `OUT ${outgoing.minute}′` : ''].filter(Boolean).join(' · ') }
             })}
-
-            {fieldPlayers.length === 0 && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="px-4 py-2 rounded-lg text-sm" style={{ background: 'rgba(0,0,0,0.5)', color: 'var(--muted2)' }}>{t.dragToPlace}</p>
-              </div>
-            )}
-          </div>
-          <p className="text-center text-sm mt-2" style={{ color: 'var(--muted2)' }}>
-            {t.dragToAdjust}
-          </p>
+            selectedId={positionPlayerId}
+            onSelect={id => setPositionPlayerId(id)}
+            onMove={(id, x, y) => updateFieldPlayer(id, { positionX: x, positionY: y })}
+            label={t.formationPlacement} moveLabel={copy.moveTarget}
+          />
+          <p className="mt-3 text-xs leading-relaxed text-[color:var(--text3)]">{copy.move}</p>
+          {fieldPlayers.some(fp => fp.id === positionPlayerId) && <button className="sn-button mt-3 w-full" onClick={() => setSelectedPlayer(fieldPlayers.find(fp => fp.id === positionPlayerId) ?? null)}>{fieldPlayers.find(fp => fp.id === positionPlayerId)?.player.name} · {copy.record}</button>}
         </section>
 
         {/* Substitutions Section */}
@@ -1177,7 +1055,7 @@ export default function QuarterEditPage() {
 
         {/* Selected Player Stats */}
         {selectedPlayer && (
-          <section style={cardStyle} className="p-4">
+          <section ref={recordRef} tabIndex={-1} aria-label={copy.record} style={cardStyle} className="scroll-mt-24 p-4">
             <div className="flex justify-between items-start mb-4">
               <div className="flex items-center gap-3">
                 <div
@@ -1205,6 +1083,7 @@ export default function QuarterEditPage() {
                 </div>
               </div>
               <button
+                aria-label={t.deletePlayerTitle}
                 onClick={() => removePlayerFromField(selectedPlayer)}
                 className="p-2 text-red-400 hover:text-red-300 rounded-lg"
               >
@@ -1221,6 +1100,7 @@ export default function QuarterEditPage() {
                 </span>
               </div>
               <input
+                aria-label={t.rating}
                 type="range"
                 min={0}
                 max={10}
@@ -1247,11 +1127,14 @@ export default function QuarterEditPage() {
                 <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.goals}</label>
                 <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
                   <button
+                    aria-label={`${t.goals} −`}
+                    disabled={selectedPlayer.goals === 0}
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { goals: Math.max(0, selectedPlayer.goals - 1) })}
                     className="w-12 h-full flex items-center justify-center text-xl font-bold text-[color:var(--text)]/40 active:bg-white/5 flex-shrink-0"
                   >−</button>
                   <span className="flex-1 text-center text-xl font-bold text-[color:var(--text)]">{selectedPlayer.goals}</span>
                   <button
+                    aria-label={`${t.goals} +`}
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { goals: selectedPlayer.goals + 1 })}
                     className="w-12 h-full flex items-center justify-center text-xl font-bold flex-shrink-0"
                     style={{ color: 'var(--text)' }}
@@ -1262,11 +1145,14 @@ export default function QuarterEditPage() {
                 <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.assistsLabel}</label>
                 <div className="flex items-center rounded-xl overflow-hidden h-12" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
                   <button
+                    aria-label={`${t.assistsLabel} −`}
+                    disabled={selectedPlayer.assists === 0}
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { assists: Math.max(0, selectedPlayer.assists - 1) })}
                     className="w-12 h-full flex items-center justify-center text-xl font-bold text-[color:var(--text)]/40 active:bg-white/5 flex-shrink-0"
                   >−</button>
                   <span className="flex-1 text-center text-xl font-bold text-[color:var(--text)]">{selectedPlayer.assists}</span>
                   <button
+                    aria-label={`${t.assistsLabel} +`}
                     onClick={() => updateFieldPlayer(selectedPlayer.id, { assists: selectedPlayer.assists + 1 })}
                     className="w-12 h-full flex items-center justify-center text-xl font-bold flex-shrink-0"
                     style={{ color: 'var(--text)' }}

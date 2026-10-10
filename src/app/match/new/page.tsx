@@ -9,7 +9,7 @@ import { ArrowLeft, MapPin, Calendar, Swords } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 
-const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
+const BEBAS = 'var(--font-sans), sans-serif'
 
 export default function NewMatchPage() {
   const router = useRouter()
@@ -66,7 +66,7 @@ export default function NewMatchPage() {
   return (
     <div className="light flex flex-col safe-top" style={{ background: 'var(--bg)', minHeight: '100dvh' }}>
       <header className="flex-shrink-0 sticky top-0 z-10" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
+        <div className="max-w-lg mx-auto px-4 py-3 flex items-center gap-3">
           <Link href="/dashboard" className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
             <ArrowLeft className="w-5 h-5" />
           </Link>
@@ -74,17 +74,17 @@ export default function NewMatchPage() {
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto max-w-4xl mx-auto w-full px-4 py-6 space-y-4 safe-bottom">
+      <main className="flex-1 overflow-y-auto max-w-lg mx-auto w-full px-4 py-6 space-y-4 safe-bottom">
         {/* VS visual (navy) */}
-        <div className="flex items-center" style={{ background: '#101828', borderRadius: 18, padding: 18, gap: 12 }}>
-          <div style={{ flex: 1, background: '#1a2437', borderRadius: 13, padding: '14px 10px', textAlign: 'center', minWidth: 0 }}>
-            <div style={{ fontSize: 11, color: '#667085', marginBottom: 4 }}>{t.homeTeam}</div>
-            <div className="truncate" style={{ fontSize: 15, fontWeight: 700, color: '#c8f542' }}>{teamName || '…'}</div>
+        <div className="flex items-center" style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 14, padding: 18, gap: 12 }}>
+          <div style={{ flex: 1, background: 'var(--card2)', borderRadius: 13, padding: '14px 10px', textAlign: 'center', minWidth: 0 }}>
+            <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 4 }}>{t.homeTeam}</div>
+            <div className="truncate" style={{ fontSize: 15, fontWeight: 700, color: 'var(--brand)' }}>{teamName || '…'}</div>
           </div>
-          <div style={{ fontFamily: BEBAS, fontSize: 20, color: '#667085', flexShrink: 0 }}>VS</div>
-          <div style={{ flex: 1, background: '#1a2437', borderRadius: 13, padding: '14px 10px', textAlign: 'center', minWidth: 0 }}>
-            <div style={{ fontSize: 11, color: '#667085', marginBottom: 4 }}>{t.opponent}</div>
-            <div className="truncate" style={{ fontSize: 15, fontWeight: 700, color: opponent ? '#fff' : '#667085' }}>{opponent || '?'}</div>
+          <div style={{ fontFamily: BEBAS, fontSize: 20, color: 'var(--text3)', flexShrink: 0 }}>VS</div>
+          <div style={{ flex: 1, background: 'var(--card2)', borderRadius: 13, padding: '14px 10px', textAlign: 'center', minWidth: 0 }}>
+            <div style={{ fontSize: 11, color: 'var(--text3)', marginBottom: 4 }}>{t.opponent}</div>
+            <div className="truncate" style={{ fontSize: 15, fontWeight: 700, color: opponent ? 'var(--text)' : 'var(--text3)' }}>{opponent || '?'}</div>
           </div>
         </div>
 
@@ -99,9 +99,10 @@ export default function NewMatchPage() {
               <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--card2)' }}>
                 {field.icon}
               </div>
-              <div className="flex-1">
-                <label className="block text-[11px] font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--muted2)' }}>{field.label}</label>
+              <div className="min-w-0 flex-1">
+                <label htmlFor={`match-field-${i}`} className="block text-[11px] font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--muted2)' }}>{field.label}</label>
                 <input
+                  id={`match-field-${i}`}
                   type={field.type}
                   value={field.value}
                   onChange={(e) => field.onChange(e.target.value)}

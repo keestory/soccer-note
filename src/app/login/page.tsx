@@ -1,5 +1,6 @@
 'use client'
 
+import { CircleDot } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -84,7 +85,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="light min-h-screen flex flex-col justify-center safe-top" style={{ background: 'var(--bg)', padding: '0 30px' }}>
+    <div className="light min-h-screen mx-auto max-w-md flex flex-col justify-center safe-top" style={{ background: 'var(--bg)', padding: '0 30px' }}>
 
       {/* Logo + app name */}
       <div className="flex flex-col items-center mb-8">
@@ -92,9 +93,9 @@ export default function LoginPage() {
           className="w-16 h-16 flex items-center justify-center mb-4"
           style={{ background: 'var(--navy)', borderRadius: 20 }}
         >
-          <span className="font-display text-4xl leading-none" style={{ color: 'var(--accent)', letterSpacing: '0.05em' }}>F</span>
+          <CircleDot size={34} strokeWidth={1.4} style={{ color: 'var(--accent)' }} />
         </div>
-        <span className="font-display text-[34px] leading-none mb-2" style={{ color: 'var(--text)', letterSpacing: '0.08em' }}>FOOTBALL NOTE</span>
+        <h1 className="mb-3 text-[30px] font-semibold tracking-tight">soccer note<span style={{ color: 'var(--brand)' }}>.</span></h1>
         <p className="text-[13px]" style={{ color: 'var(--muted2)' }}>{t.appTagline}</p>
       </div>
 

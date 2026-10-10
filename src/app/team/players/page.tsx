@@ -4,6 +4,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
+import { Sheet } from '@/components/design/Sheet'
+import { PlayerFields } from '@/components/design/PlayerFields'
+import { getDesignCopy } from '@/lib/design-copy'
 import { Plus, Trash2, Edit2, X, UserCheck, UserPlus, Users } from 'lucide-react'
 import type { Player, PositionType, PlayerAttributes } from '@/types/database'
 import { POSITION_LABELS, ATTRIBUTE_KEYS } from '@/types/database'
@@ -16,13 +19,9 @@ import { useAppData } from '@/hooks/useAppData'
 import { useI18n } from '@/lib/i18n/context'
 import { PullToRefresh } from '@/components/PullToRefresh'
 
-const POS_COLOR: Record<PositionType, string> = {
-  GK: '#f5a623', DF: '#3b82f6', MF: '#2dd4bf', FW: '#ef4444',
-}
-const POS_TEXT: Record<PositionType, string> = {
-  GK: '#3a2600', DF: '#fff', MF: '#06231d', FW: '#fff',
-}
-const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
+const POS_COLOR: Record<PositionType, string> = { GK: '#e7efe5', DF: '#e6eeef', MF: '#e4f1e9', FW: '#eeeae3' }
+const POS_TEXT: Record<PositionType, string> = { GK: '#344d3a', DF: '#345359', MF: '#22553d', FW: '#594b37' }
+const BEBAS = 'var(--font-sans), sans-serif'
 
 interface PlayerStats {
   attendance: number
@@ -44,7 +43,8 @@ type RankStatKey = 'goals' | 'assists' | 'contribution' | 'avgRating' | 'attenda
 export default function PlayersPage() {
   const router = useRouter()
   const data = useAppData()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const copy = getDesignCopy(locale)
   const supabase = createClient()
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
@@ -60,7 +60,7 @@ export default function PlayersPage() {
   const [localMemberLinks, setLocalMemberLinks] = useState<Record<string, string>>({}) // memberId → playerId
 
   // Add form state
-  const [addMode, setAddMode] = useState<'member' | 'manual'>('member')
+  const [addMode, setAddMode] = useState<'member' | 'manual'>('manual')
   const [selectedMember, setSelectedMember] = useState<MemberWithProfile | null>(null)
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
@@ -248,7 +248,7 @@ export default function PlayersPage() {
     setBio(''); setPreferredPositions(''); setPreferredNumbers(''); setPhotoUrl(null)
     setAttrs({ pace: 50, shooting: 50, passing: 50, dribbling: 50, defending: 50, physical: 50 }); setStrengthTags('')
     setShowAddSheet(false); setEditingPlayer(null)
-    setSelectedMember(null); setAddMode('member')
+    setSelectedMember(null); setAddMode('manual')
   }
 
   const selectMember = (member: MemberWithProfile) => {
@@ -287,7 +287,7 @@ export default function PlayersPage() {
   const teamName = data.selectedTeam?.name || ''
   const filtered = playersWithStats
     .filter(p => posFilter === 'ALL' || p.default_position === posFilter)
-    .filter(p => !search.trim() || p.name.includes(search.trim()))
+    .filter(p => !search.trim() || p.name.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()) || String(p.number ?? '').includes(search.trim()))
 
   // Roster / ranking view
   const statTabs: { key: RankStatKey; label: string; suffix: string }[] = [
@@ -310,7 +310,7 @@ export default function PlayersPage() {
     if (rankStat === 'avgRating') return v === null ? '–' : (v as number).toFixed(1)
     return String(v ?? 0)
   }
-  const RANK_MEDAL = ['#f5b301', '#c7ccd1', '#cd7f32'] // gold / silver / bronze
+  const RANK_MEDAL = ['#e4f1e9', '#f0f4f1', '#f0f4f1'] // gold / silver / bronze
 
   return (
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
@@ -319,18 +319,18 @@ export default function PlayersPage() {
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-md mx-auto flex justify-between items-center" style={{ padding: '10px 22px 14px' }}>
           <div style={{ fontSize: 21, fontWeight: 700, color: '#101828' }}>
-            {t.playersLabel} <span style={{ fontSize: 14, color: '#98a2b3', fontWeight: 500 }}>{t.playersN.replace('{n}', String(playersWithStats.length))}</span>
+            {t.playersLabel} <span style={{ fontSize: 14, color: 'var(--text3)', fontWeight: 500 }}>{t.playersN.replace('{n}', String(playersWithStats.length))}</span>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/team/intro"
+            <Link href="/team/intro" aria-label={t.teamIntro}
               className="flex items-center justify-center active:scale-95 transition"
-              style={{ width: 36, height: 36, borderRadius: 11, background: '#fff', border: '1px solid #eaecf0', color: '#475467' }}>
+              style={{ width: 44, height: 44, borderRadius: 11, background: '#fff', border: '1px solid #eaecf0', color: '#475467' }}>
               <Users className="w-4 h-4" />
             </Link>
             {canEdit && (
-              <button onClick={() => { resetForm(); setShowAddSheet(true) }}
+              <button aria-label={t.addPlayer} onClick={() => { resetForm(); setShowAddSheet(true) }}
                 className="flex items-center justify-center active:scale-95 transition"
-                style={{ width: 36, height: 36, borderRadius: 11, background: '#101828', color: '#c8f542', fontSize: 20 }}>
+                style={{ width: 44, height: 44, borderRadius: 11, background: '#101828', color: 'var(--accent)', fontSize: 20 }}>
                 +
               </button>
             )}
@@ -359,7 +359,7 @@ export default function PlayersPage() {
         <>
         <input
           type="text" value={search} onChange={e => setSearch(e.target.value)}
-          placeholder={t.searchPlayer}
+          placeholder={t.searchPlayer} aria-label={t.searchPlayer}
           className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-[13px]"
           style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 14, padding: '12px 16px' }}
         />
@@ -370,7 +370,7 @@ export default function PlayersPage() {
               <button key={pos} onClick={() => setPosFilter(pos)}
                 style={{
                   fontSize: 12, fontWeight: active ? 600 : 500, padding: '7px 14px', borderRadius: 20,
-                  background: active ? '#101828' : '#fff', color: active ? '#c8f542' : '#475467',
+                  background: active ? '#101828' : '#fff', color: active ? 'var(--accent)' : '#475467',
                   border: active ? 'none' : '1px solid #eaecf0',
                 }}>
                 {pos === 'ALL' ? t.allLabel : pos}
@@ -436,7 +436,7 @@ export default function PlayersPage() {
                       style={i < 3
                         ? { background: RANK_MEDAL[i], color: 'var(--text)' }
                         : { color: 'var(--muted2)' }}>
-                      {i + 1}
+                      {rankedPlayers.findIndex(p => rankValue(p) === rankValue(player)) + 1}
                     </div>
                     <div className="w-[34px] h-[34px] rounded-[9px] overflow-hidden flex items-center justify-center flex-shrink-0 font-black text-[10px]"
                       style={{ background: POS_COLOR[player.default_position], color: POS_TEXT[player.default_position] }}>
@@ -571,7 +571,7 @@ export default function PlayersPage() {
                     style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '14px 18px', gap: 13 }}>
                     <span className="overflow-hidden flex items-center justify-center flex-shrink-0"
                       style={{ fontFamily: BEBAS, fontSize: 22, width: 40, height: 40, borderRadius: 10,
-                        background: isTop ? '#c8f542' : '#f2f4f7', color: isTop ? '#101828' : '#475467' }}>
+                        background: isTop ? 'var(--accent)' : '#f2f4f7', color: isTop ? '#101828' : '#475467' }}>
                       {player.photo_url
                         ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
                         : (player.number ?? '-')}
@@ -585,21 +585,21 @@ export default function PlayersPage() {
                           </span>
                         )}
                       </div>
-                      <div style={{ fontSize: 11.5, color: '#98a2b3', marginTop: 2 }}>{player.default_position}</div>
+                      <div style={{ fontSize: 11.5, color: 'var(--text3)', marginTop: 2 }}>{player.default_position}</div>
                     </div>
                     <span style={{ fontFamily: BEBAS, fontSize: 19, color: '#101828' }}>
                       {isKeeperLine
-                        ? <>{player.stats.cleanSheets}<span style={{ fontSize: 13, color: '#98a2b3' }}>CS</span></>
-                        : <>{player.stats.goals}<span style={{ fontSize: 13, color: '#98a2b3' }}>G</span> {player.stats.assists}<span style={{ fontSize: 13, color: '#98a2b3' }}>A</span></>}
+                        ? <>{player.stats.cleanSheets}<span style={{ fontSize: 13, color: 'var(--text3)' }}>CS</span></>
+                        : <>{player.stats.goals}<span style={{ fontSize: 13, color: 'var(--text3)' }}>G</span> {player.stats.assists}<span style={{ fontSize: 13, color: 'var(--text3)' }}>A</span></>}
                     </span>
                     {canEdit && (
                       <div className="flex gap-1 ml-1" onClick={e => e.preventDefault()}>
-                        <button onClick={e => { e.preventDefault(); startEditing(player) }}
-                          className="p-2 rounded-lg" style={{ color: '#98a2b3' }}>
+                        <button aria-label={`${t.editPlayerTitle}: ${player.name}`} onClick={e => { e.preventDefault(); startEditing(player) }}
+                          className="p-2 rounded-lg" style={{ color: 'var(--text3)' }}>
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button onClick={e => { e.preventDefault(); setDeleteTarget(player.id) }}
-                          className="p-2 rounded-lg" style={{ color: '#98a2b3' }}>
+                          className="p-2 rounded-lg" style={{ color: 'var(--text3)' }}>
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -615,25 +615,7 @@ export default function PlayersPage() {
 
       {/* Add Player bottom sheet */}
       {showAddSheet && (
-        <div className="fixed inset-0 z-50" onClick={resetForm}>
-          <div className="absolute inset-0 bg-black/60" />
-          <div
-            className="absolute bottom-0 left-0 right-0 rounded-t-3xl safe-bottom"
-            style={{ background: 'var(--card)', border: '1px solid var(--line)', maxHeight: '85dvh', display: 'flex', flexDirection: 'column' }}
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Sheet handle */}
-            <div className="flex-shrink-0 pt-3 pb-1 px-5 flex items-center justify-between">
-              <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--line2)' }} />
-            </div>
-
-            <div className="flex-shrink-0 px-5 pb-3 flex items-center justify-between">
-              <h2 className="font-black text-[color:var(--text)] text-lg">{t.addPlayer}</h2>
-              <button onClick={resetForm} className="p-1 rounded" style={{ color: 'var(--muted2)' }}>
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
+        <Sheet title={t.addPlayer} closeLabel={t.close} onClose={resetForm}>
             {/* Mode tabs */}
             <div className="flex-shrink-0 px-5 pb-3">
               <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'var(--card2)' }}>
@@ -743,23 +725,8 @@ export default function PlayersPage() {
                   <p className="text-[12px] mb-4 p-3 rounded-xl" style={{ background: 'var(--card2)', color: 'var(--muted2)' }}>
                     {t.manualAddHint}
                   </p>
-                  <div className="grid grid-cols-3 gap-3 mb-3">
-                    <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder={t.playerName}
-                      className="col-span-2 outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
-                      style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
-                    <input type="number" value={number} onChange={e => setNumber(e.target.value)} min={1} max={99} placeholder="#"
-                      className="outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
-                      style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
-                  </div>
-                  <div className="grid grid-cols-4 gap-2 mb-4">
-                    {(['GK','DF','MF','FW'] as PositionType[]).map(pos => (
-                      <button key={pos} type="button" onClick={() => setPosition(pos)}
-                        className="py-2 rounded-[9px] text-sm font-bold transition"
-                        style={{ background: position === pos ? POS_COLOR[pos] : 'var(--card2)', color: position === pos ? POS_TEXT[pos] : 'var(--muted2)' }}>
-                        {pos}
-                      </button>
-                    ))}
-                  </div>
+                  <PlayerFields name={name} number={number} position={position} onName={setName} onNumber={setNumber} onPosition={setPosition} labels={{ name: t.playerName, number: copy.number, position: copy.position }} autoFocus />
+                  <div className="h-5" />
                   <button type="submit" disabled={saving} className="w-full py-3.5 rounded-xl font-black text-sm active:scale-[0.98] transition disabled:opacity-40"
                     style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {saving ? t.adding : t.manualAddButton}
@@ -767,8 +734,7 @@ export default function PlayersPage() {
                 </form>
               )}
             </div>
-          </div>
-        </div>
+        </Sheet>
       )}
 
       <ConfirmSheet

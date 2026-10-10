@@ -15,10 +15,10 @@ import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
 import { getStore } from '@/lib/dataStore'
 
-const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
+const BEBAS = 'var(--font-sans), sans-serif'
 
 export default function MatchDetailPage() {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const router = useRouter()
   const params = useParams()
   const matchId = params.id as string
@@ -434,7 +434,7 @@ export default function MatchDetailPage() {
             <div>
               <h1 className="text-base font-black text-[color:var(--text)]">vs {match.opponent}</h1>
               <div className="flex items-center gap-2 text-xs text-[color:var(--text)]/40">
-                <span>{formatDate(match.match_date)}</span>
+                <span>{formatDate(match.match_date, locale)}</span>
                 {match.location && (
                   <>
                     <span className="text-[color:var(--text)]/20">|</span>
@@ -510,27 +510,27 @@ export default function MatchDetailPage() {
           const quarters = (match.quarters ?? []).slice().sort((a, b) => a.quarter_number - b.quarter_number)
           return (
             <>
-              <section style={{ background: '#101828', borderRadius: 22, padding: 22 }}>
-                <div style={{ textAlign: 'center', fontSize: 11, color: '#98a2b3' }}>
-                  {formatDate(match.match_date)}{match.location ? ` · ${match.location}` : ''}
+              <section style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 14, padding: 22 }}>
+                <div style={{ textAlign: 'center', fontSize: 11, color: 'var(--text3)' }}>
+                  {formatDate(match.match_date, locale)}{match.location ? ` · ${match.location}` : ''}
                 </div>
                 <div className="flex items-center justify-between" style={{ marginTop: 14 }}>
                   <div style={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
-                    <div className="truncate" style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{homeTeamName}</div>
+                    <div className="truncate" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{homeTeamName}</div>
                     <div style={{ fontSize: 10, color: '#667085', letterSpacing: '.12em', marginTop: 3 }}>HOME</div>
                   </div>
-                  <div style={{ fontFamily: BEBAS, fontSize: 60, lineHeight: 0.78, color: '#c8f542', flexShrink: 0 }}>
+                  <div style={{ fontFamily: BEBAS, fontSize: 44, fontWeight: 600, lineHeight: 1.2, color: 'var(--text)', flexShrink: 0 }}>
                     {total.home}<span style={{ color: '#344054', padding: '0 6px' }}>:</span>{total.away}
                   </div>
                   <div style={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
-                    <div className="truncate" style={{ fontSize: 14, fontWeight: 700, color: '#98a2b3' }}>{match.opponent}</div>
+                    <div className="truncate" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text3)' }}>{match.opponent}</div>
                     <div style={{ fontSize: 10, color: '#667085', letterSpacing: '.12em', marginTop: 3 }}>AWAY</div>
                   </div>
                 </div>
                 <div className="flex justify-center" style={{ marginTop: 16 }}>
                   <span style={{ fontFamily: BEBAS, fontSize: 12, letterSpacing: '.1em', padding: '3px 10px', borderRadius: 6,
-                    color: isWin ? '#101828' : '#fff', background: isWin ? '#c8f542' : isLoss ? 'rgba(240,68,56,.9)' : '#1a2437' }}>
-                    {isWin ? 'WIN' : isLoss ? 'LOSS' : 'DRAW'}
+                    color: isLoss ? 'var(--danger)' : 'var(--brand)', background: 'var(--card2)' }}>
+                    {isWin ? t.win : isLoss ? t.loss : t.draw}
                   </span>
                 </div>
               </section>
@@ -539,8 +539,8 @@ export default function MatchDetailPage() {
                   {quarters.map((q, i) => (
                     <button key={q.id} onClick={() => canEditQuarters && startEditQuarterScore(q.quarter_number)}
                       style={{ flex: 1, textAlign: 'center', fontFamily: BEBAS, fontSize: 15, padding: '10px 0', borderRadius: 12,
-                        background: i === 0 ? '#101828' : '#fff', color: i === 0 ? '#c8f542' : '#475467',
-                        border: i === 0 ? 'none' : '1px solid #eaecf0' }}>
+                        background: q.quarter_number === activeQuarter ? 'var(--chip)' : 'var(--card)', color: q.quarter_number === activeQuarter ? 'var(--brand)' : 'var(--text3)',
+                        border: '1px solid var(--line)' }}>
                       {q.quarter_number}Q {q.home_score || 0}:{q.away_score || 0}
                     </button>
                   ))}
@@ -553,9 +553,9 @@ export default function MatchDetailPage() {
         {/* MVP Section */}
         {mvp && (
           <section className="flex items-center" style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '15px 18px', gap: 12 }}>
-            <span style={{ fontFamily: BEBAS, fontSize: 13, letterSpacing: '.14em', color: '#101828', background: '#c8f542', padding: '4px 10px', borderRadius: 8 }}>MVP</span>
+            <span style={{ fontFamily: BEBAS, fontSize: 13, letterSpacing: '.14em', color: '#101828', background: 'var(--accent)', padding: '4px 10px', borderRadius: 8 }}>MVP</span>
             <span style={{ fontSize: 14, fontWeight: 700, color: '#101828' }}>{mvp.playerName}</span>
-            <span style={{ fontSize: 12, color: '#98a2b3' }}>{t.avgPoints.replace('{n}', mvp.averageRating.toFixed(1))}</span>
+            <span style={{ fontSize: 12, color: 'var(--text3)' }}>{t.avgPoints.replace('{n}', mvp.averageRating.toFixed(1))}</span>
           </section>
         )}
 
@@ -782,31 +782,26 @@ export default function MatchDetailPage() {
 
               {/* Soccer Field Preview */}
               <div className="p-4">
-                <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden shadow-inner" style={{ background: 'linear-gradient(180deg,#12724a,#0e5e3d)', border: '1px solid #143325' }}>
-                  {/* Grass pattern */}
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.03) 20px, rgba(255,255,255,0.03) 40px)',
-                  }} />
-
+                <div className="sn-pitch sn-pitch-summary">
                   {/* Field outline */}
-                  <div className="absolute inset-3 border-2 border-white/40 rounded" />
+                  <div className="absolute inset-3 border border-[color:var(--pitch-line)] rounded" />
 
                   {/* Center line (horizontal — portrait pitch) */}
-                  <div className="absolute top-1/2 left-3 right-3 h-0.5 bg-white/40" />
+                  <div className="absolute top-1/2 left-3 right-3 h-0.5 bg-[color:var(--pitch-line)]" />
 
                   {/* Center circle */}
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border-2 border-white/40" />
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white/40" />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full border border-[color:var(--pitch-line)]" />
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[color:var(--pitch-line)]" />
 
                   {/* Top penalty area */}
-                  <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border-2 border-white/40 border-t-0" />
-                  <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border-2 border-white/40 border-t-0" />
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-2 w-[18%] bg-white/30 rounded-b" />
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border border-[color:var(--pitch-line)] border-t-0" />
+                  <div className="absolute top-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border border-[color:var(--pitch-line)] border-t-0" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-2 w-[18%] bg-[color:var(--pitch-line)] rounded-b" />
 
                   {/* Bottom penalty area */}
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border-2 border-white/40 border-b-0" />
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border-2 border-white/40 border-b-0" />
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-[18%] bg-white/30 rounded-t" />
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[15%] w-[55%] border border-[color:var(--pitch-line)] border-b-0" />
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 h-[6%] w-[30%] border border-[color:var(--pitch-line)] border-b-0" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 h-2 w-[18%] bg-[color:var(--pitch-line)] rounded-t" />
 
                   {/* Players */}
                   {(() => {
@@ -848,12 +843,12 @@ export default function MatchDetailPage() {
                             </span>
                           )}
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-lg ${subOut ? 'opacity-60' : ''}`}
-                            style={{ backgroundColor: POSITION_COLORS[record.position_type] }}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${subOut ? 'opacity-60' : ''}`}
+                            style={{ background: 'var(--card)', color: 'var(--text)', border: '1px solid var(--brand)' }}
                           >
                             {record.player?.number || '?'}
                           </div>
-                          <span className={`mt-0.5 px-1 py-0.5 bg-black/50 text-white text-[10px] rounded font-medium whitespace-nowrap ${subOut ? 'line-through opacity-70' : ''}`}>
+                          <span className={`mt-0.5 px-1 py-0.5 bg-[color:var(--pitch)] text-[color:var(--text)] text-[10px] rounded font-medium whitespace-nowrap ${subOut ? 'line-through opacity-70' : ''}`}>
                             {record.player?.name}
                           </span>
                           {/* OUT indicator with sub info */}
@@ -863,7 +858,7 @@ export default function MatchDetailPage() {
                                 OUT {subOut.minute}&apos;
                               </span>
                               {subOut.player_in && (
-                                <span className="mt-0.5 px-1 py-0.5 text-[8px] font-bold rounded whitespace-nowrap" style={{ background: 'rgba(204,255,0,0.8)', color: '#0a0a0a' }}>
+                                <span className="mt-0.5 px-1 py-0.5 text-[8px] font-bold rounded whitespace-nowrap" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                                   ↑ {subOut.player_in.name}
                                 </span>
                               )}
@@ -878,7 +873,7 @@ export default function MatchDetailPage() {
                                 </span>
                               )}
                               {record.assists > 0 && (
-                                <span className="px-1 text-[8px] font-bold rounded" style={{ background: 'rgba(204,255,0,0.6)', color: '#0a0a0a' }}>
+                                <span className="px-1 text-[8px] font-bold rounded" style={{ background: 'var(--accent)', color: '#0a0a0a' }}>
                                   A{record.assists}
                                 </span>
                               )}
@@ -900,8 +895,8 @@ export default function MatchDetailPage() {
                   })()}
 
                   {currentQuarter.quarter_records?.length === 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center text-white/70">
-                      <span className="bg-black/30 px-3 py-1.5 rounded">{t.placePlayersMessage}</span>
+                    <div className="absolute inset-0 flex items-center justify-center text-[color:var(--text3)]">
+                      <span className="bg-white px-3 py-1.5 rounded">{t.placePlayersMessage}</span>
                     </div>
                   )}
                 </div>
@@ -909,7 +904,7 @@ export default function MatchDetailPage() {
 
               {/* Substitutions */}
               {currentQuarter.quarter_substitutions && currentQuarter.quarter_substitutions.length > 0 && (
-                <div className="px-4 py-3" style={{ background: '#0d1a10', borderTop: '1px solid var(--line)' }}>
+                <div className="px-4 py-3" style={{ background: 'var(--card2)', borderTop: '1px solid var(--line)' }}>
                   <p className="text-xs font-bold mb-2 flex items-center gap-1" style={{ color: 'var(--text)' }}>
                     <ArrowRightLeft className="w-3.5 h-3.5" />
                     {t.substitutionCount.replace('{n}', String(currentQuarter.quarter_substitutions.length))}

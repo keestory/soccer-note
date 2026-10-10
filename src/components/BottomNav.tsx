@@ -31,11 +31,11 @@ export function BottomNavShell({ activeKey, labels, preview = false }: { activeK
           const Icon = tab.icon
           const content = (
             <>
-              <Icon aria-hidden="true" size={20} strokeWidth={active ? 2.8 : 2} />
-              <span className="text-[12px] font-black tracking-[-0.01em]">{labels[tab.key]}</span>
+              <Icon aria-hidden="true" size={21} strokeWidth={1.7} />
+              <span className="text-[11px] font-semibold">{labels[tab.key]}</span>
             </>
           )
-          const className = `focus-ring flex min-h-12 items-center justify-center gap-2 rounded-[18px] px-2 transition-colors ${active ? 'bg-white text-[color:var(--navy)]' : 'text-white/65 hover:text-white'}`
+          const className = `focus-ring flex min-h-14 flex-col items-center justify-center gap-1 rounded-[12px] px-2 transition-colors ${active ? 'bg-[color:var(--chip)] text-[color:var(--brand)]' : 'text-[color:var(--text3)] hover:text-[color:var(--text)]'}`
 
           return preview ? (
             <span key={tab.href} className={className} aria-current={active ? 'page' : undefined}>{content}</span>

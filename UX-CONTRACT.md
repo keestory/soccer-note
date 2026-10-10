@@ -2,7 +2,7 @@
 
 ## Primary flow
 
-1. Home answers: what happened most recently, what is the season snapshot, and what should I do next?
+1. Home answers: what is the next scheduled match, what happened most recently, and what should I do next?
 2. Matches provides the complete upcoming/completed record and opens existing match detail/edit flows.
 3. Team groups lower-frequency operations without removing their existing routes.
 
@@ -37,3 +37,15 @@ Native tabs mirror this model. `players`, `training`, and `community` remain rou
 - Home contains one primary CTA and no full recent-match list.
 - Complete match history lives under Matches.
 - The auth-free `/screenshots/home` route renders the same Home hero component for deterministic visual QA.
+
+## Line Matchday interaction delta (2026-10-10)
+
+- Upcoming matches use date-centered rows; completed rows display scores.
+- Manual player addition is the default, with name required and number optional.
+- Name and number search share one field. Rankings use competition ties (1,1,3).
+- A pitch player can be selected and moved by tapping a destination, dragging, or using arrow keys.
+- The selected player's explicit record action opens existing goal/assist/rating editing.
+- Coordinate storage stays unchanged: portrait display uses left=y and top=100-x.
+- Shared sheets trap focus, support Escape, restore focus and constrain their height.
+- The noindex /design-system route is an in-memory fictional review surface; its four review selectors do not change the three production navigation destinations.
+- No production data, authorization, native SDK or schema change is part of the visual refresh.

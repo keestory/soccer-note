@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { isUpcomingMatchDate } from '@/lib/match-date'
 import { useRouter } from 'next/navigation'
 import { ChevronDown, LogOut, User, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -30,7 +31,7 @@ function primeTeamCache(userId: string, team: TeamWithRole) {
 export default function DashboardPage() {
   const router = useRouter()
   const data = useAppData()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [showTeamPicker, setShowTeamPicker] = useState(false)
   const [teamName, setTeamName] = useState('')
@@ -80,14 +81,14 @@ export default function DashboardPage() {
   const isCoach = selectedTeam?.role === 'coach' || selectedTeam?.user_id === userId
   const canEditMatches = isCoach || !!selectedTeam?.membership?.can_edit_matches
   const pendingCount = isCoach ? data.members.filter(member => member.status === 'pending' && !member.is_removed).length : 0
-  const now = Date.now()
-  const played = matches.filter(match => new Date(match.match_date).getTime() <= now).sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())
+  const played = matches.filter(match => !isUpcomingMatchDate(match.match_date)).sort((a, b) => new Date(b.match_date).getTime() - new Date(a.match_date).getTime())
   const wins = played.filter(match => match.home_score > match.away_score).length
   const winRate = played.length ? Math.round((wins / played.length) * 100) : null
+  const nextMatch = matches.filter(match => isUpcomingMatchDate(match.match_date)).sort((a, b) => +new Date(a.match_date) - +new Date(b.match_date))[0]
   const latest = played[0]
   const latestMatch: HomeMatchSummary | null = latest ? {
     id: latest.id, opponent: latest.opponent, score: `${latest.home_score}-${latest.away_score}`,
-    date: formatDate(latest.match_date), location: latest.location,
+    date: formatDate(latest.match_date, locale), location: latest.location,
     result: latest.home_score > latest.away_score ? 'WIN' : latest.home_score < latest.away_score ? 'LOSS' : 'DRAW',
     resultLabel: latest.home_score > latest.away_score ? t.win : latest.home_score < latest.away_score ? t.loss : t.draw,
     quarters: (latest.quarters ?? []).slice().sort((a, b) => a.quarter_number - b.quarter_number).map(quarter => ({ label: `${quarter.quarter_number}Q`, home: quarter.home_score, away: quarter.away_score })),
@@ -114,10 +115,10 @@ export default function DashboardPage() {
   return (
     <div className="light app-shell pb-nav">
       {showTeamPicker && <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 px-5 pt-[calc(env(safe-area-inset-top)+56px)]" role="presentation" onClick={() => setShowTeamPicker(false)}><div role="dialog" aria-modal="true" aria-labelledby="team-picker-title" className="flex max-h-[70dvh] w-full max-w-md flex-col rounded-2xl border border-[color:var(--line)] bg-[color:var(--card)] p-5" onClick={event => event.stopPropagation()}><h2 id="team-picker-title" className="mb-3 font-black">{t.selectTeam}</h2><div className="mb-4 flex-1 space-y-2 overflow-y-auto">{teams.map(team => <button key={team.id} onClick={() => handleSelectTeam(team)} className="w-full rounded-xl bg-[color:var(--card2)] p-4 text-left font-bold">{team.name}</button>)}</div><button onClick={() => setShowTeamPicker(false)} className="rounded-xl bg-[color:var(--navy)] py-3 font-black text-[color:var(--accent)]">{t.close}</button></div></div>}
-      <header className="safe-top sticky top-0 z-10 bg-[color:var(--bg)]/92 backdrop-blur-xl"><div className="mx-auto flex max-w-md items-center justify-between px-5 pb-3 pt-4"><button onClick={() => setShowTeamPicker(true)} className="focus-ring flex min-h-11 min-w-0 items-center gap-2 rounded-xl"><span className="max-w-[230px] truncate text-[29px] font-black tracking-[-0.055em]">{selectedTeam.name}</span><ChevronDown aria-hidden="true" size={19} className="text-[color:var(--text3)]" /></button><div className="flex items-center gap-2"><NotificationBadge /><Link href="/profile" aria-label={t.myProfile} className="focus-ring flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--line)] bg-white text-[15px] font-black text-[color:var(--navy)]">{(displayName || '?').charAt(0).toUpperCase()}</Link></div></div></header>
+      <header className="safe-top sticky top-0 z-10 bg-[color:var(--bg)]/92 backdrop-blur-xl"><div className="mx-auto flex max-w-md items-center justify-between px-5 pb-3 pt-4"><button onClick={() => setShowTeamPicker(true)} className="focus-ring flex min-h-11 min-w-0 items-center gap-2 rounded-xl"><span className="max-w-[230px] truncate text-[25px] font-semibold tracking-[-0.04em]">{selectedTeam.name}</span><ChevronDown aria-hidden="true" size={19} className="text-[color:var(--text3)]" /></button><div className="flex items-center gap-2"><NotificationBadge /><Link href="/profile" aria-label={t.myProfile} className="focus-ring flex h-11 w-11 items-center justify-center rounded-full border border-[color:var(--line)] bg-white text-[15px] font-black text-[color:var(--navy)]">{(displayName || '?').charAt(0).toUpperCase()}</Link></div></div></header>
       <PullToRefresh onRefresh={data.refresh}><main className="mx-auto max-w-md px-5 pb-8 pt-1">
         {pendingCount > 0 && <Link href="/team/members" className="mb-4 flex items-center justify-between rounded-xl bg-[color:var(--chip)] p-3 text-sm font-bold"><span>{t.pendingJoinBadge.replace('{n}', String(pendingCount))}</span><span>{t.checkNow}</span></Link>}
-        <HomeFocus seasonLine={t.homeSeasonSummary.replace('{n}', String(played.length)).replace('{rate}', String(winRate ?? '–'))} latestLabel={t.lastMatch} opponentLabel={t.opponentShort} match={latestMatch} canCreateMatch={canEditMatches} newMatchLabel={t.newMatchRecord} allMatchesLabel={t.homeAllMatchesLabel} allMatchesDescription={t.homeAllMatchesDescription} teamOperationsLabel={t.homeTeamOperationsLabel} teamOperationsDescription={t.homeTeamOperationsDescription} noMatchesLabel={t.noMatches} />
+        <HomeFocus upcoming={nextMatch ? { id: nextMatch.id, opponent: nextMatch.opponent, date: formatDate(nextMatch.match_date, locale), location: nextMatch.location } : null} upcomingLabel={t.upcomingMatches} seasonLine={t.homeSeasonSummary.replace('{n}', String(played.length)).replace('{rate}', String(winRate ?? '–'))} latestLabel={t.lastMatch} opponentLabel={t.opponentShort} match={latestMatch} canCreateMatch={canEditMatches} newMatchLabel={t.newMatchRecord} allMatchesLabel={t.homeAllMatchesLabel} allMatchesDescription={t.homeAllMatchesDescription} teamOperationsLabel={t.homeTeamOperationsLabel} teamOperationsDescription={t.homeTeamOperationsDescription} noMatchesLabel={t.noMatches} />
       </main></PullToRefresh>
       <BottomNav />
     </div>

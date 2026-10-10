@@ -1,73 +1,57 @@
-# SoccerNote Design System — Monochrome Matchday
+# Soccer Note — Line Matchday
+Updated 2026-10-10.
 
-## Product character
-
-SoccerNote is a focused football team notebook. The interface should feel like a modern match programme: quiet gray canvas, crisp white surfaces, decisive black scoreboards, and a single volt-lime action color. Information density and typography create the character; decorative color, texture, and depth do not.
-
-The signature move is the **monochrome score block**: one uninterrupted black surface with an oversized Bebas score and quarter data separated by hairline dividers. The rest of the product stays flat, restrained, and operational.
-
-## Reference translation
-
-The 2026-10-10 user-provided mobile reference set contains six examples, including the later MY TURN screen. SoccerNote translates their recurring layout principles rather than copying brands, illustrations, schedules, or exact compositions:
-
-- Floating capsule navigation becomes SoccerNote's three-destination black navigation.
-- Clear numeric hierarchy becomes the match score and season statistics.
-- MY TURN's thin line grid becomes 1px modules for quarter scores, the statistics rail, and team utility rows.
-- White content surfaces and restrained pale green become neutral surfaces and SoccerNote's single volt action.
-- Pastel panels, paper texture, 3D objects, heavy shadows, calendars, and unrelated task metaphors are intentionally excluded.
-
-## Navigation
-
-- Primary navigation has exactly three destinations: Home, Matches, Team.
-- Home is the daily summary and single primary action.
-- Matches owns schedules, results, season totals, and match detail entry points.
-- Team is the hub for players, training, opponent matching, members, notifications, and team profile.
-- Legacy feature routes remain stable so saved links and back flows continue to work.
+## Direction
+A quiet team notebook: warm white canvas, forest green actions, one-pixel rules and legible numbers. No grass textures, neon panels, oversized black scoreboards or ornamental podiums. Keep established routes and data ownership.
 
 ## Tokens
+| Token | Value | Purpose |
+| --- | --- | --- |
+| canvas | #f8faf8 | App background |
+| surface | #ffffff | Cards and forms |
+| ink | #172c23 | Primary text |
+| forest | #176b52 | Primary actions and selected states |
+| sage | #d8ece2 | Subtle emphasis |
+| divider | #dde5df | 1px borders |
+| pitch | #f0f6f2 | Line-only formation surface |
+| pitch line | #a7c4b4 | Decorative field markings |
 
-| Role | Value |
-| --- | --- |
-| App canvas | `#f4f5f6` |
-| Surface | `#ffffff` |
-| Primary ink / navigation | `#0d0f12` |
-| Secondary ink | `#34383f` |
-| Volt action | `#d8ff3e` |
-| Primary text | `#15171a` |
-| Secondary text | `#62676f` |
-| Muted text | `#8b9098` |
-| Divider | `#e2e4e7` |
+Font: Noto Sans KR with system fallback; interface 14–16px, inputs 16px, captions 11–12px, page titles 24–30px. Tabular numbers in scores. Spacing 4/8/12/16/24/32. Controls 44px minimum, primary actions 48px, radius 10–14px. Focus rings 2px forest with 3px offset. Respect reduced motion and safe areas.
 
-Use `Noto Sans KR` for interface text and `Bebas Neue` for scores and compact statistics. Core radii are 12px controls, 16px surfaces, 18px CTAs, and 22px hero/navigation. Default horizontal page padding is 20px. Surfaces use 1px borders instead of depth; the floating navigation receives only a subtle shadow.
+## Shared components
+- HomeFocus: upcoming match, latest result, real quarter scores, one primary action, supporting links. Never fabricate missing quarter scores.
+- BottomNav: exactly Home / Matches / Team, white surface, restrained selected state, aria-current.
+- PlayerFields: persistent name/number labels, numeric keyboard, optional number, explicit position selection.
+- LinePitch: portrait display of existing horizontal coordinates; tap player then destination, pointer dragging or arrow keys. Drag cancellation handled without document-level listeners.
+- Sheet: bounded, scrollable bottom sheet; Escape, focus containment and return, body scroll restored.
+- ConfirmSheet: semantic Sheet wrapper and visible destructive confirmation.
+- Existing API calls, permission guards, player records and match storage stay in their original routes.
 
-## Components
+## Core experience
+Home surfaces the next scheduled match and latest result. Match lists distinguish schedule from scores: upcoming fixtures show a calendar day rather than a fictional 0:0. Team roster supports name and number search. Quick addition starts with manual entry; linking existing members is still available. Rankings use competition ties (1,1,3). Quarter selection and actual goal/assist editing retain the existing database flow.
 
-- Header: team name first, season summary on the following line, compact notification/profile controls.
-- Latest-match hero: one black surface with explicit result text, oversized score, opponent, metadata, and quarter data separated by internal dividers.
-- Primary CTA: flat volt fill, black text, minimum 56px height. Home has only one primary CTA.
-- Utility row: white surface, consistent 72–80px height, icon, label, supporting text, chevron, and hairline divider.
-- Statistics rail: four equal monochrome cells in one bordered white surface.
-- Bottom navigation: exactly three equal destinations in a flat floating black capsule. Active state uses a white pill, icon, label, and `aria-current`.
+The pitch editing screen selects a player for placement first; the explicit Player record action opens the existing goal/assist/rating editor. Dragging is optional. Players outside the visible pitch can still be represented by existing substitution records.
 
-## Motion
+## Localization and accessibility
+Existing eight locales remain supported. New placement labels are supplied in eight locales. Date-only strings render as calendar dates; selected locale is passed by redesigned match views. HTML language follows the selected locale. Long labels wrap; control titles and accessible labels identify icon actions. Do not use color as the only win/loss or position cue.
 
-- Section entrance is limited to a short 6px fade-up using `content-enter`.
-- Interactive rows use subtle opacity or background transitions; no card lift or simulated physical depth.
-- All non-essential transforms and animations are removed under `prefers-reduced-motion: reduce`.
+## Review surface
+/design-system is a noindex, fictional, in-memory review surface. It shares HomeFocus, PlayerFields, LinePitch and Sheet with production. It has four demonstration selectors (Home, Players/Rankings, Formation, Record); these are review selectors, not a replacement for the production three-tab navigation. Demo changes are not saved to any team or database.
 
-## Accessibility and states
+## Scope and release boundary
+Implementation applies to Next.js web and the Capacitor shell that displays that web URL. The separate Expo source under mobile/ is not changed. Production deployment, authenticated real-data workflows and physical-device verification require separate evidence. New permissions, native SDKs, data collection and database migrations are not introduced.
 
-- Interactive controls use semantic links/buttons and the shared high-contrast `focus-ring` treatment.
-- Text and icon controls maintain at least a 44px touch target.
-- Empty match state replaces the hero without hiding the create action from authorized users.
-- Permission-gated creation and administration actions remain hidden for unauthorized members.
-- Win/draw/loss is always written as text; color is never the only result signal.
-- Loading, refresh, no-team, team-picker, pending-member, empty, win/draw/loss, and localization states are supported.
+## 2026 benchmark evidence
+Observed 2026-10-10, country-specific free iPhone charts; snapshots are not annual/global rankings or quality proof.
+- Apple US Business chart: Teams #1, Zoom #3, LinkedIn #4. https://apps.apple.com/us/iphone/charts/6000
+- Apple GB Sports chart: Spond #3, Prematch #4. https://apps.apple.com/gb/iphone/charts/6004
+- Apple local-team editorial selection includes TeamSnap, Spond, Heja. https://apps.apple.com/us/iphone/grouping/25268
+- TeamSnap's 2026-02-04 announcement reports 30 million lifetime users and over 2 million daily active users in 2025. These are user metrics, not downloads. https://www.teamsnap.com/blog/announcements/teamsnap-delivers-breakthrough-innovation-strategic-partnerships-expanded-impact-across-youth-sports-2025
+- Apple Sports' 2026-05-19 announcement emphasizes speed, simplicity and lineup formations. https://www.apple.com/newsroom/2026/05/apple-sports-expands-to-more-than-90-new-countries-and-regions/
+- Spond's schedule/invite/attendance flow. https://help.spond.com/app/en/articles/121230-about-the-spond-app
+- Heja's team creation and invite-link flow. https://help.heja.io/en/articles/15286103-getting-started-with-heja-for-clubs
 
-## Avoid
+Interpretation: next-match clarity, low-friction player entry and repeated team use are more relevant than decorative graphics. Two million downloads is an aspiration, not an outcome guaranteed by these design choices.
 
-- Do not promote every capability to the bottom navigation.
-- Do not stack multiple competing primary cards on Home.
-- Do not add pastel semantic colors, paper textures, gradients, 3D shadows, or decorative illustration.
-- Do not use volt for decoration; reserve it for the primary action and keyboard focus.
-- Do not duplicate match or permission logic in presentational components.
+## Intake
+S2/S3-scale product redesign. competitive_benchmark: required, completed. discoverability: not-applicable to authenticated core; new fictional preview explicitly noindex. store_compliance: limited impact review required because Capacitor renders the web; no permissions, privacy collection or payment changes. No store submission or release is included.

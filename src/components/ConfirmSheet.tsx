@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { Sheet } from './design/Sheet'
 import { AlertTriangle } from 'lucide-react'
 
 interface ConfirmSheetProps {
@@ -24,51 +24,13 @@ export function ConfirmSheet({
   onConfirm,
   onCancel,
 }: ConfirmSheetProps) {
-  useEffect(() => {
-    if (open) document.body.style.overflow = 'hidden'
-    else document.body.style.overflow = ''
-    return () => { document.body.style.overflow = '' }
-  }, [open])
-
   if (!open) return null
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-end" onClick={onCancel}>
-      <div className="absolute inset-0 bg-black/60" />
-      <div
-        className="relative w-full rounded-t-3xl px-5 pt-5 pb-8 safe-bottom"
-        style={{ background: 'var(--card)', border: '1px solid var(--line)' }}
-        onClick={e => e.stopPropagation()}
-      >
-        <div className="w-10 h-1 rounded-full mx-auto mb-5" style={{ background: '#333' }} />
-        <div className="flex items-start gap-3 mb-5">
-          {danger && (
-            <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(192,90,77,.14)' }}>
-              <AlertTriangle className="w-5 h-5" style={{ color: '#e07a6d' }} />
-            </div>
-          )}
-          <div>
-            <p className="font-bold text-white text-[15px]">{title}</p>
-            {description && <p className="text-[13px] mt-1" style={{ color: 'var(--muted2)' }}>{description}</p>}
-          </div>
-        </div>
-        <div className="space-y-2">
-          <button
-            onClick={onConfirm}
-            className="w-full py-4 rounded-2xl font-black text-base transition active:scale-[0.98]"
-            style={{ background: danger ? 'var(--danger)' : 'var(--navy)', color: danger ? '#fff' : 'var(--accent)' }}
-          >
-            {confirmLabel}
-          </button>
-          <button
-            onClick={onCancel}
-            className="w-full py-4 rounded-2xl font-bold text-base transition active:scale-[0.98]"
-            style={{ background: 'var(--card2)', color: '#888' }}
-          >
-            {cancelLabel}
-          </button>
-        </div>
-      </div>
+  return <Sheet title={title} closeLabel={cancelLabel} onClose={onCancel}>
+    {danger && <AlertTriangle aria-hidden size={24} className="mb-3 text-[color:var(--danger)]" />}
+    {description && <p className="mb-5 text-sm leading-relaxed text-[color:var(--text3)]">{description}</p>}
+    <div className="flex flex-col gap-2">
+      <button onClick={onConfirm} className="sn-button w-full" data-primary={!danger} style={danger ? { background: 'var(--danger)', color: 'white', borderColor: 'var(--danger)' } : undefined}>{confirmLabel}</button>
+      <button onClick={onCancel} className="sn-button w-full">{cancelLabel}</button>
     </div>
-  )
+  </Sheet>
 }
