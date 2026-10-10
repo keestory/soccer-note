@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation'
 import { Home, UsersRound, Trophy } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
 
+type NavKey = 'home' | 'matches' | 'team'
+
 export const PRIMARY_NAV_ITEMS = [
   { href: '/dashboard', key: 'home', labelKey: 'homeLabel', icon: Home, match: (path: string) => path === '/dashboard' },
   { href: '/matches', key: 'matches', labelKey: 'matchesLabel', icon: Trophy, match: (path: string) => path === '/matches' || path.startsWith('/match/') },
@@ -15,35 +17,30 @@ export function BottomNav() {
   const pathname = usePathname()
   const { t } = useI18n()
 
+  const activeKey = PRIMARY_NAV_ITEMS.find(tab => tab.match(pathname))?.key
+
+  return <BottomNavShell activeKey={activeKey} labels={{ home: t.homeLabel, matches: t.matchesLabel, team: t.teamLabel }} />
+}
+
+export function BottomNavShell({ activeKey, labels, preview = false }: { activeKey?: NavKey; labels: Record<NavKey, string>; preview?: boolean }) {
   return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-20 safe-bottom"
-      style={{ background: 'var(--nav)', borderTop: '1px solid var(--line)' }}
-    >
-      <div className="flex justify-around" style={{ padding: '10px 8px 16px' }}>
+    <nav className={`${preview ? 'absolute' : 'fixed'} bottom-0 left-1/2 z-20 w-full max-w-md -translate-x-1/2 px-4 pb-[calc(10px+env(safe-area-inset-bottom))]`}>
+      <div className="floating-nav grid grid-cols-3 gap-1 p-1">
         {PRIMARY_NAV_ITEMS.map(tab => {
-          const active = tab.match(pathname)
+          const active = tab.key === activeKey
           const Icon = tab.icon
-          const label = t[tab.labelKey]
-          return (
-            <Link
-              key={tab.href}
-              href={tab.href}
-              className="flex min-w-[72px] flex-col items-center gap-1 rounded-xl py-1 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--accent)]"
-              style={{ color: active ? 'var(--nav-active)' : 'var(--text3)' }}
-              aria-current={active ? 'page' : undefined}
-            >
-              <Icon aria-hidden="true" size={21} strokeWidth={active ? 2.8 : 2} />
-              <span
-                className="text-[14px] transition-colors"
-                style={{
-                  color: active ? 'var(--nav-active)' : 'var(--text3)',
-                  fontWeight: active ? 900 : 600,
-                }}
-              >
-                {label}
-              </span>
-            </Link>
+          const content = (
+            <>
+              <Icon aria-hidden="true" size={20} strokeWidth={active ? 2.8 : 2} />
+              <span className="text-[12px] font-black tracking-[-0.01em]">{labels[tab.key]}</span>
+            </>
+          )
+          const className = `focus-ring flex min-h-12 items-center justify-center gap-2 rounded-[18px] px-2 transition-colors ${active ? 'bg-white text-[color:var(--navy)]' : 'text-white/65 hover:text-white'}`
+
+          return preview ? (
+            <span key={tab.href} className={className} aria-current={active ? 'page' : undefined}>{content}</span>
+          ) : (
+            <Link key={tab.href} href={tab.href} className={className} aria-current={active ? 'page' : undefined}>{content}</Link>
           )
         })}
       </div>

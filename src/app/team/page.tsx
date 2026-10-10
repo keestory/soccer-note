@@ -21,5 +21,17 @@ export default function TeamHubPage() {
     { href: '/team/members', label: t.memberManagement, detail: `${data.members.length}${t.persons}`, icon: ShieldCheck },
     ...(isCoach ? [{ href: '/team/notifications', label: t.notifications, detail: t.sendNotification, icon: Bell }] : []),
   ]
-  return <div className="light min-h-screen pb-nav bg-[color:var(--bg)]"><header className="safe-top bg-[color:var(--nav)]"><div className="mx-auto max-w-md px-5 pb-5 pt-4"><p className="text-xs font-bold text-[color:var(--text3)]">{t.teamManagement}</p><h1 className="mt-1 text-[28px] font-black tracking-[-0.05em]">{data.selectedTeam?.name}</h1><p className="mt-2 text-sm text-[color:var(--text3)]">{t.teamIntro}</p></div></header><main className="mx-auto max-w-md px-5 pb-8"><div className="overflow-hidden rounded-[20px] border border-[color:var(--line)] bg-white">{items.map(({ href, label, detail, icon: Icon }, index) => <Link key={href} href={href} className={`flex min-h-[78px] items-center gap-4 px-4 ${index ? 'border-t border-[color:var(--line)]' : ''}`}><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[color:var(--navy)] text-[color:var(--accent)]"><Icon aria-hidden="true" size={21} /></span><span className="min-w-0 flex-1"><strong className="block text-[16px]">{label}</strong><span className="mt-1 block truncate text-xs text-[color:var(--text3)]">{detail}</span></span><ChevronRight aria-hidden="true" size={20} className="text-[color:var(--text3)]" /></Link>)}</div></main><BottomNav /></div>
+  return <div className="light app-shell pb-nav">
+    <header className="safe-top bg-transparent"><div className="mx-auto max-w-md px-5 pb-5 pt-4"><p className="section-label">{t.teamManagement}</p><h1 className="mt-1 text-[31px] font-black tracking-[-0.055em]">{data.selectedTeam?.name}</h1><p className="mt-2 max-w-[320px] text-sm font-medium leading-relaxed text-[color:var(--text3)]">{t.teamIntro}</p></div></header>
+    <main className="mx-auto max-w-md px-5 pb-8">
+      <section aria-label={t.teamManagement} className="surface content-enter divide-y divide-[color:var(--line)] overflow-hidden">
+        {items.map(({ href, label, detail, icon: Icon }) => <Link key={href} href={href} className="interactive-row focus-ring flex min-h-[82px] items-center gap-4 px-4 py-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] border border-[color:var(--line)] bg-white text-[color:var(--navy)]"><Icon aria-hidden="true" size={20} strokeWidth={2.2} /></span>
+          <span className="min-w-0 flex-1"><strong className="block text-[15px] font-black tracking-[-0.025em]">{label}</strong><span className="mt-1 block truncate text-[12px] text-[color:var(--text3)]">{detail}</span></span>
+          <ChevronRight aria-hidden="true" size={18} className="shrink-0 text-[color:var(--text3)]" />
+        </Link>)}
+      </section>
+    </main>
+    <BottomNav />
+  </div>
 }

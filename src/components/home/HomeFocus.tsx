@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ChevronRight, Plus } from 'lucide-react'
+import { CalendarDays, ChevronRight, MapPin, Plus } from 'lucide-react'
 
 export interface HomeQuarterScore {
   label: string
@@ -16,6 +16,7 @@ export interface HomeMatchSummary {
   date: string
   location?: string | null
   result: 'WIN' | 'DRAW' | 'LOSS'
+  resultLabel: string
   quarters: HomeQuarterScore[]
 }
 
@@ -33,8 +34,6 @@ interface HomeFocusProps {
   noMatchesLabel: string
 }
 
-const BEBAS = "'Bebas Neue', var(--font-display), sans-serif"
-
 export function HomeFocus({
   seasonLine,
   latestLabel,
@@ -49,57 +48,45 @@ export function HomeFocus({
   noMatchesLabel,
 }: HomeFocusProps) {
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-[18px] font-medium tracking-[-0.02em] text-[color:var(--text3)]">
-        {seasonLine}
-      </p>
-
-      <div className="h-px bg-[color:var(--line)]" />
+    <div className="flex flex-col gap-4">
+      <div className="content-enter flex items-center border-b border-[color:var(--line)] pb-4">
+        <p className="text-[13px] font-bold tracking-[-0.01em] text-[color:var(--text2)]">{seasonLine}</p>
+      </div>
 
       {match ? (
-        <section aria-labelledby="latest-match-title">
-          <div className="mb-4 flex items-start justify-between gap-4">
-            <div>
-              <p id="latest-match-title" className="text-[18px] font-medium text-[color:var(--text3)]">{latestLabel}</p>
-              <span
-                className="mt-3 inline-flex rounded-xl px-4 py-2 text-[16px] font-black"
-                style={{
-                  background: match.result === 'WIN' ? 'var(--accent)' : match.result === 'LOSS' ? 'var(--danger)' : 'var(--card2)',
-                  color: match.result === 'LOSS' ? '#fff' : 'var(--navy)',
-                }}
-              >
-                {match.result}
+        <section aria-labelledby="latest-match-title" className="content-enter overflow-hidden rounded-[22px] bg-[color:var(--navy)] text-white [animation-delay:50ms]">
+          <Link href={`/match/${match.id}`} className="focus-ring group block rounded-[22px]">
+            <div className="flex items-center justify-between gap-3 px-5 pb-1 pt-5">
+              <p id="latest-match-title" className="text-[12px] font-black uppercase tracking-[0.16em] text-white/55">{latestLabel}</p>
+              <span className="inline-flex min-h-8 items-center rounded-full border border-white/35 px-3 text-[11px] font-black text-white">
+                {match.resultLabel}
               </span>
             </div>
-            <div className="text-right">
-              <p className="text-[16px] font-semibold text-[color:var(--text)]">{match.date}</p>
-              {match.location && <p className="mt-1 text-[14px] text-[color:var(--text3)]">{match.location}</p>}
-            </div>
-          </div>
 
-          <Link href={`/match/${match.id}`} className="group block rounded-[22px] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f542]/60">
-            <div className="flex items-end gap-5 px-2 pb-6 pt-2">
-              <span style={{ fontFamily: BEBAS }} className="text-[clamp(76px,24vw,112px)] leading-[0.78] tracking-[-0.03em] text-[color:var(--navy)]">
-                {match.score}
-              </span>
-              <div className="mb-1 border-l border-[color:var(--line)] pl-5">
-                <p className="text-[14px] text-[color:var(--text3)]">{opponentLabel}</p>
-                <p className="mt-1 text-[22px] font-black tracking-[-0.04em] text-[color:var(--text)]">vs {match.opponent}</p>
+            <div className="px-5 pb-5 pt-4">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-[12px] font-bold text-white/50">{opponentLabel}</p>
+                  <p className="mt-1 max-w-[170px] truncate text-[21px] font-black tracking-[-0.04em]">vs {match.opponent}</p>
+                </div>
+                <span className="score-display text-[clamp(74px,25vw,104px)] leading-[0.72] tracking-[-0.035em] text-white">{match.score}</span>
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-[12px] font-bold text-white/65">
+                <span className="flex items-center gap-1.5"><CalendarDays aria-hidden="true" size={14} />{match.date}</span>
+                {match.location && <span className="flex items-center gap-1.5"><MapPin aria-hidden="true" size={14} />{match.location}</span>}
               </div>
             </div>
 
-            <div
-              className="relative overflow-hidden rounded-[20px] bg-cover bg-center px-4 py-7"
-              style={{ backgroundImage: "linear-gradient(90deg, rgba(8,16,31,.93), rgba(8,16,31,.62)), url('/match-stadium-bg.png')" }}
-            >
-              <div className="relative grid grid-cols-4 divide-x divide-white/25">
+            <div className="border-t border-white/20 px-4 py-4">
+              <div className="grid grid-cols-4 divide-x divide-white/25">
                 {(match.quarters.length ? match.quarters.slice(0, 4) : [
                   { label: '1Q', home: 0, away: 0 }, { label: '2Q', home: 0, away: 0 },
                   { label: '3Q', home: 0, away: 0 }, { label: '4Q', home: 0, away: 0 },
                 ]).map((quarter) => (
-                  <div key={quarter.label} className="flex items-baseline justify-center gap-2 px-1">
-                    <span style={{ fontFamily: BEBAS }} className="text-[15px] text-white/50">{quarter.label}</span>
-                    <span style={{ fontFamily: BEBAS }} className="text-[20px] text-white">{quarter.home}:{quarter.away}</span>
+                  <div key={quarter.label} className="flex flex-col items-center justify-center gap-1 px-1">
+                    <span className="score-display text-[13px] tracking-wide text-white/55">{quarter.label}</span>
+                    <span className="score-display text-[24px] leading-none text-white">{quarter.home}:{quarter.away}</span>
                   </div>
                 ))}
               </div>
@@ -107,7 +94,7 @@ export function HomeFocus({
           </Link>
         </section>
       ) : (
-        <div className="rounded-[20px] border border-[color:var(--line)] bg-white p-10 text-center text-[15px] text-[color:var(--text3)]">
+        <div className="surface content-enter p-10 text-center text-[15px] font-bold text-[color:var(--text2)]">
           {noMatchesLabel}
         </div>
       )}
@@ -115,14 +102,14 @@ export function HomeFocus({
       {canCreateMatch && (
         <Link
           href="/match/new"
-          className="flex min-h-16 items-center justify-center gap-3 rounded-[18px] bg-[color:var(--accent)] px-5 text-[18px] font-black text-[color:var(--navy)] transition-transform active:scale-[0.985] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#101828]/20"
+          className="focus-ring content-enter flex min-h-14 items-center justify-center gap-3 rounded-[18px] bg-[color:var(--accent)] px-5 text-[16px] font-black text-[color:var(--navy)] transition-opacity active:opacity-70 [animation-delay:100ms]"
         >
           <Plus aria-hidden="true" size={26} strokeWidth={3} />
           {newMatchLabel}
         </Link>
       )}
 
-      <nav aria-label="Quick links" className="divide-y divide-[color:var(--line)] border-y border-[color:var(--line)]">
+      <nav className="surface content-enter divide-y divide-[color:var(--line)] overflow-hidden [animation-delay:140ms]">
         <HomeLink href="/matches" label={allMatchesLabel} description={allMatchesDescription} />
         <HomeLink href="/team" label={teamOperationsLabel} description={teamOperationsDescription} />
       </nav>
@@ -132,12 +119,12 @@ export function HomeFocus({
 
 function HomeLink({ href, label, description }: { href: string; label: string; description: string }) {
   return (
-    <Link href={href} className="flex min-h-[88px] items-center gap-4 py-5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c8f542]/50">
+    <Link href={href} className="interactive-row focus-ring flex min-h-[78px] items-center gap-4 px-4">
       <span className="min-w-0 flex-1">
-        <span className="block text-[18px] font-black tracking-[-0.03em] text-[color:var(--text)]">{label}</span>
-        <span className="mt-1 block text-[14px] text-[color:var(--text3)]">{description}</span>
+        <span className="block text-[15px] font-black tracking-[-0.025em] text-[color:var(--text)]">{label}</span>
+        <span className="mt-1 block truncate text-[12px] text-[color:var(--text3)]">{description}</span>
       </span>
-      <ChevronRight aria-hidden="true" className="text-[color:var(--text3)]" />
+      <ChevronRight aria-hidden="true" size={18} className="shrink-0 text-[color:var(--text3)]" />
     </Link>
   )
 }
