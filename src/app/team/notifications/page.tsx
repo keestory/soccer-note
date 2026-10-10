@@ -100,7 +100,7 @@ function NotificationsContent() {
         setCurrentUserId(cached.userId)
 
         // 팀 소유자가 members에 없으면 추가
-        let membersToSet = [...cached.members]
+        const membersToSet = [...cached.members]
         const ownerInMembers = membersToSet.some(m => m.user_id === team.user_id)
         if (!ownerInMembers) {
           membersToSet.unshift({

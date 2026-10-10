@@ -1,9 +1,10 @@
-import admin from 'firebase-admin'
+import { cert, getApp, getApps, initializeApp } from 'firebase-admin/app'
+import { getMessaging, type MulticastMessage } from 'firebase-admin/messaging'
 
 // Firebase Admin SDK 초기화 (싱글톤 패턴)
 const getFirebaseAdmin = () => {
-  if (admin.apps.length > 0) {
-    return admin.app()
+  if (getApps().length > 0) {
+    return getApp()
   }
 
   // 환경변수에서 Firebase 설정 로드
@@ -16,8 +17,8 @@ const getFirebaseAdmin = () => {
     return null
   }
 
-  return admin.initializeApp({
-    credential: admin.credential.cert({
+  return initializeApp({
+    credential: cert({
       projectId,
       clientEmail,
       privateKey,
@@ -70,10 +71,10 @@ export async function sendFCMToTokens(
   }
 
   try {
-    const messaging = admin.messaging()
+    const messaging = getMessaging(firebaseAdmin)
 
     // 멀티캐스트 메시지 구성
-    const multicastMessage: admin.messaging.MulticastMessage = {
+    const multicastMessage: MulticastMessage = {
       tokens,
       notification: {
         title: message.title,

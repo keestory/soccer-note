@@ -2,7 +2,7 @@ import { createBrowserClient } from '@supabase/ssr'
 import type { SupabaseClient, User } from '@supabase/supabase-js'
 
 // Singleton to avoid multiple GoTrueClient instances
-let _client: ReturnType<typeof createBrowserClient> | null = null
+let _client: SupabaseClient | null = null
 
 /**
  * In Capacitor (WKWebView), cookie-based session storage is unreliable across
@@ -16,17 +16,25 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          if (typeof window === 'undefined') return undefined
-          try { return localStorage.getItem(name) ?? undefined } catch { return undefined }
+        getAll() {
+          if (typeof window === 'undefined') return []
+          try {
+            return Object.keys(localStorage).map(name => ({
+              name,
+              value: localStorage.getItem(name) ?? '',
+            }))
+          } catch {
+            return []
+          }
         },
-        set(name: string, value: string) {
+        setAll(cookiesToSet) {
           if (typeof window === 'undefined') return
-          try { localStorage.setItem(name, value) } catch {}
-        },
-        remove(name: string) {
-          if (typeof window === 'undefined') return
-          try { localStorage.removeItem(name) } catch {}
+          try {
+            cookiesToSet.forEach(({ name, value }) => {
+              if (value) localStorage.setItem(name, value)
+              else localStorage.removeItem(name)
+            })
+          } catch {}
         },
       },
       // PKCE (the default) issues a refresh token, so autoRefreshToken can keep
