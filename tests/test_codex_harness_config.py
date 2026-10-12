@@ -72,13 +72,15 @@ def test_read_only_roles_cannot_modify_the_workspace():
     } == WRITABLE_AGENTS
 
 
-def test_astra_is_escalation_only():
-    astra_agents = [
-        config["name"]
+def test_astra_is_reserved_for_ui_design_and_release_escalation():
+    astra_configs = {
+        config["name"]: config
         for config in (load_toml(path) for path in sorted(AGENTS_DIR.glob("*.toml")))
         if config["model"] == "gpt-6-astra"
-    ]
-    assert astra_agents == ["release_council"]
+    }
+    assert set(astra_configs) == {"ui_ux", "release_council"}
+    assert astra_configs["ui_ux"]["model_reasoning_effort"] == "high"
+    assert astra_configs["release_council"]["model_reasoning_effort"] == "xhigh"
 
 
 def test_xhigh_is_reserved_for_security_and_release_escalation():

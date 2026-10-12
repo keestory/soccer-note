@@ -22,9 +22,9 @@ Codex는 `AGENTS.md`, `.codex/config.toml`, `.codex/agents/*.toml`을 읽는다.
 ## 모델 정책
 
 - `gpt-5.6-luna`: 문서 정비처럼 빠르고 반복적인 좁은 작업
-- `gpt-5.6-terra`: 제품 정의, UI/UX, 시장·사업·마케팅, 일반 리뷰, QA, 운영
+- `gpt-5.6-terra`: 제품 정의, 시장·사업·마케팅, 일반 리뷰, QA, 운영
 - `gpt-5.6-sol`: 전략, 복잡한 구현·계획, 보안처럼 깊은 추론이 필요한 작업
-- `gpt-6-astra`: 비가역 출시나 전문가 충돌을 다루는 명시적 에스컬레이션 전용
+- `gpt-6-astra`: UI/UX 설계 판단은 high, 비가역 출시나 전문가 충돌 에스컬레이션은 xhigh
 
 각 커스텀 역할의 모델은 TOML에 고정한다. 저장소 탐색과 명확한 소규모 위임은 Codex 내장 `explorer`와 `worker`를 필요할 때만 사용한다.
 
