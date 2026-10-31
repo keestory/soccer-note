@@ -81,3 +81,11 @@ Approved reference direction: collectible football cards, reinterpreted as an or
 All card totals are labeled all-time. An appearance requires the player's quarter record in a unique non-upcoming match. Attendance alone is not an appearance. No age renders no age label; no jersey renders a dash; failed photos fall back to a silhouette. The six subjective skill sliders/OVR are removed from these web flows while their stored values remain intact.
 
 Intake: S2, main product writer with UI/UX, independent QA and security/data review. competitive_benchmark: not-applicable to the approved reference-led implementation; prior 2026 chart research did not determine these card fields. discoverability: authenticated player routes remain private/noindex; fictional preview remains noindex. store_compliance: required for optional age metadata and uploaded photo handling; privacy copy updated, no new SDK/native permission. App Store/Play declarations and physical-device operation were not verified; this is not a store-submission approval.
+
+### Card frame and portrait refinement
+
+Jersey number and main position have their own inset header: 48px top inset in the roster and 64px in the large card, with smaller 32–44px/52px numbers and 12px/16px positions. The shield uses fixed-height top/bottom SVG caps and a stretchable middle. Long names extend only the body and cannot push the shoulder outline into the header.
+
+Uploaded portraits use intersecting horizontal/vertical alpha fades: edges disappear into the card while the central face stays opaque. The original photo is not edited. Cropping uses center 40%; the former bottom dark overlay only applies to the silhouette fallback. Compact ranking portraits retain their small shield without the broad-card fade. The user's supplied photo is a local QA asset, not a repository/public deployment asset.
+
+Intake: S1 visual correction. UI/UX and independent browser QA; discoverability, store_compliance and competitive_benchmark are not-applicable to this correction because it changes presentation only, with no new routes, data, permissions, SDKs or market decisions.

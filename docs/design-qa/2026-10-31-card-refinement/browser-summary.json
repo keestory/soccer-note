@@ -1,0 +1,19 @@
+{
+  "surfaces": 36,
+  "engines": [
+    "chrome",
+    "webkit"
+  ],
+  "frameFailureCount": 0,
+  "minHeaderClearance": 10,
+  "overflowCount": 0,
+  "pageErrors": [],
+  "photoFallbackCorrect": true,
+  "maskComposite": [
+    "intersect, intersect",
+    "intersect"
+  ],
+  "rankingMask": [
+    "none"
+  ]
+}

@@ -255,15 +255,30 @@ input, textarea, [contenteditable] {
 
 /* GOLDLINE player cards: an original shield around actual player information. */
 .player-card { position: relative; isolation: isolate; width: 100%; min-width: 0; color: var(--text); }
-.player-card-frame { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-.player-card-content { padding: 24px 13px 22px; }
-.player-card-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 5px; position: relative; z-index: 2; }
-.player-card-number { font-family: var(--font-display), sans-serif; font-size: clamp(38px, 11vw, 56px); line-height: 1; color: var(--brand); }
+/* Fixed caps prevent long names from stretching the shoulders into the header. */
+.player-card-frame { --card-top: 38px; --card-bottom: 40px; position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.player-card-frame svg { display: block; position: absolute; width: 100%; }
+.player-card-frame-top { top: 0; height: var(--card-top); }
+.player-card-frame-body { top: var(--card-top); bottom: var(--card-bottom); height: calc(100% - var(--card-top) - var(--card-bottom) + 1px); }
+.player-card-frame-bottom { bottom: 0; height: var(--card-bottom); }
+.player-card-large .player-card-frame { --card-top: 54px; --card-bottom: 54px; }
+.player-card-content { padding: 48px 14px 22px; }
+.player-card-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; padding: 0 5px 6px; position: relative; z-index: 2; }
+.player-card-number { font-family: var(--font-display), sans-serif; font-size: clamp(32px, 9vw, 44px); line-height: 1; color: var(--brand); }
 .player-card-number small { font-size: .4em; vertical-align: top; line-height: 1.6; margin-right: 2px; }
-.player-card-position { font-size: 13px; font-weight: 800; letter-spacing: .06em; padding-top: 5px; }
-.player-card-portrait { position: relative; width: 100%; aspect-ratio: 1.1; margin-top: -14px; overflow: hidden; background: linear-gradient(135deg, transparent 48%, var(--chip) 48%, var(--chip) 63%, transparent 63%); }
-.player-card-portrait::after { content: ''; position: absolute; inset: 60% 0 0; background: linear-gradient(transparent, var(--nav)); pointer-events: none; }
-.player-card-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+.player-card-position { font-size: 12px; font-weight: 800; letter-spacing: .06em; padding-top: 5px; }
+.player-card-portrait { position: relative; width: 100%; aspect-ratio: 1.05; margin-top: 0; overflow: hidden; background: linear-gradient(135deg, transparent 48%, var(--chip) 48%, var(--chip) 63%, transparent 63%); }
+.player-card-portrait:not(.has-photo)::after { content: ''; position: absolute; inset: 60% 0 0; background: linear-gradient(transparent, var(--nav)); pointer-events: none; }
+.player-card-portrait.has-photo { background: none; }
+.player-card-portrait img {
+  display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 40%;
+  /* Intersect horizontal and vertical fades without dimming the face's center. */
+  --portrait-fade: linear-gradient(to right, transparent, #000 16%, #000 84%, transparent), linear-gradient(to bottom, transparent, #000 18%, #000 60%, transparent);
+  -webkit-mask-image: var(--portrait-fade);
+  -webkit-mask-composite: source-in, source-over;
+  mask-image: var(--portrait-fade);
+  mask-composite: intersect;
+}
 .player-card-silhouette { position: absolute; bottom: 0; left: 10%; width: 80%; height: 95%; fill: var(--line2); }
 .player-card-identity { position: relative; min-height: 48px; margin-top: -5px; text-align: center; }
 .player-card-identity h2 { font-size: 16px; line-height: 1.4; font-weight: 800; overflow-wrap: anywhere; margin: 0; }
@@ -274,12 +289,15 @@ input, textarea, [contenteditable] {
 .player-card-stats dd { font-family: var(--font-display), sans-serif; font-size: 26px; line-height: 1; color: var(--brand); overflow-wrap: anywhere; }
 .player-card-scope { font-size: 10px; line-height: 1.4; color: var(--text3); text-align: center; margin: 10px 0 0; }
 .player-card-large { max-width: 330px; margin: 0 auto; }
-.player-card-large .player-card-content { padding: 34px 26px 30px; }
-.player-card-large .player-card-number { font-size: 72px; }
-.player-card-large .player-card-position { font-size: 20px; }
+.player-card-large .player-card-content { padding: 64px 26px 30px; }
+.player-card-large .player-card-number { font-size: 52px; }
+.player-card-large .player-card-position { font-size: 16px; padding-top: 7px; }
 .player-card-large .player-card-identity { min-height: 64px; }
 .player-card-large .player-card-identity h2 { font-size: 26px; }
 .player-card-large .player-card-identity p { font-size: 14px; }
 .player-card-large .player-card-stats dd { font-size: 38px; }
 .player-card-large .player-card-stats dt, .player-card-large .player-card-scope { font-size: 12px; }
 .player-card-portrait.is-compact { margin: 0; width: 48px; height: 58px; flex-shrink: 0; border: 1px solid var(--brand); background-color: var(--card2); clip-path: polygon(50% 0, 100% 9%, 100% 86%, 50% 100%, 0 86%, 0 9%); }
+
+/* Small ranking portraits keep their compact shield and a readable face. */
+.player-card-portrait.is-compact img { -webkit-mask-image: none; mask-image: none; }

@@ -81,3 +81,6 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 - Uploads send the authenticated Bearer token. The server verifies it; invalid Authorization cannot fall back to cookies. Requests without Authorization retain existing cookie support.
 - Saving is disabled while uploading. Closing or changing a player form aborts its upload; late success/failure/finally cannot modify the next form. Removing the photo clears the player's reference when saved.
 - Cards remain two columns at 320px. Names wrap, age is optional, broken photos show a silhouette, and edit/delete remain separate accessible 44px controls. Existing eight locales cover the new labels.
+
+- Card header labels keep at least 8px clearance from the inner frame at 320/390px, including an 80-character name and jersey 99. Fixed frame caps do not stretch with long content.
+- Photo edges fade on all four sides while the face remains visible; upload failure restores the unmasked silhouette. Compact ranking images remain recognizable. Cropping and fading are rendering-only changes and preserve the uploaded source.
