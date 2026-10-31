@@ -29,7 +29,7 @@ The root owns the dark tokens. Legacy `.light` wrappers inherit them and no long
 - HomeFocus: the home explains the current state first. An upcoming match becomes the primary surface; without one, a concise no-upcoming message precedes the latest result. The latest result keeps real quarter scores and becomes compact only when an upcoming match is present. Localized View all sits beside the latest-result heading; one compact 64px team-management row remains below the single primary action. Never fabricate missing quarter scores. Two-digit scores get a separate row; long opponents wrap. Win/draw/loss retain localized text plus semantic color.
 - BottomNav: Home / Matches / Ranking / Team, near-black surface, volt selected state, aria-current.
 - PlayerFields: persistent name/number labels, numeric keyboard, optional number and age, explicit primary-position selection.
-- PlayerCard: original black/volt shield, explicit jersey number, photo or silhouette, wrapping name, optional age and actual appearances/goals/assists. Roster uses two columns; detail uses the large variant. Ranking keeps compact portraits and horizontal comparison rows.
+- PlayerCard: original black/volt shield, explicit jersey number, photo or silhouette, wrapping name, optional age and actual appearances/goals/assists/clean sheets/contribution. Roster uses two columns; detail uses the large variant. Ranking keeps compact portraits and horizontal comparison rows.
 - LinePitch: portrait display of existing horizontal coordinates; tap player then destination, pointer dragging or arrow keys. Drag cancellation handled without document-level listeners.
 - Sheet: bounded, scrollable bottom sheet; Escape, focus containment and return, body scroll restored.
 - ConfirmSheet: semantic Sheet wrapper and visible destructive confirmation.
@@ -76,7 +76,7 @@ Intake: S1 bounded navigation change; main implementation plus UI/UX and indepen
 
 ## Player cards
 
-Approved reference direction: collectible football cards, reinterpreted as an original shallow shield in the existing black/volt palette. Do not copy league/club logos or imply an overall skill score. Show `#number`, main position, photo or silhouette, full name, optional age, and actual appearances/goals/assists. The roster and authenticated team introduction use two columns at 320px. Names wrap and cards grow; a minimum identity height aligns ordinary names regardless of age. Edit/delete controls are separate 44px siblings of the detail link. The detail uses a larger card; rankings keep their existing metrics, ties, date filters and comparison rows.
+Approved reference direction: collectible football cards, reinterpreted as an original shallow shield in the existing black/volt palette. Do not copy league/club logos or imply an overall skill score. Show `#number`, main position, photo or silhouette, full name, optional age, and actual appearances/goals/assists/clean sheets/contribution. The roster and authenticated team introduction use two columns at 320px. Names wrap and cards grow; a minimum identity height aligns ordinary names regardless of age. Edit/delete controls are separate 44px siblings of the detail link. The detail uses a larger card; rankings keep their existing metrics, ties, date filters and comparison rows.
 
 All card totals are labeled all-time. An appearance requires the player's quarter record in a unique non-upcoming match. Attendance alone is not an appearance. No age renders no age label; no jersey renders a dash; failed photos fall back to a silhouette. The six subjective skill sliders/OVR are removed from these web flows while their stored values remain intact.
 
@@ -89,3 +89,11 @@ Jersey number and main position have their own inset header: 48px top inset in t
 Uploaded portraits use intersecting horizontal/vertical alpha fades: edges disappear into the card while the central face stays opaque. The original photo is not edited. Cropping uses center 40%; the former bottom dark overlay only applies to the silhouette fallback. Compact ranking portraits retain their small shield without the broad-card fade. The user's supplied photo is a local QA asset, not a repository/public deployment asset.
 
 Intake: S1 visual correction. UI/UX and independent browser QA; discoverability, store_compliance and competitive_benchmark are not-applicable to this correction because it changes presentation only, with no new routes, data, permissions, SDKs or market decisions.
+
+### Five card records
+
+Keep the approved header, portrait fade and fixed shield caps. The record grid uses six columns: appearances/goals/assists each span two on the first row; clean sheets/contribution each span three on the second. All five share number size/color. Labels wrap at 11px (12px on the large card); numbers align to the top of each row when translated labels take multiple lines. No fabricated sixth metric is added.
+
+The shared quarter-total helper counts clean-sheet checks and adds stored contribution values, preserving one-decimal precision. Appearances count unique played matches. Detail cards, per-match history/charts and totals use the same values; ranking record metrics share the helper and exclude upcoming matches. Attendance ranking keeps its existing separate attendance rule.
+
+Intake: S1 existing-record extension with UI/UX, data review and independent QA. discoverability/store_compliance/competitive_benchmark: not-applicable; no new route, personal field, permission, SDK, schema or market decision.

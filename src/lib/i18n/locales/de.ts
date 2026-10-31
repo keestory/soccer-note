@@ -628,7 +628,7 @@ export const translations: Translations = {
   badgeAce: 'Ass',
   badgeAceDesc: 'Ø {n} Bewertung',
   badgeWall: 'Die Mauer',
-  badgeWallDesc: '{n} Zu-null-Spiele',
+  badgeWallDesc: '{n} Mal zu null',
   badgeFlawless: 'Makellos',
   badgeFlawlessDesc: '3× in Folge 4.5+',
   editMatchInfo: 'Spielinfo bearbeiten',

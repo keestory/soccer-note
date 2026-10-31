@@ -633,3 +633,10 @@ Target identity was checked against the published bundle: `qfbfkgbqmeqgwnbdphlm.
 Player photos use the existing player-media bucket and photo_url field. Browser/WebView upload calls now provide Authorization via the existing authHeader helper; the server verifies Bearer with Supabase Auth, rejects invalid Authorization without cookie fallback, and keeps cookie authentication only when the header is absent. Form-bound AbortControllers and request identity checks prevent a late upload from modifying another player's draft. Existing storage visibility/retention behavior is unchanged.
 
 The independent Expo source under mobile/ retains its legacy skill UI. Metadata-only attributes can render an OVR of zero there; it is not part of this Capacitor web release and no Expo artifact was built. No crash was reproduced from metadata-only values. Native launch failure diagnosis remains separate and requires the installed build's crash log/device evidence.
+
+
+### Shared card/record totals
+
+`getQuarterRecordTotals` sums goals/assists, counts `clean_sheet = true` rows and sums numeric contribution values to the schema's one-decimal precision. It is shared by roster/intro cards, the player-detail per-match groups and ranking record metrics. `getPlayerCardStats` additionally counts unique non-upcoming matches with at least one player record; attendance-only entries do not create appearances. Distinct quarters are separate records under `UNIQUE(quarter_id, player_id)`.
+
+The former detail implementation collapsed clean sheets with any and contribution with max per match, while the input flow and ranking were quarter-based. The detail now uses the shared totals, including its defense chart, match list and badge counts. Therefore existing detail totals/badges may increase without any persisted data change. Upcoming records are excluded from record-based rankings; the attendance ranking remains separate. No schema, RLS or stored record mutation is part of this extension.

@@ -19,7 +19,7 @@ export function PlayerPortrait({ player, compact = false }: { player: CardPlayer
 }
 
 export function PlayerCard({ player, stats, scope, large = false }: { player: CardPlayer; stats: PlayerCardStats; scope?: string; large?: boolean }) {
-  const { locale } = useI18n()
+  const { locale, t } = useI18n()
   const copy = getPlayerCardCopy(locale)
   const age = getPlayerAge(player)
   const id = useId().replace(/:/g, '')
@@ -46,7 +46,7 @@ export function PlayerCard({ player, stats, scope, large = false }: { player: Ca
       <div className="player-card-topline"><span className="player-card-number"><small>#</small>{player.number ?? '—'}</span><span className="player-card-position">{player.default_position}</span></div>
       <PlayerPortrait player={player} />
       <div className="player-card-identity"><h2>{player.name}</h2>{age !== null && <p>{copy.ageFormat.replace('{n}', String(age))}</p>}</div>
-      <dl className="player-card-stats">{([{ key: 'games', label: copy.games }, { key: 'goals', label: copy.goals }, { key: 'assists', label: copy.assists }] as const).map(({ key, label }) => <div key={key}><dt>{label}</dt><dd>{stats[key]}</dd></div>)}</dl>
+      <dl className="player-card-stats">{([{ key: 'games', label: copy.games }, { key: 'goals', label: copy.goals }, { key: 'assists', label: copy.assists }, { key: 'cleanSheets', label: t.cleanSheet }, { key: 'contribution', label: t.contribution }] as const).map(({ key, label }) => <div key={key}><dt>{label}</dt><dd>{stats[key]}</dd></div>)}</dl>
       <p className="player-card-scope">{scope ?? copy.allTime}</p>
     </div>
   </article>

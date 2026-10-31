@@ -76,7 +76,7 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 
 - Roster, authenticated team introduction and player detail share PlayerCard. Ranking uses its compact portrait while preserving separate tab navigation and comparison behavior.
 - Required name; optional jersey number (0–99), optional age (integer 1–120), primary position, optional photo. Blank age is omitted and does not require a date of birth.
-- Card records are cumulative appearances, goals and assists. Appearance means one unique played match with a player quarter record, regardless of quarter count. Missing records show zero; no invented abilities.
+- Card records are cumulative appearances, goals, assists, clean sheets and contribution. Appearance means one unique played match with a player quarter record, regardless of quarter count. Missing records show zero; no invented abilities.
 - Legacy JSON metadata survives editing. Only changed age adds an attributes patch. The returned persisted row updates the store; an update failure keeps the draft and previous card.
 - Uploads send the authenticated Bearer token. The server verifies it; invalid Authorization cannot fall back to cookies. Requests without Authorization retain existing cookie support.
 - Saving is disabled while uploading. Closing or changing a player form aborts its upload; late success/failure/finally cannot modify the next form. Removing the photo clears the player's reference when saved.
@@ -84,3 +84,7 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 
 - Card header labels keep at least 8px clearance from the inner frame at 320/390px, including an 80-character name and jersey 99. Fixed frame caps do not stretch with long content.
 - Photo edges fade on all four sides while the face remains visible; upload failure restores the unmasked silhouette. Compact ranking images remain recognizable. Cropping and fading are rendering-only changes and preserve the uploaded source.
+
+- Five card records use a 3+2 layout with equal numeric emphasis. Translated labels may wrap while the numbers stay aligned within each row.
+- Clean sheets count true quarter-record checks; contribution sums stored quarter values without converting numeric values into booleans. Example: two quarters with clean-sheet checks and contributions 1 and 2.5 produce appearances 1 / clean sheets 2 / contribution 3.5.
+- Detail history, defense-point charts, totals and clean-sheet badges follow those same quarter totals. This replaces the old detail-only any/max collapse; ranking continues the established quarter-sum meaning. Record metrics omit upcoming fixtures and contribution is presented to the stored one-decimal precision.

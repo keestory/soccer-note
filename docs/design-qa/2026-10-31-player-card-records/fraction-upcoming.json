@@ -1,0 +1,40 @@
+{
+  "pass": true,
+  "results": [
+    {
+      "route": "/team/players",
+      "values": [
+        "1",
+        "3",
+        "2",
+        "2",
+        "0.3"
+      ]
+    },
+    {
+      "route": "/team/intro",
+      "values": [
+        "1",
+        "3",
+        "2",
+        "2",
+        "0.3"
+      ]
+    },
+    {
+      "route": "/team/players/a",
+      "values": [
+        "1",
+        "3",
+        "2",
+        "2",
+        "0.3"
+      ]
+    },
+    {
+      "route": "/ranking",
+      "contribution": "0.3",
+      "cleanSheets": "2"
+    }
+  ]
+}

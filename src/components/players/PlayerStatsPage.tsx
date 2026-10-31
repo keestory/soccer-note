@@ -4,13 +4,14 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
-import type { Player } from '@/types/database'
+import type { Player, QuarterRecord } from '@/types/database'
 import { formatDate } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n/context'
 import { PlayerDetailSkeleton } from '@/components/Skeleton'
 import { BottomNav } from '@/components/BottomNav'
 import { PlayerCard } from '@/components/players/PlayerCard'
 import { getPlayerCardCopy } from '@/lib/player-card-copy'
+import { getQuarterRecordTotals } from '@/lib/player-card'
 
 interface MatchRecord {
   matchId: string
@@ -18,7 +19,7 @@ interface MatchRecord {
   matchDate: string
   goals: number
   assists: number
-  cleanSheet: boolean
+  cleanSheets: number
   contribution: number
   rating: number | null
   praise: string | null
@@ -134,7 +135,7 @@ function DefensePointsChart({ records, total }: { records: MatchRecord[]; total:
       </div>
       <div className="flex items-end" style={{ gap: 22, minHeight: 88, padding: '0 8px', overflowX: 'auto' }}>
         {games.map((g, i) => {
-          const cs = g.cleanSheet ? 1 : 0
+          const cs = g.cleanSheets
           return (
             <div key={i} className="flex flex-col items-center justify-end" style={{ flex: 1, minWidth: 54, gap: 6 }}>
               <div className="flex items-end" style={{ gap: 5 }}>
@@ -191,6 +192,7 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
     ])
 
     const matchMap = new Map<string, MatchRecord>()
+    const recordsByMatch = new Map<string, QuarterRecord[]>()
     if (records) {
       for (const record of records) {
         const match = record.quarter?.match
@@ -199,15 +201,14 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
         if (!matchMap.has(matchId)) {
           matchMap.set(matchId, {
             matchId, opponent: match.opponent, matchDate: match.match_date,
-            goals: 0, assists: 0, cleanSheet: false, contribution: 0, rating: null,
+            ...getQuarterRecordTotals([]), rating: null,
             praise: record.praise_text, improvement: record.improvement_text, highlight: record.highlight_text,
           })
         }
         const mr = matchMap.get(matchId)!
-        mr.goals += record.goals || 0
-        mr.assists += record.assists || 0
-        if (record.clean_sheet) mr.cleanSheet = true
-        if (record.contribution) mr.contribution = Math.max(mr.contribution, record.contribution)
+        const quarterRecords = recordsByMatch.get(matchId) ?? []
+        quarterRecords.push(record)
+        recordsByMatch.set(matchId, quarterRecords)
         if (record.rating !== null)
           mr.rating = mr.rating === null ? record.rating : (mr.rating + record.rating) / 2
         if (record.praise_text) mr.praise = record.praise_text
@@ -216,15 +217,17 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
       }
     }
 
-    const sortedRecords = Array.from(matchMap.values()).sort(
+    const sortedRecords = Array.from(matchMap.values()).map(match => ({
+      ...match, ...getQuarterRecordTotals(recordsByMatch.get(match.matchId) ?? []),
+    })).sort(
       (a, b) => new Date(b.matchDate).getTime() - new Date(a.matchDate).getTime()
     )
     setMatchRecords(sortedRecords)
 
     const totalGoals = sortedRecords.reduce((s, r) => s + r.goals, 0)
     const totalAssists = sortedRecords.reduce((s, r) => s + r.assists, 0)
-    const totalCleanSheets = sortedRecords.filter(r => r.cleanSheet).length
-    const totalContribution = sortedRecords.reduce((s, r) => s + r.contribution, 0)
+    const totalCleanSheets = sortedRecords.reduce((sum, record) => sum + record.cleanSheets, 0)
+    const totalContribution = Math.round(sortedRecords.reduce((s, r) => s + r.contribution, 0) * 10) / 10
 
     const stats: SeasonStats = {
       games: sortedRecords.length, goals: totalGoals, assists: totalAssists,
@@ -254,7 +257,7 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
 
       <main className="max-w-md mx-auto flex flex-col" style={{ gap: 13, padding: '13px 20px 20px' }}>
 
-        <PlayerCard player={player} stats={{ games: seasonStats?.games ?? 0, goals: seasonStats?.goals ?? 0, assists: seasonStats?.assists ?? 0 }} large />
+        <PlayerCard player={player} stats={{ games: seasonStats?.games ?? 0, goals: seasonStats?.goals ?? 0, assists: seasonStats?.assists ?? 0, cleanSheets: seasonStats?.cleanSheets ?? 0, contribution: seasonStats?.contribution ?? 0 }} large />
 
         {badges.length > 0 && (
           <section style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
@@ -355,7 +358,7 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
         ) : (
           matchRecords.map((record) => {
             const ap = record.goals + record.assists
-            const dp = record.contribution + (record.cleanSheet ? 1 : 0)
+            const dp = record.contribution + record.cleanSheets
             const isTop = ap > 0 && ap === maxMatchPoints
             return (
               <Link key={record.matchId} href={`/match/${record.matchId}`}
@@ -382,7 +385,7 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
                     { label: t.goal, value: record.goals, active: record.goals > 0 },
                     { label: t.assistShort, value: record.assists, active: record.assists > 0 },
                     { label: t.contribution, value: record.contribution > 0 ? record.contribution : '-', active: record.contribution > 0 },
-                    { label: t.cleanSheet, value: record.cleanSheet ? '✓' : '-', active: record.cleanSheet },
+                    { label: t.cleanSheet, value: record.cleanSheets > 0 ? record.cleanSheets : '-', active: record.cleanSheets > 0 },
                     { label: t.statAppearances, value: '✓', active: true },
                   ].map(s => (
                     <div key={s.label} style={{ textAlign: 'center' }}>

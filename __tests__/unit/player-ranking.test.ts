@@ -30,6 +30,16 @@ describe('team player rankings', () => {
     expect(buildPlayerRanking(players, matches, 'cleanSheets').rows.map(row => row.value)).toEqual([1, 1, 0])
     expect(buildPlayerRanking(players, matches, 'avgRating').rows.map(row => row.value)).toEqual([9, 7, null])
   })
+  it('counts every recorded clean sheet and keeps fractional contributions consistent', () => {
+    const played = match('2026-10-10', [
+      { player_id: 'a', goals: 0, assists: 0, contribution: 0.1, clean_sheet: true },
+      { player_id: 'a', goals: 0, assists: 0, contribution: 0.2, clean_sheet: true },
+    ])
+    const upcoming = { ...match('2026-10-11', [{ player_id: 'a', contribution: 9, clean_sheet: true }]), status: 'upcoming' as const }
+    expect(buildPlayerRanking(players, [played, upcoming], 'contribution').rows[0].value).toBe(0.3)
+    expect(buildPlayerRanking(players, [played, upcoming], 'cleanSheets').rows[0].value).toBe(2)
+    expect(buildPlayerRanking(players, [upcoming], 'cleanSheets').hasRecords).toBe(false)
+  })
   it('includes both date boundaries and supports open-ended ranges', () => {
     expect(buildPlayerRanking(players, matches, 'goals', '2026-10-01', '2026-10-01').rows[0].value).toBe(3)
     expect(buildPlayerRanking(players, matches, 'goals', '2026-10-31').rows[0].player.id).toBe('c')

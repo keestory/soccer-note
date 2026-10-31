@@ -1,22 +1,37 @@
-import type { Match, Player } from '@/types/database'
+import type { Match, Player, QuarterRecord } from '@/types/database'
 
-export interface PlayerCardStats { games: number; goals: number; assists: number }
+export interface PlayerRecordTotals { goals: number; assists: number; cleanSheets: number; contribution: number }
+export interface PlayerCardStats extends PlayerRecordTotals { games: number }
+
+/** Preserve the existing ranking's per-quarter record totals. */
+export function getQuarterRecordTotals(records: Pick<QuarterRecord, 'goals' | 'assists' | 'clean_sheet' | 'contribution'>[]): PlayerRecordTotals {
+  const totals = { goals: 0, assists: 0, cleanSheets: 0, contribution: 0 }
+  for (const record of records) {
+    totals.goals += record.goals || 0
+    totals.assists += record.assists || 0
+    totals.cleanSheets += record.clean_sheet ? 1 : 0
+    totals.contribution += record.contribution || 0
+  }
+  // Stored contribution values have one decimal place; avoid floating-point tails.
+  totals.contribution = Math.round(totals.contribution * 10) / 10
+  return totals
+}
 
 /** A player appears once per played match, regardless of the number of quarters. */
 export function getPlayerCardStats(playerId: string, matches: Match[], start = '', end = ''): PlayerCardStats {
   const seen = new Set<string>()
-  const stats = { games: 0, goals: 0, assists: 0 }
+  const playerRecords: QuarterRecord[] = []
+  let games = 0
   for (const match of matches) {
     if (match.status === 'upcoming' || seen.has(match.id)) continue
     if ((start && match.match_date < start) || (end && match.match_date > end)) continue
     seen.add(match.id)
     const records = (match.quarters ?? []).flatMap(quarter => quarter.quarter_records ?? []).filter(record => record.player_id === playerId)
     if (!records.length) continue
-    stats.games += 1
-    stats.goals += records.reduce((sum, record) => sum + (record.goals || 0), 0)
-    stats.assists += records.reduce((sum, record) => sum + (record.assists || 0), 0)
+    games += 1
+    playerRecords.push(...records)
   }
-  return stats
+  return { games, ...getQuarterRecordTotals(playerRecords) }
 }
 
 export function getPlayerAge(player: Pick<Player, 'attributes'>): number | null {

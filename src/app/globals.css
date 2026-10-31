@@ -283,8 +283,9 @@ input, textarea, [contenteditable] {
 .player-card-identity { position: relative; min-height: 48px; margin-top: -5px; text-align: center; }
 .player-card-identity h2 { font-size: 16px; line-height: 1.4; font-weight: 800; overflow-wrap: anywhere; margin: 0; }
 .player-card-identity p { font-size: 11px; color: var(--text3); margin: 4px 0 0; }
-.player-card-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; border-top: 1px solid var(--line2); margin-top: 12px; padding-top: 10px; text-align: center; }
-.player-card-stats > div { display: flex; flex-direction: column-reverse; gap: 3px; min-width: 0; }
+.player-card-stats { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px 4px; border-top: 1px solid var(--line2); margin-top: 12px; padding-top: 10px; text-align: center; }
+.player-card-stats > div { grid-column: span 2; display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 3px; min-width: 0; }
+.player-card-stats > div:nth-child(n + 4) { grid-column: span 3; }
 .player-card-stats dt { font-size: 11px; line-height: 1.25; color: var(--text3); overflow-wrap: anywhere; }
 .player-card-stats dd { font-family: var(--font-display), sans-serif; font-size: 26px; line-height: 1; color: var(--brand); overflow-wrap: anywhere; }
 .player-card-scope { font-size: 10px; line-height: 1.4; color: var(--text3); text-align: center; margin: 10px 0 0; }
