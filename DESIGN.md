@@ -28,7 +28,8 @@ The root owns the dark tokens. Legacy `.light` wrappers inherit them and no long
 - HomeHeader: dashboard and deterministic QA share the same wrapping team title, notification shell, profile action, spacing and safe-area handling. The QA fixture has no team-switch handler.
 - HomeFocus: the home explains the current state first. An upcoming match becomes the primary surface; without one, a concise no-upcoming message precedes the latest result. The latest result keeps real quarter scores and becomes compact only when an upcoming match is present. Localized View all sits beside the latest-result heading; one compact 64px team-management row remains below the single primary action. Never fabricate missing quarter scores. Two-digit scores get a separate row; long opponents wrap. Win/draw/loss retain localized text plus semantic color.
 - BottomNav: Home / Matches / Ranking / Team, near-black surface, volt selected state, aria-current.
-- PlayerFields: persistent name/number labels, numeric keyboard, optional number, explicit position selection.
+- PlayerFields: persistent name/number labels, numeric keyboard, optional number and age, explicit primary-position selection.
+- PlayerCard: original black/volt shield, explicit jersey number, photo or silhouette, wrapping name, optional age and actual appearances/goals/assists. Roster uses two columns; detail uses the large variant. Ranking keeps compact portraits and horizontal comparison rows.
 - LinePitch: portrait display of existing horizontal coordinates; tap player then destination, pointer dragging or arrow keys. Drag cancellation handled without document-level listeners.
 - Sheet: bounded, scrollable bottom sheet; Escape, focus containment and return, body scroll restored.
 - ConfirmSheet: semantic Sheet wrapper and visible destructive confirmation.
@@ -45,12 +46,12 @@ The pitch editing screen selects a player for placement first; the explicit Play
 Existing eight locales remain supported. New placement labels are supplied in eight locales. Date-only strings render as calendar dates; selected locale is passed by redesigned match views. HTML language follows the selected locale. Long labels wrap; control titles and accessible labels identify icon actions. Do not use color as the only win/loss or position cue.
 
 ## Review surface
-/design-system is a noindex, fictional, in-memory review surface. It shares HomeFocus, PlayerFields, LinePitch and Sheet with production. It has four demonstration selectors (Home, Players/Rankings, Formation, Record); these are review selectors, not a replacement for the production four-tab navigation. Demo changes are not saved to any team or database.
+/design-system is a noindex, fictional, in-memory review surface. It shares HomeFocus, PlayerCard, PlayerFields, LinePitch and Sheet with production. It has four demonstration selectors (Home, Players/Rankings, Formation, Record); these are review selectors, not a replacement for the production four-tab navigation. Demo changes are not saved to any team or database.
 
 /screenshots/home uses the real HomeHeader, HomeFocus and BottomNavShell at the viewport's actual width. Optional locale/scenario/result query parameters exercise translated, empty, viewer, upcoming, long-name and outcome fixtures without real data. Its displayed total is derived from its quarter fixture. Browser evidence must record CSS innerWidth, DPR and screenshot pixel size; a narrow Chrome screenshot alone does not prove a narrow CSS viewport.
 
 ## Scope and release boundary
-Implementation applies to Next.js web and the Capacitor shell that displays that web URL. The separate Expo source under mobile/ is not changed. Production deployment, authenticated real-data workflows and physical-device verification require separate evidence. New permissions, native SDKs, data collection and database migrations are not introduced.
+Implementation applies to Next.js web and the Capacitor shell that displays that web URL. The separate Expo source under mobile/ is not changed. Production deployment, authenticated real-data workflows and physical-device verification require separate evidence. The neon and ranking changes introduced no permissions, native SDKs or database migrations. The player-card extension below adds optional age metadata.
 
 ## Earlier 2026 benchmark evidence (historical)
 Observed 2026-10-10, country-specific free iPhone charts; snapshots are not annual/global rankings or quality proof.
@@ -72,3 +73,11 @@ S2 visual restoration with one product writer and independent UI/UX + QA review.
 Web and the current Capacitor shell expose Home / Matches / Ranking / Team. `/ranking` shows only the selected team, with six existing metrics, inclusive date filtering and competition ties (1,1,3). Empty players and no records are distinct states. `/ranking/[id]` shares the existing player statistics component and returns to Ranking; `/team/players/[id]` keeps its roster return. `/team/players` now contains roster management only. The separate Expo source remains unchanged.
 
 Intake: S1 bounded navigation change; main implementation plus UI/UX and independent QA. discoverability: not-applicable to public acquisition; the new authenticated ranking subtree is noindex. store_compliance: not-applicable, no data collection, SDK, permission or submission change. competitive_benchmark: not-applicable, existing feature relocation; the 2026-10-31 Business chart check from the neon restoration remains context only.
+
+## Player cards
+
+Approved reference direction: collectible football cards, reinterpreted as an original shallow shield in the existing black/volt palette. Do not copy league/club logos or imply an overall skill score. Show `#number`, main position, photo or silhouette, full name, optional age, and actual appearances/goals/assists. The roster and authenticated team introduction use two columns at 320px. Names wrap and cards grow; a minimum identity height aligns ordinary names regardless of age. Edit/delete controls are separate 44px siblings of the detail link. The detail uses a larger card; rankings keep their existing metrics, ties, date filters and comparison rows.
+
+All card totals are labeled all-time. An appearance requires the player's quarter record in a unique non-upcoming match. Attendance alone is not an appearance. No age renders no age label; no jersey renders a dash; failed photos fall back to a silhouette. The six subjective skill sliders/OVR are removed from these web flows while their stored values remain intact.
+
+Intake: S2, main product writer with UI/UX, independent QA and security/data review. competitive_benchmark: not-applicable to the approved reference-led implementation; prior 2026 chart research did not determine these card fields. discoverability: authenticated player routes remain private/noindex; fictional preview remains noindex. store_compliance: required for optional age metadata and uploaded photo handling; privacy copy updated, no new SDK/native permission. App Store/Play declarations and physical-device operation were not verified; this is not a store-submission approval.

@@ -622,3 +622,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 - [ ] 이 시스템 설계 검토 및 승인
 - [ ] 디자인 스펙 작성 (DESIGN_SPEC.md)
 - [ ] Supabase 프로젝트 생성
+
+
+## 2026-10-31 player card metadata extension
+
+The deployed Next.js web and Capacitor remote-web client use the existing `players.attributes` JSONB column (migration 025) for optional `card.age`. This does not require a new database column or migration. `PlayerAttributes` continues to describe six legacy skill keys; `Player.attributes` accepts partial legacy skills plus card metadata. Age is a whole number 1–120 or null, is manually maintained, and does not store a date of birth. Unknown root/card keys and legacy skills are preserved. A name-only edit omits the attributes patch; an age change merges the current editor snapshot. Concurrent JSON edits are not atomic across clients.
+
+Target identity was checked against the published bundle: `qfbfkgbqmeqgwnbdphlm.supabase.co`. Read-only REST `limit=0` confirmed the existing attributes and bio columns and absence of a standalone age column. Management API access to that project was unavailable. No production migration, RLS change, or real player mutation was performed by QA. Existing RLS remains authoritative and its live predicates were not audited here.
+
+Player photos use the existing player-media bucket and photo_url field. Browser/WebView upload calls now provide Authorization via the existing authHeader helper; the server verifies Bearer with Supabase Auth, rejects invalid Authorization without cookie fallback, and keeps cookie authentication only when the header is absent. Form-bound AbortControllers and request identity checks prevent a late upload from modifying another player's draft. Existing storage visibility/retention behavior is unchanged.
+
+The independent Expo source under mobile/ retains its legacy skill UI. Metadata-only attributes can render an OVR of zero there; it is not part of this Capacitor web release and no Expo artifact was built. No crash was reproduced from metadata-only values. Native launch failure diagnosis remains separate and requires the installed build's crash log/device evidence.

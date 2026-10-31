@@ -1,0 +1,10 @@
+{
+  "uploadSave": "pass",
+  "failurePreservesPhoto": "pass",
+  "removePhoto": "pass",
+  "bearerAuth": [
+    true,
+    true
+  ],
+  "pageErrors": []
+}

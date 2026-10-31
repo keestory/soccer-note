@@ -6,9 +6,10 @@ import { LinePitch, type PitchPlayer } from '@/components/design/LinePitch'
 import { PlayerFields } from '@/components/design/PlayerFields'
 import { Sheet } from '@/components/design/Sheet'
 import type { PositionType } from '@/types/database'
+import { PlayerCard } from '@/components/players/PlayerCard'
 import { getTranslations } from '@/lib/i18n'
 
-type DemoPlayer = PitchPlayer & { position: PositionType; goals: number; assists: number }
+type DemoPlayer = PitchPlayer & { position: PositionType; goals: number; assists: number; age?: number }
 const initialPlayers: DemoPlayer[] = [
   ['1', '김민준', 1, 'GK', 9, 50, 0, 0], ['2', '이도윤', 3, 'DF', 27, 16, 0, 1],
   ['3', '박서준', 4, 'DF', 27, 39, 1, 0], ['4', '최지호', 5, 'DF', 27, 62, 0, 0],
@@ -30,6 +31,7 @@ export default function DesignSystemPage() {
   const [adding, setAdding] = useState(false)
   const [name, setName] = useState('')
   const [number, setNumber] = useState('')
+  const [age, setAge] = useState('')
   const [position, setPosition] = useState<PositionType>('MF')
   const [quarter, setQuarter] = useState(0)
   const [scores, setScores] = useState([[1, 0], [0, 1], [2, 0], [0, 1]])
@@ -70,7 +72,8 @@ export default function DesignSystemPage() {
             <div className="sn-tabs mb-5"><button aria-pressed={!ranking} onClick={() => setRanking(false)}>선수 {players.length}</button><button aria-pressed={ranking} onClick={() => setRanking(true)}>시즌 랭킹</button></div>
             <label className="mb-5 flex items-center gap-2 rounded-xl border border-[color:var(--line)] bg-[color:var(--card)] px-3"><Search size={20} strokeWidth={1.7} aria-hidden className="text-[color:var(--text3)]" /><input className="min-w-0 flex-1 bg-transparent py-3 outline-none" aria-label="이름 또는 등번호 검색" placeholder="이름 또는 등번호 검색" value={search} onChange={e => setSearch(e.target.value)} /></label>
             {ranking && <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><span className="text-xs text-[color:var(--text3)]">2026 시즌 · 우리 팀</span><div className="flex gap-2">{(['goals', 'assists'] as const).map(m => <button key={m} className="sn-button !px-3 !py-1" aria-pressed={metric === m} style={metric === m ? { background: 'var(--chip)', color: 'var(--brand)' } : undefined} onClick={() => setMetric(m)}>{m === 'goals' ? '득점' : '도움'}</button>)}</div></div>}
-            <div className="surface divide-y divide-[color:var(--line)] overflow-hidden">{sorted.map(p => <div key={p.id} className="flex items-center gap-3 px-4 py-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[color:var(--card2)] text-sm tabular-nums">{ranking ? sorted.findIndex(x => x[metric] === p[metric]) + 1 : p.number ?? '—'}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{p.name}</p><p className="mt-1 text-xs leading-[18px] text-[color:var(--text3)]">{p.position} · #{p.number ?? '—'}</p></div><p className="text-sm tabular-nums">{ranking ? p[metric] : `${p.goals} G · ${p.assists} A`}</p></div>)}</div>
+            {!ranking ? <div className="grid grid-cols-2 gap-3">{sorted.map(p => <PlayerCard key={p.id} player={{ name: p.name, number: p.number, default_position: p.position, attributes: { card: { age: p.age ?? (p.id === '10' ? 28 : undefined) } } }} stats={{ games: p.id.length > 5 ? 0 : 12, goals: p.goals, assists: p.assists }} />)}</div> : <div className="surface divide-y divide-[color:var(--line)] overflow-hidden">{sorted.map(p => <div key={p.id} className="flex items-center gap-3 px-4 py-3"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[color:var(--card2)] text-sm tabular-nums">{ranking ? sorted.findIndex(x => x[metric] === p[metric]) + 1 : p.number ?? '—'}</span><div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold">{p.name}</p><p className="mt-1 text-xs leading-[18px] text-[color:var(--text3)]">{p.position} · #{p.number ?? '—'}</p></div><p className="text-sm tabular-nums">{ranking ? p[metric] : `${p.goals} G · ${p.assists} A`}</p></div>)}</div> }
+
             {sorted.length === 0 && <p className="py-8 text-center text-sm text-[color:var(--text3)]">검색 결과가 없습니다.</p>}
             <button className="sn-button mt-5 w-full" data-primary="true" onClick={() => setAdding(true)}><Plus size={20} strokeWidth={1.7} aria-hidden />선수 추가</button>
           </>}
@@ -92,6 +95,6 @@ export default function DesignSystemPage() {
         <nav className="sn-preview-nav" aria-label="디자인 화면">{([{key:'home',label:'홈',icon:Home},{key:'players',label:'선수·랭킹',icon:UsersRound},{key:'formation',label:'포메이션',icon:LayoutGrid},{key:'record',label:'경기 기록',icon:Trophy}] as const).map(({key,label,icon:Icon}) => <button key={key} aria-pressed={page === key} onClick={() => switchPage(key)}><Icon size={20} strokeWidth={1.7} aria-hidden/>{label}</button>)}</nav>
       </div>
     </div>
-    {adding && <Sheet title="함께 뛸 선수 추가" closeLabel="닫기" onClose={() => setAdding(false)}><form onSubmit={e => { e.preventDefault(); if (!name.trim()) return; setPlayers(prev => [...prev,{id:crypto.randomUUID(),name:name.trim(),number:number ? Number(number) : null,position,x:50,y:50,goals:0,assists:0}]); setAdding(false); setName(''); setNumber(''); setSearch(''); setNotice('선수가 미리보기에 추가되었습니다.') }}><p className="mb-5 text-sm text-[color:var(--text3)]">이름만으로 시작하세요. 등번호는 나중에 넣어도 돼요.</p><PlayerFields name={name} number={number} position={position} onName={setName} onNumber={setNumber} onPosition={setPosition} labels={{name:'선수 이름',number:'등번호',position:'포지션'}} autoFocus /><button className="sn-button mt-6 w-full" data-primary="true" type="submit" disabled={!name.trim()}><Plus size={20} strokeWidth={1.7} aria-hidden />선수 추가</button></form></Sheet>}
+    {adding && <Sheet title="함께 뛸 선수 추가" closeLabel="닫기" onClose={() => setAdding(false)}><form onSubmit={e => { e.preventDefault(); if (!name.trim()) return; setPlayers(prev => [...prev,{id:crypto.randomUUID(),name:name.trim(),number:number ? Number(number) : null,position,age:age ? Number(age) : undefined,x:50,y:50,goals:0,assists:0}]); setAdding(false); setName(''); setNumber(''); setAge(''); setSearch(''); setNotice('선수가 미리보기에 추가되었습니다.') }}><p className="mb-5 text-sm text-[color:var(--text3)]">이름만으로 시작하세요. 등번호는 나중에 넣어도 돼요.</p><PlayerFields name={name} number={number} age={age} onAge={setAge} ageLabel="나이 (선택)" ageHint="생년월일 없이 나이만 입력해요." position={position} onName={setName} onNumber={setNumber} onPosition={setPosition} labels={{name:'선수 이름',number:'등번호',position:'포지션'}} autoFocus /><button className="sn-button mt-6 w-full" data-primary="true" type="submit" disabled={!name.trim()}><Plus size={20} strokeWidth={1.7} aria-hidden />선수 추가</button></form></Sheet>}
   </div>
 }

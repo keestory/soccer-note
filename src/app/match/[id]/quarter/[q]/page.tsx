@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
-import { createClient, getSessionUser } from '@/lib/supabase'
+import { createClient, getSessionUser, authHeader } from '@/lib/supabase'
 import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner, Trash2, ArrowRightLeft } from 'lucide-react'
 import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType } from '@/types/database'
 import { POSITION_COLORS, POSITION_LABELS } from '@/types/database'
@@ -564,7 +564,7 @@ export default function QuarterEditPage() {
       formData.append('filePath', filePath)
 
       try {
-        const res = await fetch('/api/upload', { method: 'POST', body: formData })
+        const res = await fetch('/api/upload', { method: 'POST', headers: await authHeader(supabase), body: formData })
         const result = await res.json()
 
         if (!res.ok) {

@@ -1,0 +1,148 @@
+{
+  "results": [
+    "legacy card age displayed; no six-skill sliders",
+    "edit age preserves legacy + unknown metadata",
+    "unchanged age omits attributes mutation",
+    "clear age persists null and hides age",
+    "invalid age 0/121/fraction blocked before mutation",
+    "failed zero-row save preserves editor and original card",
+    "create age/jersey 0/position; metadata-only attributes without fake skills",
+    "photo upload carries Bearer and persists visible returned URL",
+    "upload failure retains old photo; remove photo saves null with silhouette fallback",
+    "nonimage selection rejected before upload",
+    "read-only member sees cards and no mutations"
+  ],
+  "pageErrors": [],
+  "mutations": [
+    {
+      "method": "PATCH",
+      "body": {
+        "name": "김네온",
+        "number": 10,
+        "default_position": "FW",
+        "bio": null,
+        "preferred_positions": null,
+        "preferred_numbers": null,
+        "photo_url": null,
+        "attributes": {
+          "pace": 77,
+          "shooting": 65,
+          "custom": "keep",
+          "card": {
+            "age": 29,
+            "extra": "keep nested"
+          }
+        },
+        "strength_tags": []
+      }
+    },
+    {
+      "method": "PATCH",
+      "body": {
+        "name": "김네온수정",
+        "number": 10,
+        "default_position": "FW",
+        "bio": null,
+        "preferred_positions": null,
+        "preferred_numbers": null,
+        "photo_url": null,
+        "strength_tags": []
+      }
+    },
+    {
+      "method": "PATCH",
+      "body": {
+        "name": "김네온수정",
+        "number": 10,
+        "default_position": "FW",
+        "bio": null,
+        "preferred_positions": null,
+        "preferred_numbers": null,
+        "photo_url": null,
+        "attributes": {
+          "pace": 77,
+          "shooting": 65,
+          "custom": "keep",
+          "card": {
+            "age": null,
+            "extra": "keep nested"
+          }
+        },
+        "strength_tags": []
+      }
+    },
+    {
+      "method": "PATCH",
+      "body": {
+        "name": "김네온수정",
+        "number": 10,
+        "default_position": "FW",
+        "bio": null,
+        "preferred_positions": null,
+        "preferred_numbers": null,
+        "photo_url": null,
+        "attributes": {
+          "pace": 77,
+          "shooting": 65,
+          "custom": "keep",
+          "card": {
+            "age": 31,
+            "extra": "keep nested"
+          }
+        },
+        "strength_tags": []
+      }
+    },
+    {
+      "method": "POST",
+      "body": {
+        "team_id": "team-qa",
+        "name": "새선수",
+        "number": 0,
+        "default_position": "GK",
+        "attributes": {
+          "card": {
+            "age": 18
+          }
+        },
+        "photo_url": null
+      }
+    },
+    {
+      "method": "PATCH",
+      "body": {
+        "name": "김네온수정",
+        "number": 10,
+        "default_position": "FW",
+        "bio": null,
+        "preferred_positions": null,
+        "preferred_numbers": null,
+        "photo_url": "http://localhost:3110/qa-photo.svg",
+        "strength_tags": []
+      }
+    },
+    {
+      "method": "PATCH",
+      "body": {
+        "name": "김네온수정",
+        "number": 10,
+        "default_position": "FW",
+        "bio": null,
+        "preferred_positions": null,
+        "preferred_numbers": null,
+        "photo_url": null,
+        "strength_tags": []
+      }
+    }
+  ],
+  "uploadRequests": [
+    {
+      "hasBearer": true,
+      "hasFilePath": true
+    },
+    {
+      "hasBearer": true,
+      "hasFilePath": true
+    }
+  ]
+}

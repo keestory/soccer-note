@@ -63,7 +63,8 @@ export interface Player {
   preferred_positions?: string[] | null;
   preferred_numbers?: string | null;
   photo_url?: string | null;
-  attributes?: PlayerAttributes | null;
+  // Existing JSONB metadata retains old self-ratings; card fields are independent.
+  attributes?: (Partial<PlayerAttributes> & { card?: { age?: number | null } }) | null;
   strength_tags?: string[] | null;
   created_at: string;
   updated_at: string;
@@ -78,6 +79,7 @@ export interface MatchAttendee {
 }
 
 export interface Match {
+  status?: 'upcoming' | 'completed';
   id: string;
   team_id: string;
   opponent: string;

@@ -8,6 +8,9 @@ import { PlayersListSkeleton } from '@/components/Skeleton'
 import { PullToRefresh } from '@/components/PullToRefresh'
 import { useAppData } from '@/hooks/useAppData'
 import { useI18n } from '@/lib/i18n/context'
+import { PlayerPortrait } from '@/components/players/PlayerCard'
+import { getPlayerAge } from '@/lib/player-card'
+import { getPlayerCardCopy } from '@/lib/player-card-copy'
 import { buildPlayerRanking, type RankStatKey } from '@/lib/player-ranking'
 
 export default function RankingPage() {
@@ -28,7 +31,8 @@ export default function RankingPage() {
 }
 
 function RankingContent({ data }: { data: ReturnType<typeof useAppData> }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const cardCopy = getPlayerCardCopy(locale)
   const [stat, setStat] = useState<RankStatKey>('goals')
   const [start, setStart] = useState('')
   const [end, setEnd] = useState('')
@@ -79,11 +83,12 @@ function RankingContent({ data }: { data: ReturnType<typeof useAppData> }) {
             <Link href="/team/players" className="focus-ring mt-3 inline-flex min-h-11 items-center text-sm font-bold text-[color:var(--brand)]">{t.playerManagement}</Link>
           </div> : !ranking.hasRecords ? <div className="surface p-6 text-center text-sm text-[color:var(--text3)]">{t.noRecords}</div> : <ol className="space-y-2">
             {ranking.rows.map(({ player, value, rank }) => <li key={player.id}>
-              <Link href={`/ranking/${player.id}`} className="surface focus-ring flex min-h-[76px] items-center gap-3 px-4 py-3 active:opacity-80">
+              <Link href={`/ranking/${player.id}`} className="surface focus-ring flex min-h-[76px] items-center gap-2 px-3 py-3 active:opacity-80">
                 <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-extrabold ${rank === 1 && value !== null ? 'bg-[color:var(--brand)] text-[color:var(--on-accent)]' : 'text-[color:var(--text3)]'}`}>{value === null ? '–' : rank}</span>
+                <PlayerPortrait player={player} compact />
                 <span className="min-w-0 flex-1">
                   <strong className="block break-words text-sm font-bold">{player.name}</strong>
-                  <span className="mt-1 block text-xs text-[color:var(--text3)]">{player.default_position} · #{player.number ?? '–'}</span>
+                  <span className="mt-1 block text-xs text-[color:var(--text3)]">{player.default_position} · #{player.number ?? '–'}{getPlayerAge(player) !== null && <> · {cardCopy.ageFormat.replace('{n}', String(getPlayerAge(player)))}</>}</span>
                 </span>
                 <span className="shrink-0 text-right">
                   <strong className="font-display block text-[28px] leading-none text-[color:var(--brand)]">{value === null ? '–' : stat === 'avgRating' ? value.toFixed(1) : value}</strong>

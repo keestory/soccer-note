@@ -1,0 +1,1125 @@
+{
+  "results": [
+    {
+      "locale": "ko",
+      "width": 320,
+      "scroll": 320,
+      "cards": [
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 305,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28세"
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 305,
+          "x": 166,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 391,
+          "x": 16,
+          "y": 583.5625,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "ko",
+      "width": 390,
+      "scroll": 390,
+      "cards": [
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28세"
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 201,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 405,
+          "x": 16,
+          "y": 620.28125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "ko",
+      "route": "/team/intro",
+      "width": 320
+    },
+    {
+      "locale": "ko",
+      "route": "/ranking",
+      "width": 320
+    },
+    {
+      "locale": "ko",
+      "route": "/team/players/a",
+      "width": 320
+    },
+    {
+      "locale": "ko",
+      "route": "/ranking/a",
+      "width": 320
+    },
+    {
+      "locale": "en_US",
+      "width": 320,
+      "scroll": 320,
+      "cards": [
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 305,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "Age 28"
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 305,
+          "x": 166,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 391,
+          "x": 16,
+          "y": 583.5625,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "en_US",
+      "width": 390,
+      "scroll": 390,
+      "cards": [
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "Age 28"
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 201,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 405,
+          "x": 16,
+          "y": 620.28125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "en_US",
+      "route": "/team/intro",
+      "width": 320
+    },
+    {
+      "locale": "en_US",
+      "route": "/ranking",
+      "width": 320
+    },
+    {
+      "locale": "en_US",
+      "route": "/team/players/a",
+      "width": 320
+    },
+    {
+      "locale": "en_US",
+      "route": "/ranking/a",
+      "width": 320
+    },
+    {
+      "locale": "en_GB",
+      "width": 320,
+      "scroll": 320,
+      "cards": [
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 305,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "Age 28"
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 305,
+          "x": 166,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 391,
+          "x": 16,
+          "y": 583.5625,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "en_GB",
+      "width": 390,
+      "scroll": 390,
+      "cards": [
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "Age 28"
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 201,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 405,
+          "x": 16,
+          "y": 620.28125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "en_GB",
+      "route": "/team/intro",
+      "width": 320
+    },
+    {
+      "locale": "en_GB",
+      "route": "/ranking",
+      "width": 320
+    },
+    {
+      "locale": "en_GB",
+      "route": "/team/players/a",
+      "width": 320
+    },
+    {
+      "locale": "en_GB",
+      "route": "/ranking/a",
+      "width": 320
+    },
+    {
+      "locale": "ja",
+      "width": 320,
+      "scroll": 320,
+      "cards": [
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28歳"
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 166,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 405,
+          "x": 16,
+          "y": 597.3125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "ja",
+      "width": 390,
+      "scroll": 390,
+      "cards": [
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28歳"
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 201,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 405,
+          "x": 16,
+          "y": 620.28125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "ja",
+      "route": "/team/intro",
+      "width": 320
+    },
+    {
+      "locale": "ja",
+      "route": "/ranking",
+      "width": 320
+    },
+    {
+      "locale": "ja",
+      "route": "/team/players/a",
+      "width": 320
+    },
+    {
+      "locale": "ja",
+      "route": "/ranking/a",
+      "width": 320
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "scroll": 320,
+      "cards": [
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28 ans"
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 166,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 405,
+          "x": 16,
+          "y": 597.3125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "scroll": 390,
+      "cards": [
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28 ans"
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 201,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 405,
+          "x": 16,
+          "y": 620.28125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "route": "/team/intro",
+      "width": 320
+    },
+    {
+      "locale": "fr",
+      "route": "/ranking",
+      "width": 320
+    },
+    {
+      "locale": "fr",
+      "route": "/team/players/a",
+      "width": 320
+    },
+    {
+      "locale": "fr",
+      "route": "/ranking/a",
+      "width": 320
+    },
+    {
+      "locale": "de",
+      "width": 320,
+      "scroll": 320,
+      "cards": [
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28 Jahre"
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 166,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 405,
+          "x": 16,
+          "y": 597.3125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "de",
+      "width": 390,
+      "scroll": 390,
+      "cards": [
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28 Jahre"
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 201,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 405,
+          "x": 16,
+          "y": 620.28125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "de",
+      "route": "/team/intro",
+      "width": 320
+    },
+    {
+      "locale": "de",
+      "route": "/ranking",
+      "width": 320
+    },
+    {
+      "locale": "de",
+      "route": "/team/players/a",
+      "width": 320
+    },
+    {
+      "locale": "de",
+      "route": "/ranking/a",
+      "width": 320
+    },
+    {
+      "locale": "it",
+      "width": 320,
+      "scroll": 320,
+      "cards": [
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28 anni"
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 166,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 405,
+          "x": 16,
+          "y": 597.3125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "it",
+      "width": 390,
+      "scroll": 390,
+      "cards": [
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28 anni"
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 201,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 405,
+          "x": 16,
+          "y": 620.28125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "it",
+      "route": "/team/intro",
+      "width": 320
+    },
+    {
+      "locale": "it",
+      "route": "/ranking",
+      "width": 320
+    },
+    {
+      "locale": "it",
+      "route": "/team/players/a",
+      "width": 320
+    },
+    {
+      "locale": "it",
+      "route": "/ranking/a",
+      "width": 320
+    },
+    {
+      "locale": "es",
+      "width": 320,
+      "scroll": 320,
+      "cards": [
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 16,
+          "y": 230,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28 años"
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 318,
+          "x": 166,
+          "y": 230,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 138,
+          "scroll": 138,
+          "height": 405,
+          "x": 16,
+          "y": 616.3125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "es",
+      "width": 390,
+      "scroll": 390,
+      "cards": [
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 16,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "김네온",
+          "stats": [
+            "1",
+            "3",
+            "1"
+          ],
+          "age": "28 años"
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 341,
+          "x": 201,
+          "y": 211,
+          "nameFont": "16px",
+          "name": "박공동",
+          "stats": [
+            "1",
+            "3",
+            "2"
+          ]
+        },
+        {
+          "width": 173,
+          "scroll": 173,
+          "height": 405,
+          "x": 16,
+          "y": 620.28125,
+          "nameFont": "16px",
+          "name": "AlexandertheverylongunbrokensurnameAlexandertheverylongunbrokensurname",
+          "stats": [
+            "1",
+            "1",
+            "4"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "w": 44,
+          "h": 44
+        },
+        {
+          "w": 44,
+          "h": 44
+        }
+      ]
+    },
+    {
+      "locale": "es",
+      "route": "/team/intro",
+      "width": 320
+    },
+    {
+      "locale": "es",
+      "route": "/ranking",
+      "width": 320
+    },
+    {
+      "locale": "es",
+      "route": "/team/players/a",
+      "width": 320
+    },
+    {
+      "locale": "es",
+      "route": "/ranking/a",
+      "width": 320
+    }
+  ],
+  "errors": []
+}

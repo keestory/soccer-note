@@ -71,3 +71,13 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 - Ties use competition ranks and the same first-place emphasis. Unrated players show a dash. No players and no records in the selected range have separate messages.
 - Ranking player details use `/ranking/[id]` with a Ranking back link; the original `/team/players/[id]` remains supported.
 - Loading retains bottom navigation. Unauthenticated users go to login; users without a selected team go to Home. Ranking is noindex and reuses existing data access.
+
+## Player card contract (2026-10-31)
+
+- Roster, authenticated team introduction and player detail share PlayerCard. Ranking uses its compact portrait while preserving separate tab navigation and comparison behavior.
+- Required name; optional jersey number (0–99), optional age (integer 1–120), primary position, optional photo. Blank age is omitted and does not require a date of birth.
+- Card records are cumulative appearances, goals and assists. Appearance means one unique played match with a player quarter record, regardless of quarter count. Missing records show zero; no invented abilities.
+- Legacy JSON metadata survives editing. Only changed age adds an attributes patch. The returned persisted row updates the store; an update failure keeps the draft and previous card.
+- Uploads send the authenticated Bearer token. The server verifies it; invalid Authorization cannot fall back to cookies. Requests without Authorization retain existing cookie support.
+- Saving is disabled while uploading. Closing or changing a player form aborts its upload; late success/failure/finally cannot modify the next form. Removing the photo clears the player's reference when saved.
+- Cards remain two columns at 320px. Names wrap, age is optional, broken photos show a silhouette, and edit/delete remain separate accessible 44px controls. Existing eight locales cover the new labels.

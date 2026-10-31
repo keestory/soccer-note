@@ -8,11 +8,23 @@ const supabaseAdmin = createClient(
 )
 
 export async function POST(request: NextRequest) {
-  // Verify user is authenticated
-  const supabase = await createServerSupabaseClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  // Native/WebView sessions live in localStorage. Validate their token on the
+  // server; only requests without an Authorization header use cookie auth.
+  const authorization = request.headers.get('authorization')
+  let user = null
+  if (authorization !== null) {
+    const token = /^Bearer\s+(\S+)$/i.exec(authorization)?.[1]
+    if (token) {
+      const { data, error } = await supabaseAdmin.auth.getUser(token)
+      if (!error) user = data.user
+    }
+  } else {
+    const supabase = await createServerSupabaseClient()
+    const { data, error } = await supabase.auth.getUser()
+    if (!error) user = data.user
+  }
 
-  if (authError || !user) {
+  if (!user) {
     return NextResponse.json({ error: '인증이 필요합니다' }, { status: 401 })
   }
 

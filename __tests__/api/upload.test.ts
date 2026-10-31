@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server'
 import { createUploadRequest } from '../helpers/request-helpers'
 
 // vi.hoisted로 mock 객체를 호이스팅
-const { mockAuthGetUser, mockStorageFrom } = vi.hoisted(() => {
+const { mockAuthGetUser, mockBearerGetUser, mockStorageFrom } = vi.hoisted(() => {
   const mockStorageFrom = vi.fn(() => ({
     upload: vi.fn().mockResolvedValue({ data: { path: 'test/photo.jpg' }, error: null }),
     getPublicUrl: vi.fn().mockReturnValue({
@@ -14,7 +14,8 @@ const { mockAuthGetUser, mockStorageFrom } = vi.hoisted(() => {
     data: { user: { id: 'user-1', email: 'test@test.com' } },
     error: null,
   })
-  return { mockAuthGetUser, mockStorageFrom }
+  const mockBearerGetUser = vi.fn()
+  return { mockAuthGetUser, mockBearerGetUser, mockStorageFrom }
 })
 
 vi.mock('@/lib/supabase-server', () => ({
@@ -26,6 +27,7 @@ vi.mock('@/lib/supabase-server', () => ({
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({
     storage: { from: mockStorageFrom },
+    auth: { getUser: mockBearerGetUser },
   })),
 }))
 
@@ -59,6 +61,25 @@ describe('POST /api/upload', () => {
     expect(response.status).toBe(401)
     const body = await response.json()
     expect(body.error).toBe('인증이 필요합니다')
+    expect(mockStorageFrom).not.toHaveBeenCalled()
+  })
+
+  it('valid Bearer session uploads without cookies', async () => {
+    mockBearerGetUser.mockResolvedValueOnce({ data: { user: { id: 'native-user' } }, error: null })
+    const request = createUploadRequest(new File(['image'], 'photo.jpg', { type: 'image/jpeg' }), 'players/photo.jpg')
+    request.headers.set('authorization', 'Bearer verified-native-token')
+    expect((await POST(request)).status).toBe(200)
+    expect(mockBearerGetUser).toHaveBeenCalledWith('verified-native-token')
+    expect(mockAuthGetUser).not.toHaveBeenCalled()
+  })
+
+  it.each(['Bearer invalid-token', 'Basic invalid-token', 'Bearer'])('rejects supplied invalid auth without falling back to another identity: %s', async header => {
+    mockBearerGetUser.mockResolvedValueOnce({ data: { user: null }, error: { message: 'Invalid token' } })
+    const request = createUploadRequest(new File(['image'], 'photo.jpg', { type: 'image/jpeg' }), 'players/photo.jpg')
+    request.headers.set('authorization', header)
+    expect((await POST(request)).status).toBe(401)
+    expect(mockAuthGetUser).not.toHaveBeenCalled()
+    expect(mockStorageFrom).not.toHaveBeenCalled()
   })
 
   it('파일 누락 → 400', async () => {

@@ -252,3 +252,34 @@ input, textarea, [contenteditable] {
       rgba(255, 255, 255, 0.03) 40px
     );
 }
+
+/* GOLDLINE player cards: an original shield around actual player information. */
+.player-card { position: relative; isolation: isolate; width: 100%; min-width: 0; color: var(--text); }
+.player-card-frame { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+.player-card-content { padding: 24px 13px 22px; }
+.player-card-topline { display: flex; align-items: flex-start; justify-content: space-between; gap: 5px; position: relative; z-index: 2; }
+.player-card-number { font-family: var(--font-display), sans-serif; font-size: clamp(38px, 11vw, 56px); line-height: 1; color: var(--brand); }
+.player-card-number small { font-size: .4em; vertical-align: top; line-height: 1.6; margin-right: 2px; }
+.player-card-position { font-size: 13px; font-weight: 800; letter-spacing: .06em; padding-top: 5px; }
+.player-card-portrait { position: relative; width: 100%; aspect-ratio: 1.1; margin-top: -14px; overflow: hidden; background: linear-gradient(135deg, transparent 48%, var(--chip) 48%, var(--chip) 63%, transparent 63%); }
+.player-card-portrait::after { content: ''; position: absolute; inset: 60% 0 0; background: linear-gradient(transparent, var(--nav)); pointer-events: none; }
+.player-card-portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 20%; }
+.player-card-silhouette { position: absolute; bottom: 0; left: 10%; width: 80%; height: 95%; fill: var(--line2); }
+.player-card-identity { position: relative; min-height: 48px; margin-top: -5px; text-align: center; }
+.player-card-identity h2 { font-size: 16px; line-height: 1.4; font-weight: 800; overflow-wrap: anywhere; margin: 0; }
+.player-card-identity p { font-size: 11px; color: var(--text3); margin: 4px 0 0; }
+.player-card-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; border-top: 1px solid var(--line2); margin-top: 12px; padding-top: 10px; text-align: center; }
+.player-card-stats > div { display: flex; flex-direction: column-reverse; gap: 3px; min-width: 0; }
+.player-card-stats dt { font-size: 11px; line-height: 1.25; color: var(--text3); overflow-wrap: anywhere; }
+.player-card-stats dd { font-family: var(--font-display), sans-serif; font-size: 26px; line-height: 1; color: var(--brand); overflow-wrap: anywhere; }
+.player-card-scope { font-size: 10px; line-height: 1.4; color: var(--text3); text-align: center; margin: 10px 0 0; }
+.player-card-large { max-width: 330px; margin: 0 auto; }
+.player-card-large .player-card-content { padding: 34px 26px 30px; }
+.player-card-large .player-card-number { font-size: 72px; }
+.player-card-large .player-card-position { font-size: 20px; }
+.player-card-large .player-card-identity { min-height: 64px; }
+.player-card-large .player-card-identity h2 { font-size: 26px; }
+.player-card-large .player-card-identity p { font-size: 14px; }
+.player-card-large .player-card-stats dd { font-size: 38px; }
+.player-card-large .player-card-stats dt, .player-card-large .player-card-scope { font-size: 12px; }
+.player-card-portrait.is-compact { margin: 0; width: 48px; height: 58px; flex-shrink: 0; border: 1px solid var(--brand); background-color: var(--card2); clip-path: polygon(50% 0, 100% 9%, 100% 86%, 50% 100%, 0 86%, 0 9%); }

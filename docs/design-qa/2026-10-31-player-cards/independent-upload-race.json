@@ -1,0 +1,5 @@
+{
+  "unexpectedPhotoInSecondPlayerEditor": "http://localhost:3110/qa-race-photo.svg",
+  "playerA": null,
+  "playerB": "http://localhost:3110/qa-race-photo.svg"
+}

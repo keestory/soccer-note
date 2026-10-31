@@ -9,7 +9,7 @@ export default function PrivacyPage() {
     <div className="light min-h-screen" style={{ background: 'var(--bg)' }}>
       <div className="max-w-3xl mx-auto px-4 py-12">
         <h1 className="text-3xl font-bold text-[color:var(--text)] mb-2">개인정보 처리방침</h1>
-        <p className="text-sm mb-8" style={{ color: 'var(--muted2)' }}>최종 수정일: 2026년 3월 22일</p>
+        <p className="text-sm mb-8" style={{ color: 'var(--muted2)' }}>최종 수정일: 2026년 10월 31일</p>
 
         <div className="max-w-none space-y-8 leading-relaxed" style={{ color: 'var(--text2)' }}>
           <section>
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
             <h3 className="text-lg font-medium text-[color:var(--text)]/80 mt-4 mb-2">나. 팀 및 경기 관리</h3>
             <ul className="list-disc pl-6 space-y-1">
               <li>팀 이름, 팀 유형 (클럽/동호회)</li>
-              <li>선수 이름, 등번호, 포지션</li>
+              <li>선수 이름, 등번호, 주포지션 및 선택 입력한 나이 (생년월일은 수집하지 않음)</li>
               <li>경기 기록 (상대팀, 날짜, 장소, 점수)</li>
               <li>선수 평가 (평점, 골, 어시스트, 피드백 텍스트)</li>
               <li>포메이션 배치 정보</li>
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
 
             <h3 className="text-lg font-medium text-[color:var(--text)]/80 mt-4 mb-2">다. 미디어</h3>
             <ul className="list-disc pl-6 space-y-1">
-              <li>경기 관련 사진 및 동영상 (사용자가 직접 업로드한 경우)</li>
+              <li>선수 사진 및 경기 관련 사진·동영상 (사용자가 직접 업로드한 경우)</li>
             </ul>
 
             <h3 className="text-lg font-medium text-[color:var(--text)]/80 mt-4 mb-2">라. 푸시 알림</h3>

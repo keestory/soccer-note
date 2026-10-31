@@ -4,12 +4,13 @@ import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
-import type { Player, PositionType } from '@/types/database'
-import { POSITION_LABELS } from '@/types/database'
+import type { Player } from '@/types/database'
 import { formatDate } from '@/lib/utils'
 import { useI18n } from '@/lib/i18n/context'
 import { PlayerDetailSkeleton } from '@/components/Skeleton'
 import { BottomNav } from '@/components/BottomNav'
+import { PlayerCard } from '@/components/players/PlayerCard'
+import { getPlayerCardCopy } from '@/lib/player-card-copy'
 
 interface MatchRecord {
   matchId: string
@@ -74,7 +75,8 @@ function shortDate(d: string): string {
 
 // 경기별 공격 포인트 — flex bars, volt=goals gray=assists, 28px per point.
 function AttackPointsChart({ records, total }: { records: MatchRecord[]; total: number }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const cardCopy = getPlayerCardCopy(locale)
   // oldest → newest along the x-axis, cap to the most recent 6 games
   const games = [...records].reverse().slice(-6)
 
@@ -104,7 +106,7 @@ function AttackPointsChart({ records, total }: { records: MatchRecord[]; total: 
         <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--line)' }} />
         <div className="flex flex-col items-center justify-end" style={{ gap: 2, paddingBottom: 16 }}>
           <div style={{ fontFamily: BEBAS, fontSize: 28, lineHeight: 1, color: 'var(--text)' }}>{total}</div>
-          <span style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap' }}>{t.seasonTotal}</span>
+          <span style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap' }}>{cardCopy.allTime}</span>
         </div>
       </div>
     </div>
@@ -113,7 +115,8 @@ function AttackPointsChart({ records, total }: { records: MatchRecord[]; total: 
 
 // 경기별 수비 포인트 — flex bars, volt=contribution gray=clean sheet, 28px per point.
 function DefensePointsChart({ records, total }: { records: MatchRecord[]; total: number }) {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const cardCopy = getPlayerCardCopy(locale)
   const games = [...records].reverse().slice(-6)
 
   return (
@@ -145,7 +148,7 @@ function DefensePointsChart({ records, total }: { records: MatchRecord[]; total:
         <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--line)' }} />
         <div className="flex flex-col items-center justify-end" style={{ gap: 2, paddingBottom: 16 }}>
           <div style={{ fontFamily: BEBAS, fontSize: 28, lineHeight: 1, color: 'var(--text)' }}>{total}</div>
-          <span style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap' }}>{t.seasonTotal}</span>
+          <span style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap' }}>{cardCopy.allTime}</span>
         </div>
       </div>
     </div>
@@ -156,7 +159,8 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
   const router = useRouter()
   const params = useParams()
   const playerId = params.id as string
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
+  const cardCopy = getPlayerCardCopy(locale)
 
   const [loading, setLoading] = useState(true)
   const [player, setPlayer] = useState<Player | null>(null)
@@ -235,7 +239,6 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
 
   if (loading || !player) return <PlayerDetailSkeleton />
 
-  const posLabel = POSITION_LABELS[player.default_position as PositionType]
   const attackPoints = (seasonStats?.goals || 0) + (seasonStats?.assists || 0)
   const defensePoints = (seasonStats?.contribution || 0) + (seasonStats?.cleanSheets || 0)
   const maxMatchPoints = matchRecords.reduce((m, r) => Math.max(m, r.goals + r.assists), 0)
@@ -245,42 +248,14 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--card)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-md mx-auto flex items-center" style={{ gap: 10, padding: '6px 20px 12px' }}>
           <Link href={backHref} aria-label={t.back} className="focus-ring flex min-h-11 min-w-11 items-center justify-center" style={{ fontSize: 20, color: 'var(--text)', lineHeight: 1 }}>‹</Link>
-          <span style={{ fontWeight: 700, fontSize: 16, color: 'var(--text)' }}>{t.playerSeasonStats}</span>
+          <span style={{ fontWeight: 700, fontSize: 16, color: 'var(--text)' }}>{cardCopy.records}</span>
         </div>
       </header>
 
       <main className="max-w-md mx-auto flex flex-col" style={{ gap: 13, padding: '13px 20px 20px' }}>
 
-        {/* 1. 히어로 카드 */}
-        <section className="flex items-center" style={{ background: 'var(--navy)', borderRadius: 20, padding: 20, gap: 14 }}>
-          <div className="flex items-center justify-center flex-shrink-0 overflow-hidden"
-            style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--accent)', color: 'var(--on-accent)', fontFamily: BEBAS, fontSize: 28 }}>
-            {player.photo_url
-              ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
-              : (player.number ?? '-')}
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--text)' }}>{player.name}</div>
-            <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 3 }}>{player.default_position} · {posLabel}</div>
-          </div>
-          <div className="flex items-start" style={{ gap: 16 }}>
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: BEBAS, fontSize: 30, lineHeight: 0.9, color: 'var(--accent)' }}>
-                {attackPoints}<span style={{ fontSize: 15 }}>P</span>
-              </div>
-              <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>{t.attackPointsLabel}</div>
-            </div>
-            <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--line-strong)' }} />
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: BEBAS, fontSize: 30, lineHeight: 0.9, color: 'var(--text)' }}>
-                {defensePoints}<span style={{ fontSize: 15 }}>P</span>
-              </div>
-              <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>{t.defensePointsLabel}</div>
-            </div>
-          </div>
-        </section>
+        <PlayerCard player={player} stats={{ games: seasonStats?.games ?? 0, goals: seasonStats?.goals ?? 0, assists: seasonStats?.assists ?? 0 }} large />
 
-        {/* 2. 업적 뱃지 */}
         {badges.length > 0 && (
           <section style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
             <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em', marginBottom: 10 }}>{t.achievementBadges}</div>
@@ -298,10 +273,10 @@ export function PlayerStatsPage({ backHref = '/team/players' }: { backHref?: '/t
           </section>
         )}
 
-        {/* 3. 시즌 스탯 그리드 */}
+        {/* Cumulative records */}
         {seasonStats && (
           <section style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em', marginBottom: 12 }}>{t.seasonStatsTitle}</div>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em', marginBottom: 12 }}>{cardCopy.allTime}</div>
             <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: 9 }}>
               {[
                 { label: t.attendance, value: seasonStats.matchAttendance },
