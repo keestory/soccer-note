@@ -203,7 +203,7 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
   const team = (app as any).applying_team
 
   const statusConfig = {
-    accepted: { label: t.acceptedLabel, bg: '#ecfdf3', color: '#027a48' },
+    accepted: { label: t.acceptedLabel, bg: '#112b1c', color: '#73e5a7' },
     rejected: { label: t.rejectedLabel, bg: 'var(--card2)', color: 'var(--muted2)' },
     pending: { label: t.waitingLabel, bg: 'var(--card2)', color: '#fbbf24' },
   }[app.status]
@@ -268,7 +268,7 @@ function AppCard({ app, onAccept, onReject, loading, postMatched }: {
         )}
 
         {app.status === 'accepted' && (
-          <div className="flex items-center gap-2 rounded-xl p-2.5" style={{ background: '#ecfdf3' }}>
+          <div className="flex items-center gap-2 rounded-xl p-2.5" style={{ background: '#112b1c' }}>
             <CheckCircle className="w-4 h-4 flex-shrink-0" style={{ color: '#4ade80' }} />
             <p className="text-xs font-bold" style={{ color: '#4ade80' }}>{t.matchAutoCreated}</p>
           </div>

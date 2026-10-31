@@ -115,7 +115,7 @@ export default function PublicProfilePage() {
                 {[form.level, form.region, form.preferred_format].filter(Boolean).join(' · ') || '프로필을 완성해주세요'}
               </p>
             </div>
-            <div className="w-2 h-2 rounded-full" style={{ background: form.is_public ? 'var(--navy)' : 'var(--text-faint)' }} />
+            <div className="w-2 h-2 rounded-full" style={{ background: form.is_public ? 'var(--brand)' : 'var(--text-faint)' }} />
           </div>
         </div>
       </div>

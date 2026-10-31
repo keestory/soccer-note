@@ -19,8 +19,8 @@ import { useAppData } from '@/hooks/useAppData'
 import { useI18n } from '@/lib/i18n/context'
 import { PullToRefresh } from '@/components/PullToRefresh'
 
-const POS_COLOR: Record<PositionType, string> = { GK: '#e7efe5', DF: '#e6eeef', MF: '#e4f1e9', FW: '#eeeae3' }
-const POS_TEXT: Record<PositionType, string> = { GK: '#344d3a', DF: '#345359', MF: '#22553d', FW: '#594b37' }
+const POS_COLOR: Record<PositionType, string> = { GK: '#302609', DF: '#11283b', MF: '#102d22', FW: '#321a13' }
+const POS_TEXT: Record<PositionType, string> = { GK: '#f5c451', DF: '#7cc7ff', MF: '#63dfae', FW: '#ffac83' }
 const BEBAS = 'var(--font-sans), sans-serif'
 
 interface PlayerStats {
@@ -310,7 +310,7 @@ export default function PlayersPage() {
     if (rankStat === 'avgRating') return v === null ? '–' : (v as number).toFixed(1)
     return String(v ?? 0)
   }
-  const RANK_MEDAL = ['#e4f1e9', '#f0f4f1', '#f0f4f1'] // gold / silver / bronze
+  const RANK_MEDAL = ['var(--chip)', 'var(--card2)', 'var(--card2)'] // gold / silver / bronze
 
   return (
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
@@ -318,19 +318,19 @@ export default function PlayersPage() {
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-md mx-auto flex justify-between items-center" style={{ padding: '10px 22px 14px' }}>
-          <div style={{ fontSize: 21, fontWeight: 700, color: '#101828' }}>
+          <div style={{ fontSize: 21, fontWeight: 700, color: 'var(--text)' }}>
             {t.playersLabel} <span style={{ fontSize: 14, color: 'var(--text3)', fontWeight: 500 }}>{t.playersN.replace('{n}', String(playersWithStats.length))}</span>
           </div>
           <div className="flex items-center gap-2">
             <Link href="/team/intro" aria-label={t.teamIntro}
               className="flex items-center justify-center active:scale-95 transition"
-              style={{ width: 44, height: 44, borderRadius: 11, background: '#fff', border: '1px solid #eaecf0', color: '#475467' }}>
+              style={{ width: 44, height: 44, borderRadius: 11, background: 'var(--card)', border: '1px solid var(--line)', color: 'var(--text2)' }}>
               <Users className="w-4 h-4" />
             </Link>
             {canEdit && (
               <button aria-label={t.addPlayer} onClick={() => { resetForm(); setShowAddSheet(true) }}
                 className="flex items-center justify-center active:scale-95 transition"
-                style={{ width: 44, height: 44, borderRadius: 11, background: '#101828', color: 'var(--accent)', fontSize: 20 }}>
+                style={{ width: 44, height: 44, borderRadius: 11, background: 'var(--navy)', color: 'var(--accent)', fontSize: 20 }}>
                 +
               </button>
             )}
@@ -360,8 +360,8 @@ export default function PlayersPage() {
         <input
           type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder={t.searchPlayer} aria-label={t.searchPlayer}
-          className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-[13px]"
-          style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 14, padding: '12px 16px' }}
+          className="w-full outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-[13px]"
+          style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 14, padding: '12px 16px' }}
         />
         <div className="flex" style={{ gap: 7 }}>
           {(['ALL', 'FW', 'MF', 'DF', 'GK'] as const).map(pos => {
@@ -370,8 +370,8 @@ export default function PlayersPage() {
               <button key={pos} onClick={() => setPosFilter(pos)}
                 style={{
                   fontSize: 12, fontWeight: active ? 600 : 500, padding: '7px 14px', borderRadius: 20,
-                  background: active ? '#101828' : '#fff', color: active ? 'var(--accent)' : '#475467',
-                  border: active ? 'none' : '1px solid #eaecf0',
+                  background: active ? 'var(--navy)' : 'var(--card)', color: active ? 'var(--accent)' : 'var(--text2)',
+                  border: active ? 'none' : '1px solid var(--line)',
                 }}>
                 {pos === 'ALL' ? t.allLabel : pos}
               </button>
@@ -400,13 +400,13 @@ export default function PlayersPage() {
                 <span className="flex-shrink-0 text-[12px] font-bold" style={{ width: 44, color: 'var(--muted1)' }}>{t.startDate}</span>
                 <input type="date" value={rankStart} max={rankEnd || undefined} onChange={e => setRankStart(e.target.value)}
                   className="flex-1 min-w-0 outline-none text-[color:var(--text)] text-[13px]"
-                  style={{ colorScheme: 'light', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '10px 12px' }} />
+                  style={{ colorScheme: 'dark', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '10px 12px' }} />
               </label>
               <label className="flex items-center" style={{ gap: 10 }}>
                 <span className="flex-shrink-0 text-[12px] font-bold" style={{ width: 44, color: 'var(--muted1)' }}>{t.endDate}</span>
                 <input type="date" value={rankEnd} min={rankStart || undefined} onChange={e => setRankEnd(e.target.value)}
                   className="flex-1 min-w-0 outline-none text-[color:var(--text)] text-[13px]"
-                  style={{ colorScheme: 'light', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '10px 12px' }} />
+                  style={{ colorScheme: 'dark', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '10px 12px' }} />
               </label>
             </div>
             {/* Stat tabs */}
@@ -488,10 +488,10 @@ export default function PlayersPage() {
             </div>
             <div className="grid grid-cols-3 gap-3 mb-3">
               <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder={t.playerName}
-                className="col-span-2 outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
+                className="col-span-2 outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-sm"
                 style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
               <input type="number" value={number} onChange={e => setNumber(e.target.value)} min={1} max={99} placeholder="#"
-                className="outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
+                className="outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-sm"
                 style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
             </div>
             <div className="grid grid-cols-4 gap-2 mb-3">
@@ -506,19 +506,19 @@ export default function PlayersPage() {
             <div className="space-y-2 mb-4">
               <input type="text" value={preferredPositions} onChange={e => setPreferredPositions(e.target.value)}
                 placeholder={t.preferredPositionsPlaceholder}
-                className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
+                className="w-full outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-sm"
                 style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
               <input type="text" value={preferredNumbers} onChange={e => setPreferredNumbers(e.target.value)}
                 placeholder={t.preferredNumbersPlaceholder}
-                className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
+                className="w-full outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-sm"
                 style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
               <textarea value={bio} onChange={e => setBio(e.target.value)} rows={3}
                 placeholder={t.selfIntroPlaceholder}
-                className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm resize-none"
+                className="w-full outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-sm resize-none"
                 style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
               <input type="text" value={strengthTags} onChange={e => setStrengthTags(e.target.value)}
                 placeholder={t.strengthsPlaceholder}
-                className="w-full outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
+                className="w-full outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-sm"
                 style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
             </div>
 
@@ -568,26 +568,26 @@ export default function PlayersPage() {
                 return (
                   <Link key={player.id} href={`/team/players/${player.id}`}
                     className="flex items-center active:opacity-80 transition"
-                    style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '14px 18px', gap: 13 }}>
+                    style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: '14px 18px', gap: 13 }}>
                     <span className="overflow-hidden flex items-center justify-center flex-shrink-0"
                       style={{ fontFamily: BEBAS, fontSize: 22, width: 40, height: 40, borderRadius: 10,
-                        background: isTop ? 'var(--accent)' : '#f2f4f7', color: isTop ? '#101828' : '#475467' }}>
+                        background: isTop ? 'var(--accent)' : 'var(--card2)', color: isTop ? 'var(--on-accent)' : 'var(--text2)' }}>
                       {player.photo_url
                         ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
                         : (player.number ?? '-')}
                     </span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-bold truncate" style={{ fontSize: 14, color: '#101828' }}>{player.name}</span>
+                        <span className="font-bold truncate" style={{ fontSize: 14, color: 'var(--text)' }}>{player.name}</span>
                         {player.linkedMember && (
-                          <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 999, background: '#eef7d6', color: '#5a7a12' }}>
+                          <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 999, background: 'var(--chip)', color: 'var(--brand)' }}>
                             {t.appLinked}
                           </span>
                         )}
                       </div>
                       <div style={{ fontSize: 11.5, color: 'var(--text3)', marginTop: 2 }}>{player.default_position}</div>
                     </div>
-                    <span style={{ fontFamily: BEBAS, fontSize: 19, color: '#101828' }}>
+                    <span style={{ fontFamily: BEBAS, fontSize: 19, color: 'var(--text)' }}>
                       {isKeeperLine
                         ? <>{player.stats.cleanSheets}<span style={{ fontSize: 13, color: 'var(--text3)' }}>CS</span></>
                         : <>{player.stats.goals}<span style={{ fontSize: 13, color: 'var(--text3)' }}>G</span> {player.stats.assists}<span style={{ fontSize: 13, color: 'var(--text3)' }}>A</span></>}
@@ -695,10 +695,10 @@ export default function PlayersPage() {
 
                       <div className="grid grid-cols-3 gap-3 mb-3">
                         <input type="text" value={name} onChange={e => setName(e.target.value)} required placeholder={t.playerName}
-                          className="col-span-2 outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
+                          className="col-span-2 outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-sm"
                           style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
                         <input type="number" value={number} onChange={e => setNumber(e.target.value)} min={1} max={99} placeholder="#"
-                          className="outline-none text-[color:var(--text)] placeholder-[#98a2b3] text-sm"
+                          className="outline-none text-[color:var(--text)] placeholder-[color:var(--text3)] text-sm"
                           style={{ background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 10, padding: '11px 13px' }} />
                       </div>
                       <div className="grid grid-cols-4 gap-2 mb-4">

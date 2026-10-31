@@ -49,7 +49,7 @@ function computeBadges(stats: SeasonStats, t: any): Badge[] {
     badges.push({ dot: '#fb923c', label: t.badgeAttendKing, desc: t.badgeAttendDesc.replace('{n}', String(stats.matchAttendance)) })
 
   if (stats.goals >= 10)
-    badges.push({ dot: '#c8f542', label: t.badgeTopScorer, desc: t.badgeGoalsDesc.replace('{n}', String(stats.goals)) })
+    badges.push({ dot: 'var(--accent)', label: t.badgeTopScorer, desc: t.badgeGoalsDesc.replace('{n}', String(stats.goals)) })
   else if (stats.goals >= 5)
     badges.push({ dot: '#22c55e', label: t.badgeStriker, desc: t.badgeGoalsDesc.replace('{n}', String(stats.goals)) })
 
@@ -72,22 +72,22 @@ function shortDate(d: string): string {
   return `${mm}.${dd}`
 }
 
-// 경기별 공격 포인트 — flex bars, navy=goals gray=assists, 28px per point.
+// 경기별 공격 포인트 — flex bars, volt=goals gray=assists, 28px per point.
 function AttackPointsChart({ records, total }: { records: MatchRecord[]; total: number }) {
   const { t } = useI18n()
   // oldest → newest along the x-axis, cap to the most recent 6 games
   const games = [...records].reverse().slice(-6)
 
   return (
-    <div style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14 }}>
+    <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
       <div className="flex justify-between items-center" style={{ marginBottom: 14 }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em' }}>{t.matchAttackPoints}</span>
+        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em' }}>{t.matchAttackPoints}</span>
         <div className="flex items-center" style={{ gap: 10 }}>
-          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: '#98a2b3' }}>
-            <span style={{ width: 8, height: 8, borderRadius: 2, background: '#101828' }} />{t.goal}
+          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: 'var(--text3)' }}>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--brand)' }} />{t.goal}
           </span>
-          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: '#98a2b3' }}>
-            <span style={{ width: 8, height: 8, borderRadius: 2, background: '#d0d5dd' }} />{t.assistShort}
+          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: 'var(--text3)' }}>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--text-faint)' }} />{t.assistShort}
           </span>
         </div>
       </div>
@@ -95,37 +95,37 @@ function AttackPointsChart({ records, total }: { records: MatchRecord[]; total: 
         {games.map((g, i) => (
           <div key={i} className="flex flex-col items-center justify-end" style={{ flex: 1, minWidth: 54, gap: 6 }}>
             <div className="flex items-end" style={{ gap: 5 }}>
-              <div style={{ width: 22, height: Math.max(g.goals * 28, g.goals > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: '#101828' }} />
-              <div style={{ width: 22, height: Math.max(g.assists * 28, g.assists > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: '#d0d5dd' }} />
+              <div style={{ width: 22, height: Math.max(g.goals * 28, g.goals > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: 'var(--brand)' }} />
+              <div style={{ width: 22, height: Math.max(g.assists * 28, g.assists > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: 'var(--text-faint)' }} />
             </div>
-            <span style={{ fontSize: 10, color: '#98a2b3', whiteSpace: 'nowrap' }}>{shortDate(g.matchDate)} {g.opponent}</span>
+            <span style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap' }}>{shortDate(g.matchDate)} {g.opponent}</span>
           </div>
         ))}
-        <div style={{ width: 1, alignSelf: 'stretch', background: '#eaecf0' }} />
+        <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--line)' }} />
         <div className="flex flex-col items-center justify-end" style={{ gap: 2, paddingBottom: 16 }}>
-          <div style={{ fontFamily: BEBAS, fontSize: 28, lineHeight: 1, color: '#101828' }}>{total}</div>
-          <span style={{ fontSize: 10, color: '#98a2b3', whiteSpace: 'nowrap' }}>{t.seasonTotal}</span>
+          <div style={{ fontFamily: BEBAS, fontSize: 28, lineHeight: 1, color: 'var(--text)' }}>{total}</div>
+          <span style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap' }}>{t.seasonTotal}</span>
         </div>
       </div>
     </div>
   )
 }
 
-// 경기별 수비 포인트 — flex bars, navy=contribution gray=clean sheet, 28px per point.
+// 경기별 수비 포인트 — flex bars, volt=contribution gray=clean sheet, 28px per point.
 function DefensePointsChart({ records, total }: { records: MatchRecord[]; total: number }) {
   const { t } = useI18n()
   const games = [...records].reverse().slice(-6)
 
   return (
-    <div style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14 }}>
+    <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
       <div className="flex justify-between items-center" style={{ marginBottom: 14 }}>
-        <span style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em' }}>{t.matchDefensePoints}</span>
+        <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em' }}>{t.matchDefensePoints}</span>
         <div className="flex items-center" style={{ gap: 10 }}>
-          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: '#98a2b3' }}>
-            <span style={{ width: 8, height: 8, borderRadius: 2, background: '#101828' }} />{t.contribution}
+          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: 'var(--text3)' }}>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--brand)' }} />{t.contribution}
           </span>
-          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: '#98a2b3' }}>
-            <span style={{ width: 8, height: 8, borderRadius: 2, background: '#d0d5dd' }} />{t.cleanSheet}
+          <span className="flex items-center" style={{ gap: 4, fontSize: 10, color: 'var(--text3)' }}>
+            <span style={{ width: 8, height: 8, borderRadius: 2, background: 'var(--text-faint)' }} />{t.cleanSheet}
           </span>
         </div>
       </div>
@@ -135,17 +135,17 @@ function DefensePointsChart({ records, total }: { records: MatchRecord[]; total:
           return (
             <div key={i} className="flex flex-col items-center justify-end" style={{ flex: 1, minWidth: 54, gap: 6 }}>
               <div className="flex items-end" style={{ gap: 5 }}>
-                <div style={{ width: 22, height: Math.max(g.contribution * 28, g.contribution > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: '#101828' }} />
-                <div style={{ width: 22, height: Math.max(cs * 28, cs > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: '#d0d5dd' }} />
+                <div style={{ width: 22, height: Math.max(g.contribution * 28, g.contribution > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: 'var(--brand)' }} />
+                <div style={{ width: 22, height: Math.max(cs * 28, cs > 0 ? 6 : 3), borderRadius: '5px 5px 2px 2px', background: 'var(--text-faint)' }} />
               </div>
-              <span style={{ fontSize: 10, color: '#98a2b3', whiteSpace: 'nowrap' }}>{shortDate(g.matchDate)} {g.opponent}</span>
+              <span style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap' }}>{shortDate(g.matchDate)} {g.opponent}</span>
             </div>
           )
         })}
-        <div style={{ width: 1, alignSelf: 'stretch', background: '#eaecf0' }} />
+        <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--line)' }} />
         <div className="flex flex-col items-center justify-end" style={{ gap: 2, paddingBottom: 16 }}>
-          <div style={{ fontFamily: BEBAS, fontSize: 28, lineHeight: 1, color: '#101828' }}>{total}</div>
-          <span style={{ fontSize: 10, color: '#98a2b3', whiteSpace: 'nowrap' }}>{t.seasonTotal}</span>
+          <div style={{ fontFamily: BEBAS, fontSize: 28, lineHeight: 1, color: 'var(--text)' }}>{total}</div>
+          <span style={{ fontSize: 10, color: 'var(--text3)', whiteSpace: 'nowrap' }}>{t.seasonTotal}</span>
         </div>
       </div>
     </div>
@@ -241,56 +241,56 @@ export default function PlayerStatsPage() {
   const maxMatchPoints = matchRecords.reduce((m, r) => Math.max(m, r.goals + r.assists), 0)
 
   return (
-    <div className="light min-h-screen pb-nav" style={{ background: '#f5f6f8', fontFamily: 'var(--font-sans), Gothic A1, system-ui, sans-serif' }}>
-      <header className="sticky top-0 z-10 safe-top" style={{ background: '#fff', borderBottom: '1px solid #eaecf0' }}>
+    <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)', fontFamily: 'var(--font-sans), Gothic A1, system-ui, sans-serif' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--card)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-md mx-auto flex items-center" style={{ gap: 10, padding: '6px 20px 12px' }}>
-          <Link href="/team/players" style={{ fontSize: 20, color: '#101828', lineHeight: 1 }}>‹</Link>
-          <span style={{ fontWeight: 700, fontSize: 16, color: '#101828' }}>{t.playerSeasonStats}</span>
+          <Link href="/team/players" style={{ fontSize: 20, color: 'var(--text)', lineHeight: 1 }}>‹</Link>
+          <span style={{ fontWeight: 700, fontSize: 16, color: 'var(--text)' }}>{t.playerSeasonStats}</span>
         </div>
       </header>
 
       <main className="max-w-md mx-auto flex flex-col" style={{ gap: 13, padding: '13px 20px 20px' }}>
 
         {/* 1. 히어로 카드 */}
-        <section className="flex items-center" style={{ background: '#101828', borderRadius: 20, padding: 20, gap: 14 }}>
+        <section className="flex items-center" style={{ background: 'var(--navy)', borderRadius: 20, padding: 20, gap: 14 }}>
           <div className="flex items-center justify-center flex-shrink-0 overflow-hidden"
-            style={{ width: 56, height: 56, borderRadius: 16, background: '#c8f542', color: '#101828', fontFamily: BEBAS, fontSize: 28 }}>
+            style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--accent)', color: 'var(--on-accent)', fontFamily: BEBAS, fontSize: 28 }}>
             {player.photo_url
               ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
               : (player.number ?? '-')}
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 19, fontWeight: 700, color: '#fff' }}>{player.name}</div>
-            <div style={{ fontSize: 12, color: '#98a2b3', marginTop: 3 }}>{player.default_position} · {posLabel}</div>
+            <div style={{ fontSize: 19, fontWeight: 700, color: 'var(--text)' }}>{player.name}</div>
+            <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 3 }}>{player.default_position} · {posLabel}</div>
           </div>
           <div className="flex items-start" style={{ gap: 16 }}>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: BEBAS, fontSize: 30, lineHeight: 0.9, color: '#c8f542' }}>
+              <div style={{ fontFamily: BEBAS, fontSize: 30, lineHeight: 0.9, color: 'var(--accent)' }}>
                 {attackPoints}<span style={{ fontSize: 15 }}>P</span>
               </div>
-              <div style={{ fontSize: 10, color: '#667085', marginTop: 3 }}>{t.attackPointsLabel}</div>
+              <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>{t.attackPointsLabel}</div>
             </div>
-            <div style={{ width: 1, alignSelf: 'stretch', background: '#344054' }} />
+            <div style={{ width: 1, alignSelf: 'stretch', background: 'var(--line-strong)' }} />
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontFamily: BEBAS, fontSize: 30, lineHeight: 0.9, color: '#fff' }}>
+              <div style={{ fontFamily: BEBAS, fontSize: 30, lineHeight: 0.9, color: 'var(--text)' }}>
                 {defensePoints}<span style={{ fontSize: 15 }}>P</span>
               </div>
-              <div style={{ fontSize: 10, color: '#667085', marginTop: 3 }}>{t.defensePointsLabel}</div>
+              <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 3 }}>{t.defensePointsLabel}</div>
             </div>
           </div>
         </section>
 
         {/* 2. 업적 뱃지 */}
         {badges.length > 0 && (
-          <section style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em', marginBottom: 10 }}>{t.achievementBadges}</div>
+          <section style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em', marginBottom: 10 }}>{t.achievementBadges}</div>
             <div className="flex flex-wrap" style={{ gap: 8 }}>
               {badges.map((b, i) => (
-                <div key={i} className="flex items-center" style={{ gap: 8, background: '#f2f4f7', borderRadius: 11, padding: '8px 12px' }}>
+                <div key={i} className="flex items-center" style={{ gap: 8, background: 'var(--card2)', borderRadius: 11, padding: '8px 12px' }}>
                   <span style={{ width: 8, height: 8, borderRadius: '50%', background: b.dot, flexShrink: 0 }} />
                   <div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: '#101828' }}>{b.label}</div>
-                    <div style={{ fontSize: 10, color: '#98a2b3' }}>{b.desc}</div>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{b.label}</div>
+                    <div style={{ fontSize: 10, color: 'var(--text3)' }}>{b.desc}</div>
                   </div>
                 </div>
               ))}
@@ -300,8 +300,8 @@ export default function PlayerStatsPage() {
 
         {/* 3. 시즌 스탯 그리드 */}
         {seasonStats && (
-          <section style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em', marginBottom: 12 }}>{t.seasonStatsTitle}</div>
+          <section style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em', marginBottom: 12 }}>{t.seasonStatsTitle}</div>
             <div className="grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', gap: 9 }}>
               {[
                 { label: t.attendance, value: seasonStats.matchAttendance },
@@ -312,9 +312,9 @@ export default function PlayerStatsPage() {
                 { label: t.cleanSheet, value: seasonStats.cleanSheets },
                 { label: t.statTraining, value: seasonStats.trainingAttendance },
               ].map(s => (
-                <div key={s.label} style={{ background: '#f2f4f7', borderRadius: 11, padding: 11, textAlign: 'center' }}>
-                  <div style={{ fontFamily: BEBAS, fontSize: 24, color: s.value === 0 ? '#d0d5dd' : '#101828' }}>{s.value}</div>
-                  <div style={{ fontSize: 10, color: '#98a2b3', marginTop: 2 }}>{s.label}</div>
+                <div key={s.label} style={{ background: 'var(--card2)', borderRadius: 11, padding: 11, textAlign: 'center' }}>
+                  <div style={{ fontFamily: BEBAS, fontSize: 24, color: s.value === 0 ? 'var(--text-faint)' : 'var(--text)' }}>{s.value}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 2 }}>{s.label}</div>
                 </div>
               ))}
             </div>
@@ -333,11 +333,11 @@ export default function PlayerStatsPage() {
 
         {/* 강점 태그 */}
         {player.strength_tags && player.strength_tags.length > 0 && (
-          <section style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em', marginBottom: 10 }}>{t.strengths}</div>
+          <section style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em', marginBottom: 10 }}>{t.strengths}</div>
             <div className="flex flex-wrap" style={{ gap: 8 }}>
               {player.strength_tags.map((tag, i) => (
-                <span key={i} style={{ fontSize: 13, fontWeight: 700, color: '#101828', background: '#f2f4f7', borderRadius: 11, padding: '8px 12px' }}>{tag}</span>
+                <span key={i} style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', background: 'var(--card2)', borderRadius: 11, padding: '8px 12px' }}>{tag}</span>
               ))}
             </div>
           </section>
@@ -345,26 +345,26 @@ export default function PlayerStatsPage() {
 
         {/* 멤버 소개 */}
         {(player.bio || player.preferred_positions?.length || player.preferred_numbers) && (
-          <section className="flex flex-col" style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14, gap: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em' }}>{t.memberIntro}</div>
+          <section className="flex flex-col" style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14, gap: 12 }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em' }}>{t.memberIntro}</div>
             {player.bio && (
-              <p style={{ fontSize: 14, lineHeight: 1.6, color: '#475467', whiteSpace: 'pre-wrap' }}>{player.bio}</p>
+              <p style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--text2)', whiteSpace: 'pre-wrap' }}>{player.bio}</p>
             )}
             <div className="flex flex-wrap" style={{ gap: 16 }}>
               {player.preferred_positions && player.preferred_positions.length > 0 && (
                 <div>
-                  <div style={{ fontSize: 10, fontWeight: 600, color: '#98a2b3', marginBottom: 6 }}>{t.preferredPositions}</div>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text3)', marginBottom: 6 }}>{t.preferredPositions}</div>
                   <div className="flex flex-wrap" style={{ gap: 6 }}>
                     {player.preferred_positions.map((pos, i) => (
-                      <span key={i} style={{ fontSize: 12, fontWeight: 700, color: '#101828', background: '#f2f4f7', borderRadius: 8, padding: '2px 8px' }}>{pos}</span>
+                      <span key={i} style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', background: 'var(--card2)', borderRadius: 8, padding: '2px 8px' }}>{pos}</span>
                     ))}
                   </div>
                 </div>
               )}
               {player.preferred_numbers && (
                 <div>
-                  <div style={{ fontSize: 10, fontWeight: 600, color: '#98a2b3', marginBottom: 6 }}>{t.preferredNumbers}</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: '#101828' }}>{player.preferred_numbers}</div>
+                  <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text3)', marginBottom: 6 }}>{t.preferredNumbers}</div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{player.preferred_numbers}</div>
                 </div>
               )}
             </div>
@@ -372,9 +372,9 @@ export default function PlayerStatsPage() {
         )}
 
         {/* 5. 경기 기록 리스트 */}
-        <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3', letterSpacing: '.1em' }}>{t.matchRecordSection}</div>
+        <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)', letterSpacing: '.1em' }}>{t.matchRecordSection}</div>
         {matchRecords.length === 0 ? (
-          <div style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 40, textAlign: 'center', fontSize: 13, color: '#98a2b3' }}>
+          <div style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 40, textAlign: 'center', fontSize: 13, color: 'var(--text3)' }}>
             {t.noMatchRecord}
           </div>
         ) : (
@@ -385,20 +385,20 @@ export default function PlayerStatsPage() {
             return (
               <Link key={record.matchId} href={`/match/${record.matchId}`}
                 className="block active:scale-[0.99] transition"
-                style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: 14 }}>
+                style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: 14 }}>
                 <div className="flex justify-between items-start" style={{ marginBottom: 12 }}>
                   <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#101828' }}>{t.vs} {record.opponent}</div>
-                    <div style={{ fontSize: 11, color: '#98a2b3', marginTop: 2 }}>{formatDate(record.matchDate)}</div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{t.vs} {record.opponent}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 2 }}>{formatDate(record.matchDate)}</div>
                   </div>
                   <div className="flex items-center flex-shrink-0" style={{ gap: 6 }}>
-                    <span className="flex items-center" style={{ gap: 4, padding: '4px 9px', borderRadius: 8, background: isTop ? '#c8f542' : '#f2f4f7' }}>
-                      <span style={{ fontSize: 9, fontWeight: 700, color: isTop ? '#101828' : '#98a2b3' }}>{t.attackShort}</span>
-                      <span style={{ fontFamily: BEBAS, fontSize: 15, color: isTop ? '#101828' : '#475467' }}>{ap}P</span>
+                    <span className="flex items-center" style={{ gap: 4, padding: '4px 9px', borderRadius: 8, background: isTop ? 'var(--accent)' : 'var(--card2)' }}>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: isTop ? 'var(--on-accent)' : 'var(--text3)' }}>{t.attackShort}</span>
+                      <span style={{ fontFamily: BEBAS, fontSize: 15, color: isTop ? 'var(--on-accent)' : 'var(--text2)' }}>{ap}P</span>
                     </span>
-                    <span className="flex items-center" style={{ gap: 4, padding: '4px 9px', borderRadius: 8, background: '#f2f4f7' }}>
-                      <span style={{ fontSize: 9, fontWeight: 700, color: '#98a2b3' }}>{t.defenseShort}</span>
-                      <span style={{ fontFamily: BEBAS, fontSize: 15, color: '#475467' }}>{dp}P</span>
+                    <span className="flex items-center" style={{ gap: 4, padding: '4px 9px', borderRadius: 8, background: 'var(--card2)' }}>
+                      <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text3)' }}>{t.defenseShort}</span>
+                      <span style={{ fontFamily: BEBAS, fontSize: 15, color: 'var(--text2)' }}>{dp}P</span>
                     </span>
                   </div>
                 </div>
@@ -411,16 +411,16 @@ export default function PlayerStatsPage() {
                     { label: t.statAppearances, value: '✓', active: true },
                   ].map(s => (
                     <div key={s.label} style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: 10, color: '#98a2b3' }}>{s.label}</div>
-                      <div style={{ fontFamily: BEBAS, fontSize: 18, color: s.active ? '#101828' : '#d0d5dd' }}>{s.value}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text3)' }}>{s.label}</div>
+                      <div style={{ fontFamily: BEBAS, fontSize: 18, color: s.active ? 'var(--text)' : 'var(--text-faint)' }}>{s.value}</div>
                     </div>
                   ))}
                 </div>
                 {(record.highlight || record.praise || record.improvement) && (
-                  <div className="flex flex-col" style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #eaecf0', gap: 4 }}>
-                    {record.highlight && <p style={{ fontSize: 12, color: '#b54708', background: '#fef0c7', padding: '4px 8px', borderRadius: 8 }}>⭐ {record.highlight}</p>}
-                    {record.praise && <p style={{ fontSize: 12, color: '#475467', background: '#f2f4f7', padding: '4px 8px', borderRadius: 8 }}>👍 {record.praise}</p>}
-                    {record.improvement && <p style={{ fontSize: 12, color: '#667085', background: '#f2f4f7', padding: '4px 8px', borderRadius: 8 }}>💡 {record.improvement}</p>}
+                  <div className="flex flex-col" style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--line)', gap: 4 }}>
+                    {record.highlight && <p style={{ fontSize: 12, color: 'var(--warning-text)', background: 'var(--warning-bg)', padding: '4px 8px', borderRadius: 8 }}>⭐ {record.highlight}</p>}
+                    {record.praise && <p style={{ fontSize: 12, color: 'var(--text2)', background: 'var(--card2)', padding: '4px 8px', borderRadius: 8 }}>👍 {record.praise}</p>}
+                    {record.improvement && <p style={{ fontSize: 12, color: 'var(--text3)', background: 'var(--card2)', padding: '4px 8px', borderRadius: 8 }}>💡 {record.improvement}</p>}
                   </div>
                 )}
               </Link>

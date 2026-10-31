@@ -18,10 +18,10 @@ const LEVELS = ['전체', '입문', '초급', '중급', '고급']
 
 // Navy Board level badge (text / bg) — matches reference match-level chips
 const LEVEL_STYLE: Record<string, { color: string; bg: string }> = {
-  '입문': { color: '#475467', bg: '#f2f4f7' },
-  '초급': { color: '#026aa2', bg: '#e0f2fe' },
-  '중급': { color: '#0e9384', bg: '#e0f5f2' },
-  '고급': { color: '#b54708', bg: '#fef0c7' },
+  '입문': { color: 'var(--text2)', bg: 'var(--card2)' },
+  '초급': { color: '#74cbff', bg: '#102738' },
+  '중급': { color: '#64dac6', bg: '#102e27' },
+  '고급': { color: 'var(--warning-text)', bg: 'var(--warning-bg)' },
 }
 
 function formatMatchDate(dateStr: string) {
@@ -93,22 +93,22 @@ export default function CommunityPage() {
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
 
       {/* Header */}
-      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid #eaecf0' }}>
+      <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
         <div className="max-w-md mx-auto" style={{ padding: '8px 22px 14px' }}>
           <div className="flex items-start justify-between">
             <div>
-              <div style={{ fontSize: 21, fontWeight: 700, color: '#101828' }}>{t.findOpponentTitle}</div>
-              <div style={{ fontSize: 12, color: '#98a2b3', marginTop: 2 }}>{t.findTeamsTagline}</div>
+              <div style={{ fontSize: 21, fontWeight: 700, color: 'var(--text)' }}>{t.findOpponentTitle}</div>
+              <div style={{ fontSize: 12, color: 'var(--text3)', marginTop: 2 }}>{t.findTeamsTagline}</div>
             </div>
             <div className="flex" style={{ gap: 8 }}>
               <button onClick={() => setShowFilters(v => !v)}
-                style={{ border: '1px solid #eaecf0', background: showFilters || activeFilters > 0 ? '#f2f4f7' : '#fff', fontSize: 12, fontWeight: 600, color: '#475467', padding: '8px 12px', borderRadius: 10 }}>
+                style={{ border: '1px solid var(--line)', background: showFilters || activeFilters > 0 ? 'var(--card2)' : 'var(--card)', fontSize: 12, fontWeight: 600, color: 'var(--text2)', padding: '8px 12px', borderRadius: 10 }}>
                 {t.filter}{activeFilters > 0 ? ` (${activeFilters})` : ''}
               </button>
               {isCoach && (
                 <Link href="/community/new"
                   className="active:scale-95 transition"
-                  style={{ fontSize: 12, fontWeight: 700, color: '#c8f542', background: '#101828', padding: '8px 12px', borderRadius: 10 }}>
+                  style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', background: 'var(--navy)', padding: '8px 12px', borderRadius: 10 }}>
                   {t.writePost}
                 </Link>
               )}
@@ -135,8 +135,8 @@ export default function CommunityPage() {
                     className="whitespace-nowrap flex-shrink-0"
                     style={{
                       fontSize: 11, fontWeight: active ? 600 : 500, padding: '5px 12px', borderRadius: 20,
-                      background: active ? '#101828' : '#fff', color: active ? '#c8f542' : '#475467',
-                      border: active ? 'none' : '1px solid #eaecf0',
+                      background: active ? 'var(--navy)' : 'var(--card)', color: active ? 'var(--accent)' : 'var(--text2)',
+                      border: active ? 'none' : '1px solid var(--line)',
                     }}>
                     {chip === '전체' ? t.allLabel : chip}
                   </button>
@@ -190,22 +190,22 @@ export default function CommunityPage() {
 
                   {/* Region tile */}
                   <div className="flex flex-col items-center justify-center flex-shrink-0"
-                    style={{ width: 48, height: 48, borderRadius: 12, background: '#f2f4f7' }}>
-                    <span style={{ fontSize: 10, color: '#98a2b3' }}>{regionParts[0] || '–'}</span>
-                    <span style={{ fontSize: 13, fontWeight: 700, color: '#101828' }}>{regionParts[1] || regionParts[0] || '–'}</span>
+                    style={{ width: 48, height: 48, borderRadius: 12, background: 'var(--card2)' }}>
+                    <span style={{ fontSize: 10, color: 'var(--text3)' }}>{regionParts[0] || '–'}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>{regionParts[1] || regionParts[0] || '–'}</span>
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div style={{ fontSize: 11, fontWeight: 600, color: '#98a2b3' }}>{post.team?.name}</div>
-                    <div className="line-clamp-2" style={{ fontSize: 13, fontWeight: 600, color: '#101828', lineHeight: 1.35, margin: '2px 0 8px' }}>{post.title}</div>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text3)' }}>{post.team?.name}</div>
+                    <div className="line-clamp-2" style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', lineHeight: 1.35, margin: '2px 0 8px' }}>{post.title}</div>
                     <div className="flex items-center gap-2 flex-wrap">
                       <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 8px', borderRadius: 7,
-                        background: dateInfo.urgent ? '#fdecec' : '#f2f4f7', color: dateInfo.urgent ? '#f04438' : '#475467' }}>
+                        background: dateInfo.urgent ? 'var(--result-loss-bg)' : 'var(--card2)', color: dateInfo.urgent ? '#f04438' : 'var(--text2)' }}>
                         {dateInfo.label}{post.match_time ? ` ${post.match_time}` : ''}
                       </span>
                       {(isMyPost || hasApplied) && (
-                        <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 7, background: '#f2f4f7', color: '#101828' }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 7, background: 'var(--card2)', color: 'var(--text)' }}>
                           {isMyPost ? t.myPostBadge : t.appliedBadge}
                         </span>
                       )}
@@ -217,7 +217,7 @@ export default function CommunityPage() {
                     <span style={{ fontSize: 11, fontWeight: 600, padding: '3px 9px', borderRadius: 9, color: levelStyle.color, background: levelStyle.bg }}>
                       {post.level}
                     </span>
-                    <span style={{ fontSize: 11, color: '#98a2b3', padding: '2px 8px', borderRadius: 7, background: '#f2f4f7' }}>
+                    <span style={{ fontSize: 11, color: 'var(--text3)', padding: '2px 8px', borderRadius: 7, background: 'var(--card2)' }}>
                       {post.format}
                     </span>
                   </div>

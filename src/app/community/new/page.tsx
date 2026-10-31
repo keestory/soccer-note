@@ -35,8 +35,8 @@ const TIMES = ['06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','
 
 const LEVEL_ACTIVE: Record<string, { bg: string; color: string }> = {
   '입문': { bg: '#334155', color: '#94a3b8' },
-  '초급': { bg: '#e0f2fe', color: '#026aa2' },
-  '중급': { bg: '#e0f5f2', color: '#0e9384' },
+  '초급': { bg: '#102738', color: '#74cbff' },
+  '중급': { bg: '#102e27', color: '#64dac6' },
   '고급': { bg: 'var(--card2)', color: '#fbbf24' },
 }
 

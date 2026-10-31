@@ -205,7 +205,7 @@ export default function Onboarding() {
             key={i}
             onClick={() => setCurrentSlide(i)}
             className="h-2 rounded-full transition-all"
-            style={{ width: i === currentSlide ? 24 : 8, background: i === currentSlide ? 'var(--navy)' : 'rgba(16,24,40,0.18)' }}
+            style={{ width: i === currentSlide ? 24 : 8, background: i === currentSlide ? 'var(--brand)' : 'var(--line-strong)' }}
           />
         ))}
       </div>
@@ -304,7 +304,7 @@ function MockFormation() {
   return (
     <div className="p-4 h-full flex flex-col">
       <div className="flex items-center justify-between mb-3">
-        <p className="font-semibold text-gray-900">1쿼터 포메이션</p>
+        <p className="font-semibold text-[color:var(--text)]">1쿼터 포메이션</p>
         <span className="text-sm bg-primary-100 text-primary-700 px-3 py-1 rounded-full font-medium">4-3-3</span>
       </div>
       <div className="flex-1 relative bg-gradient-to-b from-green-700 via-green-600 to-green-700 rounded-xl overflow-hidden min-h-[300px]">

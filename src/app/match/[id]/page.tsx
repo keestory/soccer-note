@@ -517,14 +517,14 @@ export default function MatchDetailPage() {
                 <div className="flex items-center justify-between" style={{ marginTop: 14 }}>
                   <div style={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
                     <div className="truncate" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{homeTeamName}</div>
-                    <div style={{ fontSize: 10, color: '#667085', letterSpacing: '.12em', marginTop: 3 }}>HOME</div>
+                    <div style={{ fontSize: 10, color: 'var(--text3)', letterSpacing: '.12em', marginTop: 3 }}>HOME</div>
                   </div>
                   <div style={{ fontFamily: BEBAS, fontSize: 44, fontWeight: 600, lineHeight: 1.2, color: 'var(--text)', flexShrink: 0 }}>
-                    {total.home}<span style={{ color: '#344054', padding: '0 6px' }}>:</span>{total.away}
+                    {total.home}<span style={{ color: 'var(--line-strong)', padding: '0 6px' }}>:</span>{total.away}
                   </div>
                   <div style={{ textAlign: 'center', flex: 1, minWidth: 0 }}>
                     <div className="truncate" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text3)' }}>{match.opponent}</div>
-                    <div style={{ fontSize: 10, color: '#667085', letterSpacing: '.12em', marginTop: 3 }}>AWAY</div>
+                    <div style={{ fontSize: 10, color: 'var(--text3)', letterSpacing: '.12em', marginTop: 3 }}>AWAY</div>
                   </div>
                 </div>
                 <div className="flex justify-center" style={{ marginTop: 16 }}>
@@ -552,9 +552,9 @@ export default function MatchDetailPage() {
 
         {/* MVP Section */}
         {mvp && (
-          <section className="flex items-center" style={{ background: '#fff', border: '1px solid #eaecf0', borderRadius: 16, padding: '15px 18px', gap: 12 }}>
-            <span style={{ fontFamily: BEBAS, fontSize: 13, letterSpacing: '.14em', color: '#101828', background: 'var(--accent)', padding: '4px 10px', borderRadius: 8 }}>MVP</span>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#101828' }}>{mvp.playerName}</span>
+          <section className="flex items-center" style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 16, padding: '15px 18px', gap: 12 }}>
+            <span style={{ fontFamily: BEBAS, fontSize: 13, letterSpacing: '.14em', color: 'var(--on-accent)', background: 'var(--accent)', padding: '4px 10px', borderRadius: 8 }}>MVP</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text)' }}>{mvp.playerName}</span>
             <span style={{ fontSize: 12, color: 'var(--text3)' }}>{t.avgPoints.replace('{n}', mvp.averageRating.toFixed(1))}</span>
           </section>
         )}
@@ -896,7 +896,7 @@ export default function MatchDetailPage() {
 
                   {currentQuarter.quarter_records?.length === 0 && (
                     <div className="absolute inset-0 flex items-center justify-center text-[color:var(--text3)]">
-                      <span className="bg-white px-3 py-1.5 rounded">{t.placePlayersMessage}</span>
+                      <span className="bg-[color:var(--card)] px-3 py-1.5 rounded">{t.placePlayersMessage}</span>
                     </div>
                   )}
                 </div>
@@ -970,8 +970,8 @@ export default function MatchDetailPage() {
                             </div>
                           )}
                           {record.improvement_text && (
-                            <div className="rounded-lg px-3 py-2" style={{ background: '#fef0c7' }}>
-                              <p className="text-[10px] font-bold mb-0.5" style={{ color: '#b54708' }}>{t.improvementLabel}</p>
+                            <div className="rounded-lg px-3 py-2" style={{ background: 'var(--warning-bg)' }}>
+                              <p className="text-[10px] font-bold mb-0.5" style={{ color: 'var(--warning-text)' }}>{t.improvementLabel}</p>
                               <p className="text-[13px] text-[color:var(--text)]/80">{record.improvement_text}</p>
                             </div>
                           )}

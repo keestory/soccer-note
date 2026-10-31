@@ -867,7 +867,7 @@ export default function QuarterEditPage() {
             <button
               onClick={openSubModal}
               className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
-              style={{ background: '#fef0c7', color: '#b54708' }}
+              style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}
             >
               <Plus className="w-4 h-4" />
               {t.addSubstitution}
@@ -936,7 +936,7 @@ export default function QuarterEditPage() {
               {subPickerMode ? (
                 <div className="flex flex-col flex-1 min-h-0">
                   <p className="text-sm font-medium mb-3 flex items-center gap-2 text-[color:var(--text)]/70">
-                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold`} style={subPickerMode === 'out' ? { background: '#fef3f2', color: '#d92d20' } : { background: 'var(--chip)', color: 'var(--text)' }}>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-bold`} style={subPickerMode === 'out' ? { background: 'var(--result-loss-bg)', color: 'var(--result-loss)' } : { background: 'var(--chip)', color: 'var(--text)' }}>
                       {subPickerMode === 'out' ? 'OUT' : 'IN'}
                     </span>
                     {t.selectPlayer}
@@ -1169,7 +1169,7 @@ export default function QuarterEditPage() {
                 style={{
                   background: selectedPlayer.cleanSheet ? 'var(--chip)' : 'var(--card2)',
                   border: selectedPlayer.cleanSheet ? '1px solid var(--accent)' : '1px solid var(--line)',
-                  color: selectedPlayer.cleanSheet ? 'var(--navy)' : 'var(--text-faint)',
+                  color: selectedPlayer.cleanSheet ? 'var(--brand)' : 'var(--text-faint)',
                 }}
               >
                 <Check className="w-4 h-4" />

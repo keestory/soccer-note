@@ -54,3 +54,10 @@ Native tabs mirror this model. `players`, `training`, and `community` remain rou
 - Shared sheets trap focus, support Escape, restore focus and constrain their height.
 - The noindex /design-system route is an in-memory fictional review surface; its four review selectors do not change the three production navigation destinations.
 - No production data, authorization, native SDK or schema change is part of the visual refresh.
+
+## Neon restoration (2026-10-31)
+
+- GOLDLINE dark surfaces and volt accents replace Line Matchday colors; the interaction requirements above still apply.
+- Existing forest-default preferences migrate to volt. Other valid saved accents remain usable on dark surfaces.
+- Filled neon actions use dark foregrounds; dark cards use light text, including legacy team, training and player-detail routes.
+- The shared preview and Home screenshot route reflect the restored design; archived store screenshots are separate assets.

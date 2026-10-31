@@ -29,6 +29,6 @@ export function LinePitch({ players, selectedId, onSelect, onMove, onMoveStart, 
       onPointerCancel={() => { drag.current = null; justDragged.current = false }}
       onClick={() => { if (!justDragged.current) onSelect(player.id); justDragged.current = false }}
       onKeyDown={e => { const delta: Record<string, [number, number]> = { ArrowUp: [3, 0], ArrowDown: [-3, 0], ArrowLeft: [0, -3], ArrowRight: [0, 3] }; if (delta[e.key]) { e.preventDefault(); onMoveStart?.(); const [x, y] = delta[e.key]; onMove(player.id, Math.max(8, Math.min(92, player.x + x)), Math.max(10, Math.min(90, player.y + y))) } }}
-    ><strong>{player.number ?? '—'}</strong><span>{player.name}</span>{player.substitution && <small className="rounded bg-white px-1 text-[9px] leading-3 text-[color:var(--text)]">{player.substitution}</small>}</button>)}
+    ><strong>{player.number ?? '—'}</strong><span>{player.name}</span>{player.substitution && <small className="rounded bg-[color:var(--card)] px-1 text-[9px] leading-3 text-[color:var(--text)]">{player.substitution}</small>}</button>)}
   </div>
 }

@@ -26,7 +26,7 @@ export function HomeHeader({ teamName, displayName, teamPickerLabel, profileLabe
       </h1>
       <div className="flex shrink-0 items-center gap-2">
         {notification}
-        <Link href="/profile" aria-label={profileLabel} className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[color:var(--line-strong)] bg-white text-sm font-semibold text-[color:var(--text)]">{(displayName || '?').charAt(0).toUpperCase()}</Link>
+        <Link href="/profile" aria-label={profileLabel} className="focus-ring flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[color:var(--line-strong)] bg-[color:var(--card)] text-sm font-semibold text-[color:var(--text)]">{(displayName || '?').charAt(0).toUpperCase()}</Link>
       </div>
     </div>
   </header>

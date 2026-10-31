@@ -26,7 +26,7 @@ export default function LanguageSelector() {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 px-2 py-1.5 text-gray-600 hover:bg-gray-100 rounded-lg transition text-sm"
+        className="flex items-center gap-1.5 px-2 py-1.5 text-[color:var(--text3)] hover:bg-[color:var(--card2)] rounded-lg transition text-sm"
         title={t.language}
       >
         <Globe className="w-4 h-4" />

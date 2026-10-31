@@ -119,7 +119,7 @@ export default function NewTrainingPage() {
                   <button key={key} type="button" onClick={() => setTrainingType(key)}
                     className="flex flex-col items-center gap-1.5 py-3 rounded-[12px] text-xs font-bold transition"
                     style={{
-                      background: active ? '#101828' : 'var(--card2)',
+                      background: active ? 'var(--navy)' : 'var(--card2)',
                       border: '1px solid transparent',
                       color: active ? '#fff' : 'var(--muted2)',
                     }}>
@@ -171,7 +171,7 @@ export default function NewTrainingPage() {
               <MapPin className="w-3.5 h-3.5" /> {t.location} <span className="normal-case font-medium" style={{ color: 'var(--text-faint)' }}>{t.optional}</span>
             </label>
             <input type="text" value={locationVal} onChange={e => setLocationVal(e.target.value)}
-              className="w-full font-bold text-base outline-none placeholder-[#98a2b3]"
+              className="w-full font-bold text-base outline-none placeholder-[color:var(--text3)]"
               style={{ background: 'transparent', color: 'var(--text)' }}
               placeholder={t.locationPlaceholder} />
           </div>
@@ -182,7 +182,7 @@ export default function NewTrainingPage() {
               {t.trainingNotes} <span className="normal-case font-medium" style={{ color: 'var(--text-faint)' }}>{t.optional}</span>
             </label>
             <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={3}
-              className="w-full text-sm outline-none resize-none leading-relaxed placeholder-[#98a2b3]"
+              className="w-full text-sm outline-none resize-none leading-relaxed placeholder-[color:var(--text3)]"
               style={{ background: 'transparent', color: 'var(--text)' }}
               placeholder={t.trainingNotesPlaceholder} />
           </div>

@@ -221,8 +221,8 @@ export default function InboxPage() {
               onClick={() => setFilter(f)}
               className="py-3 px-1 border-b-2 text-sm font-medium transition-colors"
               style={{
-                borderColor: filter === f ? 'var(--navy)' : 'transparent',
-                color: filter === f ? 'var(--navy)' : 'var(--muted2)',
+                borderColor: filter === f ? 'var(--brand)' : 'transparent',
+                color: filter === f ? 'var(--brand)' : 'var(--muted2)',
               }}
             >
               {f === 'all' ? '전체' : `안읽음${unreadCount > 0 ? ` (${unreadCount})` : ''}`}
@@ -251,7 +251,7 @@ export default function InboxPage() {
                   key={notification.receipt_id}
                   className="border-l-[3px] transition-colors"
                   style={{
-                    borderLeftColor: isUnread ? 'var(--navy)' : 'transparent',
+                    borderLeftColor: isUnread ? 'var(--brand)' : 'transparent',
                     borderBottom: '1px solid var(--line)',
                   }}
                 >
@@ -261,7 +261,7 @@ export default function InboxPage() {
                     style={{ background: isUnread ? 'rgba(204,255,0,0.03)' : 'transparent' }}
                   >
                     <div className="flex-shrink-0 mt-1.5">
-                      <div className="w-2 h-2 rounded-full" style={{ background: isUnread ? 'var(--navy)' : 'transparent' }} />
+                      <div className="w-2 h-2 rounded-full" style={{ background: isUnread ? 'var(--brand)' : 'transparent' }} />
                     </div>
 
                     <div className="flex-shrink-0 mt-0.5">

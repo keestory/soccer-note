@@ -182,10 +182,10 @@ export default function ProfilePage() {
             className="w-full flex items-center justify-between px-5 py-4 transition"
           >
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: '#fef3f2' }}>
-                <Trash2 className="w-4 h-4" style={{ color: '#d92d20' }} />
+              <div className="w-9 h-9 rounded-full flex items-center justify-center" style={{ background: 'var(--result-loss-bg)' }}>
+                <Trash2 className="w-4 h-4" style={{ color: 'var(--result-loss)' }} />
               </div>
-              <span className="font-medium" style={{ color: '#d92d20' }}>{t.deleteAccount}</span>
+              <span className="font-medium" style={{ color: 'var(--result-loss)' }}>{t.deleteAccount}</span>
             </div>
             <ChevronRight className="w-4 h-4" style={{ color: '#fda29b' }} />
           </button>
@@ -215,11 +215,11 @@ export default function ProfilePage() {
                     : { background: 'var(--card2)', border: '1px solid transparent' }}
                 >
                   <span className="text-xl">{l.flag}</span>
-                  <span className="font-medium text-[15px]" style={{ color: locale === l.code ? 'var(--navy)' : 'var(--text)' }}>
+                  <span className="font-medium text-[15px]" style={{ color: locale === l.code ? 'var(--brand)' : 'var(--text)' }}>
                     {l.label}
                   </span>
                   {locale === l.code && (
-                    <span className="ml-auto w-2 h-2 rounded-full" style={{ background: 'var(--navy)' }} />
+                    <span className="ml-auto w-2 h-2 rounded-full" style={{ background: 'var(--brand)' }} />
                   )}
                 </button>
               ))}
@@ -233,8 +233,8 @@ export default function ProfilePage() {
         <div className="fixed inset-0 bg-black/70 z-50 flex items-end">
           <div className="w-full rounded-t-3xl p-6 safe-bottom" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
             <div className="w-10 h-1 rounded-full mx-auto mb-6" style={{ background: 'var(--line)' }} />
-            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: '#fef3f2' }}>
-              <Trash2 className="w-7 h-7" style={{ color: '#d92d20' }} />
+            <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--result-loss-bg)' }}>
+              <Trash2 className="w-7 h-7" style={{ color: 'var(--result-loss)' }} />
             </div>
             <h3 className="text-lg font-bold text-center text-[color:var(--text)] mb-2">{t.deleteAccountConfirm}</h3>
             <p className="text-[13px] text-center mb-6" style={{ color: 'var(--muted2)' }}>{t.deleteAccountDescription}</p>

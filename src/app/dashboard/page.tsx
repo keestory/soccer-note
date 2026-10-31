@@ -99,7 +99,7 @@ export default function DashboardPage() {
     return (
       <div className="light min-h-screen px-5 py-8" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
         <div className="mx-auto max-w-lg">
-          <div className="mb-8 text-center"><span className="font-display text-[30px] tracking-widest text-[color:var(--navy)]">FOOTBALL NOTE</span></div>
+          <div className="mb-8 text-center"><span className="font-display text-[30px] tracking-widest text-[color:var(--brand)]">FOOTBALL NOTE</span></div>
           {teams.length > 0 && <div className="mb-4 rounded-2xl border border-[color:var(--line)] bg-[color:var(--card)] p-5"><h2 className="mb-4 font-black">{t.myTeams} ({teams.length})</h2><div className="max-h-[40vh] space-y-2 overflow-y-auto">{teams.map(team => <button key={team.id} onClick={() => handleSelectTeam(team)} className="flex w-full items-center justify-between rounded-xl bg-[color:var(--card2)] p-4 text-left"><span><span className="block font-bold">{team.name}</span><span className="text-sm text-[color:var(--muted2)]">{team.role === 'coach' ? t.coach : t.member}</span></span><ChevronDown aria-hidden="true" className="h-4 w-4 -rotate-90 text-[color:var(--text3)]" /></button>)}</div></div>}
           <form noValidate onSubmit={handleCreateTeam} className="mb-4 rounded-2xl border border-[color:var(--line)] bg-[color:var(--card)] p-5">
             <h2 className="mb-4 font-black">{t.createTeam}</h2>

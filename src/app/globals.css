@@ -6,38 +6,43 @@
   --motion-standard: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Line Matchday design tokens. */
-:root, .light {
-  --bg: #f8faf8;
-  --card: #ffffff;
-  --card2: #f0f4f1;
-  --nav: #ffffff;
-  --accent: #d8ece2;
-  --brand: #176b52;
-  --on-brand: #ffffff;
-  --pitch: #f0f6f2;
-  --pitch-line: #a7c4b4;
-  --muted1: #62676f;
-  --muted2: #68776e;
-  --chip: #eaf3ed;
-  --chipText: #15171a;
-  --line: #dde5df;
-  --line-strong: #b8c6bc;
-  --control-line: #83968a;
-  --result-loss: #a33a36;
-  --result-loss-bg: #fbefed;
-  --line2: #d4d7db;
-  --dash: #62676f;
-  --text: #172c23;
-  --text2: #50565f;
-  --text3: #62676f;
-  --text-faint: #c9ccd0;
-  --navy: #203d30;
-  --navy2: #34383f;
-  --on-navy: #ffffff;
-  --on-accent: #0d0f12;
+/* GOLDLINE / Volt: restore the original dark football identity. */
+:root {
+  color-scheme: dark;
+  --bg: #0a0a0a;
+  --card: #111010;
+  --card2: #1b1c18;
+  --nav: #050505;
+  --accent: #ccff00;
+  --brand: #ccff00;
+  --on-brand: #0a0a0a;
+  --pitch: #10190c;
+  --pitch-line: #566645;
+  --muted1: #b3b7aa;
+  --muted2: #969c8c;
+  --chip: #1a1e09;
+  --chipText: #ccff00;
+  --line: #292d22;
+  --line-strong: #414936;
+  --control-line: #738064;
+  --result-loss: #ff928b;
+  --result-loss-bg: #2d1514;
+  --result-loss-line: #70403b;
+  --warning-bg: #2b220e;
+  --warning-text: #f5ca7a;
+  --warning-line: #79632e;
+  --line2: #363b2d;
+  --dash: #252c09;
+  --text: #f5f5ef;
+  --text2: #c4c8bc;
+  --text3: #a3aa98;
+  --text-faint: #8a927f;
+  --navy: #1b2111;
+  --navy2: #262c1e;
+  --on-navy: #f5f5ef;
+  --on-accent: #0a0a0a;
   --danger: #d13b36;
-  --nav-active: #0d0f12;
+  --nav-active: #ccff00;
   color: var(--text);
   background: var(--bg);
 }
@@ -98,7 +103,7 @@ input, textarea, [contenteditable] {
 
   .surface {
     border: 1px solid var(--line-strong);
-    border-radius: 12px;
+    border-radius: 20px;
     background: var(--card);
   }
 
@@ -107,7 +112,7 @@ input, textarea, [contenteditable] {
   }
 
   .interactive-row:hover {
-    background: #f8f8f8;
+    background: var(--card2);
   }
 
   .interactive-row:active {
@@ -132,41 +137,42 @@ input, textarea, [contenteditable] {
   }
 
   .score-display {
-    font-family: var(--font-sans), sans-serif;
-    font-weight: 600;
-    letter-spacing: -0.06em;
+    font-family: var(--font-display), var(--font-sans), sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    color: var(--brand);
     font-variant-numeric: tabular-nums;
   }
 
   .floating-nav {
     border: 1px solid var(--line);
     border-radius: 18px;
-    background: var(--card);
-    box-shadow: 0 4px 24px rgba(23, 44, 35, 0.06);
+    background: var(--nav);
+    box-shadow: 0 4px 24px rgb(0 0 0 / .35);
   }
 }
 
-/* Line Matchday: shared controls, pitch, forms and review surface. */
-.light { --brand: inherit; --on-brand: inherit; --accent: inherit; }
+/* Shared controls retain the current mobile interaction contract.
+   Legacy .light wrappers inherit the dark root tokens; they no longer reset accents. */
 :where(button, a, input, select, textarea):focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
 .light :where(button, input:not([type=range]):not([type=checkbox]):not([type=radio]), select) { min-height: 44px; }
 .light :where(input:not([type=range]), select, textarea) { font-size: 16px; }
-.sn-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 18px; border: 1px solid var(--line); border-radius: 12px; font-size: 14px; font-weight: 600; background: var(--card); color: var(--text); cursor: pointer; }
+.sn-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 12px 18px; border: 1px solid var(--line); border-radius: 14px; font-size: 14px; font-weight: 700; background: var(--card); color: var(--text); cursor: pointer; }
 .sn-button[data-primary=true] { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
 .sn-button:disabled { opacity: .45; cursor: not-allowed; }
-.sn-page-title { font-size: 26px; line-height: 34px; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
-.sn-opponent { font-size: 20px; line-height: 28px; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.sn-page-title { font-size: 26px; line-height: 34px; font-weight: 800; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.sn-opponent { font-size: 20px; line-height: 28px; font-weight: 700; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .sn-kicker { font-size: 12px; line-height: 18px; font-weight: 600; letter-spacing: .01em; color: var(--text3); }
 .sn-kicker--latin { letter-spacing: .1em; text-transform: uppercase; }
 .sn-home-status { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -.01em; color: var(--text); }
 .sn-home-section-title { font-size: 16px; line-height: 24px; font-weight: 600; letter-spacing: -.01em; color: var(--text); }
-.sn-home-upcoming { padding: 20px; border: 1px solid var(--line-strong); border-radius: 12px; background: var(--chip); }
+.sn-home-upcoming { padding: 20px; border: 1px solid var(--line-strong); border-radius: 20px; background: var(--chip); }
 .sn-home-upcoming-date { font-size: 14px; line-height: 21px; font-weight: 600; color: var(--text); }
-.sn-home-upcoming-opponent { font-size: 22px; line-height: 30px; font-weight: 600; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.sn-home-upcoming-opponent { font-size: 22px; line-height: 30px; font-weight: 800; letter-spacing: -.02em; overflow-wrap: anywhere; }
 .sn-home-upcoming-meta { font-size: 12px; line-height: 18px; color: var(--text3); }
 .sn-result { display: inline-flex; align-items: center; border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; font-size: 12px; line-height: 18px; font-weight: 500; background: var(--card2); color: var(--text2); }
 .sn-result[data-result=WIN] { color: var(--brand); background: var(--chip); border-color: var(--line-strong); }
-.sn-result[data-result=LOSS] { color: var(--result-loss); background: var(--result-loss-bg); border-color: #e5c7c3; }
+.sn-result[data-result=LOSS] { color: var(--result-loss); background: var(--result-loss-bg); border-color: var(--result-loss-line); }
 .sn-match-card { container-type: inline-size; }
 .sn-match-summary { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; padding: 20px; }
 .sn-match-score { font-size: 48px; line-height: 1; white-space: nowrap; }
@@ -184,13 +190,13 @@ input, textarea, [contenteditable] {
 .sn-pitch { position: relative; aspect-ratio: 3 / 4; width: 100%; background: var(--pitch); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
 .sn-pitch svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 .sn-pitch-player { position: absolute; z-index: 1; display: flex; flex-direction: column; align-items: center; width: 64px; min-height: 52px; transform: translate(-50%, -50%); color: var(--text); background: none; cursor: pointer; }
-.sn-pitch-player > strong { display: grid; place-items: center; width: 36px; height: 36px; background: white; border: 1px solid var(--brand); border-radius: 50%; font-size: 14px; font-weight: 600; }
+.sn-pitch-player > strong { display: grid; place-items: center; width: 36px; height: 36px; background: var(--card2); border: 1px solid var(--brand); border-radius: 50%; font-size: 14px; font-weight: 600; }
 .sn-pitch-player[aria-pressed=true] > strong { background: var(--brand); color: var(--on-brand); outline: 3px solid var(--accent); }
 .sn-pitch-player[data-substituted-out=true] > strong { border-style: dashed; background: var(--card2); }
 .sn-pitch-player[data-substituted-out=true][aria-pressed=true] > strong { background: var(--brand); color: var(--on-brand); }
 .sn-pitch-player[data-substituted-out=true] > span { text-decoration: line-through; }
 .sn-pitch-player > span { max-width: 74px; padding: 1px 4px; background: var(--pitch); font-size: 12px; line-height: 18px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.sn-sheet-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(16 32 23 / .35); display: flex; align-items: flex-end; justify-content: center; }
+.sn-sheet-backdrop { position: fixed; inset: 0; z-index: 60; background: rgb(0 0 0 / .72); display: flex; align-items: flex-end; justify-content: center; }
 .sn-sheet { width: 100%; max-width: 480px; max-height: 88dvh; overflow-y: auto; border-radius: 20px 20px 0 0; background: var(--card); padding: 20px 24px calc(24px + env(safe-area-inset-bottom)); }
 .sn-preview-layout { max-width: 1200px; margin: auto; padding: 64px 32px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: clamp(32px, 5vw, 80px); align-items: start; }
 .sn-preview-phone { position: relative; min-height: 800px; border: 1px solid var(--line); border-radius: 26px; overflow: hidden; background: var(--bg); }
