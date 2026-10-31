@@ -4,7 +4,8 @@
 
 1. Home answers: what is the next scheduled match, what happened most recently, and what should I do next?
 2. Matches provides the complete upcoming/completed record and opens existing match detail/edit flows.
-3. Team groups lower-frequency operations without removing their existing routes.
+3. Ranking provides the selected team’s player rankings as a separate primary tab.
+4. Team groups lower-frequency operations without removing their existing routes.
 
 ## Route ownership
 
@@ -12,9 +13,10 @@
 | --- | --- |
 | Home | `/dashboard` |
 | Matches | `/matches`, `/match/*` |
+| Ranking | `/ranking`, `/ranking/*` |
 | Team | `/team`, `/team/*`, `/training/*`, `/community/*` |
 
-Native tabs mirror this model. `players`, `training`, and `community` remain routable but are hidden from the tab bar.
+The deployed Capacitor shell displays this web navigation. The separate Expo source currently retains its earlier three-tab model. `players`, `training`, and `community` remain routable but are hidden from the tab bar.
 
 ## Permissions
 
@@ -33,7 +35,7 @@ Native tabs mirror this model. `players`, `training`, and `community` remain rou
 
 ## Acceptance criteria
 
-- Exactly three primary destinations appear on web and native.
+- Exactly four primary destinations appear on web and the current Capacitor web shell: Home, Matches, Ranking, Team.
 - Existing player, training, community, match detail, and team administration URLs still resolve.
 - Home contains one primary CTA and no full recent-match list.
 - Home state hierarchy is conditional: next match first when scheduled; otherwise no-upcoming status followed by the latest result or empty-history explanation.
@@ -52,7 +54,7 @@ Native tabs mirror this model. `players`, `training`, and `community` remain rou
 - The selected player's explicit record action opens existing goal/assist/rating editing.
 - Coordinate storage stays unchanged: portrait display uses left=y and top=100-x.
 - Shared sheets trap focus, support Escape, restore focus and constrain their height.
-- The noindex /design-system route is an in-memory fictional review surface; its four review selectors do not change the three production navigation destinations.
+- The noindex /design-system route is an in-memory fictional review surface; its four review selectors do not change the four production navigation destinations.
 - No production data, authorization, native SDK or schema change is part of the visual refresh.
 
 ## Neon restoration (2026-10-31)
@@ -61,3 +63,11 @@ Native tabs mirror this model. `players`, `training`, and `community` remain rou
 - Existing forest-default preferences migrate to volt. Other valid saved accents remain usable on dark surfaces.
 - Filled neon actions use dark foregrounds; dark cards use light text, including legacy team, training and player-detail routes.
 - The shared preview and Home screenshot route reflect the restored design; archived store screenshots are separate assets.
+
+## Separate ranking tab
+
+- Ranking is reachable directly from the bottom navigation at `/ranking`; player management no longer contains the roster/ranking toggle.
+- The selected team name is explicit. Goals, assists, contribution, rating, attendance and clean sheets retain their calculations and inclusive date filters.
+- Ties use competition ranks and the same first-place emphasis. Unrated players show a dash. No players and no records in the selected range have separate messages.
+- Ranking player details use `/ranking/[id]` with a Ranking back link; the original `/team/players/[id]` remains supported.
+- Loading retains bottom navigation. Unauthenticated users go to login; users without a selected team go to Home. Ranking is noindex and reuses existing data access.

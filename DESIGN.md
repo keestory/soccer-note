@@ -27,7 +27,7 @@ The root owns the dark tokens. Legacy `.light` wrappers inherit them and no long
 ## Shared components
 - HomeHeader: dashboard and deterministic QA share the same wrapping team title, notification shell, profile action, spacing and safe-area handling. The QA fixture has no team-switch handler.
 - HomeFocus: the home explains the current state first. An upcoming match becomes the primary surface; without one, a concise no-upcoming message precedes the latest result. The latest result keeps real quarter scores and becomes compact only when an upcoming match is present. Localized View all sits beside the latest-result heading; one compact 64px team-management row remains below the single primary action. Never fabricate missing quarter scores. Two-digit scores get a separate row; long opponents wrap. Win/draw/loss retain localized text plus semantic color.
-- BottomNav: exactly Home / Matches / Team, near-black surface, volt selected state, aria-current.
+- BottomNav: Home / Matches / Ranking / Team, near-black surface, volt selected state, aria-current.
 - PlayerFields: persistent name/number labels, numeric keyboard, optional number, explicit position selection.
 - LinePitch: portrait display of existing horizontal coordinates; tap player then destination, pointer dragging or arrow keys. Drag cancellation handled without document-level listeners.
 - Sheet: bounded, scrollable bottom sheet; Escape, focus containment and return, body scroll restored.
@@ -45,7 +45,7 @@ The pitch editing screen selects a player for placement first; the explicit Play
 Existing eight locales remain supported. New placement labels are supplied in eight locales. Date-only strings render as calendar dates; selected locale is passed by redesigned match views. HTML language follows the selected locale. Long labels wrap; control titles and accessible labels identify icon actions. Do not use color as the only win/loss or position cue.
 
 ## Review surface
-/design-system is a noindex, fictional, in-memory review surface. It shares HomeFocus, PlayerFields, LinePitch and Sheet with production. It has four demonstration selectors (Home, Players/Rankings, Formation, Record); these are review selectors, not a replacement for the production three-tab navigation. Demo changes are not saved to any team or database.
+/design-system is a noindex, fictional, in-memory review surface. It shares HomeFocus, PlayerFields, LinePitch and Sheet with production. It has four demonstration selectors (Home, Players/Rankings, Formation, Record); these are review selectors, not a replacement for the production four-tab navigation. Demo changes are not saved to any team or database.
 
 /screenshots/home uses the real HomeHeader, HomeFocus and BottomNavShell at the viewport's actual width. Optional locale/scenario/result query parameters exercise translated, empty, viewer, upcoming, long-name and outcome fixtures without real data. Its displayed total is derived from its quarter fixture. Browser evidence must record CSS innerWidth, DPR and screenshot pixel size; a narrow Chrome screenshot alone does not prove a narrow CSS viewport.
 
@@ -66,3 +66,9 @@ Interpretation: next-match clarity, low-friction player entry and repeated team 
 
 ## Intake for the neon restoration
 S2 visual restoration with one product writer and independent UI/UX + QA review. competitive_benchmark: brief Apple Business chart check per workspace instruction; the historical neon source is the visual authority. discoverability: not-applicable, no routes/indexing/content ownership changed. store_compliance: not-applicable, no SDK, permissions, data collection, payments or store submission changes. Native splash/status configuration and physical-device appearance are separate from this web change.
+
+## Separate team ranking tab
+
+Web and the current Capacitor shell expose Home / Matches / Ranking / Team. `/ranking` shows only the selected team, with six existing metrics, inclusive date filtering and competition ties (1,1,3). Empty players and no records are distinct states. `/ranking/[id]` shares the existing player statistics component and returns to Ranking; `/team/players/[id]` keeps its roster return. `/team/players` now contains roster management only. The separate Expo source remains unchanged.
+
+Intake: S1 bounded navigation change; main implementation plus UI/UX and independent QA. discoverability: not-applicable to public acquisition; the new authenticated ranking subtree is noindex. store_compliance: not-applicable, no data collection, SDK, permission or submission change. competitive_benchmark: not-applicable, existing feature relocation; the 2026-10-31 Business chart check from the neon restoration remains context only.

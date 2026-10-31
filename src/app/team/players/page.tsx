@@ -10,7 +10,7 @@ import { getDesignCopy } from '@/lib/design-copy'
 import { Plus, Trash2, Edit2, X, UserCheck, UserPlus, Users } from 'lucide-react'
 import type { Player, PositionType, PlayerAttributes } from '@/types/database'
 import { POSITION_LABELS, ATTRIBUTE_KEYS } from '@/types/database'
-import type { MemberWithProfile } from '@/lib/dataStore'
+import { updateStore, type MemberWithProfile } from '@/lib/dataStore'
 import toast from 'react-hot-toast'
 import { PlayersListSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
@@ -38,8 +38,6 @@ interface PlayerWithStats extends Player {
   linkedMember?: MemberWithProfile
 }
 
-type RankStatKey = 'goals' | 'assists' | 'contribution' | 'avgRating' | 'attendance' | 'cleanSheets'
-
 export default function PlayersPage() {
   const router = useRouter()
   const data = useAppData()
@@ -52,12 +50,13 @@ export default function PlayersPage() {
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
   const [search, setSearch] = useState('')
   const [posFilter, setPosFilter] = useState<'ALL' | PositionType>('ALL')
-  const [view, setView] = useState<'roster' | 'ranking'>('roster')
-  const [rankStat, setRankStat] = useState<RankStatKey>('goals')
-  const [rankStart, setRankStart] = useState('')
-  const [rankEnd, setRankEnd] = useState('')
   const [localPlayers, setLocalPlayers] = useState<Player[] | null>(null)
   const [localMemberLinks, setLocalMemberLinks] = useState<Record<string, string>>({}) // memberId → playerId
+
+  const updatePlayers = (players: Player[]) => {
+    setLocalPlayers(players)
+    updateStore({ players })
+  }
 
   // Add form state
   const [addMode, setAddMode] = useState<'member' | 'manual'>('manual')
@@ -166,7 +165,7 @@ export default function PlayersPage() {
         .eq('id', selectedMember.id)
       if (me) throw me
 
-      setLocalPlayers([...(localPlayers ?? data.players), newPlayer])
+      updatePlayers([...(localPlayers ?? data.players), newPlayer])
       setLocalMemberLinks(prev => ({ ...prev, [selectedMember.id]: newPlayer.id }))
       toast.success(`${name.trim()} — ${t.playerAdded}`)
       resetForm()
@@ -187,7 +186,7 @@ export default function PlayersPage() {
         .insert({ team_id: data.selectedTeamId, name: name.trim(), number: number ? parseInt(number) : null, default_position: position })
         .select().single()
       if (error) throw error
-      setLocalPlayers([...(localPlayers ?? data.players), newPlayer])
+      updatePlayers([...(localPlayers ?? data.players), newPlayer])
       toast.success(t.playerAdded)
       resetForm()
     } catch {
@@ -215,7 +214,7 @@ export default function PlayersPage() {
     const { error } = await supabase.from('players').update(patch).eq('id', editingPlayer.id)
     if (error) { toast.error(t.saveFailed); return }
     toast.success(t.playerUpdated)
-    setLocalPlayers((localPlayers ?? data.players).map(p =>
+    updatePlayers((localPlayers ?? data.players).map(p =>
       p.id === editingPlayer.id ? { ...p, ...patch } : p
     ))
     resetForm()
@@ -226,7 +225,7 @@ export default function PlayersPage() {
     const { error } = await supabase.from('players').delete().eq('id', playerId)
     if (error) { toast.error(t.deleteFailed); return }
     toast.success(t.playerDeleted)
-    setLocalPlayers((localPlayers ?? data.players).filter(p => p.id !== playerId))
+    updatePlayers((localPlayers ?? data.players).filter(p => p.id !== playerId))
   }
 
   const startEditing = (player: Player) => {
@@ -256,61 +255,12 @@ export default function PlayersPage() {
     setName(member.profile?.display_name || '')
   }
 
-  // Stats recomputed over the selected date range (empty range = all time).
-  // Must stay above the early `return` below so hook order is stable.
-  const rangeStats = useMemo(() => {
-    const inRange = (d?: string) => !!d && (!rankStart || d >= rankStart) && (!rankEnd || d <= rankEnd)
-    const rangeMatches = (rankStart || rankEnd)
-      ? data.matches.filter((mt: any) => inRange(mt.match_date))
-      : data.matches
-    const map = new Map<string, PlayerStats>()
-    for (const p of playersWithStats) {
-      const recs = rangeMatches
-        .flatMap((mt: any) => (mt.quarters ?? []).flatMap((q: any) => q.quarter_records ?? []))
-        .filter((r: any) => r.player_id === p.id)
-      const rated = recs.filter((r: any) => r.rating !== null)
-      map.set(p.id, {
-        attendance: rangeMatches.filter((mt: any) => (mt.match_attendees ?? []).some((a: any) => a.player_id === p.id)).length,
-        games: recs.length,
-        goals: recs.reduce((s: number, r: any) => s + (r.goals || 0), 0),
-        assists: recs.reduce((s: number, r: any) => s + (r.assists || 0), 0),
-        cleanSheets: recs.filter((r: any) => r.clean_sheet).length,
-        contribution: recs.reduce((s: number, r: any) => s + (r.contribution || 0), 0),
-        avgRating: rated.length ? rated.reduce((s: number, r: any) => s + (r.rating || 0), 0) / rated.length : null,
-      })
-    }
-    return map
-  }, [playersWithStats, data.matches, rankStart, rankEnd])
-
   if (data.loading) return <PlayersListSkeleton />
 
   const teamName = data.selectedTeam?.name || ''
   const filtered = playersWithStats
     .filter(p => posFilter === 'ALL' || p.default_position === posFilter)
     .filter(p => !search.trim() || p.name.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()) || String(p.number ?? '').includes(search.trim()))
-
-  // Roster / ranking view
-  const statTabs: { key: RankStatKey; label: string; suffix: string }[] = [
-    { key: 'goals', label: t.goals, suffix: t.goals },
-    { key: 'assists', label: t.assistsLabel, suffix: t.assistsLabel },
-    { key: 'contribution', label: t.contribution, suffix: '' },
-    { key: 'avgRating', label: t.rating, suffix: '' },
-    { key: 'attendance', label: t.attendance, suffix: '' },
-    { key: 'cleanSheets', label: t.cleanSheet, suffix: '' },
-  ]
-
-  const statOf = (p: PlayerWithStats) => rangeStats.get(p.id) ?? p.stats
-  const rankValue = (p: PlayerWithStats) => {
-    const v = statOf(p)[rankStat]
-    return v === null ? -1 : v
-  }
-  const rankedPlayers = [...playersWithStats].sort((a, b) => rankValue(b) - rankValue(a))
-  const formatRank = (p: PlayerWithStats) => {
-    const v = statOf(p)[rankStat]
-    if (rankStat === 'avgRating') return v === null ? '–' : (v as number).toFixed(1)
-    return String(v ?? 0)
-  }
-  const RANK_MEDAL = ['var(--chip)', 'var(--card2)', 'var(--card2)'] // gold / silver / bronze
 
   return (
     <div className="light min-h-screen pb-nav" style={{ background: 'var(--bg)' }}>
@@ -341,22 +291,7 @@ export default function PlayersPage() {
       <PullToRefresh onRefresh={async () => { setLocalPlayers(null); setLocalMemberLinks({}); await data.refresh() }}>
       <div className="max-w-md mx-auto px-5 py-4 space-y-4">
 
-        {/* Roster / Ranking toggle */}
-        <div className="flex gap-1 p-1 rounded-xl" style={{ background: 'var(--card2)' }}>
-          {(['roster', 'ranking'] as const).map(v => (
-            <button key={v} onClick={() => setView(v)}
-              className="flex-1 py-2 rounded-lg text-[13px] font-bold transition"
-              style={view === v
-                ? { background: 'var(--card)', color: 'var(--text)' }
-                : { background: 'transparent', color: 'var(--muted2)' }}>
-              {v === 'roster' ? t.rosterTab : t.rankingTab}
-            </button>
-          ))}
-        </div>
-
-        {/* Search + position filter (roster only) */}
-        {view === 'roster' && (
-        <>
+        {/* Search and position filter */}
         <input
           type="text" value={search} onChange={e => setSearch(e.target.value)}
           placeholder={t.searchPlayer} aria-label={t.searchPlayer}
@@ -378,90 +313,6 @@ export default function PlayersPage() {
             )
           })}
         </div>
-        </>
-        )}
-
-        {/* Ranking view */}
-        {view === 'ranking' && (
-          <div className="space-y-3">
-            {/* Date range filter — stacked rows so nothing overflows the frame */}
-            <div className="flex flex-col" style={{ background: 'var(--card)', border: '1px solid var(--line)', borderRadius: 14, padding: 12, gap: 8 }}>
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--muted2)' }}>{t.periodLabel}</span>
-                {(rankStart || rankEnd) && (
-                  <button onClick={() => { setRankStart(''); setRankEnd('') }}
-                    className="text-[12px] font-bold px-2.5 py-1 rounded-full"
-                    style={{ background: 'var(--chip)', color: 'var(--text)' }}>
-                    {t.allPeriod}
-                  </button>
-                )}
-              </div>
-              <label className="flex items-center" style={{ gap: 10 }}>
-                <span className="flex-shrink-0 text-[12px] font-bold" style={{ width: 44, color: 'var(--muted1)' }}>{t.startDate}</span>
-                <input type="date" value={rankStart} max={rankEnd || undefined} onChange={e => setRankStart(e.target.value)}
-                  className="flex-1 min-w-0 outline-none text-[color:var(--text)] text-[13px]"
-                  style={{ colorScheme: 'dark', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '10px 12px' }} />
-              </label>
-              <label className="flex items-center" style={{ gap: 10 }}>
-                <span className="flex-shrink-0 text-[12px] font-bold" style={{ width: 44, color: 'var(--muted1)' }}>{t.endDate}</span>
-                <input type="date" value={rankEnd} min={rankStart || undefined} onChange={e => setRankEnd(e.target.value)}
-                  className="flex-1 min-w-0 outline-none text-[color:var(--text)] text-[13px]"
-                  style={{ colorScheme: 'dark', boxSizing: 'border-box', background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 9, padding: '10px 12px' }} />
-              </label>
-            </div>
-            {/* Stat tabs */}
-            <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
-              {statTabs.map(tab => (
-                <button key={tab.key} onClick={() => setRankStat(tab.key)}
-                  className="flex-shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-bold transition"
-                  style={rankStat === tab.key
-                    ? { background: 'var(--navy)', color: 'var(--accent)' }
-                    : { background: 'var(--card)', color: 'var(--muted1)', border: '1px solid var(--line)' }}>
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            {/* Ranked list */}
-            {rankedPlayers.length === 0 ? (
-              <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-                <p className="text-[14px]" style={{ color: 'var(--muted2)' }}>{t.noPlayers}</p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {rankedPlayers.map((player, i) => (
-                  <Link key={player.id} href={`/team/players/${player.id}`}
-                    className="flex items-center gap-3 p-4 rounded-[14px] active:opacity-80 transition"
-                    style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center font-black text-[13px] flex-shrink-0"
-                      style={i < 3
-                        ? { background: RANK_MEDAL[i], color: 'var(--text)' }
-                        : { color: 'var(--muted2)' }}>
-                      {rankedPlayers.findIndex(p => rankValue(p) === rankValue(player)) + 1}
-                    </div>
-                    <div className="w-[34px] h-[34px] rounded-[9px] overflow-hidden flex items-center justify-center flex-shrink-0 font-black text-[10px]"
-                      style={{ background: POS_COLOR[player.default_position], color: POS_TEXT[player.default_position] }}>
-                      {player.photo_url
-                        ? <img src={player.photo_url} alt={player.name} className="w-full h-full object-cover" />
-                        : player.default_position}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-[14px] text-[color:var(--text)] truncate">
-                        {player.name} <span style={{ color: 'var(--muted2)' }}>#{player.number || '–'}</span>
-                      </p>
-                    </div>
-                    <div className="text-right flex-shrink-0 flex items-baseline gap-1">
-                      <p className="font-display text-[22px] leading-none" style={{ color: 'var(--text)' }}>{formatRank(player)}</p>
-                      {statTabs.find(tb => tb.key === rankStat)?.suffix
-                        ? <span className="text-[11px]" style={{ color: 'var(--muted2)' }}>{statTabs.find(tb => tb.key === rankStat)!.suffix}</span>
-                        : null}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Edit form (inline, only for editing existing players) */}
         {canEdit && editingPlayer && (
           <form onSubmit={handleUpdatePlayer}
@@ -545,8 +396,8 @@ export default function PlayersPage() {
           </form>
         )}
 
-        {/* Players list (roster only) */}
-        {view === 'roster' && (filtered.length === 0 ? (
+        {/* Players list */}
+        {filtered.length === 0 ? (
           <div className="rounded-2xl p-8 text-center" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
             <p className="text-[14px]" style={{ color: 'var(--muted2)' }}>
               {t.noPlayers}
@@ -609,7 +460,7 @@ export default function PlayersPage() {
               })
             })()}
           </div>
-        ))}
+        )}
       </div>
       </PullToRefresh>
 

@@ -1,0 +1,1213 @@
+{
+  "results": [
+    {
+      "locale": "ko",
+      "width": 320,
+      "scroll": 320,
+      "dateWidths": [
+        {
+          "width": 168,
+          "scroll": 168
+        },
+        {
+          "width": 168,
+          "scroll": 168
+        }
+      ],
+      "nav": [
+        {
+          "text": "홈",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "경기",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "랭킹",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "팀",
+          "width": 67,
+          "scroll": 67
+        }
+      ]
+    },
+    {
+      "locale": "ko",
+      "width": 360,
+      "scroll": 360,
+      "dateWidths": [
+        {
+          "width": 208,
+          "scroll": 208
+        },
+        {
+          "width": 208,
+          "scroll": 208
+        }
+      ],
+      "nav": [
+        {
+          "text": "홈",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "경기",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "랭킹",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "팀",
+          "width": 77,
+          "scroll": 77
+        }
+      ]
+    },
+    {
+      "locale": "ko",
+      "width": 390,
+      "scroll": 390,
+      "dateWidths": [
+        {
+          "width": 238,
+          "scroll": 238
+        },
+        {
+          "width": 238,
+          "scroll": 238
+        }
+      ],
+      "nav": [
+        {
+          "text": "홈",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "경기",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "랭킹",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "팀",
+          "width": 84,
+          "scroll": 84
+        }
+      ]
+    },
+    {
+      "locale": "ko",
+      "width": 430,
+      "scroll": 430,
+      "dateWidths": [
+        {
+          "width": 278,
+          "scroll": 278
+        },
+        {
+          "width": 278,
+          "scroll": 278
+        }
+      ],
+      "nav": [
+        {
+          "text": "홈",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "경기",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "랭킹",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "팀",
+          "width": 94,
+          "scroll": 94
+        }
+      ]
+    },
+    {
+      "locale": "en_US",
+      "width": 320,
+      "scroll": 320,
+      "dateWidths": [
+        {
+          "width": 168,
+          "scroll": 168
+        },
+        {
+          "width": 168,
+          "scroll": 168
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Matches",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Ranking",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Team",
+          "width": 67,
+          "scroll": 67
+        }
+      ]
+    },
+    {
+      "locale": "en_US",
+      "width": 360,
+      "scroll": 360,
+      "dateWidths": [
+        {
+          "width": 208,
+          "scroll": 208
+        },
+        {
+          "width": 208,
+          "scroll": 208
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Matches",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Ranking",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Team",
+          "width": 77,
+          "scroll": 77
+        }
+      ]
+    },
+    {
+      "locale": "en_US",
+      "width": 390,
+      "scroll": 390,
+      "dateWidths": [
+        {
+          "width": 238,
+          "scroll": 238
+        },
+        {
+          "width": 238,
+          "scroll": 238
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Matches",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Ranking",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Team",
+          "width": 84,
+          "scroll": 84
+        }
+      ]
+    },
+    {
+      "locale": "en_US",
+      "width": 430,
+      "scroll": 430,
+      "dateWidths": [
+        {
+          "width": 278,
+          "scroll": 278
+        },
+        {
+          "width": 278,
+          "scroll": 278
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Matches",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Ranking",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Team",
+          "width": 94,
+          "scroll": 94
+        }
+      ]
+    },
+    {
+      "locale": "en_GB",
+      "width": 320,
+      "scroll": 320,
+      "dateWidths": [
+        {
+          "width": 168,
+          "scroll": 168
+        },
+        {
+          "width": 168,
+          "scroll": 168
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Matches",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Ranking",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Team",
+          "width": 67,
+          "scroll": 67
+        }
+      ]
+    },
+    {
+      "locale": "en_GB",
+      "width": 360,
+      "scroll": 360,
+      "dateWidths": [
+        {
+          "width": 208,
+          "scroll": 208
+        },
+        {
+          "width": 208,
+          "scroll": 208
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Matches",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Ranking",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Team",
+          "width": 77,
+          "scroll": 77
+        }
+      ]
+    },
+    {
+      "locale": "en_GB",
+      "width": 390,
+      "scroll": 390,
+      "dateWidths": [
+        {
+          "width": 238,
+          "scroll": 238
+        },
+        {
+          "width": 238,
+          "scroll": 238
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Matches",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Ranking",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Team",
+          "width": 84,
+          "scroll": 84
+        }
+      ]
+    },
+    {
+      "locale": "en_GB",
+      "width": 430,
+      "scroll": 430,
+      "dateWidths": [
+        {
+          "width": 278,
+          "scroll": 278
+        },
+        {
+          "width": 278,
+          "scroll": 278
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Matches",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Ranking",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Team",
+          "width": 94,
+          "scroll": 94
+        }
+      ]
+    },
+    {
+      "locale": "ja",
+      "width": 320,
+      "scroll": 320,
+      "dateWidths": [
+        {
+          "width": 168,
+          "scroll": 168
+        },
+        {
+          "width": 168,
+          "scroll": 168
+        }
+      ],
+      "nav": [
+        {
+          "text": "ホーム",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "試合",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "ランキング",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "チーム",
+          "width": 67,
+          "scroll": 67
+        }
+      ]
+    },
+    {
+      "locale": "ja",
+      "width": 360,
+      "scroll": 360,
+      "dateWidths": [
+        {
+          "width": 208,
+          "scroll": 208
+        },
+        {
+          "width": 208,
+          "scroll": 208
+        }
+      ],
+      "nav": [
+        {
+          "text": "ホーム",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "試合",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "ランキング",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "チーム",
+          "width": 77,
+          "scroll": 77
+        }
+      ]
+    },
+    {
+      "locale": "ja",
+      "width": 390,
+      "scroll": 390,
+      "dateWidths": [
+        {
+          "width": 238,
+          "scroll": 238
+        },
+        {
+          "width": 238,
+          "scroll": 238
+        }
+      ],
+      "nav": [
+        {
+          "text": "ホーム",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "試合",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "ランキング",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "チーム",
+          "width": 84,
+          "scroll": 84
+        }
+      ]
+    },
+    {
+      "locale": "ja",
+      "width": 430,
+      "scroll": 430,
+      "dateWidths": [
+        {
+          "width": 278,
+          "scroll": 278
+        },
+        {
+          "width": 278,
+          "scroll": 278
+        }
+      ],
+      "nav": [
+        {
+          "text": "ホーム",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "試合",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "ランキング",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "チーム",
+          "width": 94,
+          "scroll": 94
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "width": 320,
+      "scroll": 320,
+      "dateWidths": [
+        {
+          "width": 168,
+          "scroll": 168
+        },
+        {
+          "width": 168,
+          "scroll": 168
+        }
+      ],
+      "nav": [
+        {
+          "text": "Accueil",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Matchs",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Classement",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Équipe",
+          "width": 67,
+          "scroll": 67
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "width": 360,
+      "scroll": 360,
+      "dateWidths": [
+        {
+          "width": 208,
+          "scroll": 208
+        },
+        {
+          "width": 208,
+          "scroll": 208
+        }
+      ],
+      "nav": [
+        {
+          "text": "Accueil",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Matchs",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Classement",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Équipe",
+          "width": 77,
+          "scroll": 77
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "width": 390,
+      "scroll": 390,
+      "dateWidths": [
+        {
+          "width": 238,
+          "scroll": 238
+        },
+        {
+          "width": 238,
+          "scroll": 238
+        }
+      ],
+      "nav": [
+        {
+          "text": "Accueil",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Matchs",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Classement",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Équipe",
+          "width": 84,
+          "scroll": 84
+        }
+      ]
+    },
+    {
+      "locale": "fr",
+      "width": 430,
+      "scroll": 430,
+      "dateWidths": [
+        {
+          "width": 278,
+          "scroll": 278
+        },
+        {
+          "width": 278,
+          "scroll": 278
+        }
+      ],
+      "nav": [
+        {
+          "text": "Accueil",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Matchs",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Classement",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Équipe",
+          "width": 94,
+          "scroll": 94
+        }
+      ]
+    },
+    {
+      "locale": "de",
+      "width": 320,
+      "scroll": 320,
+      "dateWidths": [
+        {
+          "width": 168,
+          "scroll": 168
+        },
+        {
+          "width": 168,
+          "scroll": 168
+        }
+      ],
+      "nav": [
+        {
+          "text": "Start",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Spiele",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Rangliste",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Team",
+          "width": 67,
+          "scroll": 67
+        }
+      ]
+    },
+    {
+      "locale": "de",
+      "width": 360,
+      "scroll": 360,
+      "dateWidths": [
+        {
+          "width": 208,
+          "scroll": 208
+        },
+        {
+          "width": 208,
+          "scroll": 208
+        }
+      ],
+      "nav": [
+        {
+          "text": "Start",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Spiele",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Rangliste",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Team",
+          "width": 77,
+          "scroll": 77
+        }
+      ]
+    },
+    {
+      "locale": "de",
+      "width": 390,
+      "scroll": 390,
+      "dateWidths": [
+        {
+          "width": 238,
+          "scroll": 238
+        },
+        {
+          "width": 238,
+          "scroll": 238
+        }
+      ],
+      "nav": [
+        {
+          "text": "Start",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Spiele",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Rangliste",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Team",
+          "width": 84,
+          "scroll": 84
+        }
+      ]
+    },
+    {
+      "locale": "de",
+      "width": 430,
+      "scroll": 430,
+      "dateWidths": [
+        {
+          "width": 278,
+          "scroll": 278
+        },
+        {
+          "width": 278,
+          "scroll": 278
+        }
+      ],
+      "nav": [
+        {
+          "text": "Start",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Spiele",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Rangliste",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Team",
+          "width": 94,
+          "scroll": 94
+        }
+      ]
+    },
+    {
+      "locale": "it",
+      "width": 320,
+      "scroll": 320,
+      "dateWidths": [
+        {
+          "width": 168,
+          "scroll": 168
+        },
+        {
+          "width": 168,
+          "scroll": 168
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Partite",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Classifica",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Squadra",
+          "width": 67,
+          "scroll": 67
+        }
+      ]
+    },
+    {
+      "locale": "it",
+      "width": 360,
+      "scroll": 360,
+      "dateWidths": [
+        {
+          "width": 208,
+          "scroll": 208
+        },
+        {
+          "width": 208,
+          "scroll": 208
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Partite",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Classifica",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Squadra",
+          "width": 77,
+          "scroll": 77
+        }
+      ]
+    },
+    {
+      "locale": "it",
+      "width": 390,
+      "scroll": 390,
+      "dateWidths": [
+        {
+          "width": 238,
+          "scroll": 238
+        },
+        {
+          "width": 238,
+          "scroll": 238
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Partite",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Classifica",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Squadra",
+          "width": 84,
+          "scroll": 84
+        }
+      ]
+    },
+    {
+      "locale": "it",
+      "width": 430,
+      "scroll": 430,
+      "dateWidths": [
+        {
+          "width": 278,
+          "scroll": 278
+        },
+        {
+          "width": 278,
+          "scroll": 278
+        }
+      ],
+      "nav": [
+        {
+          "text": "Home",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Partite",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Classifica",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Squadra",
+          "width": 94,
+          "scroll": 94
+        }
+      ]
+    },
+    {
+      "locale": "es",
+      "width": 320,
+      "scroll": 320,
+      "dateWidths": [
+        {
+          "width": 168,
+          "scroll": 168
+        },
+        {
+          "width": 168,
+          "scroll": 168
+        }
+      ],
+      "nav": [
+        {
+          "text": "Inicio",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Partidos",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Clasificación",
+          "width": 67,
+          "scroll": 67
+        },
+        {
+          "text": "Equipo",
+          "width": 67,
+          "scroll": 67
+        }
+      ]
+    },
+    {
+      "locale": "es",
+      "width": 360,
+      "scroll": 360,
+      "dateWidths": [
+        {
+          "width": 208,
+          "scroll": 208
+        },
+        {
+          "width": 208,
+          "scroll": 208
+        }
+      ],
+      "nav": [
+        {
+          "text": "Inicio",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Partidos",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Clasificación",
+          "width": 77,
+          "scroll": 77
+        },
+        {
+          "text": "Equipo",
+          "width": 77,
+          "scroll": 77
+        }
+      ]
+    },
+    {
+      "locale": "es",
+      "width": 390,
+      "scroll": 390,
+      "dateWidths": [
+        {
+          "width": 238,
+          "scroll": 238
+        },
+        {
+          "width": 238,
+          "scroll": 238
+        }
+      ],
+      "nav": [
+        {
+          "text": "Inicio",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Partidos",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Clasificación",
+          "width": 84,
+          "scroll": 84
+        },
+        {
+          "text": "Equipo",
+          "width": 84,
+          "scroll": 84
+        }
+      ]
+    },
+    {
+      "locale": "es",
+      "width": 430,
+      "scroll": 430,
+      "dateWidths": [
+        {
+          "width": 278,
+          "scroll": 278
+        },
+        {
+          "width": 278,
+          "scroll": 278
+        }
+      ],
+      "nav": [
+        {
+          "text": "Inicio",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Partidos",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Clasificación",
+          "width": 94,
+          "scroll": 94
+        },
+        {
+          "text": "Equipo",
+          "width": 94,
+          "scroll": 94
+        }
+      ]
+    },
+    {
+      "variant": {
+        "empty": true
+      },
+      "url": "http://localhost:3110/ranking"
+    },
+    {
+      "variant": {
+        "auth": false
+      },
+      "url": "http://localhost:3110/login"
+    },
+    {
+      "variant": {
+        "noTeam": true
+      },
+      "url": "http://localhost:3110/dashboard"
+    },
+    {
+      "variant": {
+        "viewer": true
+      },
+      "url": "http://localhost:3110/team/players"
+    }
+  ],
+  "errors": []
+}

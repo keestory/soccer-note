@@ -24,7 +24,7 @@ export default async function HomeScreenshotPage({ searchParams }: { searchParam
           upcoming={params.scenario === 'upcoming' ? { id: 'preview-next', opponent: '서울 유나이티드', date: formatDate('2026-10-18', locale), location: '서울숲 축구장' } : undefined} upcomingLabel={t.nextMatch}
           canCreateMatch={params.scenario !== 'viewer'} newMatchLabel={t.newMatchRecord} allMatchesLabel={t.viewAll} teamOperationsLabel={t.homeTeamOperationsLabel} teamOperationsDescription={t.homeTeamOperationsDescription} noMatchesLabel={t.noMatches} noUpcomingLabel={t.homeNoUpcoming} emptyDescription={t.homeEmptyDescription} />
       </main>
-      <BottomNavShell activeKey="home" labels={{ home: t.homeLabel, matches: t.matchesLabel, team: t.teamLabel }} />
+      <BottomNavShell activeKey="home" labels={{ home: t.homeLabel, matches: t.matchesLabel, ranking: t.rankingTab, team: t.teamLabel }} />
     </div>
   )
 }
