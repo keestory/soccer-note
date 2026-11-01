@@ -20,6 +20,7 @@ const bebasNeue = Bebas_Neue({
 export const metadata: Metadata = {
   title: 'Football Note - 축구팀 경기 기록',
   description: '축구팀 경기 결과와 선수 평가를 기록하고 MVP를 선정하세요',
+  icons: { icon: '/app-icon-512.png' },
 }
 
 export const viewport: Viewport = {

@@ -67,6 +67,8 @@ Final production webpack build completed, including TypeScript and all 47 static
 
 Production delivery is verified separately against the remote commit, the Vercel production deployment and the anonymous introduction/account screens. A successful local build does not establish production OAuth completion.
 
+Initial deployed anonymous checks passed all ten 390/1440px introduction/account screens and their navigation, but Chrome reported the existing missing `/favicon.ico`. Root metadata now explicitly points to the existing `/app-icon-512.png`; no image asset was changed. The final production smoke check also checks console errors to catch this class of resource failure.
+
 ## Known limits
 
 Email-confirmation signup stores the requested display name in auth metadata. The existing database trigger still initializes the profile name from the email prefix. No generic login-time rewrite or cross-device name synchronization was introduced.
