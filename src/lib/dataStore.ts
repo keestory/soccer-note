@@ -342,3 +342,19 @@ export async function refreshData(): Promise<void> {
   updateStore({ isLoaded: false })
   await loadAppData()
 }
+
+/** An authentication handoff must not reuse anonymous or another account's cache. */
+export async function refreshDataAfterAuth(userId: string): Promise<void> {
+  // Let any pre-login load finish before resetting so it cannot overwrite the new session.
+  if (loadPromise) await loadPromise.catch(() => {})
+  loadPromise = null
+  const sameUser = store.userId === userId
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.removeItem(CACHE_KEY)
+      if (!sameUser) localStorage.removeItem('selectedTeamId')
+    } catch { /* Cache is optional. */ }
+  }
+  updateStore({ ...EMPTY_SERVER_SNAPSHOT })
+  await loadAppData()
+}

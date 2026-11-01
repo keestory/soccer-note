@@ -1,5 +1,5 @@
 # Soccer Note — GOLDLINE / Volt
-Updated 2026-10-31.
+Updated 2026-11-01.
 
 ## Direction
 Restore the original GOLDLINE dark theme at the user's request: near-black canvas, volt neon actions, dark cards and condensed scoreboard numbers. Historical reference: `fedd654` / `f9f4f10` before the light-theme conversion in `386bf26`. Keep the current state-aware home, routes, player tools and data ownership.
@@ -97,3 +97,11 @@ Keep the approved header, portrait fade and fixed shield caps. The record grid u
 The shared quarter-total helper counts clean-sheet checks and adds stored contribution values, preserving one-decimal precision. Appearances count unique played matches. Detail cards, per-match history/charts and totals use the same values; ranking record metrics share the helper and exclude upcoming matches. Attendance ranking keeps its existing separate attendance rule.
 
 Intake: S1 existing-record extension with UI/UX, data review and independent QA. discoverability/store_compliance/competitive_benchmark: not-applicable; no new route, personal field, permission, SDK, schema or market decision.
+
+## Entry and onboarding
+
+The public root is the first of three reachable introduction screens: player cards, match/player records, then starting a team. The two supplied Pinterest references inform the large left-aligned heading, one central visual, progress and low-positioned action; their artwork and palettes are not application assets. Reuse the existing PlayerCard with a silhouette and clearly fictional records. Public examples never read real member data.
+
+EntryBrand, AuthScreen and the first-team choice share the SOCCER NOTE wordmark, dark tokens and solid Volt primary buttons. Mobile entry uses 24px side padding (20px below 360px), 30–38px headings, 16px inputs and 44px minimum interactive targets. Desktop uses a bounded two-column introduction/form layout. Google retains its white provider surface. Long translations and short viewports scroll naturally.
+
+Intake: S2; main integration, Astra UI/UX, one engineer, independent QA and auth/security review. competitive_benchmark: required, focused 2026-11-01 Korea iPhone Business chart/source check plus the supplied references. discoverability: required for public-root semantics and fictional-only content, with no indexing-policy change. store_compliance: required for authentication handoff parity; no new provider, SDK, permission, schema, native artifact or store submission. Evidence and limits: `docs/design-qa/2026-11-01-entry-onboarding.md`.

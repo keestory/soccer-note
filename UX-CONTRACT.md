@@ -88,3 +88,12 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 - Five card records use a 3+2 layout with equal numeric emphasis. Translated labels may wrap while the numbers stay aligned within each row.
 - Clean sheets count true quarter-record checks; contribution sums stored quarter values without converting numeric values into booleans. Example: two quarters with clean-sheet checks and contributions 1 and 2.5 produce appearances 1 / clean sheets 2 / contribution 3.5.
 - Detail history, defense-point charts, totals and clean-sheet badges follow those same quarter totals. This replaces the old detail-only any/max collapse; ranking continues the established quarter-sum meaning. Record metrics omit upcoming fixtures and contribution is presented to the stored one-decimal precision.
+
+## Entry flow (2026-11-01)
+
+- Anonymous root visitors start at step 1 of 3. Next, previous, skip, signup and login are keyboard accessible; advancing focuses the new heading. No timed advance or extra logo splash. Signed-in visitors go to Home.
+- Login and signup share persistent labels, password visibility controls, busy/error feedback, provider branding and links that preserve a valid invitation destination.
+- New accounts without an authenticated session see email-confirmation guidance. This state performs no protected profile or membership write. Immediate authenticated signup saves the name with a visible retry on profile failure. Regular login never overwrites a later profile name from signup metadata.
+- Users without a team see equally prominent create/join choices. Create opens the existing form; cancel returns focus to its choice. Names are trimmed, duplicate submission is blocked and failure keeps the draft. Existing team selection and approval-pending membership behavior remain intact.
+- Authentication accepts only `/dashboard`, `/team/join` or the latter with one valid eight-character invite code as a return path. Invalid/external targets fall back to Home. OAuth return storage expires after 30 minutes and is consumed once.
+- Login handoffs clear anonymous/previous-account data before navigating. Web PKCE code exchange remains owned by the Supabase client; native callbacks retain the existing custom-scheme exchange.

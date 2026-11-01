@@ -9,6 +9,7 @@ import type { Team, MemberStatus } from '@/types/database'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
 import { Skeleton } from '@/components/Skeleton'
+import { authEntryPath } from '@/lib/auth-return'
 
 function JoinTeamContent() {
   const { t } = useI18n()
@@ -35,7 +36,7 @@ function JoinTeamContent() {
 
   const checkAuth = async () => {
     const user = await getSessionUser(supabase)
-    if (!user) { router.push(`/login?redirect=/team/join${inviteCode ? `?code=${inviteCode}` : ''}`); return }
+    if (!user) { router.push(authEntryPath('login', `/team/join${inviteCode ? `?code=${inviteCode}` : ''}`)); return }
     const { data: profile } = await supabase.from('profiles').select('display_name').eq('id', user.id).single()
     setDisplayName(profile?.display_name || user.user_metadata?.display_name || null)
     setLoadingProfile(false)

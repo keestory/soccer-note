@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { isUpcomingMatchDate } from '@/lib/match-date'
 import { useRouter } from 'next/navigation'
-import { ChevronDown, LogOut, User, UserPlus } from 'lucide-react'
+import { ArrowLeft, ChevronDown, LogOut, User } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { BottomNav } from '@/components/BottomNav'
 import { HomeFocus, type HomeMatchSummary } from '@/components/home/HomeFocus'
@@ -18,6 +18,9 @@ import { createClient } from '@/lib/supabase'
 import { cacheResolvedTeam } from '@/lib/team-resolver'
 import { updateStore, type TeamWithRole } from '@/lib/dataStore'
 import { formatDate } from '@/lib/utils'
+import { EntryBrand, TeamChoiceContent } from '@/components/entry/Entry'
+import { getEntryCopy } from '@/lib/entry-copy'
+import entryStyles from '@/components/entry/entry.module.css'
 
 function primeTeamCache(userId: string, team: TeamWithRole) {
   const isCoach = team.role === 'coach' || team.user_id === userId
@@ -36,12 +39,16 @@ export default function DashboardPage() {
   const [showCreateTeam, setShowCreateTeam] = useState(false)
   const [showTeamPicker, setShowTeamPicker] = useState(false)
   const [teamName, setTeamName] = useState('')
+  const [creatingTeam, setCreatingTeam] = useState(false)
+  const [createError, setCreateError] = useState('')
+  const createPending = useRef(false)
+  const createChoice = useRef<HTMLButtonElement>(null)
+  const entryCopy = getEntryCopy(locale)
 
   useEffect(() => { if (data.isLoaded && !data.userId) router.push('/login') }, [data.isLoaded, data.userId, router])
   useEffect(() => {
     if (data.userId && data.selectedTeam) {
       primeTeamCache(data.userId, data.selectedTeam)
-      if (data.teams.length === 0) setShowCreateTeam(true)
     }
   }, [data.userId, data.selectedTeam, data.teams.length])
   useEffect(() => {
@@ -58,20 +65,31 @@ export default function DashboardPage() {
 
   const handleCreateTeam = async (event: React.FormEvent) => {
     event.preventDefault()
-    if (!teamName.trim() || !data.userId) return
-    const supabase = createClient()
-    const { data: team, error } = await supabase.from('teams').insert({ name: teamName, user_id: data.userId }).select().single()
-    if (error) { toast.error(t.teamCreateFailed); return }
-    await supabase.from('team_members').upsert({
-      id: crypto.randomUUID(), team_id: team.id, user_id: data.userId,
-      role: 'coach', can_edit_players: true, can_edit_matches: true, can_edit_quarters: true,
-      joined_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    })
-    toast.success(t.teamCreated)
-    setTeamName('')
+    if (!teamName.trim() || !data.userId || createPending.current) return
+    createPending.current = true
+    setCreatingTeam(true)
+    setCreateError('')
+    try {
+      const supabase = createClient()
+      const { data: team, error } = await supabase.from('teams').insert({ name: teamName.trim(), user_id: data.userId }).select().single()
+      if (error) { setCreateError(t.teamCreateFailed); return }
+      await supabase.from('team_members').upsert({
+        id: crypto.randomUUID(), team_id: team.id, user_id: data.userId,
+        role: 'coach', can_edit_players: true, can_edit_matches: true, can_edit_quarters: true,
+        joined_at: new Date().toISOString(), updated_at: new Date().toISOString(),
+      })
+      toast.success(t.teamCreated)
+      setTeamName('')
+      setShowCreateTeam(false)
+      updateStore({ isLoaded: false })
+      await data.refresh()
+    } catch { setCreateError(t.teamCreateFailed) }
+    finally { createPending.current = false; setCreatingTeam(false) }
+  }
+
+  const closeCreateTeam = () => {
     setShowCreateTeam(false)
-    updateStore({ isLoaded: false })
-    await data.refresh()
+    requestAnimationFrame(() => createChoice.current?.focus())
   }
 
   const handleLogout = async () => { await createClient().auth.signOut(); router.push('/') }
@@ -97,19 +115,24 @@ export default function DashboardPage() {
 
   if (!selectedTeam || showCreateTeam) {
     return (
-      <div className="light min-h-screen px-5 py-8" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
-        <div className="mx-auto max-w-lg">
-          <div className="mb-8 text-center"><span className="font-display text-[30px] tracking-widest text-[color:var(--brand)]">FOOTBALL NOTE</span></div>
-          {teams.length > 0 && <div className="mb-4 rounded-2xl border border-[color:var(--line)] bg-[color:var(--card)] p-5"><h2 className="mb-4 font-black">{t.myTeams} ({teams.length})</h2><div className="max-h-[40vh] space-y-2 overflow-y-auto">{teams.map(team => <button key={team.id} onClick={() => handleSelectTeam(team)} className="flex w-full items-center justify-between rounded-xl bg-[color:var(--card2)] p-4 text-left"><span><span className="block font-bold">{team.name}</span><span className="text-sm text-[color:var(--muted2)]">{team.role === 'coach' ? t.coach : t.member}</span></span><ChevronDown aria-hidden="true" className="h-4 w-4 -rotate-90 text-[color:var(--text3)]" /></button>)}</div></div>}
-          <form noValidate onSubmit={handleCreateTeam} className="mb-4 rounded-2xl border border-[color:var(--line)] bg-[color:var(--card)] p-5">
-            <h2 className="mb-4 font-black">{t.createTeam}</h2>
-            <input aria-label={t.teamName} value={teamName} onChange={event => setTeamName(event.target.value)} className="mb-3 w-full rounded-xl border border-[color:var(--line)] bg-[color:var(--card2)] px-4 py-3 outline-none" placeholder={t.teamName} />
-            <button type="submit" disabled={!teamName.trim()} className="w-full rounded-xl bg-[color:var(--navy)] py-3.5 font-black text-[color:var(--accent)] disabled:opacity-40">{t.createTeamButton}</button>
-          </form>
-          <Link href="/team/join" className="flex items-center justify-center gap-2 rounded-xl bg-[color:var(--card)] py-4 font-bold"><UserPlus size={17} />{t.inviteCodeJoin}</Link>
-          <div className="mt-4 flex flex-col gap-2"><Link href="/profile" className="flex items-center justify-center gap-2 py-3 text-sm text-[color:var(--text3)]"><User size={16} />{t.myProfile}</Link><button onClick={handleLogout} className="flex items-center justify-center gap-2 py-3 text-sm text-[color:var(--text3)]"><LogOut size={16} />{t.logout}</button></div>
+      <main className={entryStyles.page}>
+        <div className={entryStyles.firstTeam}>
+          <header className={entryStyles.header}><EntryBrand href="/dashboard" /><Link href="/profile" className={entryStyles.textLink}><User size={16} aria-hidden="true" />&nbsp;{t.myProfile}</Link></header>
+          <div className={entryStyles.heading}><h1 className={entryStyles.title}>{entryCopy.teamTitle}</h1><p className={entryStyles.description}>{entryCopy.teamDescription}</p></div>
+          {teams.length > 0 && <section className={entryStyles.teamList}><h2>{t.myTeams} ({teams.length})</h2><div className="space-y-2">{teams.map(team => <button key={team.id} onClick={() => handleSelectTeam(team)} className="flex min-h-[64px] w-full items-center justify-between rounded-xl bg-[color:var(--card2)] p-4 text-left"><span><span className="block font-bold">{team.name}</span><span className="text-sm text-[color:var(--muted2)]">{team.role === 'coach' ? t.coach : t.member}</span></span><ChevronDown aria-hidden="true" className="h-4 w-4 -rotate-90 text-[color:var(--text3)]" /></button>)}</div></section>}
+          {showCreateTeam ? <form onSubmit={handleCreateTeam} className={entryStyles.teamForm} aria-busy={creatingTeam}>
+            <button type="button" onClick={closeCreateTeam} disabled={creatingTeam} className={entryStyles.textLink}><ArrowLeft size={16} aria-hidden="true" />&nbsp;{t.cancel}</button>
+            <h2>{t.createTeam}</h2>
+            {createError && <p role="alert" className={entryStyles.error}>{createError}</p>}
+            <div className={entryStyles.field}><label htmlFor="new-team-name">{t.teamName}</label><input id="new-team-name" autoFocus required value={teamName} onChange={event => setTeamName(event.target.value)} placeholder={t.teamName} disabled={creatingTeam} /></div>
+            <button type="submit" disabled={creatingTeam || !teamName.trim()} className={entryStyles.primary}>{creatingTeam ? t.loading : t.createTeamButton}</button>
+          </form> : <div className={entryStyles.choices}>
+            <button ref={createChoice} type="button" className={entryStyles.choice} onClick={() => setShowCreateTeam(true)}><TeamChoiceContent /></button>
+            <Link href="/team/join" className={entryStyles.choice}><TeamChoiceContent join /></Link>
+          </div>}
+          <div className="mt-6 flex justify-center"><button onClick={handleLogout} className={entryStyles.textLink}><LogOut size={16} aria-hidden="true" />&nbsp;{t.logout}</button></div>
         </div>
-      </div>
+      </main>
     )
   }
 
