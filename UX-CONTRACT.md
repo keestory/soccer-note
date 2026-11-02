@@ -107,3 +107,12 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 - Multiple requests are not an atomic transaction. Some changes may have saved before an error. A lost deletion acknowledgment may require returning to the match and reopening to reconcile actual records; the UI does not claim the database stayed unchanged.
 - The explicit Back action confirms leaving a dirty/failed draft with the shared accessible Sheet. Browser unload warns where supported. Browser history, native back, forced termination and cross-reload draft recovery are not guaranteed.
 - Success reconciles IDs and the matching team's cached quarter without reloading the entire editor or changing other teams' cached data. All eight locales expose status and recovery. No new data collection, schema, RLS or native permission is added.
+
+## Confirmed team context (2026-11-02, cloud reconstruction)
+
+- Team name, records, roster, visibility and client permission cache change together after the latest selection completes. Until then the previous confirmed team remains visible. A failed request keeps it intact.
+- The team Sheet shows the current team, names the pending/failed target, and offers retry. Escape, backdrop, Close, cancel and leaving Home invalidate pending selection; late responses cannot switch teams after dismissal. Another target can supersede a pending target without an extra confirmation tap.
+- Account changes immediately clear old account context and invalidate old loads. A stale permission resolver cannot replace a newly committed team's cache. Actual database authorization remains owned by unchanged RLS.
+- Same-team refresh does not reset an open player draft or pending mutation. A refresh snapshot overlapping a write cannot erase its acknowledged result. Old player and quarter acknowledgements cannot update another account/team or a later visit to the original team.
+- Player forms freeze while saving and announce progress. A failed member link retains the acknowledged inserted player for a link-only retry within the current roster visit; the UI explicitly distinguishes saved player from unconfirmed link. Full reload/route-exit recovery and a lost insertion acknowledgement are not guaranteed.
+- The quarter saver rechecks editor/account context before its subsequent delete stage. Requests already sent to the server are not undone by switching account or leaving.

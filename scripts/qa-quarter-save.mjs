@@ -16,14 +16,14 @@ const base = process.env.SOCCER_QA_BASE_URL || 'http://127.0.0.1:3127'
 const productionFixture = process.env.SOCCER_QA_ALLOW_PRODUCTION_FIXTURE === '1' && base === 'https://soccer-note-hazel.vercel.app'
 assert(productionFixture || ['http://localhost:3127', 'http://127.0.0.1:3127'].includes(base), 'Only the exact local app or explicitly authorized production fixture alias is allowed')
 const supabaseHost = productionFixture ? 'qfbfkgbqmeqgwnbdphlm.supabase.co' : 'soccer-note-test.supabase.co'
-const output = resolve('docs/design-qa/2026-11-02-quarter-save', productionFixture ? 'production' : '.')
+const output = resolve(process.env.SOCCER_QA_OUTPUT || 'docs/design-qa/2026-11-02-quarter-save', productionFixture && !process.env.SOCCER_QA_OUTPUT ? 'production' : '.')
 await mkdir(output, { recursive: true })
 const ids = { user: '10000000-0000-4000-8000-000000000001', team: '20000000-0000-4000-8000-000000000001', match: '30000000-0000-4000-8000-000000000001', quarter: '40000000-0000-4000-8000-000000000001' }
 const players = [1, 2, 3].map(n => ({ id: `50000000-0000-4000-8000-00000000000${n}`, team_id: ids.team, name: `가상 선수 ${['하나', '둘', '셋'][n - 1]}`, number: [9, 7, 11][n - 1], default_position: 'FW', created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' }))
 const record = (n, extra = {}) => ({ id: `60000000-0000-4000-8000-00000000000${n}`, quarter_id: ids.quarter, player_id: players[n - 1].id, position_type: 'FW', position_x: 65, position_y: n === 1 ? 35 : 65, rating: 7, goals: 0, assists: 0, clean_sheet: false, contribution: 0, praise_text: null, improvement_text: null, highlight_text: null, media_urls: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z', ...extra })
 const session = { access_token: `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify({ sub: ids.user, role: 'authenticated', exp: 4102444800 })).toString('base64url')}.fixture`, refresh_token: 'fictional-refresh-token', expires_at: 4102444800, expires_in: 3600, token_type: 'bearer', user: { id: ids.user, aud: 'authenticated', role: 'authenticated', email: 'fixture@example.invalid', user_metadata: {}, app_metadata: {}, created_at: '2026-01-01T00:00:00Z' } }
 const report = { observedAt: new Date().toISOString(), app: base, data: 'Synthetic in-memory fixtures only; all data APIs intercepted', cases: [], consoleErrors: [], pageErrors: [], unexpectedRequests: [], screenshots: [], cleanupWarnings: [] }
-const browser = await chromium.launch({ channel: 'chrome', headless: true })
+const browser = await chromium.launch({ ...(process.env.SOCCER_QA_BROWSER ? { executablePath: process.env.SOCCER_QA_BROWSER } : { channel: 'chrome' }), headless: true })
 const pause = ms => new Promise(r => setTimeout(r, ms))
 async function closeBounded(surface, label) {
   let timer
@@ -38,7 +38,7 @@ async function closeBounded(surface, label) {
 async function persistReport() {
   report.expectedInjectedNetworkErrors = report.consoleErrors.filter(text => /Failed to load resource:.*(500|ERR_CONNECTION_FAILED)/.test(text))
   report.unexpectedConsoleErrors = report.consoleErrors.filter(text => !report.expectedInjectedNetworkErrors.includes(text))
-  report.passed = report.cases.length === 8 && report.cases.every(item => item.status === 'pass') && report.pageErrors.length === 0 && report.unexpectedRequests.length === 0 && report.unexpectedConsoleErrors.length === 0
+  report.passed = report.cases.length === 8 && report.cases.every(item => item.status === 'pass') && report.pageErrors.length === 0 && report.unexpectedRequests.length === 0 && report.unexpectedConsoleErrors.length === 0 && report.cleanupWarnings.length === 0
   await writeFile(`${output}/browser-results.json`, JSON.stringify(report, null, 2) + '\n')
 }
 
@@ -56,6 +56,7 @@ async function fixture({ width = 390, locale = 'ko', initial = [record(1), recor
   await context.route('**/*', async route => {
     const request = route.request(), url = new URL(request.url()), method = request.method()
     if (url.origin === new URL(base).origin && !url.pathname.startsWith('/api/') && ['GET', 'HEAD'].includes(method)) return route.continue()
+    if (url.origin === new URL(base).origin && url.pathname === '/api/team-members-profiles' && method === 'GET') return fulfill(route, { profiles: [] })
     if (url.origin === new URL(base).origin && url.pathname === '/api/upload') {
       const mode = state.nextUpload; state.nextUpload = null
       await waitMode(mode)
@@ -69,8 +70,13 @@ async function fixture({ width = 390, locale = 'ko', initial = [record(1), recor
     if (url.pathname.startsWith('/auth/v1/')) return fulfill(route, session.user)
     const table = url.pathname.split('/').at(-1)
     state.requests.push({ method, table })
-    if (table === 'matches' && method === 'GET') return fulfill(route, { id: ids.match, team_id: ids.team, opponent: '가상 상대팀', match_date: '2026-01-01', quarters: [{ id: ids.quarter, match_id: ids.match, quarter_number: 1, duration_minutes: 25, quarter_records: state.records.map(row => ({ ...row, player: players.find(p => p.id === row.player_id) })) }] })
-    if (table === 'teams') return fulfill(route, { id: ids.team, user_id: ids.user, name: '가상 QA 팀' })
+    const objectResponse = request.headers().accept?.includes('application/vnd.pgrst.object+json')
+    const respondRows = rows => fulfill(route, objectResponse ? rows[0] ?? null : rows)
+    if (table === 'matches' && method === 'GET') return respondRows([{ id: ids.match, team_id: ids.team, opponent: '가상 상대팀', match_date: '2026-01-01', quarters: [{ id: ids.quarter, match_id: ids.match, quarter_number: 1, duration_minutes: 25, quarter_records: state.records.map(row => ({ ...row, player: players.find(p => p.id === row.player_id) })) }] }])
+    if (table === 'teams' && method === 'GET') return respondRows([{ id: ids.team, user_id: ids.user, name: '가상 QA 팀' }])
+    if (table === 'profiles' && method === 'GET') return respondRows([{ id: ids.user, display_name: '가상 코치' }])
+    if (['team_members', 'training_sessions'].includes(table) && method === 'GET') return respondRows([])
+    if (table === 'team_visibility_settings' && method === 'GET') return respondRows([{ team_id: ids.team }])
     if (table === 'players') return fulfill(route, players)
     if (table === 'match_attendees') return fulfill(route, [])
     if (table === 'quarter_substitutions') {
@@ -124,7 +130,7 @@ async function selectPlayer(page, n = 1) { await page.getByRole('button', { name
 async function changeGoal(page) { await selectPlayer(page); await page.getByRole('button', { name: '골 +', exact: true }).click() }
 async function expectReady(page) { await page.waitForFunction(() => document.querySelector('#quarter-save-status')?.textContent === '변경 사항이 모두 저장됐어요.'); assert.equal(await save(page).isDisabled(), true) }
 async function expectFailure(page) { await page.waitForFunction(() => document.querySelector('#quarter-save-status')?.getAttribute('role') === 'alert'); assert.equal(await page.locator('fieldset').evaluate(el => el.disabled), true); assert.equal(await save(page).isEnabled(), true) }
-async function screenshot(page, file) { await page.evaluate(() => scrollTo(0, 0)); await page.waitForFunction(() => { const button = document.querySelector('header button:last-child'); return Math.abs(Number(getComputedStyle(button).opacity) - (button.disabled ? 0.5 : 1)) < 0.001 }); await page.screenshot({ path: `${output}/${file}`, fullPage: false }); const metrics = await page.evaluate(() => ({ innerWidth, innerHeight, dpr: devicePixelRatio, scrollWidth: document.documentElement.scrollWidth, statusColor: getComputedStyle(document.querySelector('#quarter-save-status')).color, statusBackground: getComputedStyle(document.querySelector('#quarter-save-status')).backgroundColor, saveOpacity: getComputedStyle(document.querySelector('header button:last-child')).opacity })); report.screenshots.push({ file, ...metrics }) }
+async function screenshot(page, file) { await page.evaluate(() => document.fonts.ready); await page.evaluate(() => scrollTo(0, 0)); await page.waitForFunction(() => { const button = document.querySelector('header button:last-child'); return Math.abs(Number(getComputedStyle(button).opacity) - (button.disabled ? 0.5 : 1)) < 0.001 }); await page.screenshot({ path: `${output}/${file}`, fullPage: false }); const metrics = await page.evaluate(() => ({ innerWidth, innerHeight, dpr: devicePixelRatio, scrollWidth: document.documentElement.scrollWidth, fontStatus: document.fonts.status, computedFontFamily: getComputedStyle(document.body).fontFamily, fontFaces: [...new Map([...document.fonts].map(face => [`${face.family}:${face.weight}:${face.status}`, { family: face.family, weight: face.weight, status: face.status }])).values()], statusColor: getComputedStyle(document.querySelector('#quarter-save-status')).color, statusBackground: getComputedStyle(document.querySelector('#quarter-save-status')).backgroundColor, saveOpacity: getComputedStyle(document.querySelector('header button:last-child')).opacity })); report.screenshots.push({ file, ...metrics }) }
 async function caseRun(name, action) { if (process.env.SOCCER_QA_CASE && !name.includes(process.env.SOCCER_QA_CASE)) return; const start = Date.now(); try { const evidence = await action(); report.cases.push({ name, status: 'pass', elapsedMs: Date.now() - start, evidence }); await persistReport() } catch (error) { report.cases.push({ name, status: 'fail', error: error.stack }); await persistReport(); throw error } }
 
 try {

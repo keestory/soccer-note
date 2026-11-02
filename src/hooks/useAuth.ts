@@ -18,7 +18,10 @@ export function useAuth() {
   const supabase = createClient()
 
   useEffect(() => {
+    let active = true
+    let generation = 0
     const checkAuth = async () => {
+      const request = generation
       const now = Date.now()
 
       // 캐시가 유효하면 사용
@@ -30,6 +33,7 @@ export function useAuth() {
 
       // 새로 fetch
       const { data: { user: fetchedUser } } = await supabase.auth.getUser()
+      if (!active || request !== generation) return
       cachedUser = fetchedUser
       lastAuthCheck = now
       setUser(fetchedUser)
@@ -40,12 +44,14 @@ export function useAuth() {
 
     // Auth 상태 변경 리스너
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      generation++
       cachedUser = session?.user || null
       lastAuthCheck = Date.now()
       setUser(cachedUser)
+      setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => { active = false; generation++; subscription.unsubscribe() }
   }, [])
 
   return { user, loading }

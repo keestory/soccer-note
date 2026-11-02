@@ -1,6 +1,7 @@
 'use client'
 
 import { createClient, authHeader } from '@/lib/supabase'
+import { cacheResolvedTeam, clearResolvedTeam } from '@/lib/team-resolver'
 import type { Team, Match, TeamMember, Player, TeamVisibilitySettings, TrainingSession, Profile, QuarterRecord } from '@/types/database'
 
 // 프로필이 포함된 멤버 타입
@@ -17,6 +18,10 @@ interface DataStore {
   // 팀 데이터
   teams: TeamWithRole[]
   selectedTeamId: string | null
+  pendingTeamId: string | null
+  teamLoadError: string | null
+  appLoadError: boolean
+  contextVersion: number
 
   // 선택된 팀의 데이터
   matches: Match[]
@@ -49,6 +54,10 @@ export const EMPTY_SERVER_SNAPSHOT: Readonly<DataStore> = Object.freeze({
   displayName: null,
   teams: EMPTY_TEAMS,
   selectedTeamId: null,
+  pendingTeamId: null,
+  teamLoadError: null,
+  appLoadError: false,
+  contextVersion: 0,
   matches: EMPTY_MATCHES,
   trainings: EMPTY_TRAININGS,
   players: EMPTY_PLAYERS,
@@ -67,19 +76,11 @@ export interface TeamWithRole extends Team {
 // NOTE: updateStore가 매번 새 객체를 만들어 참조를 교체한다.
 // useSyncExternalStore는 스냅샷을 참조로 비교하므로, 제자리 변경(Object.assign)을
 // 하면 리렌더가 트리거되지 않는다 (예: 팀 전환 시 헤더가 즉시 안 바뀜).
-let store: DataStore = {
-  userId: null,
-  displayName: null,
-  teams: [],
-  selectedTeamId: null,
-  matches: [],
-  trainings: [],
-  players: [],
-  members: [],
-  visibilitySettings: null,
-  lastFetch: 0,
-  isLoaded: false
-}
+let store: DataStore = { ...EMPTY_SERVER_SNAPSHOT }
+let appRequest = 0
+let teamRequest = 0
+let writeRevision = 0
+const activeWrites = new Set<DataContext>()
 
 // 리스너들
 type Listener = () => void
@@ -96,9 +97,54 @@ function notify() {
 
 // 스토어 업데이트
 export function updateStore(partial: Partial<DataStore>) {
+  const identityChanged = ('userId' in partial && partial.userId !== store.userId) ||
+    ('selectedTeamId' in partial && partial.selectedTeamId !== store.selectedTeamId)
+  if (identityChanged) {
+    teamRequest++
+    partial = { ...partial, contextVersion: store.contextVersion + 1 }
+  }
   // 새 객체를 만들어 참조를 교체 → useSyncExternalStore가 변경을 감지해 리렌더
   store = { ...store, ...partial }
   notify()
+}
+
+/** Identity is stable across refreshes, but never across account/team changes. */
+export interface DataContext { userId: string | null; teamId: string | null; version: number }
+export function getDataContext(): DataContext {
+  return { userId: store.userId, teamId: store.selectedTeamId, version: store.contextVersion }
+}
+export function isDataContextCurrent(context: DataContext) {
+  return context.userId === store.userId && context.teamId === store.selectedTeamId && context.version === store.contextVersion
+}
+export function beginTeamWrite(): { context: DataContext; finish: () => void } {
+  const context = getDataContext()
+  writeRevision++
+  activeWrites.add(context)
+  let finished = false
+  return { context, finish: () => {
+    if (finished) return
+    finished = true
+    activeWrites.delete(context)
+    // A departed editor must not invalidate another account's first load.
+    if (isDataContextCurrent(context)) {
+      writeRevision++
+      updateStore({ lastFetch: 0 })
+    }
+  } }
+}
+export function applyPlayerWrite(context: DataContext, player: Player | null, removedId?: string, memberId?: string) {
+  if (!isDataContextCurrent(context) || (player && player.team_id !== context.teamId)) return false
+  updateStore({
+    players: player
+      ? store.players.some(item => item.id === player.id)
+        ? store.players.map(item => item.id === player.id ? player : item)
+        : [...store.players, player]
+      : store.players.filter(item => item.id !== removedId),
+    members: memberId && player ? store.members.map(item => item.id === memberId ? { ...item, linked_player_id: player.id } : item) : store.members,
+    lastFetch: 0,
+  })
+  persistSnapshot()
+  return true
 }
 
 // 스토어 읽기
@@ -143,7 +189,7 @@ function hydrateFromCache() {
     const s = JSON.parse(raw)
     if (!s?.userId) return
     // 즉시 그릴 수 있도록 isLoaded=true, 단 lastFetch=0으로 두어 곧바로 재검증
-    store = { ...store, ...s, isLoaded: true, lastFetch: 0 }
+    store = { ...store, ...s, pendingTeamId: null, teamLoadError: null, contextVersion: 0, isLoaded: false, lastFetch: 0 }
   } catch {
     // 파싱 실패 시 캐시 무시
   }
@@ -154,11 +200,60 @@ hydrateFromCache()
 
 // 데이터 로드 상태
 let loadPromise: Promise<void> | null = null
+let observedClient: ReturnType<typeof createClient> | null = null
+
+function savedTeamId() {
+  try { return typeof window === 'undefined' ? null : localStorage.getItem('selectedTeamId') } catch { return null }
+}
+
+function resetAccount(userId: string | null) {
+  appRequest++
+  teamRequest++
+  loadPromise = null
+  if (store.userId) clearResolvedTeam(store.userId)
+  try {
+    localStorage.removeItem(CACHE_KEY)
+    if (store.userId !== userId) localStorage.removeItem('selectedTeamId')
+  } catch { /* Optional browser cache. */ }
+  updateStore({ ...EMPTY_SERVER_SNAPSHOT, contextVersion: store.contextVersion + 1, userId, isLoaded: !userId })
+}
+
+/** Auth callbacks invalidate synchronously; requests start outside the auth lock. */
+export function observeDataAuth() {
+  const client = createClient()
+  if (observedClient === client || !client.auth.onAuthStateChange) return
+  observedClient = client
+  client.auth.onAuthStateChange((_event, session) => {
+    const userId = session?.user.id ?? null
+    if (userId === store.userId) return
+    resetAccount(userId)
+    if (userId) queueMicrotask(() => { void loadAppData().catch(() => {}) })
+  })
+}
+
+function commitTeam(teamId: string, snapshot: Partial<DataStore>, base: Partial<DataStore> = {}) {
+  const userId = base.userId ?? store.userId
+  const team = (base.teams ?? store.teams).find(item => item.id === teamId)
+  if (!userId || !team) return
+  const isCoach = team.role === 'coach' || team.user_id === userId
+  // Browser storage and resolver cache are ready before subscribers see the snapshot.
+  try { localStorage.setItem('selectedTeamId', teamId) } catch { /* Optional cache. */ }
+  clearResolvedTeam(userId)
+  cacheResolvedTeam(userId, {
+    teamId, role: team.role, isOwner: team.user_id === userId,
+    canEditPlayers: isCoach || !!team.membership?.can_edit_players,
+    canEditMatches: isCoach || !!team.membership?.can_edit_matches,
+    canEditQuarters: isCoach || !!team.membership?.can_edit_quarters,
+  })
+  updateStore({ ...base, ...snapshot, selectedTeamId: teamId, pendingTeamId: null, teamLoadError: null, isLoaded: true, lastFetch: Date.now() })
+  persistSnapshot()
+}
 
 /**
  * 앱 데이터 초기 로드 (한 번만 실행)
  */
 export async function loadAppData(): Promise<void> {
+  observeDataAuth()
   // 이미 로딩 중이면 기다림
   if (loadPromise) return loadPromise
 
@@ -167,29 +262,29 @@ export async function loadAppData(): Promise<void> {
     return
   }
 
-  loadPromise = (async () => {
+  const request = ++appRequest
+  const selection = teamRequest
+  const revision = writeRevision
+  const current = () => request === appRequest
+  updateStore({ appLoadError: false })
+  const promise = (async () => {
     const supabase = createClient()
 
     // 인증 확인 — getSession()은 로컬 저장소에서 즉시 읽어 네트워크 왕복이 없다
     // (getUser()는 매번 서버에 토큰 검증 요청을 보내 느리다).
     const { data: { session } } = await supabase.auth.getSession()
+    if (!current()) return
     const user = session?.user
     if (!user) {
-      // 로그아웃 상태 — 남아있는 캐시 제거
-      if (typeof window !== 'undefined') { try { localStorage.removeItem(CACHE_KEY) } catch {} }
-      updateStore({ isLoaded: true, lastFetch: Date.now(), userId: null, teams: [], matches: [], trainings: [], players: [], members: [] })
-      loadPromise = null
+      resetAccount(null)
       return
     }
     // 캐시가 다른 사용자 것이면 폐기
-    if (store.userId && store.userId !== user.id && typeof window !== 'undefined') {
-      try { localStorage.removeItem(CACHE_KEY) } catch {}
+    if (store.userId !== user.id) {
+      resetAccount(user.id)
+      await loadAppData()
+      return
     }
-
-    // 저장된 팀 ID가 있으면 팀 상세 데이터를 기본 조회와 동시에 시작한다
-    // (팀 목록이 돌아올 때까지 기다리지 않아 왕복 한 번을 절약).
-    const cachedTeamId = typeof window !== 'undefined' ? localStorage.getItem('selectedTeamId') : null
-    const eagerTeamDataPromise = cachedTeamId ? loadTeamData(cachedTeamId).catch(() => {}) : null
 
     // 병렬로 모든 기본 데이터 로드
     const [profileResult, ownedTeamsResult, membershipsResult] = await Promise.all([
@@ -197,6 +292,8 @@ export async function loadAppData(): Promise<void> {
       supabase.from('teams').select('*').eq('user_id', user.id).or('is_removed.is.null,is_removed.eq.false'),
       supabase.from('team_members').select('*, team:teams (*)').eq('user_id', user.id).eq('status', 'approved').or('is_removed.is.null,is_removed.eq.false')
     ])
+    if (!current()) return
+    if (ownedTeamsResult.error || membershipsResult.error) throw ownedTeamsResult.error || membershipsResult.error
 
     const displayName = profileResult.data?.display_name || user.user_metadata?.display_name || null
 
@@ -236,39 +333,44 @@ export async function loadAppData(): Promise<void> {
     }
 
     // 선택된 팀 결정
-    const savedTeamId = typeof window !== 'undefined' ? localStorage.getItem('selectedTeamId') : null
-    const selectedTeamId = teamsWithRole.find(t => t.id === savedTeamId)?.id || teamsWithRole[0]?.id || null
-
-    updateStore({
-      userId: user.id,
-      displayName,
-      teams: teamsWithRole,
-      selectedTeamId,
-      isLoaded: true,
-      lastFetch: Date.now()
-    })
-
-    persistSnapshot()
-
-    // 선택된 팀의 데이터 로드 (이미 병렬로 받은 팀이면 그 결과를 재사용)
-    if (selectedTeamId) {
-      if (selectedTeamId === cachedTeamId && eagerTeamDataPromise) {
-        await eagerTeamDataPromise
-      } else {
-        await loadTeamData(selectedTeamId)
-      }
+    const preferredTeamId = store.selectedTeamId ?? savedTeamId()
+    const selectedTeamId = teamsWithRole.find(t => t.id === preferredTeamId)?.id || teamsWithRole[0]?.id || null
+    const base = { userId: user.id, displayName, teams: teamsWithRole }
+    if (teamRequest !== selection) return
+    if (!selectedTeamId) {
+      clearResolvedTeam(user.id)
+      try { localStorage.removeItem('selectedTeamId') } catch {}
+      updateStore({ ...EMPTY_SERVER_SNAPSHOT, ...base, contextVersion: store.contextVersion, isLoaded: true, lastFetch: Date.now() })
+      persistSnapshot()
+      return
     }
-
-    loadPromise = null
+    try {
+      const snapshot = await fetchTeamData(selectedTeamId)
+      if (!current() || teamRequest !== selection) return
+      if (revision !== writeRevision || hasCurrentWrite()) {
+        // Existing screens can keep their confirmed snapshot. An interrupted
+        // first load needs a retry state rather than an endless loading screen.
+        if (!store.isLoaded) updateStore({ appLoadError: true })
+        return
+      }
+      commitTeam(selectedTeamId, snapshot, base)
+    } catch (error) {
+      if (!current() || teamRequest !== selection) return
+      // On first entry keep the team list so a failed load can be retried.
+      updateStore({ ...(store.selectedTeamId ? {} : base), isLoaded: true, teamLoadError: selectedTeamId })
+      throw error
+    }
   })()
-
-  return loadPromise
+  loadPromise = promise
+  try { await promise } catch {
+    if (current() && !store.teamLoadError) updateStore({ appLoadError: true })
+  } finally { if (loadPromise === promise) loadPromise = null }
 }
 
 /**
  * 특정 팀의 상세 데이터 로드
  */
-export async function loadTeamData(teamId: string): Promise<void> {
+async function fetchTeamData(teamId: string): Promise<Partial<DataStore>> {
   const supabase = createClient()
 
   const [matchesResult, trainingsResult, playersResult, visibilityResult, membersResult, profilesResponse] = await Promise.all([
@@ -277,10 +379,14 @@ export async function loadTeamData(teamId: string): Promise<void> {
     supabase.from('matches').select('*, quarters (*, quarter_records (*)), match_attendees (id, player_id)').eq('team_id', teamId).order('match_date', { ascending: false }),
     supabase.from('training_sessions').select('*, training_attendees (id, player_id)').eq('team_id', teamId).order('training_date', { ascending: false }),
     supabase.from('players').select('*').eq('team_id', teamId).order('number'),
-    supabase.from('team_visibility_settings').select('*').eq('team_id', teamId).single(),
+    supabase.from('team_visibility_settings').select('*').eq('team_id', teamId).maybeSingle(),
     supabase.from('team_members').select('*').eq('team_id', teamId).or('is_removed.is.null,is_removed.eq.false').order('joined_at'),
     fetch(`/api/team-members-profiles?teamId=${teamId}`, { headers: await authHeader(supabase) })
   ])
+  for (const result of [matchesResult, trainingsResult, playersResult, visibilityResult, membersResult]) {
+    if (result.error) throw result.error
+  }
+  if (!profilesResponse.ok) throw new Error('Team profiles could not be loaded')
 
   // record.player를 players 목록에서 붙여 기존 코드와 호환되는 형태로 복원
   const players = playersResult.data || []
@@ -304,41 +410,60 @@ export async function loadTeamData(teamId: string): Promise<void> {
         profile: profileMap.get(m.user_id)
       }))
     }
-  } catch (e) {
+  } catch {
     // 프로필 로드 실패 시 무시
   }
 
-  updateStore({
-    selectedTeamId: teamId,
+  return {
     matches,
     trainings: trainingsResult.data || [],
     players,
     members: membersWithProfiles,
     visibilitySettings: visibilityResult.data || null
-  })
-
-  // localStorage에 저장
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('selectedTeamId', teamId)
   }
-  persistSnapshot()
+}
+
+function hasCurrentWrite() {
+  return [...activeWrites].some(isDataContextCurrent)
+}
+
+export function cancelTeamSelection() {
+  // Route/StrictMode cleanup also calls this when no picker request exists.
+  // It must not cancel an unrelated first app load.
+  if (store.pendingTeamId !== null) teamRequest++
+  updateStore({ pendingTeamId: null, teamLoadError: null })
 }
 
 /**
  * 팀 변경
  */
-export async function selectTeam(teamId: string): Promise<void> {
-  // Update selectedTeamId immediately so the header reflects the new team
-  // before DB queries finish loading the team's data
-  updateStore({ selectedTeamId: teamId })
-  if (typeof window !== 'undefined') localStorage.setItem('selectedTeamId', teamId)
-  await loadTeamData(teamId)
+export async function selectTeam(teamId: string): Promise<boolean> {
+  if (!store.userId || !store.teams.some(team => team.id === teamId)) return false
+  const request = ++teamRequest
+  const context = getDataContext()
+  const revision = writeRevision
+  updateStore({ pendingTeamId: teamId, teamLoadError: null })
+  try {
+    const snapshot = await fetchTeamData(teamId)
+    if (request !== teamRequest || !isDataContextCurrent(context)) return false
+    if (teamId === context.teamId && (revision !== writeRevision || hasCurrentWrite())) {
+      updateStore({ pendingTeamId: null })
+      return false
+    }
+    commitTeam(teamId, snapshot)
+    return true
+  } catch {
+    if (request === teamRequest && isDataContextCurrent(context)) updateStore({ pendingTeamId: null, teamLoadError: teamId })
+    return false
+  }
 }
+
+export async function loadTeamData(teamId: string): Promise<void> { await selectTeam(teamId) }
 
 /** Apply acknowledged editor writes only to an already loaded matching team.
  * Preserve other records (including ones another editor may have added). */
-export function applySavedQuarterRecords(teamId: string, matchId: string, quarterId: string, records: QuarterRecord[], removedIds: string[]) {
-  if (store.selectedTeamId !== teamId || records.some(record => record.quarter_id !== quarterId)) return
+export function applySavedQuarterRecords(teamId: string, matchId: string, quarterId: string, records: QuarterRecord[], removedIds: string[], context?: DataContext) {
+  if ((context && !isDataContextCurrent(context)) || store.selectedTeamId !== teamId || records.some(record => record.quarter_id !== quarterId)) return
   const match = store.matches.find(item => item.id === matchId && item.team_id === teamId)
   if (!match?.quarters?.some(quarter => quarter.id === quarterId)) return
   const playerIds = new Set(records.map(record => record.player_id))
@@ -363,22 +488,12 @@ export function applySavedQuarterRecords(teamId: string, matchId: string, quarte
  * 데이터 새로고침
  */
 export async function refreshData(): Promise<void> {
-  updateStore({ isLoaded: false })
+  updateStore({ lastFetch: 0 })
   await loadAppData()
 }
 
 /** An authentication handoff must not reuse anonymous or another account's cache. */
 export async function refreshDataAfterAuth(userId: string): Promise<void> {
-  // Let any pre-login load finish before resetting so it cannot overwrite the new session.
-  if (loadPromise) await loadPromise.catch(() => {})
-  loadPromise = null
-  const sameUser = store.userId === userId
-  if (typeof window !== 'undefined') {
-    try {
-      localStorage.removeItem(CACHE_KEY)
-      if (!sameUser) localStorage.removeItem('selectedTeamId')
-    } catch { /* Cache is optional. */ }
-  }
-  updateStore({ ...EMPTY_SERVER_SNAPSHOT })
+  resetAccount(userId)
   await loadAppData()
 }

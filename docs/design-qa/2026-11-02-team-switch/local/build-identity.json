@@ -1,0 +1,8 @@
+{
+  "buildId": "LGZgaQM3qLvAVWMbGHyBB",
+  "sourceManifestSha256": "ab3d56c6cfcda1c6193a8dbec8984f495d606b2569ba12ed5907eab79e57391a",
+  "sourceFileCount": 119,
+  "packageJsonSha256": "71c60b3f11cacf56b60c040fda526bbab31da3abadfa76c105648e1bd02ab84a",
+  "packageLockSha256": "7ceeaa76f8555c195a0cd0ea47e65e133ea864d12349cdd6210ab34134e0a315",
+  "scope": "Post-review local Webpack production build, cloud-only, synthetic API fixtures, temporary font mirror"
+}

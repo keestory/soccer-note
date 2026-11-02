@@ -11,6 +11,7 @@ export interface ResolvedTeam {
 
 const TTL = 5 * 60 * 1000 // 5 minutes
 const cacheKey = (userId: string) => `team_resolve_${userId}`
+const generations = new Map<string, number>()
 
 interface CacheEntry extends ResolvedTeam {
   ts: number
@@ -33,6 +34,7 @@ function readCache(userId: string): ResolvedTeam | null {
 
 /** Call when the user leaves/disbands a team so stale cache doesn't linger. */
 export function clearResolvedTeam(userId: string) {
+  generations.set(userId, (generations.get(userId) ?? 0) + 1)
   try {
     sessionStorage.removeItem(cacheKey(userId))
   } catch {
@@ -63,6 +65,14 @@ export async function resolveTeam(
   userId: string,
   teamIdParam?: string | null
 ): Promise<ResolvedTeam | null> {
+  const generation = generations.get(userId) ?? 0
+  let originalSelection: string | null = null
+  try { originalSelection = localStorage.getItem('selectedTeamId') } catch {}
+  const cacheIfCurrent = (team: ResolvedTeam) => {
+    let currentSelection: string | null = null
+    try { currentSelection = localStorage.getItem('selectedTeamId') } catch {}
+    if ((generations.get(userId) ?? 0) === generation && currentSelection === originalSelection) cacheResolvedTeam(userId, team)
+  }
   // Explicit ?team= param bypasses the cache (but refreshes it)
   if (!teamIdParam) {
     const cached = readCache(userId)
@@ -112,12 +122,12 @@ export async function resolveTeam(
     ])
     if (owned) {
       const team = asOwner(teamIdParam)
-      cacheResolvedTeam(userId, team)
+      cacheIfCurrent(team)
       return team
     }
     if (membership && membership.status === 'approved') {
       const team = asMember(membership)
-      cacheResolvedTeam(userId, team)
+      cacheIfCurrent(team)
       return team
     }
     return null
@@ -151,6 +161,6 @@ export async function resolveTeam(
   if (!team && ownedTeams && ownedTeams.length > 0) team = asOwner(ownedTeams[0].id)
   if (!team && memberships && memberships.length > 0) team = asMember(memberships[0])
 
-  if (team) cacheResolvedTeam(userId, team)
+  if (team) cacheIfCurrent(team)
   return team
 }

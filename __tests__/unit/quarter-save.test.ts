@@ -60,6 +60,15 @@ function database(initial: QuarterRecord[]) {
 }
 
 describe('quarter persistence acknowledgement and recovery', () => {
+  it('stops the delete stage if the account or editor context changes after upsert', async () => {
+    const baseline = [row('r1', 'p1'), row('r2', 'p2')]
+    const db = database(baseline)
+    let checks = 0
+    await expect(saveQuarterRecords(db.client, 'q1', [input('p1')], baseline, () => ++checks === 1)).rejects.toBeInstanceOf(QuarterSaveError)
+    expect(db.calls).toEqual([{ kind: 'upsert' }])
+    expect(db.rows.has('r2')).toBe(true)
+  })
+
   it('never removes old records if upsert fails', async () => {
     const initial = [row('r1', 'p1'), row('r2', 'p2')]
     const db = database(initial)

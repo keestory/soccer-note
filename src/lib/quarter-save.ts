@@ -18,7 +18,9 @@ export async function saveQuarterRecords(
   quarterId: string,
   draft: QuarterRecordInput[],
   baseline: SavedRecordIdentity[],
+  isCurrent: () => boolean = () => true,
 ): Promise<QuarterRecord[]> {
+  if (!isCurrent()) throw new Error('Quarter save context changed')
   const playerIds = new Set(draft.map(record => record.player_id))
   if (playerIds.size !== draft.length || draft.some(record => record.quarter_id !== quarterId) || baseline.some(record => record.quarter_id !== quarterId)) {
     throw new Error('Invalid quarter save scope')
@@ -44,6 +46,7 @@ export async function saveQuarterRecords(
   if (removedIds.length > 0) {
     let acknowledgedRemovedIds: string[] = []
     try {
+      if (!isCurrent()) throw new Error('Quarter save context changed')
       const { data, error } = await client.from('quarter_records').delete()
         .eq('quarter_id', quarterId).in('id', removedIds).select('id, quarter_id')
       if (error) throw error

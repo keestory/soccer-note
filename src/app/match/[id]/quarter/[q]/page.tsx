@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useSyncExternalStore } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient, getSessionUser, authHeader } from '@/lib/supabase'
 import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner, Trash2, ArrowRightLeft } from 'lucide-react'
@@ -14,7 +14,7 @@ import { QuarterEditSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { saveQuarterRecords, QuarterSaveError, type QuarterRecordInput, type SavedRecordIdentity } from '@/lib/quarter-save'
 import { getQuarterSaveCopy } from '@/lib/quarter-save-copy'
-import { applySavedQuarterRecords } from '@/lib/dataStore'
+import { applySavedQuarterRecords, beginTeamWrite, getDataContext, getServerSnapshot, getStore, isDataContextCurrent, observeDataAuth, subscribe, type DataContext } from '@/lib/dataStore'
 
 // Formation presets: positions as [x%, y%] for each role
 // Field is horizontal: left = our goal, right = opponent goal
@@ -130,6 +130,8 @@ export default function QuarterEditPage() {
   const { t, locale } = useI18n()
   const copy = getDesignCopy(locale)
   const saveCopy = getQuarterSaveCopy(locale)
+  const store = useSyncExternalStore(subscribe, getStore, getServerSnapshot)
+  const editorContext = useRef<DataContext>(getDataContext())
   const [positionPlayerId, setPositionPlayerId] = useState<string | null>(null)
   const router = useRouter()
   const params = useParams()
@@ -164,11 +166,13 @@ export default function QuarterEditPage() {
   const teamIdRef = useRef<string | null>(null)
   const generationRef = useRef(0)
   const operationRef = useRef<{ kind: 'save' | 'upload' | 'substitution'; generation: number } | null>(null)
+  const activeWriteRef = useRef<ReturnType<typeof beginTeamWrite> | null>(null)
   const uploadAbortRef = useRef<AbortController | null>(null)
   const failedSaveRef = useRef(false)
   const supabase = createClient()
   const busy = saving || uploadingMedia || savingSub
   const dirty = savedDraft !== null && draftKey(fieldPlayers) !== savedDraft
+  useEffect(() => { observeDataAuth() }, [])
 
   useEffect(() => {
     if (!dirty && !busy && !saveFailed) return
@@ -189,6 +193,7 @@ export default function QuarterEditPage() {
 
   useEffect(() => {
     const generation = ++generationRef.current
+    editorContext.current = getDataContext()
     operationRef.current = null
     setLoading(true)
     setSaving(false)
@@ -207,12 +212,15 @@ export default function QuarterEditPage() {
     return () => {
       generationRef.current = generation + 1
       uploadAbortRef.current?.abort()
+      activeWriteRef.current?.finish()
+      activeWriteRef.current = null
       operationRef.current = null
     }
-  }, [matchId, quarterNumber])
+  }, [matchId, quarterNumber, store.contextVersion])
 
   const loadData = async (generation: number) => {
-    const isCurrent = () => generationRef.current === generation
+    const context = editorContext.current
+    const isCurrent = () => generationRef.current === generation && isDataContextCurrent(context)
     setPositionPlayerId(null)
     // Check permissions first
     const user = await getSessionUser(supabase)
@@ -537,7 +545,7 @@ export default function QuarterEditPage() {
   }
 
   const handleAddSubstitution = async () => {
-    if (!quarter || !subOutId || !subInId || operationRef.current || failedSaveRef.current) return
+    if (!quarter || !subOutId || !subInId || operationRef.current || failedSaveRef.current || !isDataContextCurrent(editorContext.current)) return
     if (subOutId === subInId) {
       toast.error(t.samePlayerSubError)
       return
@@ -545,7 +553,8 @@ export default function QuarterEditPage() {
 
     const operation = { kind: 'substitution' as const, generation: generationRef.current }
     operationRef.current = operation
-    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation
+    const context = editorContext.current
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation && isDataContextCurrent(context)
     setSavingSub(true)
     try {
       const { data, error } = await supabase
@@ -602,10 +611,11 @@ export default function QuarterEditPage() {
   }
 
   const handleDeleteSubstitution = async (subId: string) => {
-    if (operationRef.current || failedSaveRef.current || !quarter) return
+    if (operationRef.current || failedSaveRef.current || !quarter || !isDataContextCurrent(editorContext.current)) return
     const operation = { kind: 'substitution' as const, generation: generationRef.current }
     operationRef.current = operation
-    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation
+    const context = editorContext.current
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation && isDataContextCurrent(context)
     setSavingSub(true)
     try {
       const { error } = await supabase
@@ -648,14 +658,15 @@ export default function QuarterEditPage() {
   }
 
   const handleMediaUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0 || !selectedPlayer || operationRef.current || failedSaveRef.current) return
+    if (!files || files.length === 0 || !selectedPlayer || operationRef.current || failedSaveRef.current || !isDataContextCurrent(editorContext.current)) return
 
     const operation = { kind: 'upload' as const, generation: generationRef.current }
     operationRef.current = operation
     const controller = new AbortController()
     uploadAbortRef.current = controller
     const player = selectedPlayer
-    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation
+    const context = editorContext.current
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation && isDataContextCurrent(context)
     setUploadingMedia(true)
     const newUrls: string[] = []
 
@@ -707,10 +718,12 @@ export default function QuarterEditPage() {
   }
 
   const handleSave = async () => {
-    if (!quarter || operationRef.current || loading) return
+    if (!quarter || operationRef.current || loading || !isDataContextCurrent(editorContext.current)) return
+    const write = beginTeamWrite()
+    activeWriteRef.current = write
     const operation = { kind: 'save' as const, generation: generationRef.current }
     operationRef.current = operation
-    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation && isDataContextCurrent(write.context)
     const snapshot = fieldPlayers
     const baseline = baselineRef.current
     const teamId = teamIdRef.current
@@ -718,7 +731,7 @@ export default function QuarterEditPage() {
     setSaveFailed(false)
 
     try {
-      const records = await saveQuarterRecords(supabase, quarter.id, snapshot.map(player => toRecord(quarter.id, player)), baseline)
+      const records = await saveQuarterRecords(supabase, quarter.id, snapshot.map(player => toRecord(quarter.id, player)), baseline, isCurrent)
       if (!isCurrent()) return
       const byPlayer = new Map(records.map(record => [record.player_id, record]))
       const reconciled = snapshot.map(player => ({ ...player, id: byPlayer.get(player.playerId)!.id }))
@@ -731,7 +744,7 @@ export default function QuarterEditPage() {
       baselineRef.current = records.map(record => ({ id: record.id, quarter_id: record.quarter_id, player_id: record.player_id }))
       setSavedDraft(draftKey(reconciled))
       failedSaveRef.current = false
-      if (teamId) applySavedQuarterRecords(teamId, matchId, quarter.id, records, baseline.filter(record => !byPlayer.has(record.player_id)).map(record => record.id))
+      if (teamId) applySavedQuarterRecords(teamId, matchId, quarter.id, records, baseline.filter(record => !byPlayer.has(record.player_id)).map(record => record.id), write.context)
       toast.success(t.quarterAllSaved)
     } catch (error) {
       if (isCurrent()) {
@@ -751,12 +764,14 @@ export default function QuarterEditPage() {
             const player = snapshot.find(item => item.id === previous)
             return player ? acknowledged.get(player.playerId)?.id ?? previous : previous
           })
-          if (teamId) applySavedQuarterRecords(teamId, matchId, quarter.id, error.acknowledgedRecords, error.acknowledgedRemovedIds)
+          if (teamId) applySavedQuarterRecords(teamId, matchId, quarter.id, error.acknowledgedRecords, error.acknowledgedRemovedIds, write.context)
         }
         failedSaveRef.current = true
         setSaveFailed(true)
       }
     } finally {
+      write.finish()
+      if (activeWriteRef.current === write) activeWriteRef.current = null
       if (isCurrent()) {
         operationRef.current = null
         setSaving(false)
@@ -770,7 +785,7 @@ export default function QuarterEditPage() {
     else router.push(`/match/${matchId}`)
   }
 
-  if (loading) {
+  if (loading || !isDataContextCurrent(editorContext.current)) {
     return <QuarterEditSkeleton />
   }
 
