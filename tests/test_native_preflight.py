@@ -38,6 +38,8 @@ import json, os, pathlib, sys, time
 mode = {mode!r}
 pathlib.Path({str(self.pid)!r}).write_text(str(os.getpid()))
 replies = json.loads({json.dumps(replies)!r})
+if mode == "warning_rpc_error":
+    print("WARNING: could not create PATH aliases: Read-only file system", file=sys.stderr)
 if mode == "readonly":
     print("Project-local config disabled until project trusted", file=sys.stderr)
     print("Error: Read-only file system (os error 30) private-token", file=sys.stderr)
@@ -55,7 +57,7 @@ for line in sys.stdin:
     if mode == "refresh":
         print(json.dumps({{"id": 99, "method": "account/chatgptAuthTokens/refresh"}}), flush=True)
         time.sleep(10)
-    if mode == "rpc_error":
+    if mode in ("rpc_error", "warning_rpc_error"):
         print(json.dumps({{"id": request["id"], "error": {{"message": "private-token"}}}}), flush=True)
         continue
     print(json.dumps({{"id": request["id"], "result": replies[request["method"]]}}), flush=True)
@@ -132,6 +134,34 @@ for line in sys.stdin:
         report = probe_native(ROOT, executable=str(self.root / "absent"))
         self.assertEqual(report["reason"], "native_cli_start_failed")
         self.assertEqual(report["stage"], "native_startup")
+
+    def test_alias_warning_does_not_replace_an_initialize_rpc_failure(self):
+        report = probe_native(ROOT, executable=self.server("warning_rpc_error"))
+        self.assertEqual(report["reason"], "native_metadata_rpc_error")
+        self.assertIn("read_only_filesystem", report["warnings"])
+        self.assertNotIn("private-token", json.dumps(report))
+
+    def test_expired_deadline_prevents_sending_another_request(self):
+        session = MetadataSession([self.server()], ROOT, self.root, 1)
+        try:
+            session.read("initialize")
+            session.deadline = time.monotonic() - 1
+            with self.assertRaisesRegex(ProbeError, "native_metadata_timeout"):
+                session.read("account/read")
+        finally:
+            session.close()
+        requests = [json.loads(line) for line in self.calls.read_text().splitlines()]
+        self.assertNotIn("account/read", [r["method"] for r in requests])
+
+    def test_buffered_reply_cannot_bypass_expired_total_deadline(self):
+        session = MetadataSession([self.server()], ROOT, self.root, 1)
+        try:
+            session.buffer = b'{"id":1,"result":{}}\n'
+            session.deadline = time.monotonic() - 1
+            with self.assertRaisesRegex(ProbeError, "native_metadata_timeout"):
+                session._receive()
+        finally:
+            session.close()
 
     def test_invalid_or_exhausted_windows_never_report_available(self):
         for used in (True, -1, 101, "10", float("nan"), float("inf"), None):

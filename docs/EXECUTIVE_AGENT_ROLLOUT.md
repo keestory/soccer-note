@@ -48,3 +48,13 @@ CSO·CMO는 기존 `strategy`·`marketing`을 보강하고 CFO·CGO·CAIO를 새
 - 검증: kee_agent 63 tests + 17 subtests, soccer-note 46 tests + 17 subtests, wetheone 31 tests 통과. 세 저장소 lint 오류 0개; 경고 2/10/6개 중 새 2개는 unittest 표준 setUp/tearDown 이름의 오탐이다. 공통 파일 16개 SHA256 일치, diff check 통과. 실제 startup probe는 09:24:48 UTC에 blocked/종료 2/모델 0회였다.
 - 결정·남은 제한: 호스트 상태 경로·전역 trust·인증·보안 설정은 변경하지 않았다. native metadata adapter 구현과 실제 추론 연결 완료를 구분한다. 자동 토론·독립 모델 리뷰는 미실행이며 테스트 fixture를 대화로 게시하지 않는다.
 - 다음 행동: 클라우드 host가 설치 상태 파일의 지원되는 writable 위치 또는 이미 승인된 hosted metadata/runtime 경로를 제공하면 기존 계정의 포함분·초과 과금 차단을 조회하고 그 보장을 연결한다. 별도 유료 API·새 키·과금 확대는 요구하지 않는다. 부모 작업이 기존 Notion·일일 지침에 결과를 동기화한다.
+
+## 클라우드 복구 조사 후속
+
+기록 시각: 2026-11-02 10:07 UTC. 기록자: CEO 메시 [메인 통합·구현 / root]. 종류: 실제 진단/수정 결과이며 경영 역할 토론이 아니다.
+
+상위 조정 담당의 복구 요청에 따라 공식 상태 경로와 기존 daemon proxy 경로를 확인했다. statvfs에서 클라우드 Codex 홈은 read-only, workspace/tmp는 writable이었다. 설치 ID 전용 공식 경로 옵션은 확인되지 않았고 전체 state root 이동은 auth/config 선택까지 바꾸므로 적용하지 않았다. 기본 daemon 제어 소켓은 없었고 version 읽기는 종료 1/메타데이터 없음이었다. 새 endpoint·credential·trust·권한을 만들거나 이전 실패한 SQLite/log 시도를 반복하지 않았다.
+
+점검 코드의 독립 결함 두 가지를 수정했다: PATH-alias 경고로 initialize RPC 실패 사유가 덮이는 오분류, 요청 전송/버퍼 응답에서 전체 deadline을 다시 확인하지 않던 문제. 세 회귀 테스트를 추가했고 kee_agent 66 + 17 subtests, soccer-note 49 + 17 subtests, wetheone 34 tests가 통과했다. lint 오류 0, 경고 2/10/6으로 이전과 같다.
+
+결정: 현 컨테이너에서 호스트 상태 경계를 우회하지 않는다. 부모/플랫폼이 기존 인증·보안 정책을 유지하는 writable native state 또는 이미 승인된 hosted runtime endpoint를 제공해야 한다. 같은 read-only 구성의 재생성만으로 복구됐다고 판단하지 않는다. 이 컨테이너에는 환경 provisioning 도구가 없으며 새 환경/중복 작업을 만들지 않았다. 실제 자동 토론·독립 모델 리뷰·계정 한도 확인은 미실행/미확인으로 남긴다. [복구 인계와 수용 기준](NATIVE_RUNTIME_PREFLIGHT.md)을 따른다.

@@ -101,3 +101,62 @@ Official references: [app-server read protocol](https://learn.chatgpt.com/docs/a
 [workspace overage behavior](https://learn.chatgpt.com/docs/enterprise/chatgpt-work-usage-and-cost).
 The latter documents why account-specific overage settings matter; it does not
 establish which plan or settings this account has.
+
+## Recovery investigation — 2026-11-02
+
+The follow-up inspected filesystem metadata and official CLI help without
+repeating the failed SQLite/log startup attempts. `statvfs` reports the filesystem
+covering `/home/agent/.codex` as read-only; `/workspace` and `/tmp` are writable.
+This distinguishes a mount/sandbox boundary from a chmod/ownership mistake.
+Changing a repository file cannot repair it.
+
+The [supported environment variables](https://learn.chatgpt.com/docs/config-file/environment-variables)
+and [state locations](https://learn.chatgpt.com/docs/config-file/config-advanced)
+document a whole-state root and a separate SQLite root. The whole-state root also
+selects configuration and authentication. No supported installation-ID-only path
+override was found in the reference or installed CLI help. Moving the whole root
+is therefore not a demonstrated way to retain this existing authenticated session;
+no root environment variable, auth store, credential file or trust setting was
+changed or copied.
+
+Installed help also exposes `codex app-server proxy --sock <SOCKET_PATH>` for an
+already running server. The default control socket
+`/home/agent/.codex/app-server-control/app-server-control.sock` does not exist here.
+The read-only daemon-version command returned exit 1 and no JSON metadata, so it
+did not establish a running server. No alternate socket/remote endpoint was
+supplied by the host. No proxy connection, daemon start/restart, login, token
+refresh, private-session read or inference was attempted.
+
+### Recovery handoff for the coordinating host
+
+Use the saved cloud execution configuration and the existing pushed branches;
+do not create a duplicate product task or touch unrelated projects. The platform
+must supply one of these supported runtime shapes:
+
+1. A cloud executor whose **platform-provisioned Codex state** is writable where
+   the installed CLI needs installation/runtime state, with its existing approved
+   authentication and managed security policy retained by the platform. The agent
+   must not copy credentials or weaken the current sandbox to simulate this.
+2. An already authorized native app-server endpoint provided by the cloud host,
+   usable through the documented proxy/interface with the same account and no
+   additional-charge bounds. A guessed socket or a newly authenticated account
+   is not a substitute.
+
+Recreating the same read-only state layout alone is not a verified recovery.
+No environment-management/provisioning tool is exposed in this delegated container;
+the coordinating host owns this step. No replacement environment was created.
+
+Recovery acceptance: native `initialize`, `account/read` without forced refresh,
+`account/rateLimits/read` and `model/list` all complete using existing access.
+Then separately verify included/free allowance and enforced no-overage behavior
+before connecting inference. Successful metadata reads alone are insufficient.
+Five-role discussion and independent model review remain **not executed**.
+
+### Independent code fixes completed while the host is blocked
+
+The probe now distinguishes a PATH-alias read-only **warning** from a fatal
+read-only startup **error**. An initialize RPC failure retains its own reason
+instead of being overwritten by the warning. The same total deadline is checked
+before sending another request and before accepting already buffered replies.
+Three regression tests cover these defects; all use a fixture subprocess, not
+an LLM or a recovered host. This improves diagnostics without claiming host repair.

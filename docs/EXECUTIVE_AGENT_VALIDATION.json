@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-11-02T09:27:33Z",
+  "observed_at": "2026-11-02T10:07:19Z",
   "scope": "shared executive contract and native metadata preflight; no inference adapter connected",
   "roles": [
     "strategy",
@@ -19,24 +19,24 @@
   "shared_file_mismatches": [],
   "validation": {
     "kee_agent": {
-      "tests": 63,
+      "tests": 66,
       "subtests": 17,
       "lint_errors": 0,
       "lint_warnings": 2
     },
     "soccer_note": {
-      "tests": 46,
+      "tests": 49,
       "subtests": 17,
       "lint_errors": 0,
       "lint_warnings": 10
     },
     "wetheone": {
-      "tests": 31,
+      "tests": 34,
       "lint_errors": 0,
       "lint_warnings": 6
     },
     "diff_check": "passed",
-    "new_lint_warnings": "2 per repository: naming linter flags standard unittest setUp/tearDown overrides"
+    "new_lint_warnings": "0 in recovery follow-up; two prior standard unittest override warnings remain in each repository"
   },
   "live_execution": {
     "status": "blocked",
@@ -130,5 +130,32 @@
     "kee_agent": "de69db523afd3b6901bd77f2600d3b5d1c30e93c",
     "soccer-note": "66052453c2a20c3a2b86b75c20e16748b79505d9",
     "wetheone": "f3cbe6151480b81c4f8a6da6c256f3b7d1eb98c4"
+  },
+  "recovery_investigation": {
+    "status": "blocked_pending_host_provisioning",
+    "filesystem_metadata": {
+      "/home/agent/.codex": "read_only",
+      "/workspace": "writable",
+      "/tmp": "writable"
+    },
+    "installation_id_only_override": "not found in supported reference or installed CLI help",
+    "default_daemon_control_socket_exists": false,
+    "daemon_version_read": {
+      "exit_code": 1,
+      "json_metadata_received": false
+    },
+    "existing_authorized_alternative_endpoint": "not supplied",
+    "credentials_copied": false,
+    "global_state_or_trust_changed": false,
+    "environment_rebuilt": false,
+    "failed_sqlite_log_startup_repeated": false,
+    "new_model_calls": 0,
+    "code_fixes": [
+      "preserve RPC failure despite PATH alias warning",
+      "enforce total deadline before send and buffered receive"
+    ],
+    "regression_tests_added": 3,
+    "next_owner": "coordinating cloud host: provision writable native state with existing approved authentication, or provide an authorized existing hosted runtime endpoint",
+    "same_readonly_layout_rebuild_is_sufficient": false
   }
 }

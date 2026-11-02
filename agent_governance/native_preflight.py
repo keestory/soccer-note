@@ -47,8 +47,11 @@ class MetadataSession:
         self.serial = 0
         self.observed_bytes = 0
         self.warnings = set()
+        self.fatal_read_only = False
 
     def _send(self, message: dict) -> None:
+        if time.monotonic() >= self.deadline:
+            raise ProbeError("native_metadata_timeout")
         try:
             self.process.stdin.write(json.dumps(message).encode() + b"\n")
             self.process.stdin.flush()
@@ -56,6 +59,9 @@ class MetadataSession:
             raise ProbeError("native_process_exited") from None
 
     def _receive(self) -> dict:
+        # Buffered messages must not outlive the same total request budget.
+        if time.monotonic() >= self.deadline:
+            raise ProbeError("native_metadata_timeout")
         while b"\n" not in self.buffer:
             remaining = self.deadline - time.monotonic()
             if remaining <= 0 or not self.selector.select(remaining):
@@ -101,6 +107,9 @@ class MetadataSession:
     def _classify(self, text: str) -> None:
         if "Read-only file system" in text:
             self.warnings.add("read_only_filesystem")
+        if any(line.strip().startswith("Error:") and "Read-only file system" in line
+               for line in text.splitlines()):
+            self.fatal_read_only = True
         if "until project trusted" in text or "as trusted project" in text:
             self.warnings.add("project_config_untrusted")
 
@@ -203,6 +212,8 @@ def probe_native(root: Path, *, timeout: float = 20, executable: str = "codex") 
     except (ProbeError, OSError) as error:
         report["stage"] = "metadata_read" if report["completed_reads"] else "native_startup"
         report["reason"] = str(error) if isinstance(error, ProbeError) else "runtime_path_unavailable"
-        if "read_only_filesystem" in report["warnings"] and report["stage"] == "native_startup":
+        if (session is not None and session.fatal_read_only
+                and report["stage"] == "native_startup"
+                and report["reason"] == "native_process_exited"):
             report["reason"] = "native_startup_read_only_filesystem"
     return report
