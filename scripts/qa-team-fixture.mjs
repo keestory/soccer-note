@@ -7,7 +7,7 @@ import { pathToFileURL } from 'node:url'
 export const base = process.env.SOCCER_QA_BASE_URL || 'http://127.0.0.1:3127'
 export const production = base === 'https://soccer-note-hazel.vercel.app' && process.env.SOCCER_QA_ALLOW_PRODUCTION_FIXTURE === '1'
 export const preview = process.env.SOCCER_QA_PREVIEW === '1'
-assert(production || ['http://127.0.0.1:3127', 'http://localhost:3127', ...(preview ? ['http://127.0.0.1:3126'] : [])].includes(base), 'Only exact authorized fixture origins are allowed')
+assert(production || ['http://127.0.0.1:3127', 'http://localhost:3127', 'http://127.0.0.1:3128', ...(preview ? ['http://127.0.0.1:3126'] : [])].includes(base), 'Only exact authorized fixture origins are allowed')
 export const host = production ? 'qfbfkgbqmeqgwnbdphlm.supabase.co' : 'soccer-note-test.supabase.co'
 export const authKey = `sb-${host.split('.')[0]}-auth-token`
 export const output = resolve('docs/design-qa/2026-11-02-team-switch', production ? 'production' : preview ? 'preview' : 'local')

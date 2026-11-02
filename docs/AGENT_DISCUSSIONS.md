@@ -51,3 +51,7 @@
 ## X-20261102 — 경영 역할 확장 및 CMO 표시명 변경
 
 새 CSO/CFO/CGO/CAIO와 기존 CMO의 정의·모델·비용 계약은 [확장 기록](EXECUTIVE_AGENT_ROLLOUT.md)의 X001–X004를 따른다. CMO는 이후 사비로 표시하고 이 파일의 과거 기록은 고치지 않는다. 실제 다섯 역할 호출은 비용 증거 미확인으로 blocked이며 fixture를 대화로 기록하지 않았다.
+
+## 실제 hosted 경영 검토 연결 — 2026-11-02
+
+13:15–13:18 UTC 부모 작업에서 실행된 다섯 별도 역할의 실제 제안·반론·수정은 [공통 경영 검토 기록](EXECUTIVE_AGENT_ROLLOUT.md)의 **hosted-native-assistant-review** 절에 보존한다. 부모가 전달한 관측 요약이며 원문 전사·repo CLI 실행·actual model 확인·무료 과금 증명으로 확대하지 않는다. 과거 기록과 CLI blocked 상태는 유지한다.

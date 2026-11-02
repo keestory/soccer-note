@@ -40,6 +40,8 @@
 
 실행 환경 근거: 현재 클라우드 CLI는 0.163.0이며 세션의 사용 가능 모델 목록에는 위 네 모델이 있다. 이는 호출 가능성 정보일 뿐 잔액·추가 과금 차단 증거가 아니다. 읽기 전용 CLI 진단은 네트워크/파일시스템 제약이 있었고, `app-server`의 계정·한도 읽기를 위한 초기화는 응답 전에 종료됐다. 후속 확인에서는 프로젝트 미신뢰로 프로젝트 설정·hooks·exec policy가 로드되지 않는다는 안내와 `Read-only file system (os error 30)`을 확인했다. `doctor`의 config loaded를 프로젝트별 역할/비용 설정의 실제 적용 증거로 확대하지 않는다. 임시 SQLite 상태 경로만 사용한 진단도 초기화에 실패했으며 전역 trust·인증·네트워크 권한은 바꾸지 않았다. 실제 계정 entitlement·포함 잔액·과금 방지 강제 여부는 **unknown**이다. 새 역할의 실제 모델 호출은 **미실행**, actual model은 **unknown**, 기본 상태는 **blocked**다. 모델 접근을 입증하려는 유료 시험 호출도 하지 않았다.
 
+후속 관측 (2026-11-02 13:15–13:18 UTC): 부모의 native hosted-agent 도구에서 다섯 별도 역할의 실제 제안·반론이 실행됐다는 결과를 전달받았다. [hosted-native-assistant-review 기록](EXECUTIVE_AGENT_ROLLOUT.md)을 따른다. 앞의 CLI 미실행 상태·비용 가드는 유지하며, hosted 검토의 실제 모델과 과금 0원은 확인하지 못했다.
+
 ## 비용 차단과 실행 경로
 
 1. `.codex/config.toml`은 native 자동 하위 에이전트 실행을 `enabled=false`로 선언한다. 이는 파일의 선언이며 실제 CLI 적용 증거가 아니다. 현재 클라우드 CLI는 프로젝트를 신뢰된 경로로 인식하지 않아 이 설정을 로드하지 못했다. 신뢰 설정을 변경하지 않으며 native 실행은 미검증/blocked로 유지한다. 기존 개별 모델 설정은 보존한다. Python 진입점의 비용 차단은 이 native 설정과 별도로 검증한다.

@@ -1,5 +1,11 @@
 # Native runtime preflight — 2026-11-02
 
+Latest provenance update: the parent reported a real **hosted-native-assistant-review**
+at 2026-11-02 13:15–13:18 UTC; see [the discussion record](EXECUTIVE_AGENT_ROLLOUT.md).
+It did not run through this repository CLI, establish actual model/zero billing,
+or repair the blocked runtime. Earlier non-execution statements below describe
+their recorded diagnostic times.
+
 ## Result and scope
 
 The native metadata adapter is implemented in `agent_governance/native_preflight.py`.

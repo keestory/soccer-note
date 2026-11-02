@@ -43,7 +43,8 @@
     "reason": "native startup blocked by read-only installation_id; account reads not reached, billing enforcement unobserved, inference adapter unconnected",
     "actual_model": "unknown",
     "roles_invoked": [],
-    "events_generated": 0
+    "events_generated": 0,
+    "scope": "repository CLI/inference adapter only; hosted parent review is recorded separately"
   },
   "native_cli": {
     "version": "0.163.0",
@@ -157,5 +158,43 @@
     "regression_tests_added": 3,
     "next_owner": "coordinating cloud host: provision writable native state with existing approved authentication, or provide an authorized existing hosted runtime endpoint",
     "same_readonly_layout_rebuild_is_sufficient": false
+  },
+  "hosted_native_assistant_review": {
+    "provenance": "hosted-native-assistant-review",
+    "status": "executed_reported_by_parent",
+    "window_utc": "2026-11-02T13:15:00Z/2026-11-02T13:18:00Z",
+    "recorded_at": "2026-11-02T13:19:49Z",
+    "participants": [
+      "CSO 크루이프",
+      "CFO 크로스",
+      "CMO 사비",
+      "CGO 음바페",
+      "CAIO 이니에스타"
+    ],
+    "distinct_workers": 5,
+    "actual_model": "unknown",
+    "evidence": "parent supplied observable proposals, rebuttals and revisions; no raw transcript or private IDs",
+    "external_api_or_new_paid_service_used": false,
+    "zero_billing_verified": false,
+    "cli_repaired": false,
+    "real_participant_experiment_started": false,
+    "product_defect_at_review_time": "unknown",
+    "independent_code_review_completed": false
+  },
+  "hosted_review_followup": {
+    "scope": "one evidenced existing core-flow defect",
+    "product": "soccer-note",
+    "baseline_commit": "1c9340e8ff40ffa61a6fb85f2d073a72a7a4239b",
+    "defect": "quarter score save ignored match-total write error and falsely closed editor",
+    "fix": "check both errors; preserve draft/editor on failure; publish UI after error-free writes",
+    "product_unit_tests": 138,
+    "browser_synthetic_cases_passed": 3,
+    "types_and_build": "passed",
+    "product_lint_errors": 0,
+    "product_lint_existing_warnings": 49,
+    "production_deployed": false,
+    "real_activation_evidence": false,
+    "production_db_or_rls_verified": false,
+    "further_product_inspection": "stopped after one evidenced fix"
   }
 }

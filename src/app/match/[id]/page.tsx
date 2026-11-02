@@ -227,28 +227,8 @@ export default function MatchDetailPage() {
     const q = match.quarters?.find(q => q.quarter_number === editingQuarterScore)
     if (!q) return
 
-    const { error } = await supabase
-      .from('quarters')
-      .update({ home_score: qHome, away_score: qAway })
-      .eq('id', q.id)
-
-    if (error) {
-      toast.error(t.scoreSaveFailed)
-      return
-    }
-
-    // Update local state
-    setMatch(prev => {
-      if (!prev) return prev
-      const updatedQuarters = prev.quarters?.map(quarter =>
-        quarter.quarter_number === editingQuarterScore
-          ? { ...quarter, home_score: qHome, away_score: qAway }
-          : quarter
-      )
-      return { ...prev, quarters: updatedQuarters }
-    })
-
-    // Also update match total score
+    // Both writes must succeed before closing the editor. They are not atomic:
+    // keep the same draft available to retry if the total write fails.
     const newTotal = match.quarters?.reduce(
       (acc, q) => ({
         home: acc.home + (q.quarter_number === editingQuarterScore ? qHome : (q.home_score || 0)),
@@ -257,14 +237,29 @@ export default function MatchDetailPage() {
       { home: 0, away: 0 }
     ) || { home: 0, away: 0 }
 
-    await supabase
-      .from('matches')
-      .update({ home_score: newTotal.home, away_score: newTotal.away })
-      .eq('id', matchId)
+    try {
+      const { error: quarterError } = await supabase
+        .from('quarters')
+        .update({ home_score: qHome, away_score: qAway })
+        .eq('id', q.id)
+      if (quarterError) throw quarterError
 
-    setMatch(prev => prev ? { ...prev, home_score: newTotal.home, away_score: newTotal.away } : null)
-    setEditingQuarterScore(null)
-    toast.success(t.scoreSaved)
+      const { error: matchError } = await supabase
+        .from('matches')
+        .update({ home_score: newTotal.home, away_score: newTotal.away })
+        .eq('id', matchId)
+      if (matchError) throw matchError
+
+      setMatch(prev => prev ? {
+        ...prev, home_score: newTotal.home, away_score: newTotal.away,
+        quarters: prev.quarters?.map(quarter => quarter.id === q.id
+          ? { ...quarter, home_score: qHome, away_score: qAway } : quarter),
+      } : null)
+      setEditingQuarterScore(null)
+      toast.success(t.scoreSaved)
+    } catch {
+      toast.error(t.scoreSaveFailed)
+    }
   }
 
   const openAttendeePicker = () => {
