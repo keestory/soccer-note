@@ -1,4 +1,5 @@
 # 경영 에이전트 확장 기록 — 2026-11-02
+현재 상태 (2026-11-02 09:27 UTC): [kee_agent draft PR #1](https://github.com/keestory/kee_agent/pull/1)은 생성됐고 open/draft로 확인됐다. 아래 생성 거절 절은 과거 기록이다. 최신 런타임 후속 결과는 이 문서 마지막 절과 [정확한 진단](NATIVE_RUNTIME_PREFLIGHT.md)을 따른다.
 
 기록 시각: 2026-11-02 07:28:44 UTC. 기록자: CEO 메시 [메인 통합·구현 / root]. 종류: 관측 조정 메시지 요약과 구현 결과. 개별 발언 시각은 미상이며 아래 ID는 문서 기록 ID다. 사용자 원문·개인/계정/비공개 스레드 식별자는 옮기지 않는다.
 
@@ -36,3 +37,14 @@ CSO·CMO는 기존 `strategy`·`marketing`을 보강하고 CFO·CGO·CAIO를 새
 필요한 실행 전제는 (1) 기존 클라우드 host가 제공하는 신뢰 가능한 계정/모델 entitlement와 확인 시각, (2) 남은 무료·구독 포함 사용량, (3) 호출 도중 한도 소진에도 구매 크레딧·유료 fallback을 사용하지 않는 강제 보장, (4) 이를 전달하는 포함분 전용 adapter다. 현재 네 항목 모두 충족 여부를 확인할 수 없어 실제 역할 호출은 **blocked**, 실제 사용 모델은 **unknown**, 생성된 실제 대화 이벤트는 0개다. 새 자격 증명이나 유료 시험 호출로 확인하지 않는다.
 
 원격 CI 조회: kee_agent `eeea2b9`는 상태 검사 0개, soccer-note `5443e01`와 wetheone `e7d7ba1`은 Vercel 상태 success였다. 세 커밋에 대해 조회된 PR 트리거 Actions run은 0개다. 이 wrapper는 PR 트리거 첫 페이지를 조회하므로 저장소의 모든 CI가 없다는 뜻은 아니다. Vercel 상태를 Python 테스트 실행이나 운영 재배포로 표현하지 않는다.
+
+## 자동 native 사전 점검 구현과 호스트 경계
+
+기록 시각: 2026-11-02 09:27 UTC. 기록자: CEO 메시 [메인 통합·구현 / root]. 종류: 실제 도구 결과와 구현 결정이며 다섯 역할의 발언 기록이 아니다.
+
+- 제안·반론의 실제 출처: 상위 조정 담당이 일반적인 quota unknown과 복구 가능한 실행기 오류를 구분하라고 요청했다. 구현 담당은 이 구분을 채택해 실제 파일시스템 호출을 조사하고 읽기 전용 native metadata adapter를 추가했다. 새 다섯 역할이나 독립 리뷰어가 발언했다고 소급하지 않는다.
+- 근거: 임시 SQLite·로그 경로를 모두 지정해도 클라우드 CLI는 `/home/agent/.codex/installation_id`를 쓰기 모드로 열다가 EROFS로 종료됐다. 프로젝트 trust 경고와 별개인 startup 실패다. 계정/한도 응답은 받지 못했으며 부족·소진이라고 단정하지 않는다.
+- 구현: `--preflight`가 고정된 읽기 메서드만 요청하고 기한·출력 크기를 제한한다. 계정 식별자와 원문 오류를 숨기고, 실패는 종료 코드 2로 처리한다. 계정 조회 성공 fixture에서도 비용 강제 증거가 없으면 실행을 허용하지 않는다.
+- 검증: kee_agent 63 tests + 17 subtests, soccer-note 46 tests + 17 subtests, wetheone 31 tests 통과. 세 저장소 lint 오류 0개; 경고 2/10/6개 중 새 2개는 unittest 표준 setUp/tearDown 이름의 오탐이다. 공통 파일 16개 SHA256 일치, diff check 통과. 실제 startup probe는 09:24:48 UTC에 blocked/종료 2/모델 0회였다.
+- 결정·남은 제한: 호스트 상태 경로·전역 trust·인증·보안 설정은 변경하지 않았다. native metadata adapter 구현과 실제 추론 연결 완료를 구분한다. 자동 토론·독립 모델 리뷰는 미실행이며 테스트 fixture를 대화로 게시하지 않는다.
+- 다음 행동: 클라우드 host가 설치 상태 파일의 지원되는 writable 위치 또는 이미 승인된 hosted metadata/runtime 경로를 제공하면 기존 계정의 포함분·초과 과금 차단을 조회하고 그 보장을 연결한다. 별도 유료 API·새 키·과금 확대는 요구하지 않는다. 부모 작업이 기존 Notion·일일 지침에 결과를 동기화한다.

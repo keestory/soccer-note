@@ -654,3 +654,5 @@ Team selection uses a separate request generation from the confirmed account/tea
 ## 공통 경영 검토 경로
 
 `agent_governance/`는 제품 런타임과 분리된 표준 라이브러리 기반 역할 로더·주제 라우터·비용 검사·토론 프로토콜이다. `run.py --council-plan`은 오프라인 계획만 출력한다. 실제 포함분 전용 host adapter는 미연결이며 모델 실행은 blocked다. [공통 계약](docs/EXECUTIVE_AGENTS.md)을 따른다.
+
+`python3 -m agent_governance --preflight --topics ai`는 기존 native 계정·한도 읽기만 수행한다. 추론 adapter와 별개이며 실행기 실패/비용 미검증은 종료 코드 2로 차단한다. [정확한 클라우드 진단](docs/NATIVE_RUNTIME_PREFLIGHT.md)을 따른다.

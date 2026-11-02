@@ -44,7 +44,7 @@
 
 1. `.codex/config.toml`은 native 자동 하위 에이전트 실행을 `enabled=false`로 선언한다. 이는 파일의 선언이며 실제 CLI 적용 증거가 아니다. 현재 클라우드 CLI는 프로젝트를 신뢰된 경로로 인식하지 않아 이 설정을 로드하지 못했다. 신뢰 설정을 변경하지 않으며 native 실행은 미검증/blocked로 유지한다. 기존 개별 모델 설정은 보존한다. Python 진입점의 비용 차단은 이 native 설정과 별도로 검증한다.
 2. `run.py --council-plan`과 `python3 -m agent_governance`는 오프라인으로 주제별 역할을 로드한다. 이 명령은 LLM·API·Claude 프로세스를 호출하지 않는다. 기존 `run.py`의 모델 실행 진입은 기본 차단하며 lint와 오프라인 계획은 사용할 수 있다.
-3. `agent_governance.discussion.run_discussion`에는 실제 제안/반론 라운드와 비용 검사가 연결돼 있다. 실운영 host adapter는 **아직 제공하지 않는다**. adapter가 없으면 참여 예정 역할과 blocked 이유만 반환하고 대화 이벤트는 만들지 않는다.
+3. `agent_governance.discussion.run_discussion`에는 실제 제안/반론 라운드와 비용 검사가 연결돼 있다. 계정·한도·모델 목록을 읽는 native metadata adapter는 구현했지만 실운영 **추론** host adapter는 아직 연결하지 않았다. `--preflight`는 실행기 시작 오류와 비용 증거 미확인을 구분하고, blocked이면 종료 코드 2를 반환한다. 성공한 계정 읽기도 실행 권한으로 바꾸지 않는다. 추론 adapter가 없으면 참여 예정 역할과 blocked 이유만 반환하고 대화 이벤트는 만들지 않는다.
 4. 향후 신뢰된 host adapter는 각 호출 직전에 계정 인증 종류, 실제 모델, 가용 모델, 검증 시각/만료, free 또는 subscription_included 한도, 남은 사용 가능 여부, **호출 도중에도 포함분만 사용하도록 강제하는 기능**, 유료 fallback·구매 크레딧 사용 금지, 클라우드 실행을 입증해야 한다. 사용자 JSON이나 저장소 플래그 하나를 entitlement로 신뢰하지 않는다.
 5. 증거 없음·5분 초과·미래 시각·한도 소진·API 키·잔액 불명·모델 불명·유료 fallback 가능성은 호출 **전에 blocked**다. 포함분 소진을 자동 구매나 다른 계정/모델로 넘기지 않는다. 한도 수치만 읽고 호출 도중 과금 방지를 보장할 수 없다면 실행하지 않는다.
 6. 실제 응답 모델도 확인한다. 응답 유실·모델 불명/변경은 **uncertain**, 자동 재시도 없음이다. 받은 검토가 누락되면 완료/합의로 표시하지 않는다.
@@ -72,9 +72,13 @@
 ```sh
 python3 run.py --council-plan strategy revenue acquisition growth ai
 python3 -m agent_governance --topics ai
+python3 -m agent_governance --preflight --topics strategy revenue acquisition growth ai
 python3 -m unittest discover -s tests -p test_executive_contract.py -v
+python3 -m unittest discover -s tests -p test_native_preflight.py -v
 ```
 
 이 결과는 로더·주제 라우팅·비용 차단·프로토콜의 오프라인 검증이다. 실제 다섯 모델 호출이나 독립 전문가 검토의 완료가 아니다. synthetic host 테스트는 다섯 역할 × 제안/반론 2라운드, 호출 전 비용 차단, 중간 소진, veto, 응답 불확실성, 실제 모델 변경을 검증한다.
 
-`kee_agent`가 공통 파일의 원본이며 `agent_governance/`, 다섯 역할 TOML, `tests/test_executive_contract.py`, 이 계약을 동기화한다. 제품 AGENTS·협업 기록·기존 테스트는 전체 덮어쓰기하지 않고 해당 진입점만 수정한다. 다른 담당자의 커밋과 DB 후보는 섞지 않는다. Notion·일일 실행 지침은 부모 작업이 기존 위치에서 동기화한다. 문서·하네스 변경을 위해 운영 웹을 재배포하지 않는다.
+오프라인 계획과 달리 `--preflight`는 기존 클라우드 CLI의 읽기 전용 메타데이터 요청을 수행한다. LLM 호출·새 로그인·유료 API는 실행하지 않는다. [정확한 런타임 진단과 후속 조건](NATIVE_RUNTIME_PREFLIGHT.md)에 실제 관측과 fixture를 구분했다. 현재 재현된 원인은 클라우드 홈의 `installation_id` 쓰기 실패이며, trust 경고나 quota unknown과 같은 뜻이 아니다.
+
+`kee_agent`가 공통 파일의 원본이며 `agent_governance/`, 다섯 역할 TOML, `tests/test_executive_contract.py`, `tests/test_native_preflight.py`, 이 계약과 런타임 진단 문서를 동기화한다. 제품 AGENTS·협업 기록·기존 테스트는 전체 덮어쓰기하지 않고 해당 진입점만 수정한다. 다른 담당자의 커밋과 DB 후보는 섞지 않는다. Notion·일일 실행 지침은 부모 작업이 기존 위치에서 동기화한다. 문서·하네스 변경을 위해 운영 웹을 재배포하지 않는다.

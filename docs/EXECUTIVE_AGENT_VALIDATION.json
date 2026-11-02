@@ -1,6 +1,6 @@
 {
-  "observed_at": "2026-11-02T07:28:44Z",
-  "scope": "shared executive agent contract only",
+  "observed_at": "2026-11-02T09:27:33Z",
+  "scope": "shared executive contract and native metadata preflight; no inference adapter connected",
   "roles": [
     "strategy",
     "finance",
@@ -15,31 +15,32 @@
     "CGO 음바페",
     "CAIO 이니에스타"
   ],
-  "shared_files_compared": 13,
+  "shared_files_compared": 16,
   "shared_file_mismatches": [],
   "validation": {
     "kee_agent": {
-      "tests": 52,
+      "tests": 63,
       "subtests": 17,
       "lint_errors": 0,
-      "lint_warnings": 0
+      "lint_warnings": 2
     },
     "soccer_note": {
-      "tests": 35,
+      "tests": 46,
       "subtests": 17,
       "lint_errors": 0,
-      "lint_warnings": 8
+      "lint_warnings": 10
     },
     "wetheone": {
-      "tests": 20,
+      "tests": 31,
       "lint_errors": 0,
-      "lint_warnings": 4
+      "lint_warnings": 6
     },
-    "diff_check": "passed"
+    "diff_check": "passed",
+    "new_lint_warnings": "2 per repository: naming linter flags standard unittest setUp/tearDown overrides"
   },
   "live_execution": {
     "status": "blocked",
-    "reason": "account entitlement, included allowance and provider-enforced no-charge execution unverified; live host adapter unavailable",
+    "reason": "native startup blocked by read-only installation_id; account reads not reached, billing enforcement unobserved, inference adapter unconnected",
     "actual_model": "unknown",
     "roles_invoked": [],
     "events_generated": 0
@@ -48,14 +49,19 @@
     "version": "0.163.0",
     "strict_config": "loaded",
     "doctor": "provider HTTP/WebSocket reachability failed",
-    "account_rate_limit_read": "app-server exited before initialize response; no account or rate-limit result",
+    "account_rate_limit_read": "not reached: initialize response unavailable",
     "project_config_application": "unverified: project-local config disabled because project is not trusted",
-    "startup_error": "Read-only file system (os error 30)",
-    "trust_or_credential_changes": false
+    "startup_error": "EROFS opening /home/agent/.codex/installation_id with O_RDWR|O_CREAT",
+    "trust_or_credential_changes": false,
+    "diagnostic": "filesystem-only syscall trace; sqlite_home and log_dir temporary overrides do not relocate installation_id",
+    "metadata_adapter": "implemented and fixture-tested; real startup blocked",
+    "runtime_preflight_observed_at": "2026-11-02T09:24:48.151553+00:00",
+    "runtime_preflight_exit_code": 2,
+    "runtime_preflight_model_calls": 0
   },
   "independent_review": {
     "model_policy": "parent supplied independent review summary incorporated",
-    "implementation": "pending; no new unverified-cost model invocation"
+    "implementation": "pending: no newly invoked model reviewer because included-only execution is unverified; main-agent review and automated tests completed"
   },
   "product_changes": false,
   "production_deployment_requested": false,
@@ -63,17 +69,15 @@
   "note": "Synthetic host tests are not real dialogue or financial/user metrics.",
   "publication": {
     "branches_pushed": true,
-    "kee_agent_draft_pr": "denied_by_automatic_approval_review",
-    "reason": "Exact new PR authorization deemed insufficient for an external repository commitment",
+    "kee_agent_draft_pr": "https://github.com/keestory/kee_agent/pull/1",
+    "kee_agent_status": "open_draft",
+    "kee_agent_base": "main",
+    "kee_agent_verified_head": "de69db523afd3b6901bd77f2600d3b5d1c30e93c",
     "existing_prs": [
       "soccer-note#62",
       "wetheone#5"
     ],
-    "approved_retry": "denied_by_automatic_approval_review",
-    "approved_retry_count": 1,
-    "pr_search_before_retry": "no_matching_pr",
-    "further_retry_or_bypass": false,
-    "unapproved_retry_or_bypass": false
+    "note": "PR #1 creation blocker resolved after exact confirmation; verification before this runtime follow-up commit. No approval or merge."
   },
   "ci_observations": [
     {
@@ -105,5 +109,26 @@
       "pr_triggered_workflow_runs": 0
     }
   ],
-  "ci_query_limit": "Workflow tool filters to PR-triggered runs and first page; local test results remain separate."
+  "ci_query_limit": "Workflow tool filters to PR-triggered runs and first page; local test results remain separate.",
+  "publication_history": [
+    {
+      "branches_pushed": true,
+      "kee_agent_draft_pr": "denied_by_automatic_approval_review",
+      "reason": "Exact new PR authorization deemed insufficient for an external repository commitment",
+      "existing_prs": [
+        "soccer-note#62",
+        "wetheone#5"
+      ],
+      "approved_retry": "denied_by_automatic_approval_review",
+      "approved_retry_count": 1,
+      "pr_search_before_retry": "no_matching_pr",
+      "further_retry_or_bypass": false,
+      "unapproved_retry_or_bypass": false
+    }
+  ],
+  "source_bases": {
+    "kee_agent": "de69db523afd3b6901bd77f2600d3b5d1c30e93c",
+    "soccer-note": "66052453c2a20c3a2b86b75c20e16748b79505d9",
+    "wetheone": "f3cbe6151480b81c4f8a6da6c256f3b7d1eb98c4"
+  }
 }
