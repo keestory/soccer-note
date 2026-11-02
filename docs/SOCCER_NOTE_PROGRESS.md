@@ -78,3 +78,5 @@ S2 기존 기능 안정화. `discoverability: not-applicable` — 인증 뒤 기
 기준 운영 커밋은 `e6de33735a298d08e32448afaea2b42645b5e3b8`이며 이전 Vercel 배포 ID는 `dpl_3ALrLXkBp8HLp8aoZ3aVkaZNoEHE`다. 구현·검증·배포의 최종 결과는 이 문서와 릴리스 기록에 별도로 추가한다. 테스트 통과, 배포 READY, 공개 동작 확인을 구분한다.
 
 배포 전 검증: 단위/기능 테스트 117개 통과, TypeScript 및 production build 통과, lint 오류 0개/기존 경고 52개, `git diff --check` 통과. 독립 브라우저 QA 8개 통과(가상 데이터, 320/390px, 실제 CSS viewport 기록), 예상 밖 네트워크 요청·페이지 오류 0개. 수정 전 320px 실패 증거와 수정 후 결과를 함께 보존했다. 자세한 범위는 [독립 QA 기록](design-qa/2026-11-02-quarter-save/independent-qa.md)에 있다. 운영 Supabase 쓰기·실제 RLS·물리 기기·스토어 제출 검증은 수행하지 않았다.
+
+운영 배포 완료: `8ea82a495c0846bc36fccca2607eab88048911b1`, `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC`, [공개 서비스](https://soccer-note-hazel.vercel.app), [draft PR #62](https://github.com/keestory/soccer-note/pull/62). 공개 alias의 정확한 SHA, root/login/privacy HTTP 200 및 배포된 편집 UI의 합성 8/8을 확인했다. [릴리스·롤백 기록](RELEASE_2026-11-02.md)에 버전과 제한을 남겼다. 후속 문서/QA 도구 커밋은 운영 제품 코드를 바꾸지 않는다.

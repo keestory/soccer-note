@@ -22,9 +22,25 @@ const ids = { user: '10000000-0000-4000-8000-000000000001', team: '20000000-0000
 const players = [1, 2, 3].map(n => ({ id: `50000000-0000-4000-8000-00000000000${n}`, team_id: ids.team, name: `가상 선수 ${['하나', '둘', '셋'][n - 1]}`, number: [9, 7, 11][n - 1], default_position: 'FW', created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z' }))
 const record = (n, extra = {}) => ({ id: `60000000-0000-4000-8000-00000000000${n}`, quarter_id: ids.quarter, player_id: players[n - 1].id, position_type: 'FW', position_x: 65, position_y: n === 1 ? 35 : 65, rating: 7, goals: 0, assists: 0, clean_sheet: false, contribution: 0, praise_text: null, improvement_text: null, highlight_text: null, media_urls: null, created_at: '2026-01-01T00:00:00Z', updated_at: '2026-01-01T00:00:00Z', ...extra })
 const session = { access_token: `${Buffer.from('{"alg":"HS256","typ":"JWT"}').toString('base64url')}.${Buffer.from(JSON.stringify({ sub: ids.user, role: 'authenticated', exp: 4102444800 })).toString('base64url')}.fixture`, refresh_token: 'fictional-refresh-token', expires_at: 4102444800, expires_in: 3600, token_type: 'bearer', user: { id: ids.user, aud: 'authenticated', role: 'authenticated', email: 'fixture@example.invalid', user_metadata: {}, app_metadata: {}, created_at: '2026-01-01T00:00:00Z' } }
-const report = { observedAt: new Date().toISOString(), app: base, data: 'Synthetic in-memory fixtures only; all data APIs intercepted', cases: [], consoleErrors: [], pageErrors: [], unexpectedRequests: [], screenshots: [] }
+const report = { observedAt: new Date().toISOString(), app: base, data: 'Synthetic in-memory fixtures only; all data APIs intercepted', cases: [], consoleErrors: [], pageErrors: [], unexpectedRequests: [], screenshots: [], cleanupWarnings: [] }
 const browser = await chromium.launch({ channel: 'chrome', headless: true })
 const pause = ms => new Promise(r => setTimeout(r, ms))
+async function closeBounded(surface, label) {
+  let timer
+  try {
+    await Promise.race([
+      surface.close(),
+      new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Cleanup exceeded 5 seconds')), 5000) }),
+    ])
+  } catch (error) { report.cleanupWarnings.push({ label, message: error.message }) }
+  finally { clearTimeout(timer) }
+}
+async function persistReport() {
+  report.expectedInjectedNetworkErrors = report.consoleErrors.filter(text => /Failed to load resource:.*(500|ERR_CONNECTION_FAILED)/.test(text))
+  report.unexpectedConsoleErrors = report.consoleErrors.filter(text => !report.expectedInjectedNetworkErrors.includes(text))
+  report.passed = report.cases.length === 8 && report.cases.every(item => item.status === 'pass') && report.pageErrors.length === 0 && report.unexpectedRequests.length === 0 && report.unexpectedConsoleErrors.length === 0
+  await writeFile(`${output}/browser-results.json`, JSON.stringify(report, null, 2) + '\n')
+}
 
 async function fixture({ width = 390, locale = 'ko', initial = [record(1), record(2)] } = {}) {
   const context = await browser.newContext({ viewport: { width, height: 844 }, deviceScaleFactor: 1, locale: 'ko-KR', serviceWorkers: 'block' })
@@ -109,7 +125,7 @@ async function changeGoal(page) { await selectPlayer(page); await page.getByRole
 async function expectReady(page) { await page.waitForFunction(() => document.querySelector('#quarter-save-status')?.textContent === '변경 사항이 모두 저장됐어요.'); assert.equal(await save(page).isDisabled(), true) }
 async function expectFailure(page) { await page.waitForFunction(() => document.querySelector('#quarter-save-status')?.getAttribute('role') === 'alert'); assert.equal(await page.locator('fieldset').evaluate(el => el.disabled), true); assert.equal(await save(page).isEnabled(), true) }
 async function screenshot(page, file) { await page.evaluate(() => scrollTo(0, 0)); await page.waitForFunction(() => { const button = document.querySelector('header button:last-child'); return Math.abs(Number(getComputedStyle(button).opacity) - (button.disabled ? 0.5 : 1)) < 0.001 }); await page.screenshot({ path: `${output}/${file}`, fullPage: false }); const metrics = await page.evaluate(() => ({ innerWidth, innerHeight, dpr: devicePixelRatio, scrollWidth: document.documentElement.scrollWidth, statusColor: getComputedStyle(document.querySelector('#quarter-save-status')).color, statusBackground: getComputedStyle(document.querySelector('#quarter-save-status')).backgroundColor, saveOpacity: getComputedStyle(document.querySelector('header button:last-child')).opacity })); report.screenshots.push({ file, ...metrics }) }
-async function caseRun(name, action) { if (process.env.SOCCER_QA_CASE && !name.includes(process.env.SOCCER_QA_CASE)) return; const start = Date.now(); try { const evidence = await action(); report.cases.push({ name, status: 'pass', elapsedMs: Date.now() - start, evidence }) } catch (error) { report.cases.push({ name, status: 'fail', error: error.stack }); throw error } }
+async function caseRun(name, action) { if (process.env.SOCCER_QA_CASE && !name.includes(process.env.SOCCER_QA_CASE)) return; const start = Date.now(); try { const evidence = await action(); report.cases.push({ name, status: 'pass', elapsedMs: Date.now() - start, evidence }); await persistReport() } catch (error) { report.cases.push({ name, status: 'fail', error: error.stack }); await persistReport(); throw error } }
 
 try {
   await caseRun('390px delayed full save: one request, edit lock, unchanged IDs, draft back confirmation', async () => {
@@ -140,7 +156,7 @@ try {
       assert.equal(state.deletes.length, 0)
       await screenshot(page, 'saved-390.png')
       return { postCount: state.posts.length, deleteCount: 0, goal: 1, stableId: true, focusReturned: true }
-    } finally { await context.close() }
+    } finally { await closeBounded(context, 'delayed-save context') }
   })
   await caseRun('failed upsert: no delete, retained locked snapshot, successful identical retry', async () => {
     const { page, context, state } = await fixture()
@@ -156,7 +172,7 @@ try {
       assert.equal(state.records.find(r => r.player_id === players[0].id).goals, 1)
       assert.equal(await page.locator('fieldset').evaluate(el => el.disabled), false)
       return { identicalRetry: true, noDeleteOnUpsertFailure: true, retainedDraft: true }
-    } finally { await context.close() }
+    } finally { await closeBounded(context, 'upsert-failure context') }
   })
   await caseRun('partial save removal failure then retry: explicit baseline IDs, unseen concurrent row preserved', async () => {
     const { page, context, state } = await fixture()
@@ -173,7 +189,7 @@ try {
       assert(state.records.some(r => r.id === record(3).id))
       assert(state.deletes.every(r => r.filter.includes(record(2).id) && !r.filter.includes(record(3).id)))
       return { order: 'upsert then explicit delete', unseenRowPreserved: true, retryConfirmed: true }
-    } finally { await context.close() }
+    } finally { await closeBounded(context, 'partial-save context') }
   })
   await caseRun('empty lineup: delete only loaded rows and fail closed on missing acknowledgement', async () => {
     const { page, context, state } = await fixture({ initial: [record(1)] })
@@ -185,7 +201,7 @@ try {
       await save(page).click(); await expectReady(page)
       assert.equal(state.records.length, 1); assert.equal(state.records[0].id, record(3).id)
       return { emptySavePermitted: true, zeroAckRejected: true, unseenRowPreserved: true }
-    } finally { await context.close() }
+    } finally { await closeBounded(context, 'empty-lineup context') }
   })
   await caseRun('new player with lost upsert response: retry preserves one identity without duplicates', async () => {
     const { page, context, state } = await fixture({ initial: [] })
@@ -199,7 +215,7 @@ try {
       assert.equal(state.records.length, 1); assert.equal(state.records[0].id, firstId)
       assert.deepEqual(state.posts[0], state.posts[1])
       return { oneRow: true, stableIdAcrossLostResponse: true }
-    } finally { await context.close() }
+    } finally { await closeBounded(context, 'lost-response context') }
   })
   await caseRun('upload in flight: full save and editing wait, uploaded URL included in next save', async () => {
     const { page, context, state } = await fixture()
@@ -213,7 +229,7 @@ try {
       await save(page).click(); await expectReady(page)
       assert.deepEqual(state.records.find(r => r.player_id === players[0].id).media_urls, [`${base}/app-icon-512.png`])
       return { noSaveDuringUpload: true, uploadedUrlRetained: true }
-    } finally { await context.close() }
+    } finally { await closeBounded(context, 'upload context') }
   })
   await caseRun('substitution in flight: full save waits and new player is included after acknowledgement', async () => {
     const { page, context, state } = await fixture()
@@ -235,7 +251,7 @@ try {
       assert.equal(state.records.length, 3)
       assert(state.records.some(row => row.player_id === players[2].id))
       return { noSaveDuringSubstitution: true, acknowledgedSubstituteIncluded: true }
-    } finally { await context.close() }
+    } finally { await closeBounded(context, 'substitution context') }
   })
   await caseRun('320px long German copy: status wraps and primary controls remain at least 44px', async () => {
     const { page, context, state } = await fixture({ width: 320, locale: 'de' })
@@ -250,14 +266,15 @@ try {
       assert(metrics.heights.every(height => height >= 44))
       assert.equal(metrics.lang, 'de')
       return metrics
-    } finally { await context.close() }
+    } finally { await closeBounded(context, 'responsive context') }
   })
 } finally {
-  await browser.close()
-  report.expectedInjectedNetworkErrors = report.consoleErrors.filter(text => /Failed to load resource:.*(500|ERR_CONNECTION_FAILED)/.test(text))
-  report.unexpectedConsoleErrors = report.consoleErrors.filter(text => !report.expectedInjectedNetworkErrors.includes(text))
-  report.passed = report.cases.length > 0 && report.cases.every(item => item.status === 'pass') && report.pageErrors.length === 0 && report.unexpectedRequests.length === 0 && report.unexpectedConsoleErrors.length === 0
-  await writeFile(`${output}/browser-results.json`, JSON.stringify(report, null, 2) + '\n')
-  console.log(JSON.stringify({ passed: report.passed, cases: report.cases.map(({ name, status }) => ({ name, status })), pageErrors: report.pageErrors, unexpectedRequests: report.unexpectedRequests, unexpectedConsoleErrors: report.unexpectedConsoleErrors }, null, 2))
+  await persistReport()
+  await closeBounded(browser, 'browser')
+  await persistReport()
+  console.log(JSON.stringify({ passed: report.passed, cases: report.cases.map(({ name, status }) => ({ name, status })), pageErrors: report.pageErrors, unexpectedRequests: report.unexpectedRequests, unexpectedConsoleErrors: report.unexpectedConsoleErrors, cleanupWarnings: report.cleanupWarnings }, null, 2))
   if (!report.passed) process.exitCode = 1
+  // Close only this standalone test runner if a browser transport did not exit.
+  // Fixture results are already durable; this never terminates unrelated apps.
+  if (report.cleanupWarnings.length) process.exit(process.exitCode || 0)
 }
