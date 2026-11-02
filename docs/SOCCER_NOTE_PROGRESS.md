@@ -100,3 +100,15 @@ S2 기존 기능 안정화. `discoverability: not-applicable` — 인증 뒤 기
 **05:07 UTC 운영 배포 완료:** `b3b96fd29f778ef5b44084cb96e2130c93a8a30c`, `dpl_yxx1LCzPEhBeJep6sFd9R2KzgEYJ`, READY / production / aliasError null. [공개 서비스](https://soccer-note-hazel.vercel.app)의 alias가 새 배포 ID를 가리킨다. 무료 플랜과 기존 project를 유지했고 유료 옵션·요금제·DB/RLS·권한·환경변수를 바꾸지 않았다. 배포 직후 error/fatal 로그 그룹은 없었으나 실제 사용자 성공이나 오류율 0을 뜻하지 않는다.
 
 남은 확인을 구분한다. 공개 HTTP는 클라우드 proxy CONNECT 403이므로 부모 작업의 별도 클라우드 브라우저 확인이 필요하다. 이전 롤백 대상 `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC` / `8ea82a4`의 READY는 확인했지만 `rollbackCandidate=true` 조회는 `403 forbidden` / `deploymentRollback`으로 거부됐다. 재시도·우회·실제 롤백은 하지 않았으며 실행 권한은 미검증이다. [배포 증거](design-qa/2026-11-02-team-switch/production-deployment.json)와 상세 기록을 기존 노션 허브에 동기화해야 한다. PR #62는 draft/open으로 유지한다.
+
+## 2026-11-02 — 역할 별칭과 실제 협업 기록
+
+문서·협업 규칙만 수정한다. `discoverability`, `store_compliance`, `competitive_benchmark`는 모두 `not-applicable`: 공개 제품/검색/스토어/경쟁 판단의 변경이 없다. 역할 표시를 CEO 메시, CPO 모드리치, CTO 데브라이너, CDO 네이마르, CMO 손흥민, CDAO 로드리, CQO 반다이크, CISO 말디니로 통일하고 실제 선수의 참여·견해와 무관한 별칭임을 명시했다. 기존 내부 ID·모델·권한·호출 조건은 유지한다.
+
+[하네스 문서](CODEX_HARNESS.md)에 시각·역할·제안·반론·근거·결정·남은 이견·다음 행동·출처/커밋 계약을 추가했다. [협업 기록](AGENT_DISCUSSIONS.md)의 `D-20261102-01`은 이번에 실제 전달한 메시지 요약, `H-20261102-01`은 고정 커밋의 과거 문서 기반 요약이다. 과거에 새 별칭을 소급하거나 대화를 만들어 붙이지 않는다. 비밀·숨겨진 추론·시스템 지침·사용자 원문/식별자는 공개 기록에서 제외한다. 부모가 기존 Notion 토론 페이지에 동기화하며 중복 생성하지 않는다.
+
+무료·클라우드 전용으로 진행한다. 제품 코드·호스팅 설정을 변경하거나 운영 배포를 다시 실행하지 않는다. 기존 Supabase/롤백 접근 거부와 실제 지표 미확인 상태는 이번 문서 작업으로 해소됐다고 간주하지 않는다.
+
+CQO 반다이크 [reviewer / independent_review]가 실제 읽기 전용 검토에서 제시한 시각 정확도, 같은 날 소급 방지, 공개 추적 정보와 비공개 식별자 구분, 무료 제약과 실비 검증 구분의 네 보완을 반영했다. 하네스 테스트 15개 통과, Python lint 오류 0개/변경 밖 경고 8개, diff 검사 통과. CLI doctor의 네트워크 확인과 debug prompt-input은 각각 환경 접근 제한·읽기 전용 파일시스템으로 실패했으며 전체 CLI 검증 완료로 표시하지 않는다. 해당 제한을 권한 확대나 다른 자격 증명으로 우회하지 않았다.
+
+07:09 UTC 최종 독립 확인에서 실제 응답 요약·별칭 비소급·상대 링크·고정 Git 객체의 근거 일치와 추가 차단 사유 없음을 확인했다. 제품과 `.codex` 실행 설정의 diff는 없다. CLI 환경 제한을 남긴 상태로 문서와 관측 기록을 전달한다.
