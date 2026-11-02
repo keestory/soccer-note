@@ -2,6 +2,8 @@
 
 Soccer Note의 기본 에이전트 시스템은 Codex 네이티브 멀티에이전트 설정을 사용한다. 라우팅의 핵심은 **기본 호출 0개, 조건이 맞을 때만 전문 에이전트 추가**다.
 
+현재 새 경영 역할과 모델 실행은 [공통 계약](EXECUTIVE_AGENTS.md)을 따른다. 포함 사용량·추가 과금 차단이 미확인이라 native 자동 호출은 disabled이며 아래 모델 호출 예시는 현재 실행 허가가 아니다. 오프라인 `python3 run.py --council-plan strategy revenue acquisition growth ai`로 역할을 확인한다.
+
 ## 실행
 
 저장소 루트에서 Codex를 시작한다.
@@ -26,7 +28,7 @@ Codex는 `AGENTS.md`, `.codex/config.toml`, `.codex/agents/*.toml`을 읽는다.
 - `gpt-5.6-sol`: 전략, 복잡한 구현·계획, 보안처럼 깊은 추론이 필요한 작업
 - `gpt-6-astra`: UI/UX 설계 판단은 high, 비가역 출시나 전문가 충돌 에스컬레이션은 xhigh
 
-각 커스텀 역할의 모델은 TOML에 고정한다. 저장소 탐색과 명확한 소규모 위임은 Codex 내장 `explorer`와 `worker`를 필요할 때만 사용한다.
+기존 역할의 모델 설정은 보존한다. CSO/CFO/CMO/CGO/CAIO는 model/effort를 inherit하며 선호값을 `agent_governance/roles.toml`에 분리한다. 어떤 역할도 포함 사용량 검증 없이 자동 실행하지 않는다. 저장소 탐색과 명확한 소규모 위임은 Codex 내장 `explorer`와 `worker`를 필요할 때만 사용한다.
 
 ## 신규 서비스의 표준 경로
 
@@ -122,11 +124,15 @@ QA 후 실제 렌더링과 제출할 IPA/AAB·현재 콘솔 상태까지 각각 
 
 | 표시명 | 책임 | 연결할 기존 역할 |
 | --- | --- | --- |
-| CEO 메시 | 사업·최종 판단 | 메인 통합 담당, `strategy`, `business_development` |
+| CEO 메시 | 사업·최종 판단 | 메인 통합 담당; `business_development`는 제안 입력 |
 | CPO 모드리치 | 제품 기획 | `product_manager`, `planner`, `market_researcher` |
 | CTO 데브라이너 | 개발 | `architect`, `engineer`, `ops` |
 | CDO 네이마르 | 디자인 | `ui_ux`, `competitive_pattern_researcher` |
-| CMO 손흥민 | 마케팅 | `marketing`, `gtm_lead`, `discoverability` |
+| CMO 사비 | 마케팅 | `marketing`, `gtm_lead`, `discoverability` |
+| CSO 크루이프 | 전략 대안 | `strategy` |
+| CFO 크로스 | 재무·비용 veto | `finance` |
+| CGO 음바페 | 퍼널 실험·성장 | `growth` |
+| CAIO 이니에스타 | AI 평가·라우팅 | `ai_lead` |
 | CDAO 로드리 | 데이터 | `analyst` |
 | CQO 반다이크 | QA·독립 품질 검토 | `qa`, `reviewer`, `store_compliance` |
 | CISO 말디니 | 보안 | `security_reviewer` |

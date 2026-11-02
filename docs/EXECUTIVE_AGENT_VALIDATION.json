@@ -1,0 +1,61 @@
+{
+  "observed_at": "2026-11-02T07:28:44Z",
+  "scope": "shared executive agent contract only",
+  "roles": [
+    "strategy",
+    "finance",
+    "marketing",
+    "growth",
+    "ai_lead"
+  ],
+  "aliases": [
+    "CSO 크루이프",
+    "CFO 크로스",
+    "CMO 사비",
+    "CGO 음바페",
+    "CAIO 이니에스타"
+  ],
+  "shared_files_compared": 13,
+  "shared_file_mismatches": [],
+  "validation": {
+    "kee_agent": {
+      "tests": 52,
+      "subtests": 17,
+      "lint_errors": 0,
+      "lint_warnings": 0
+    },
+    "soccer_note": {
+      "tests": 35,
+      "subtests": 17,
+      "lint_errors": 0,
+      "lint_warnings": 8
+    },
+    "wetheone": {
+      "tests": 20,
+      "lint_errors": 0,
+      "lint_warnings": 4
+    },
+    "diff_check": "passed"
+  },
+  "live_execution": {
+    "status": "blocked",
+    "reason": "account entitlement, included allowance and provider-enforced no-charge execution unverified; live host adapter unavailable",
+    "actual_model": "unknown",
+    "roles_invoked": [],
+    "events_generated": 0
+  },
+  "native_cli": {
+    "version": "0.163.0",
+    "strict_config": "loaded",
+    "doctor": "provider HTTP/WebSocket reachability failed",
+    "account_rate_limit_read": "app-server initialization exited before result; requests not completed"
+  },
+  "independent_review": {
+    "model_policy": "parent supplied independent review summary incorporated",
+    "implementation": "pending; no new unverified-cost model invocation"
+  },
+  "product_changes": false,
+  "production_deployment_requested": false,
+  "db_or_permission_changes": false,
+  "note": "Synthetic host tests are not real dialogue or financial/user metrics."
+}

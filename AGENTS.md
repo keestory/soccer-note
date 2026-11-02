@@ -1,6 +1,6 @@
 # AGENTS.md — Soccer Note Codex Harness
 
-이 파일은 Soccer Note에서 Codex가 작업 난이도와 위험에 따라 에이전트를 선택하는 라우팅 규칙이다. 역할별 모델과 상세 지침의 단일 원본은 `.codex/agents/*.toml`이다.
+이 파일은 Soccer Note에서 Codex가 작업 난이도와 위험에 따라 에이전트를 선택하는 라우팅 규칙이다. 역할별 지침은 `.codex/agents/*.toml`, 새 경영 역할의 모델 선호·비용 계약은 `agent_governance/roles.toml`과 [공통 계약](docs/EXECUTIVE_AGENTS.md)에 있다. 포함 사용량을 검증하기 전 native 자동 호출과 legacy 모델 실행은 blocked다.
 
 ## 기본 원칙
 
@@ -40,9 +40,9 @@
 |---|---|---|---|
 | `market_researcher` | `gpt-5.6-terra` / high | 신규 제품·시장·가격·경쟁·ASO·앱스토어 순위 판단 | 내부 버그, 이미 확정된 기능 구현 |
 | `competitive_pattern_researcher` | `gpt-5.6-terra` / high | 신규 제품·핵심 플로우의 현재 상위 제품, 패턴, 디자인, 리뷰 근거를 비교할 때 | 작은 수정, 경쟁 근거가 제품 결정을 바꾸지 않는 작업 |
-| `strategy` | `gpt-5.6-sol` / high | 큰 제품 선택, 포지셔닝, 우선순위 충돌 | 수용 기준이 명확한 기능 |
+| `strategy` (CSO 크루이프) | inherit / 비용 검증 전 blocked | 큰 제품 선택, 포지셔닝, 우선순위 충돌 | 수용 기준이 명확한 기능 |
 | `business_development` | `gpt-5.6-terra` / high | 수익화, 파트너십, 유통, B2B, 단위경제 | 사업모델과 무관한 제품 수정 |
-| `marketing` | `gpt-5.6-terra` / high | 출시 메시지, ASO, 획득 채널, 캠페인 실험 | 백엔드·인프라 단독 변경 |
+| `marketing` (CMO 사비) | inherit / 비용 검증 전 blocked | 출시 메시지, ASO, 획득 채널, 캠페인 실험 | 백엔드·인프라 단독 변경 |
 | `discoverability` | `gpt-5.6-terra` / high | 신규 제품, 공개 URL·콘텐츠·렌더링·canonical·structured data·검색 랜딩·Universal/App Links 변경 | 인증 뒤 전용 화면, 순수 내부 API·리팩터링, 검색·딥링크 영향이 없는 수정 |
 | `store_compliance` | `gpt-5.6-sol` / high | 모바일 앱 신규 개발, 로그인·데이터·권한·결제·SDK·UGC 변경, App Store/Google Play 제출 | 모바일 스토어와 무관한 웹·백엔드 작업 |
 | `gtm_lead` | `gpt-5.6-sol` / high | 실제 출시의 타깃·포지셔닝·채널·가격·준비도·측정을 하나로 통합 | 출시가 없는 내부 구현, 작은 패치 |
@@ -59,7 +59,7 @@
 | `doc_gardener` | `gpt-5.6-luna` / medium | 명시적 문서 정비 또는 동작 변경으로 문서 동기화가 큼 | 코드와 무관한 작은 문서 한 줄 수정 |
 | `release_council` | `gpt-6-astra` / xhigh | 되돌리기 어려운 출시, 다중 시스템 마이그레이션, 전문가 간 미해결 충돌 | 일반 개발·리뷰·출시 체크리스트 |
 
-저장소 탐색은 Codex 내장 `explorer`, 명확한 소규모 위임은 내장 `worker`를 필요할 때만 사용한다. 이 둘을 같은 이름의 커스텀 에이전트로 중복 정의하지 않는다.
+새 `finance`(CFO 크로스), `growth`(CGO 음바페), `ai_lead`(CAIO 이니에스타)는 읽기 전용이다. 전략·수익·획득·성장·AI 사안은 [공통 역할/비용/토론 계약](docs/EXECUTIVE_AGENTS.md)의 필수 검토자를 적용한다. 모델 추천을 호출 완료로, fixture를 실제 토론으로 기록하지 않는다. 저장소 탐색은 Codex 내장 `explorer`, 명확한 소규모 위임은 내장 `worker`를 필요할 때만 사용한다. 이 둘을 같은 이름의 커스텀 에이전트로 중복 정의하지 않는다.
 
 ## 서비스 개발 표준 수명주기
 

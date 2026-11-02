@@ -193,7 +193,25 @@ def main():
     parser.add_argument("--agents", action="store_true", help="에이전트 목록")
     parser.add_argument("--files", "-f", nargs="*", help="관련 파일 지정")
 
+    parser.add_argument("--council-plan", nargs="*", metavar="TOPIC", help="오프라인 경영 역할 검토 계획 (모델 호출 없음)")
+
     args = parser.parse_args()
+
+    if args.council_plan is not None:
+        import json
+        from agent_governance.catalog import load_catalog, select_roles
+        try:
+            roles = select_roles(load_catalog(PROJECT_ROOT), args.council_plan)
+        except ValueError as error:
+            parser.error(str(error))
+        print(json.dumps({"mode": "offline_plan", "roles": roles, "actual_model": "unknown",
+                          "execution": "blocked" if roles else "not_applicable",
+                          "reason": "verified_included_host_unavailable" if roles else None}, ensure_ascii=False, indent=2))
+        return
+
+    if args.prompt or args.gc or args.quality:
+        parser.error("Included-only runtime not verified: legacy model execution is blocked. Use --council-plan for offline routing.")
+
 
     if args.workflows:
         from orchestrator.main import Orchestrator

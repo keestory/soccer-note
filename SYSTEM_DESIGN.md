@@ -650,3 +650,7 @@ The current web runtime is Next.js 16 with the existing singleton Supabase PKCE 
 `refreshDataAfterAuth` invalidates previous loads immediately, removes the persisted app cache, clears the selected team when the user changes, resets the in-memory store and reloads using the current session without waiting for an old request. The singleton data auth listener invalidates synchronously and queues data loading outside the auth callback. Authenticated cache hydration remains hidden until session validation and initial loading finish.
 
 Team selection uses a separate request generation from the confirmed account/team context version. It stages all team data before committing selection and the resolver cache together. Mutation identity survives same-team refresh; refresh snapshots overlapping writes are discarded, while acknowledged writes merge into the current scoped store by ID. Context versions change on account/team changes, including returning to a previously selected team, so old callbacks cannot become valid again. Resolver cache generations prevent earlier lookups from overwriting a later selection. No database migration, RLS policy, auth-provider setting, SDK, permission or native bundle change accompanies this web implementation. Fixture authentication and callback tests do not establish real-provider or physical-device success.
+
+## 공통 경영 검토 경로
+
+`agent_governance/`는 제품 런타임과 분리된 표준 라이브러리 기반 역할 로더·주제 라우터·비용 검사·토론 프로토콜이다. `run.py --council-plan`은 오프라인 계획만 출력한다. 실제 포함분 전용 host adapter는 미연결이며 모델 실행은 blocked다. [공통 계약](docs/EXECUTIVE_AGENTS.md)을 따른다.

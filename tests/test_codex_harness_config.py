@@ -16,7 +16,7 @@ EXPECTED_AGENTS = {
     "business_development", "marketing", "discoverability", "store_compliance", "product_manager",
     "ui_ux", "architect", "planner", "engineer", "qa",
     "reviewer", "security_reviewer", "ops", "analyst", "doc_gardener",
-    "gtm_lead", "release_council",
+    "gtm_lead", "release_council", "finance", "growth", "ai_lead",
 }
 
 FORBIDDEN_CUSTOM_NAMES = {"default", "worker", "explorer"}
@@ -37,9 +37,9 @@ def load_toml(path: Path) -> dict:
 def test_project_config_enables_bounded_multi_agent_work():
     agents = load_toml(CODEX_DIR / "config.toml")["agents"]
 
-    assert agents["enabled"] is True
+    assert agents["enabled"] is False
     assert 1 <= agents["max_concurrent_threads_per_session"] <= 3
-    assert agents["default_subagent_model"] == "gpt-5.6-terra"
+    assert "default_subagent_model" not in agents
     assert agents["default_subagent_reasoning_effort"] == "medium"
 
 
@@ -53,10 +53,14 @@ def test_custom_agents_have_valid_unique_identity_and_models():
     for config in configs:
         assert config["description"].strip()
         assert config["developer_instructions"].strip()
-        assert config["model"] in ALLOWED_MODELS
-        assert config["model_reasoning_effort"] in {
-            "low", "medium", "high", "xhigh", "max", "ultra",
-        }
+        if config["name"] in {"strategy", "finance", "marketing", "growth", "ai_lead"}:
+            assert "model" not in config
+            assert "model_reasoning_effort" not in config
+        else:
+            assert config["model"] in ALLOWED_MODELS
+            assert config["model_reasoning_effort"] in {
+                "low", "medium", "high", "xhigh", "max", "ultra",
+            }
 
 
 def test_read_only_roles_cannot_modify_the_workspace():
@@ -76,7 +80,7 @@ def test_astra_is_reserved_for_ui_design_and_release_escalation():
     astra_configs = {
         config["name"]: config
         for config in (load_toml(path) for path in sorted(AGENTS_DIR.glob("*.toml")))
-        if config["model"] == "gpt-6-astra"
+        if config.get("model") == "gpt-6-astra"
     }
     assert set(astra_configs) == {"ui_ux", "release_council"}
     assert astra_configs["ui_ux"]["model_reasoning_effort"] == "high"
@@ -87,7 +91,7 @@ def test_xhigh_is_reserved_for_security_and_release_escalation():
     xhigh_agents = {
         config["name"]
         for config in (load_toml(path) for path in sorted(AGENTS_DIR.glob("*.toml")))
-        if config["model_reasoning_effort"] == "xhigh"
+        if config.get("model_reasoning_effort") == "xhigh"
     }
     assert xhigh_agents == {"security_reviewer", "release_council"}
 
