@@ -97,3 +97,13 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 - Users without a team see equally prominent create/join choices. Create opens the existing form; cancel returns focus to its choice. Names are trimmed, duplicate submission is blocked and failure keeps the draft. Existing team selection and approval-pending membership behavior remain intact.
 - Authentication accepts only `/dashboard`, `/team/join` or the latter with one valid eight-character invite code as a return path. Invalid/external targets fall back to Home. OAuth return storage expires after 30 minutes and is consumed once.
 - Login handoffs clear anonymous/previous-account data before navigating. Web PKCE code exchange remains owned by the Supabase client; native callbacks retain the existing custom-scheme exchange.
+
+## Quarter save reliability (2026-11-02)
+
+- One explicit Save all action covers formation, player statistics, reviews and media references. Substitution records retain their separate immediate persistence.
+- Preserve existing record IDs through the `(quarter_id, player_id)` unique key. A failed upsert must never trigger deletion. Delete only loaded IDs explicitly removed by this editor, within the current quarter, and require acknowledged IDs before claiming success.
+- Save, media upload and substitution mutations share one synchronous operation lock. The editor cannot change a pending save snapshot. Old route responses cannot reset the next editor.
+- Persistent status distinguishes unsaved, saving, saved and unconfirmed failure. Failed drafts stay on screen and are locked until the same save succeeds or the user confirms leaving. This avoids forgetting an unacknowledged newly committed row while editing the failed snapshot.
+- Multiple requests are not an atomic transaction. Some changes may have saved before an error. A lost deletion acknowledgment may require returning to the match and reopening to reconcile actual records; the UI does not claim the database stayed unchanged.
+- The explicit Back action confirms leaving a dirty/failed draft with the shared accessible Sheet. Browser unload warns where supported. Browser history, native back, forced termination and cross-reload draft recovery are not guaranteed.
+- Success reconciles IDs and the matching team's cached quarter without reloading the entire editor or changing other teams' cached data. All eight locales expose status and recovery. No new data collection, schema, RLS or native permission is added.

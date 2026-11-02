@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import Link from 'next/link'
 import { createClient, getSessionUser, authHeader } from '@/lib/supabase'
 import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner, Trash2, ArrowRightLeft } from 'lucide-react'
 import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType } from '@/types/database'
@@ -12,6 +11,10 @@ import { useI18n } from '@/lib/i18n/context'
 import { LinePitch } from '@/components/design/LinePitch'
 import { getDesignCopy } from '@/lib/design-copy'
 import { QuarterEditSkeleton } from '@/components/Skeleton'
+import { ConfirmSheet } from '@/components/ConfirmSheet'
+import { saveQuarterRecords, QuarterSaveError, type QuarterRecordInput, type SavedRecordIdentity } from '@/lib/quarter-save'
+import { getQuarterSaveCopy } from '@/lib/quarter-save-copy'
+import { applySavedQuarterRecords } from '@/lib/dataStore'
 
 // Formation presets: positions as [x%, y%] for each role
 // Field is horizontal: left = our goal, right = opponent goal
@@ -108,16 +111,25 @@ interface FieldPlayer {
   mediaUrls: string[]
 }
 
-function getRatingStyle(rating: number | null): { textClass: string; accentClass: string } {
-  if (rating === null) return { textClass: 'text-gray-400', accentClass: 'accent-gray-400' }
-  if (rating <= 3) return { textClass: 'text-red-500', accentClass: 'accent-red-500' }
-  if (rating <= 6) return { textClass: 'text-amber-500', accentClass: 'accent-amber-500' }
-  return { textClass: 'text-primary-600', accentClass: 'accent-primary-600' }
+function toRecord(quarterId: string, fp: FieldPlayer): QuarterRecordInput {
+  return {
+    quarter_id: quarterId, player_id: fp.playerId,
+    position_type: fp.positionType, position_x: fp.positionX, position_y: fp.positionY,
+    rating: fp.rating, goals: fp.goals, assists: fp.assists,
+    clean_sheet: fp.cleanSheet, contribution: fp.contribution,
+    praise_text: fp.praiseText || null, improvement_text: fp.improvementText || null,
+    highlight_text: fp.highlightText || null, media_urls: fp.mediaUrls.length ? fp.mediaUrls : null,
+  }
+}
+
+function draftKey(players: FieldPlayer[]) {
+  return JSON.stringify(players.map(player => toRecord('', player)).sort((a, b) => a.player_id.localeCompare(b.player_id)))
 }
 
 export default function QuarterEditPage() {
   const { t, locale } = useI18n()
   const copy = getDesignCopy(locale)
+  const saveCopy = getQuarterSaveCopy(locale)
   const [positionPlayerId, setPositionPlayerId] = useState<string | null>(null)
   const router = useRouter()
   const params = useParams()
@@ -133,7 +145,9 @@ export default function QuarterEditPage() {
   const [showPlayerPicker, setShowPlayerPicker] = useState(false)
   const [selectedPickerPlayers, setSelectedPickerPlayers] = useState<Set<string>>(new Set())
   const [uploadingMedia, setUploadingMedia] = useState(false)
-  const [savingPlayer, setSavingPlayer] = useState(false)
+  const [savedDraft, setSavedDraft] = useState<string | null>(null)
+  const [saveFailed, setSaveFailed] = useState(false)
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
   const [substitutions, setSubstitutions] = useState<QuarterSubstitution[]>([])
   const [showSubModal, setShowSubModal] = useState(false)
   const [subMinute, setSubMinute] = useState(0)
@@ -146,7 +160,25 @@ export default function QuarterEditPage() {
   const mediaInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
   const recordRef = useRef<HTMLElement>(null)
+  const baselineRef = useRef<SavedRecordIdentity[]>([])
+  const teamIdRef = useRef<string | null>(null)
+  const generationRef = useRef(0)
+  const operationRef = useRef<{ kind: 'save' | 'upload' | 'substitution'; generation: number } | null>(null)
+  const uploadAbortRef = useRef<AbortController | null>(null)
+  const failedSaveRef = useRef(false)
   const supabase = createClient()
+  const busy = saving || uploadingMedia || savingSub
+  const dirty = savedDraft !== null && draftKey(fieldPlayers) !== savedDraft
+
+  useEffect(() => {
+    if (!dirty && !busy && !saveFailed) return
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', beforeUnload)
+    return () => window.removeEventListener('beforeunload', beforeUnload)
+  }, [dirty, busy, saveFailed])
 
   useEffect(() => {
     if (selectedPlayer) {
@@ -156,13 +188,35 @@ export default function QuarterEditPage() {
   }, [selectedPlayer?.id])
 
   useEffect(() => {
-    loadData()
+    const generation = ++generationRef.current
+    operationRef.current = null
+    setLoading(true)
+    setSaving(false)
+    setUploadingMedia(false)
+    setSavingSub(false)
+    setSavedDraft(null)
+    setSaveFailed(false)
+    failedSaveRef.current = false
+    setSelectedPlayer(null)
+    setShowLeaveConfirm(false)
+    setShowPlayerPicker(false)
+    setShowSubModal(false)
+    baselineRef.current = []
+    teamIdRef.current = null
+    loadData(generation)
+    return () => {
+      generationRef.current = generation + 1
+      uploadAbortRef.current?.abort()
+      operationRef.current = null
+    }
   }, [matchId, quarterNumber])
 
-  const loadData = async () => {
+  const loadData = async (generation: number) => {
+    const isCurrent = () => generationRef.current === generation
     setPositionPlayerId(null)
     // Check permissions first
     const user = await getSessionUser(supabase)
+    if (!isCurrent()) return
     if (!user) {
       router.push('/login')
       return
@@ -184,6 +238,8 @@ export default function QuarterEditPage() {
       .eq('id', matchId)
       .single()
 
+    if (!isCurrent()) return
+
     if (!matchData) {
       toast.error(t.matchLoadFailed)
       router.push('/dashboard')
@@ -197,6 +253,8 @@ export default function QuarterEditPage() {
       .eq('id', matchData.team_id)
       .single()
 
+    if (!isCurrent()) return
+
     let hasPermission = team?.user_id === user.id
 
     if (!hasPermission) {
@@ -206,6 +264,8 @@ export default function QuarterEditPage() {
         .eq('team_id', matchData.team_id)
         .eq('user_id', user.id)
         .single()
+
+      if (!isCurrent()) return
 
       hasPermission = membership?.role === 'coach' || membership?.can_edit_quarters === true
     }
@@ -224,6 +284,8 @@ export default function QuarterEditPage() {
     }
 
     setQuarter(currentQuarter)
+    teamIdRef.current = matchData.team_id
+    baselineRef.current = (currentQuarter.quarter_records ?? []).map((record: QuarterRecord) => ({ id: record.id, quarter_id: record.quarter_id, player_id: record.player_id }))
 
     // Convert existing records to field players
     const existingPlayers: FieldPlayer[] = currentQuarter.quarter_records?.map((r: QuarterRecord) => ({
@@ -245,6 +307,7 @@ export default function QuarterEditPage() {
     })) || []
 
     setFieldPlayers(existingPlayers)
+    setSavedDraft(draftKey(existingPlayers))
 
     // Load substitutions for this quarter
     const { data: subsData } = await supabase
@@ -252,6 +315,8 @@ export default function QuarterEditPage() {
       .select('*, player_out:players!player_out_id(*), player_in:players!player_in_id(*)')
       .eq('quarter_id', currentQuarter.id)
       .order('minute')
+
+    if (!isCurrent()) return
 
     if (subsData) {
       setSubstitutions(subsData)
@@ -264,6 +329,8 @@ export default function QuarterEditPage() {
       .eq('team_id', matchData.team_id)
       .order('number')
 
+    if (!isCurrent()) return
+
     if (teamPlayers) {
       setAllTeamPlayers(teamPlayers)
     }
@@ -273,6 +340,8 @@ export default function QuarterEditPage() {
       .from('match_attendees')
       .select('player_id, player:players(*)')
       .eq('match_id', matchId)
+
+    if (!isCurrent()) return
 
     const usedPlayerIds = new Set(existingPlayers.map(fp => fp.playerId))
 
@@ -291,6 +360,8 @@ export default function QuarterEditPage() {
         .eq('team_id', matchData.team_id)
         .order('number')
 
+      if (!isCurrent()) return
+
       if (players) {
         setAvailablePlayers(players.filter(p => !usedPlayerIds.has(p.id)))
       }
@@ -300,6 +371,7 @@ export default function QuarterEditPage() {
   }
 
   const togglePickerPlayer = (playerId: string) => {
+    if (operationRef.current || failedSaveRef.current) return
     setSelectedPickerPlayers(prev => {
       const newSet = new Set(prev)
       if (newSet.has(playerId)) {
@@ -312,6 +384,7 @@ export default function QuarterEditPage() {
   }
 
   const addSelectedPlayersToField = () => {
+    if (operationRef.current || failedSaveRef.current) return
     const playersToAdd = availablePlayers.filter(p => selectedPickerPlayers.has(p.id))
 
     // Group players by position to calculate per-group index
@@ -370,6 +443,7 @@ export default function QuarterEditPage() {
   }
 
   const addPlayerToField = (player: Player, x: number = 50, y: number = 50) => {
+    if (operationRef.current || failedSaveRef.current) return
     const newFieldPlayer: FieldPlayer = {
       id: `new-${Date.now()}`,
       playerId: player.id,
@@ -394,6 +468,7 @@ export default function QuarterEditPage() {
   }
 
   const applyFormation = (formationKey: string) => {
+    if (operationRef.current || failedSaveRef.current) return
     if (fieldPlayers.length === 0) {
       toast.error(t.addPlayersFirst)
       return
@@ -462,78 +537,100 @@ export default function QuarterEditPage() {
   }
 
   const handleAddSubstitution = async () => {
-    if (!quarter || !subOutId || !subInId) return
+    if (!quarter || !subOutId || !subInId || operationRef.current || failedSaveRef.current) return
     if (subOutId === subInId) {
       toast.error(t.samePlayerSubError)
       return
     }
 
+    const operation = { kind: 'substitution' as const, generation: generationRef.current }
+    operationRef.current = operation
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation
     setSavingSub(true)
-    const { data, error } = await supabase
-      .from('quarter_substitutions')
-      .insert({
-        quarter_id: quarter.id,
-        player_out_id: subOutId,
-        player_in_id: subInId,
-        minute: subMinute,
-      })
-      .select('*, player_out:players!player_out_id(*), player_in:players!player_in_id(*)')
-      .single()
+    try {
+      const { data, error } = await supabase
+        .from('quarter_substitutions')
+        .insert({
+          quarter_id: quarter.id,
+          player_out_id: subOutId,
+          player_in_id: subInId,
+          minute: subMinute,
+        })
+        .select('*, player_out:players!player_out_id(*), player_in:players!player_in_id(*)')
+        .single()
 
-    if (error) {
-      toast.error(t.substitutionAddFailed)
-      setSavingSub(false)
-      return
-    }
+      if (!isCurrent()) return
+      if (error) throw error
 
-    setSubstitutions([...substitutions, data].sort((a, b) => a.minute - b.minute))
-    setShowSubModal(false)
-    setSavingSub(false)
+      setSubstitutions([...substitutions, data].sort((a, b) => a.minute - b.minute))
+      setShowSubModal(false)
 
-    // Auto-add the IN player to the field for recording stats
-    const inPlayer = allTeamPlayers.find(p => p.id === subInId)
-    const outFieldPlayer = fieldPlayers.find(fp => fp.playerId === subOutId)
-    if (inPlayer && !fieldPlayers.some(fp => fp.playerId === subInId)) {
-      const newFieldPlayer: FieldPlayer = {
-        id: `new-${Date.now()}`,
-        playerId: inPlayer.id,
-        player: inPlayer,
-        positionType: outFieldPlayer?.positionType || inPlayer.default_position,
-        positionX: outFieldPlayer ? Math.min(90, outFieldPlayer.positionX + 3) : 50,
-        positionY: outFieldPlayer ? Math.min(90, outFieldPlayer.positionY + 3) : 50,
-        rating: null,
-        goals: 0,
-        assists: 0,
-        cleanSheet: false,
-        contribution: 0,
-        praiseText: '',
-        improvementText: '',
-        highlightText: '',
-        mediaUrls: [],
+      // Auto-add the IN player to the field for recording stats
+      const inPlayer = allTeamPlayers.find(p => p.id === subInId)
+      const outFieldPlayer = fieldPlayers.find(fp => fp.playerId === subOutId)
+      if (inPlayer && !fieldPlayers.some(fp => fp.playerId === subInId)) {
+        const newFieldPlayer: FieldPlayer = {
+          id: `new-${Date.now()}`,
+          playerId: inPlayer.id,
+          player: inPlayer,
+          positionType: outFieldPlayer?.positionType || inPlayer.default_position,
+          positionX: outFieldPlayer ? Math.min(90, outFieldPlayer.positionX + 3) : 50,
+          positionY: outFieldPlayer ? Math.min(90, outFieldPlayer.positionY + 3) : 50,
+          rating: null,
+          goals: 0,
+          assists: 0,
+          cleanSheet: false,
+          contribution: 0,
+          praiseText: '',
+          improvementText: '',
+          highlightText: '',
+          mediaUrls: [],
+        }
+        setFieldPlayers(prev => [...prev, newFieldPlayer])
+        setAvailablePlayers(prev => prev.filter(p => p.id !== inPlayer.id))
       }
-      setFieldPlayers(prev => [...prev, newFieldPlayer])
-      setAvailablePlayers(prev => prev.filter(p => p.id !== inPlayer.id))
-    }
 
-    toast.success(t.substitutionAdded)
+      toast.success(t.substitutionAdded)
+    } catch {
+      if (isCurrent()) toast.error(t.substitutionAddFailed)
+    } finally {
+      if (isCurrent()) {
+        operationRef.current = null
+        setSavingSub(false)
+      }
+    }
   }
 
   const handleDeleteSubstitution = async (subId: string) => {
-    const { error } = await supabase
-      .from('quarter_substitutions')
-      .delete()
-      .eq('id', subId)
+    if (operationRef.current || failedSaveRef.current || !quarter) return
+    const operation = { kind: 'substitution' as const, generation: generationRef.current }
+    operationRef.current = operation
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation
+    setSavingSub(true)
+    try {
+      const { error } = await supabase
+        .from('quarter_substitutions')
+        .delete()
+        .eq('id', subId)
+        .eq('quarter_id', quarter.id)
 
-    if (error) {
-      toast.error(t.substitutionDeleteFailed)
-      return
+      if (!isCurrent()) return
+      if (error) throw error
+
+      setSubstitutions(substitutions.filter(s => s.id !== subId))
+      toast.success(t.substitutionDeleted)
+    } catch {
+      if (isCurrent()) toast.error(t.substitutionDeleteFailed)
+    } finally {
+      if (isCurrent()) {
+        operationRef.current = null
+        setSavingSub(false)
+      }
     }
-
-    setSubstitutions(substitutions.filter(s => s.id !== subId))
-    toast.success(t.substitutionDeleted)
   }
 
   const removePlayerFromField = (fieldPlayer: FieldPlayer) => {
+    if (operationRef.current || failedSaveRef.current) return
     setPositionPlayerId(null)
     setFieldPlayers(fieldPlayers.filter(fp => fp.id !== fieldPlayer.id))
     setAvailablePlayers([...availablePlayers, fieldPlayer.player])
@@ -541,6 +638,7 @@ export default function QuarterEditPage() {
   }
 
   const updateFieldPlayer = (id: string, updates: Partial<FieldPlayer>) => {
+    if (operationRef.current || failedSaveRef.current) return
     setFieldPlayers(prev =>
       prev.map(fp => (fp.id === id ? { ...fp, ...updates } : fp))
     )
@@ -550,42 +648,55 @@ export default function QuarterEditPage() {
   }
 
   const handleMediaUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0 || !selectedPlayer) return
+    if (!files || files.length === 0 || !selectedPlayer || operationRef.current || failedSaveRef.current) return
 
+    const operation = { kind: 'upload' as const, generation: generationRef.current }
+    operationRef.current = operation
+    const controller = new AbortController()
+    uploadAbortRef.current = controller
+    const player = selectedPlayer
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation
     setUploadingMedia(true)
     const newUrls: string[] = []
 
     for (const file of Array.from(files)) {
+      if (!isCurrent()) break
       const fileExt = file.name.split('.').pop()
-      const filePath = `${matchId}/${quarter?.id}/${selectedPlayer.playerId}/${Date.now()}.${fileExt}`
+      const filePath = `${matchId}/${quarter?.id}/${player.playerId}/${Date.now()}.${fileExt}`
 
       const formData = new FormData()
       formData.append('file', file)
       formData.append('filePath', filePath)
 
       try {
-        const res = await fetch('/api/upload', { method: 'POST', headers: await authHeader(supabase), body: formData })
+        const res = await fetch('/api/upload', { method: 'POST', headers: await authHeader(supabase), body: formData, signal: controller.signal })
         const result = await res.json()
+        if (!isCurrent()) break
 
         if (!res.ok) {
-          console.error('Upload error:', result.error)
           toast.error(`${t.uploadFailed}: ${file.name} - ${result.error}`)
           continue
         }
 
         newUrls.push(result.url)
-      } catch (err) {
-        console.error('Upload error:', err)
+      } catch {
+        if (!isCurrent() || controller.signal.aborted) break
         toast.error(`${t.uploadFailed}: ${file.name}`)
       }
     }
 
+    if (!isCurrent()) return
     if (newUrls.length > 0) {
-      const updated = [...selectedPlayer.mediaUrls, ...newUrls]
-      updateFieldPlayer(selectedPlayer.id, { mediaUrls: updated })
+      const updated = [...player.mediaUrls, ...newUrls]
+      setFieldPlayers(previous => previous.map(item => item.playerId === player.playerId ? { ...item, mediaUrls: updated } : item))
+      setSelectedPlayer(previous => previous?.playerId === player.playerId ? { ...previous, mediaUrls: updated } : previous)
       toast.success(`${newUrls.length}${t.filesUploaded}`)
     }
 
+    operationRef.current = null
+    uploadAbortRef.current = null
+    if (mediaInputRef.current) mediaInputRef.current.value = ''
+    if (cameraInputRef.current) cameraInputRef.current.value = ''
     setUploadingMedia(false)
   }
 
@@ -596,108 +707,67 @@ export default function QuarterEditPage() {
   }
 
   const handleSave = async () => {
-    if (!quarter) return
-
+    if (!quarter || operationRef.current || loading) return
+    const operation = { kind: 'save' as const, generation: generationRef.current }
+    operationRef.current = operation
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation
+    const snapshot = fieldPlayers
+    const baseline = baselineRef.current
+    const teamId = teamIdRef.current
     setSaving(true)
+    setSaveFailed(false)
 
     try {
-      // Delete existing records
-      await supabase
-        .from('quarter_records')
-        .delete()
-        .eq('quarter_id', quarter.id)
-
-      // Insert new records
-      if (fieldPlayers.length > 0) {
-        const records = fieldPlayers.map(fp => ({
-          quarter_id: quarter.id,
-          player_id: fp.playerId,
-          position_type: fp.positionType,
-          position_x: fp.positionX,
-          position_y: fp.positionY,
-          rating: fp.rating,
-          goals: fp.goals,
-          assists: fp.assists,
-          clean_sheet: fp.cleanSheet,
-          contribution: fp.contribution,
-          praise_text: fp.praiseText || null,
-          improvement_text: fp.improvementText || null,
-          highlight_text: fp.highlightText || null,
-          media_urls: fp.mediaUrls.length > 0 ? fp.mediaUrls : null,
-        }))
-
-        const { error } = await supabase
-          .from('quarter_records')
-          .insert(records)
-
-        if (error) throw error
-      }
-
-      // Reload data to get server-generated IDs
-      await loadData()
+      const records = await saveQuarterRecords(supabase, quarter.id, snapshot.map(player => toRecord(quarter.id, player)), baseline)
+      if (!isCurrent()) return
+      const byPlayer = new Map(records.map(record => [record.player_id, record]))
+      const reconciled = snapshot.map(player => ({ ...player, id: byPlayer.get(player.playerId)!.id }))
+      setFieldPlayers(reconciled)
+      setSelectedPlayer(previous => previous ? reconciled.find(player => player.playerId === previous.playerId) ?? null : null)
+      setPositionPlayerId(previous => {
+        const player = snapshot.find(item => item.id === previous)
+        return player ? byPlayer.get(player.playerId)?.id ?? null : null
+      })
+      baselineRef.current = records.map(record => ({ id: record.id, quarter_id: record.quarter_id, player_id: record.player_id }))
+      setSavedDraft(draftKey(reconciled))
+      failedSaveRef.current = false
+      if (teamId) applySavedQuarterRecords(teamId, matchId, quarter.id, records, baseline.filter(record => !byPlayer.has(record.player_id)).map(record => record.id))
       toast.success(t.quarterAllSaved)
     } catch (error) {
-      toast.error(t.saveFailed)
+      if (isCurrent()) {
+        if (error instanceof QuarterSaveError) {
+          // Keep the draft/removal intent, but remember acknowledged new IDs so
+          // a later retry or removal never treats them as an unknown record.
+          const acknowledged = new Map(error.acknowledgedRecords.map(record => [record.player_id, record]))
+          const removed = new Set(error.acknowledgedRemovedIds)
+          baselineRef.current = [
+            ...baseline.filter(record => !removed.has(record.id) && !acknowledged.has(record.player_id)),
+            ...error.acknowledgedRecords.map(record => ({ id: record.id, quarter_id: record.quarter_id, player_id: record.player_id })),
+          ]
+          const reconcileId = (player: FieldPlayer) => ({ ...player, id: acknowledged.get(player.playerId)?.id ?? player.id })
+          setFieldPlayers(previous => previous.map(reconcileId))
+          setSelectedPlayer(previous => previous ? reconcileId(previous) : null)
+          setPositionPlayerId(previous => {
+            const player = snapshot.find(item => item.id === previous)
+            return player ? acknowledged.get(player.playerId)?.id ?? previous : previous
+          })
+          if (teamId) applySavedQuarterRecords(teamId, matchId, quarter.id, error.acknowledgedRecords, error.acknowledgedRemovedIds)
+        }
+        failedSaveRef.current = true
+        setSaveFailed(true)
+      }
     } finally {
-      setSaving(false)
+      if (isCurrent()) {
+        operationRef.current = null
+        setSaving(false)
+      }
     }
   }
 
-  const handleSavePlayer = async (fp: FieldPlayer) => {
-    if (!quarter) return
-
-    setSavingPlayer(true)
-
-    try {
-      const record = {
-        quarter_id: quarter.id,
-        player_id: fp.playerId,
-        position_type: fp.positionType,
-        position_x: fp.positionX,
-        position_y: fp.positionY,
-        rating: fp.rating,
-        goals: fp.goals,
-        assists: fp.assists,
-        clean_sheet: fp.cleanSheet,
-        contribution: fp.contribution,
-        praise_text: fp.praiseText || null,
-        improvement_text: fp.improvementText || null,
-        highlight_text: fp.highlightText || null,
-        media_urls: fp.mediaUrls.length > 0 ? fp.mediaUrls : null,
-      }
-
-      const isNew = fp.id.startsWith('new-')
-
-      if (isNew) {
-        const { data, error } = await supabase
-          .from('quarter_records')
-          .insert(record)
-          .select()
-          .single()
-
-        if (error) throw error
-
-        // Update local state with real ID
-        setFieldPlayers(prev =>
-          prev.map(p => p.id === fp.id ? { ...p, id: data.id } : p)
-        )
-        setSelectedPlayer(prev => prev?.id === fp.id ? { ...prev, id: data.id } : prev)
-        setPositionPlayerId(prev => prev === fp.id ? data.id : prev)
-      } else {
-        const { error } = await supabase
-          .from('quarter_records')
-          .update(record)
-          .eq('id', fp.id)
-
-        if (error) throw error
-      }
-
-      toast.success(`${fp.player.name} — ${t.savedShort}`)
-    } catch (error) {
-      toast.error(t.playerSaveFailed)
-    } finally {
-      setSavingPlayer(false)
-    }
+  const handleBack = () => {
+    if (operationRef.current) return
+    if (dirty || saveFailed) setShowLeaveConfirm(true)
+    else router.push(`/match/${matchId}`)
   }
 
   if (loading) {
@@ -712,31 +782,36 @@ export default function QuarterEditPage() {
     <div className="light min-h-screen pb-32" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
-        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <Link href={`/match/${matchId}`} className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
+        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <button type="button" onClick={handleBack} disabled={busy} aria-label={saveCopy.back} className="min-w-11 min-h-11 p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)] disabled:opacity-40">
+              <ArrowLeft aria-hidden className="w-5 h-5" />
+            </button>
             <h1 className="text-base font-black text-[color:var(--text)]">{t.quarterEditTitle.replace('{n}', String(quarterNumber))}</h1>
           </div>
           <button
             onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50"
+            disabled={busy || loading || (!dirty && !saveFailed)}
+            aria-describedby="quarter-save-status"
+            className="flex min-h-11 max-w-[55%] items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50"
             style={{ background: 'var(--navy)', color: 'var(--accent)' }}
           >
-            <Save className="w-4 h-4" />
-            {saving ? t.saving : t.save}
+            <Save aria-hidden className="w-4 h-4 flex-shrink-0" />
+            {saving ? t.saving : saveFailed ? saveCopy.retry : saveCopy.saveAll}
           </button>
         </div>
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
+        <p id="quarter-save-status" role={saveFailed ? 'alert' : 'status'} aria-live={saveFailed ? 'assertive' : 'polite'} aria-atomic="true" className="rounded-xl border px-4 py-3 text-sm leading-relaxed" style={{ background: 'var(--card)', borderColor: saveFailed ? 'var(--danger)' : 'var(--line)', color: 'var(--text)' }}>
+          {saving ? saveCopy.saving : busy ? saveCopy.waiting : saveFailed ? saveCopy.failed : dirty ? saveCopy.dirty : saveCopy.ready}
+        </p>
+        <fieldset disabled={busy || saveFailed} aria-busy={busy} className="min-w-0 space-y-6 border-0 p-0 m-0">
         {/* Soccer Field */}
         <section>
-          <div className="flex justify-between items-center mb-3">
+          <div className="flex flex-wrap justify-between items-center gap-3 mb-3">
             <h2 className="font-bold text-[color:var(--text)] text-sm">{t.formationPlacement}</h2>
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
               <select
                 onChange={(e) => {
                   if (e.target.value) {
@@ -757,7 +832,7 @@ export default function QuarterEditPage() {
               {availablePlayers.length > 0 && (
                 <button
                   onClick={() => setShowPlayerPicker(!showPlayerPicker)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
+                  className="flex min-h-11 max-w-full items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
                   style={{ background: 'var(--chip)', color: 'var(--text)' }}
                 >
                   <Plus className="w-4 h-4" />
@@ -849,7 +924,7 @@ export default function QuarterEditPage() {
               return { id: fp.id, name: fp.player.name, number: fp.player.number, x: fp.positionX, y: fp.positionY, substitutedOut: !!outgoing, substitution: [incoming ? `IN ${incoming.minute}′` : '', outgoing ? `OUT ${outgoing.minute}′` : ''].filter(Boolean).join(' · ') }
             })}
             selectedId={positionPlayerId}
-            onSelect={id => setPositionPlayerId(id)}
+            onSelect={id => { if (!operationRef.current && !failedSaveRef.current) setPositionPlayerId(id) }}
             onMove={(id, x, y) => updateFieldPlayer(id, { positionX: x, positionY: y })}
             label={t.formationPlacement} moveLabel={copy.moveTarget}
           />
@@ -859,14 +934,14 @@ export default function QuarterEditPage() {
 
         {/* Substitutions Section */}
         <section style={cardStyle} className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-bold text-[color:var(--text)] text-sm flex items-center gap-2">
-              <ArrowRightLeft className="w-4 h-4 text-[color:var(--text)]/40" />
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <h2 className="min-w-0 font-bold text-[color:var(--text)] text-sm flex items-center gap-2">
+              <ArrowRightLeft className="w-4 h-4 flex-shrink-0 text-[color:var(--text)]/40" />
               {t.substitutionRecords} ({substitutions.length})
             </h2>
             <button
               onClick={openSubModal}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
+              className="flex min-h-11 max-w-full items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
               style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}
             >
               <Plus className="w-4 h-4" />
@@ -1322,7 +1397,9 @@ export default function QuarterEditPage() {
             </div>
           </section>
         )}
+        </fieldset>
       </main>
+      <ConfirmSheet open={showLeaveConfirm} title={saveCopy.leaveTitle} description={saveCopy.leaveDescription} confirmLabel={saveCopy.leave} cancelLabel={saveCopy.stay} onCancel={() => setShowLeaveConfirm(false)} onConfirm={() => { if (!operationRef.current) router.push(`/match/${matchId}`) }} />
     </div>
   )
 }

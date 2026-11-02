@@ -1,7 +1,7 @@
 'use client'
 
 import { createClient, authHeader } from '@/lib/supabase'
-import type { Team, Match, TeamMember, Player, TeamVisibilitySettings, TrainingSession, Profile } from '@/types/database'
+import type { Team, Match, TeamMember, Player, TeamVisibilitySettings, TrainingSession, Profile, QuarterRecord } from '@/types/database'
 
 // 프로필이 포함된 멤버 타입
 export interface MemberWithProfile extends TeamMember {
@@ -333,6 +333,30 @@ export async function selectTeam(teamId: string): Promise<void> {
   updateStore({ selectedTeamId: teamId })
   if (typeof window !== 'undefined') localStorage.setItem('selectedTeamId', teamId)
   await loadTeamData(teamId)
+}
+
+/** Apply acknowledged editor writes only to an already loaded matching team.
+ * Preserve other records (including ones another editor may have added). */
+export function applySavedQuarterRecords(teamId: string, matchId: string, quarterId: string, records: QuarterRecord[], removedIds: string[]) {
+  if (store.selectedTeamId !== teamId || records.some(record => record.quarter_id !== quarterId)) return
+  const match = store.matches.find(item => item.id === matchId && item.team_id === teamId)
+  if (!match?.quarters?.some(quarter => quarter.id === quarterId)) return
+  const playerIds = new Set(records.map(record => record.player_id))
+  const removed = new Set(removedIds)
+  updateStore({
+    lastFetch: 0,
+    matches: store.matches.map(item => item !== match ? item : {
+      ...item,
+      quarters: item.quarters?.map(quarter => quarter.id !== quarterId ? quarter : {
+        ...quarter,
+        quarter_records: [
+          ...(quarter.quarter_records ?? []).filter(record => !removed.has(record.id) && !playerIds.has(record.player_id)),
+          ...records.map(record => ({ ...record, player: store.players.find(player => player.id === record.player_id) })),
+        ],
+      }),
+    }),
+  })
+  persistSnapshot()
 }
 
 /**
