@@ -95,4 +95,8 @@ S2 기존 기능 안정화. `discoverability: not-applicable` — 인증 뒤 기
 
 상세 비교·반론·개발·검증·롤백과 배포 결과는 [클라우드 작업 기록](TEAM_CONTEXT_CLOUD_2026-11-02.md), [독립 QA](design-qa/2026-11-02-team-switch/independent-qa.md)에 있다. 노션 동기화는 상위 작업에서 기존 허브에 이어 쓰며 중복 페이지·자동화를 만들지 않는다. 다음 제품 과제는 인증 화면 공통 오류/재시도, 긴 팀명 헤더, 경기 날짜/상태 통일, 쿼터 반복 입력 단축이다.
 
-원격 제품 커밋 `b3b96fd29f778ef5b44084cb96e2130c93a8a30c` 반영 완료. 동일 SHA의 자동 Vercel preview `dpl_2zQUzRR62Cuom34azTZe46YQKz3m`은 READY로 정상 호스팅 빌드도 확인했다. **운영 배포는 자동 승인 검토가 거부해 미실행**이다. “이 정확한 production 배포에 대한 명시적 승인이 없다”는 이유였고, 다른 경로로 우회하지 않았다. 공개 서비스는 계속 첫 릴리스 `8ea82a4` / `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC`를 제공한다. 코드/검증 완료와 운영 배포 차단을 노션에서도 분리해 기록해야 한다.
+원격 제품 커밋 `b3b96fd29f778ef5b44084cb96e2130c93a8a30c` 반영 완료. 동일 SHA의 자동 Vercel preview `dpl_2zQUzRR62Cuom34azTZe46YQKz3m`은 READY로 정상 호스팅 빌드도 확인했다. 최초 운영 요청은 자동 승인 검토에서 거부되어 실행되지 않았다. 이후 사용자의 정확한 운영 반영 승인과 무료 전용 지시에 따라 실제 `plan=hobby`와 최근 24시간 배포 17회(무료 일일 한도 100회)를 확인한 뒤 동일 작업을 한 번 재시도했다.
+
+**05:07 UTC 운영 배포 완료:** `b3b96fd29f778ef5b44084cb96e2130c93a8a30c`, `dpl_yxx1LCzPEhBeJep6sFd9R2KzgEYJ`, READY / production / aliasError null. [공개 서비스](https://soccer-note-hazel.vercel.app)의 alias가 새 배포 ID를 가리킨다. 무료 플랜과 기존 project를 유지했고 유료 옵션·요금제·DB/RLS·권한·환경변수를 바꾸지 않았다. 배포 직후 error/fatal 로그 그룹은 없었으나 실제 사용자 성공이나 오류율 0을 뜻하지 않는다.
+
+남은 확인을 구분한다. 공개 HTTP는 클라우드 proxy CONNECT 403이므로 부모 작업의 별도 클라우드 브라우저 확인이 필요하다. 이전 롤백 대상 `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC` / `8ea82a4`의 READY는 확인했지만 `rollbackCandidate=true` 조회는 `403 forbidden` / `deploymentRollback`으로 거부됐다. 재시도·우회·실제 롤백은 하지 않았으며 실행 권한은 미검증이다. [배포 증거](design-qa/2026-11-02-team-switch/production-deployment.json)와 상세 기록을 기존 노션 허브에 동기화해야 한다. PR #62는 draft/open으로 유지한다.

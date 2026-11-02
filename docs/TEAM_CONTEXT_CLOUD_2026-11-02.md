@@ -1,5 +1,7 @@
 # Soccer Note — 클라우드 팀 전환 개선
 
+최종 상태(2026-11-02 05:07 UTC): 검증한 `b3b96fd29f778ef5b44084cb96e2130c93a8a30c`의 기존 운영 배포를 완료했다. Vercel Hobby 무료 플랜, READY, 공개 alias 연결을 확인했다. 공개 화면은 이 실행 환경의 proxy 403으로 미확인이고, 롤백 후보 조회는 권한 거부로 차단됐다. 아래 초기 배포 거부는 이후 해소된 이력이다.
+
 ## 범위와 기준
 
 2026-11-02, `keestory/soccer-note`의 `codex/quarter-save-reliability`를 클라우드 `/workspace/soccer-note`에 별도로 clone했다. 기준 커밋은 `896562a2b33004840da9a8dbfd98d48223da8b14`, 기존 draft PR은 [#62](https://github.com/keestory/soccer-note/pull/62)다. Mac의 미커밋 패치는 전송되지 않았으며 이번 구현은 원격 코드와 요구사항으로 재구성한다. Mac이나 해당 executor에 연결하지 않았고 실행 환경 이름과 무관한 `ourcommunity` 저장소는 변경하지 않는다.
@@ -114,7 +116,7 @@ SUPABASE_SERVICE_ROLE_KEY=synthetic-server-fixture-key npm run build -- --webpac
 
 이번 릴리스의 롤백 대상은 시작 시 운영 중이던 `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC` / `8ea82a495c0846bc36fccca2607eab88048911b1`이다. 같은 Vercel project/team의 기존 rollback 기능을 사용하며, 그보다 오래된 `dpl_3ALrLX…`를 사용하면 삭제 후 삽입 코드까지 되살아난다. 스키마·캐시 저장 형식의 마이그레이션은 없으며 실제 롤백은 실행하지 않는다. 실행 중인 브라우저와 이미 보낸 데이터 쓰기를 롤백이 취소하지 않는 점은 그대로다.
 
-## 원격 반영 및 운영 배포 차단
+## 원격 반영 및 최초 운영 배포 거부 이력
 
 검증한 제품 커밋 `b3b96fd29f778ef5b44084cb96e2130c93a8a30c`을 기존 브랜치/PR #62에 push했고 원격 SHA를 다시 확인했다. 기존 Git 연동이 생성한 **preview** `dpl_2zQUzRR62Cuom34azTZe46YQKz3m`은 같은 SHA로 **READY**다. [호스팅 preview](https://soccer-note-f1iq6u141-keestory91-6294s-projects.vercel.app)의 정상 호스팅 빌드는 통과했지만 보호된/공개 URL 화면 검증을 뜻하지 않는다. 운영 환경변수 변경이나 local font mirror 설정은 하지 않았다.
 
@@ -122,4 +124,25 @@ SUPABASE_SERVICE_ROLE_KEY=synthetic-server-fixture-key npm run build -- --webpac
 
 기존 서비스 배포를 허용한 사용자 지시가 전달돼 있었지만 자동 검토가 이 요청에 대한 승인으로 인정하지 않았다. 이 작업의 상태는 **denied / 미실행**이다. 다른 배포·promotion 경로로 우회하거나 같은 요청을 반복하지 않았다. 이후 읽기 전용 확인에서 공개 alias는 계속 `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC` / `8ea82a495c0846bc36fccca2607eab88048911b1`, READY / production이었다. 새 SHA에는 자동 preview만 존재했다.
 
-남은 작업은 위 정확한 커밋의 기존 Soccer Note 운영 배포다. 기존 웹/Capacitor 원격 웹 사용자의 팀 전환·저장 화면이 바뀌는 배포이며, DB/RLS/자격 증명은 바꾸지 않는다. 배포 승인이 확인되면 동일 작업만 이어가고, 공개 HTTP 검증은 별도의 접근 제한으로 계속 구분한다. 이번 기록은 배포 완료나 공개 smoke 성공을 주장하지 않는다.
+이 시점에는 정확한 커밋의 기존 Soccer Note 운영 배포가 남아 있었다. 이후 아래와 같이 승인된 동일 작업을 한 번 재시도해 완료했다. 기존 웹/Capacitor 원격 웹 사용자의 팀 전환·저장 화면이 바뀌며 DB/RLS/자격 증명은 바꾸지 않는다.
+
+## 무료 플랜 확인 및 운영 배포 완료
+
+2026-11-02, 사용자가 정확한 제품 커밋과 공개 서비스의 운영 반영을 승인하고 항상 무료 버전만 사용하도록 지정했다. 무료 플랜을 먼저 읽기 전용으로 확인한 뒤, 앞서 미실행으로 거부된 동일 `create_deployment` 요청을 한 번 재시도했다. 다른 배포 경로로 우회하지 않았고 요금제 변경·과금 동의·새 유료 서비스·DB/RLS/권한·환경변수 변경은 하지 않았다.
+
+- `get_git_deployment_context`: 대상 팀 `team_jr2EoWExoCNDX3AFRs9fZxKh`의 실제 `plan=hobby`, Soccer Note project 연결 확인.
+- 배포 전 팀 전체 최근 24시간 배포 **17회**, pagination의 다음 페이지 없음. [Vercel 공식 한도](https://vercel.com/docs/limits)의 Hobby 하루 100회 안이었다. 다른 프로젝트는 한도 집계에만 포함했고 변경하지 않았다.
+- [Hobby 공식 안내](https://vercel.com/docs/plans/hobby)는 무료 tier이며 한도 초과 시 사용 재개까지 대기한다고 명시한다. 월간 사용량 전체 잔여치는 도구에서 제공되지 않아 추정하지 않았다. 청구 조회는 `404 costs_not_found`였으며 이를 청구 금액 0의 증거로 사용하지 않았다. 실제 무료 플랜에서 이번 빌드/배포는 성공했다.
+- 배포: **`dpl_yxx1LCzPEhBeJep6sFd9R2KzgEYJ`**, `target=production`, **READY**, `aliasError=null`.
+- 정확한 제품 SHA: **`b3b96fd29f778ef5b44084cb96e2130c93a8a30c`**. `e6ee0f3` 및 이후 기록 커밋은 문서만 바꾸며 제품 배포 대상은 b3b96fd로 유지한다.
+- 대상 project: `prj_8MtXlwcx0NzpWAZQjGUuFTL4HHAL` / `soccer-note`.
+- [공개 서비스](https://soccer-note-hazel.vercel.app)의 `get_alias`가 위 배포 ID와 project를 반환했다.
+- [배포 URL](https://soccer-note-2xifea14a-keestory91-6294s-projects.vercel.app), [배포 관리 화면](https://vercel.com/keestory91-6294s-projects/soccer-note/yxx1LCzPEhBeJep6sFd9R2KzgEYJ).
+- 호스팅 빌드 로그에 `Build Completed in /vercel/output [20s]`, `Deployment completed`를 확인했다. READY 시각은 2026-11-02 05:07:16 UTC다.
+- 배포 직후 error/fatal runtime log 그룹 조회에는 행이 없었다. 짧은 구간이며 실제 접속량도 미확인이므로 운영 오류율 0이나 사용자 성공을 의미하지 않는다.
+
+공개 화면 확인은 **blocked**다. 05:07 UTC의 클라우드 `curl -I https://soccer-note-hazel.vercel.app`는 `CONNECT tunnel failed, response 403`, proxy `server: envoy`를 반환했다. 앱이 반환한 403으로 해석하지 않는다. 부모 작업의 별도 클라우드 브라우저에서 root/login/privacy와 배포된 모바일 화면을 확인해야 하며 Mac은 사용하지 않는다. 보호 우회·공유 자격 증명 생성도 하지 않았다.
+
+롤백 대상 `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC` / `8ea82a495c0846bc36fccca2607eab88048911b1`는 배포 직전 READY / production으로 재확인했다. 그러나 `list_deployments(rollbackCandidate=true)`는 `403 forbidden`, resource `deploymentRollback`, “You don't have permission to list the resource.”로 **denied**됐다. 해당 조회를 반복하거나 CLI/다른 자격 증명으로 우회하지 않았으며 실제 롤백은 실행하지 않았다. 따라서 보존된 이전 배포는 확인했지만, 현재 연결의 롤백 실행 권한까지 검증한 것으로 표시하지 않는다.
+
+정제된 배포 증거는 [production-deployment.json](design-qa/2026-11-02-team-switch/production-deployment.json)에 보관한다. PR #62는 draft/open을 유지하고 main 병합·PR 승인은 하지 않는다. 남은 검증은 공개 브라우저, 롤백 실행 권한, 실제 OAuth/운영 DB·RLS·실기기이며 실제 사업 지표는 계속 `null / blocked`다.
