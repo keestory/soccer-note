@@ -57,5 +57,15 @@
   "product_changes": false,
   "production_deployment_requested": false,
   "db_or_permission_changes": false,
-  "note": "Synthetic host tests are not real dialogue or financial/user metrics."
+  "note": "Synthetic host tests are not real dialogue or financial/user metrics.",
+  "publication": {
+    "branches_pushed": true,
+    "kee_agent_draft_pr": "denied_by_automatic_approval_review",
+    "reason": "Exact new PR authorization deemed insufficient for an external repository commitment",
+    "retried_or_bypassed": false,
+    "existing_prs": [
+      "soccer-note#62",
+      "wetheone#5"
+    ]
+  }
 }

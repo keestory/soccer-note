@@ -22,3 +22,7 @@ CSO·CMO는 기존 `strategy`·`marketing`을 보강하고 CFO·CGO·CAIO를 새
 완료: 역할 파일 로드·중복 CMO/ID 검출·관련 주제 필수 검토·비용 불명/소진 차단·중간 한도 소진·veto·응답 유실/모델 변경 시 재시도 금지 테스트. kee_agent 전체 Python 테스트 52개와 17 subtests, soccer-note 하네스 테스트 35개와 17 subtests, WeTheOne 공통 테스트 20개 통과. lint는 모두 오류 0개이며 각각 경고 0/8/4개다. [검증 기록](EXECUTIVE_AGENT_VALIDATION.json)에 실제 실행과 테스트를 분리했다.
 
 남은 행동: 부모 작업이 원격 커밋/PR과 이 기록을 기존 Notion·일일 지침에 동기화한다. 비용을 강제로 제한할 수 있는 기존 연결의 검증된 adapter가 제공될 때만 실제 다섯 역할 토론·독립 코드 리뷰를 진행한다. 그 전에는 오프라인 계획과 로컬 테스트만 실행한다. 새 키·OAuth·유료 API·모델 시험 호출로 확인을 우회하지 않는다. 제품/DB 변경과 운영 웹 재배포는 하지 않았다.
+
+## 원격 게시와 draft PR 생성 차단
+
+세 저장소의 요청된 브랜치 push는 성공했다. kee_agent의 `codex/executive-agent-contract` → `main` 새 draft PR 생성 요청은 자동 승인 검토에서 이 정확한 PR을 여는 승인이 충분하지 않다는 이유로 **denied / 미실행**됐다. GitHub PR이 생성됐다고 표시하지 않는다. 해당 생성 요청을 반복하거나 CLI/다른 경로로 우회하지 않았으며 브랜치의 검토 가능한 코드는 보존한다. 기존 soccer-note #62와 wetheone #5는 계속 draft/open으로 관리하며 승인·병합하지 않는다.
