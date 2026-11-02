@@ -48,7 +48,10 @@
     "version": "0.163.0",
     "strict_config": "loaded",
     "doctor": "provider HTTP/WebSocket reachability failed",
-    "account_rate_limit_read": "app-server initialization exited before result; requests not completed"
+    "account_rate_limit_read": "app-server exited before initialize response; no account or rate-limit result",
+    "project_config_application": "unverified: project-local config disabled because project is not trusted",
+    "startup_error": "Read-only file system (os error 30)",
+    "trust_or_credential_changes": false
   },
   "independent_review": {
     "model_policy": "parent supplied independent review summary incorporated",
@@ -62,10 +65,45 @@
     "branches_pushed": true,
     "kee_agent_draft_pr": "denied_by_automatic_approval_review",
     "reason": "Exact new PR authorization deemed insufficient for an external repository commitment",
-    "retried_or_bypassed": false,
     "existing_prs": [
       "soccer-note#62",
       "wetheone#5"
-    ]
-  }
+    ],
+    "approved_retry": "denied_by_automatic_approval_review",
+    "approved_retry_count": 1,
+    "pr_search_before_retry": "no_matching_pr",
+    "further_retry_or_bypass": false,
+    "unapproved_retry_or_bypass": false
+  },
+  "ci_observations": [
+    {
+      "repository": "kee_agent",
+      "commit": "eeea2b96e345adace937563f99c308fa3a117428",
+      "statuses": [],
+      "pr_triggered_workflow_runs": 0
+    },
+    {
+      "repository": "soccer-note",
+      "commit": "5443e019d7079ef4418c51b131382da7317843d3",
+      "statuses": [
+        {
+          "context": "Vercel",
+          "state": "success"
+        }
+      ],
+      "pr_triggered_workflow_runs": 0
+    },
+    {
+      "repository": "wetheone",
+      "commit": "e7d7ba16b2ac77859ace646ec23864a4cd4bf17b",
+      "statuses": [
+        {
+          "context": "Vercel",
+          "state": "success"
+        }
+      ],
+      "pr_triggered_workflow_runs": 0
+    }
+  ],
+  "ci_query_limit": "Workflow tool filters to PR-triggered runs and first page; local test results remain separate."
 }

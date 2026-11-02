@@ -26,3 +26,13 @@ CSO·CMO는 기존 `strategy`·`marketing`을 보강하고 CFO·CGO·CAIO를 새
 ## 원격 게시와 draft PR 생성 차단
 
 세 저장소의 요청된 브랜치 push는 성공했다. kee_agent의 `codex/executive-agent-contract` → `main` 새 draft PR 생성 요청은 자동 승인 검토에서 이 정확한 PR을 여는 승인이 충분하지 않다는 이유로 **denied / 미실행**됐다. GitHub PR이 생성됐다고 표시하지 않는다. 해당 생성 요청을 반복하거나 CLI/다른 경로로 우회하지 않았으며 브랜치의 검토 가능한 코드는 보존한다. 기존 soccer-note #62와 wetheone #5는 계속 draft/open으로 관리하며 승인·병합하지 않는다.
+
+## 후속 승인 이후 PR 재시도와 클라우드 진단
+
+기록일: 2026-11-02. 기록자: CEO 메시 [메인 통합 / root]. 종류: 실제 도구 결과 요약이며 다섯 역할의 대화가 아니다. 기존 대상 head/base의 PR 검색 결과는 없었다. 새 진행 승인 후 같은 대상의 draft PR 생성만 한 번 재시도했지만 자동 승인 검토가 다시 정확한 PR 생성 승인이 부족하다고 판정해 **denied / 미실행**됐다. 이후 생성 재시도·CLI 우회·승인·병합은 하지 않는다.
+
+클라우드 CLI 진단은 `app-server`가 `Read-only file system (os error 30)`으로 초기화 전에 종료되고, 프로젝트 trust가 없어 프로젝트 설정·hooks·exec policy를 로드하지 않는다고 보고했다. 임시 SQLite 상태 경로를 사용하는 진단에서도 계정/한도 응답을 얻지 못했다. 전역 trust나 자격 증명·권한·provider를 변경하지 않았다. 따라서 프로젝트 설정 파일의 `enabled=false`와 실제 native 적용을 구분하며, Python 가드의 오프라인 테스트만 통과한 것으로 표시한다. 기존 제공 도구의 모델 목록만으로 포함 잔액이나 추가 과금 차단을 입증할 수 없다.
+
+필요한 실행 전제는 (1) 기존 클라우드 host가 제공하는 신뢰 가능한 계정/모델 entitlement와 확인 시각, (2) 남은 무료·구독 포함 사용량, (3) 호출 도중 한도 소진에도 구매 크레딧·유료 fallback을 사용하지 않는 강제 보장, (4) 이를 전달하는 포함분 전용 adapter다. 현재 네 항목 모두 충족 여부를 확인할 수 없어 실제 역할 호출은 **blocked**, 실제 사용 모델은 **unknown**, 생성된 실제 대화 이벤트는 0개다. 새 자격 증명이나 유료 시험 호출로 확인하지 않는다.
+
+원격 CI 조회: kee_agent `eeea2b9`는 상태 검사 0개, soccer-note `5443e01`와 wetheone `e7d7ba1`은 Vercel 상태 success였다. 세 커밋에 대해 조회된 PR 트리거 Actions run은 0개다. 이 wrapper는 PR 트리거 첫 페이지를 조회하므로 저장소의 모든 CI가 없다는 뜻은 아니다. Vercel 상태를 Python 테스트 실행이나 운영 재배포로 표현하지 않는다.

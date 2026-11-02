@@ -58,7 +58,7 @@ class RoutingTests(unittest.TestCase):
             (root / "Bad-Name.py").write_text("pass\n")
             self.assertEqual([item.file for item in check_file_names(root)], ["Bad-Name.py"])
 
-    def test_native_auto_spawn_stays_disabled_until_runtime_is_verified(self):
+    def test_declared_native_auto_spawn_stays_disabled_until_runtime_is_verified(self):
         config = tomllib.loads((ROOT / ".codex/config.toml").read_text())
         self.assertIs(config["agents"]["enabled"], False)
         self.assertNotIn("default_subagent_model", config["agents"])
