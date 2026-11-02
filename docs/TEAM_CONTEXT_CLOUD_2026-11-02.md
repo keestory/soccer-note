@@ -113,3 +113,13 @@ SUPABASE_SERVICE_ROLE_KEY=synthetic-server-fixture-key npm run build -- --webpac
 공개 `https://soccer-note-hazel.vercel.app`에 대한 클라우드 curl은 proxy HTTP 403, web 도구는 URL 접근 불가를 반환했다. Vercel의 deployment/alias 읽기는 가능하다. `web_fetch_vercel_url`은 임시 공유 링크를 생성/재사용하고 생성 금지 옵션이 없어 사용하지 않는다. 권한/자격 증명을 추가하지 않으며 공개 브라우저 smoke는 **blocked**로 기록한다. 배포 READY와 alias 확인을 공개 화면 검증 완료로 바꾸지 않는다.
 
 이번 릴리스의 롤백 대상은 시작 시 운영 중이던 `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC` / `8ea82a495c0846bc36fccca2607eab88048911b1`이다. 같은 Vercel project/team의 기존 rollback 기능을 사용하며, 그보다 오래된 `dpl_3ALrLX…`를 사용하면 삭제 후 삽입 코드까지 되살아난다. 스키마·캐시 저장 형식의 마이그레이션은 없으며 실제 롤백은 실행하지 않는다. 실행 중인 브라우저와 이미 보낸 데이터 쓰기를 롤백이 취소하지 않는 점은 그대로다.
+
+## 원격 반영 및 운영 배포 차단
+
+검증한 제품 커밋 `b3b96fd29f778ef5b44084cb96e2130c93a8a30c`을 기존 브랜치/PR #62에 push했고 원격 SHA를 다시 확인했다. 기존 Git 연동이 생성한 **preview** `dpl_2zQUzRR62Cuom34azTZe46YQKz3m`은 같은 SHA로 **READY**다. [호스팅 preview](https://soccer-note-f1iq6u141-keestory91-6294s-projects.vercel.app)의 정상 호스팅 빌드는 통과했지만 보호된/공개 URL 화면 검증을 뜻하지 않는다. 운영 환경변수 변경이나 local font mirror 설정은 하지 않았다.
+
+이후 기존 프로젝트의 `create_deployment`, `target=production`, `gitSource.ref=b3b96fd29f778ef5b44084cb96e2130c93a8a30c` 요청은 **자동 승인 검토가 거부**했다. 이유 원문: “This creates a production Vercel deployment and externally commits the verified branch to a live service; the user authorized cloud development but did not explicitly authorize this exact production deployment.”
+
+기존 서비스 배포를 허용한 사용자 지시가 전달돼 있었지만 자동 검토가 이 요청에 대한 승인으로 인정하지 않았다. 이 작업의 상태는 **denied / 미실행**이다. 다른 배포·promotion 경로로 우회하거나 같은 요청을 반복하지 않았다. 이후 읽기 전용 확인에서 공개 alias는 계속 `dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC` / `8ea82a495c0846bc36fccca2607eab88048911b1`, READY / production이었다. 새 SHA에는 자동 preview만 존재했다.
+
+남은 작업은 위 정확한 커밋의 기존 Soccer Note 운영 배포다. 기존 웹/Capacitor 원격 웹 사용자의 팀 전환·저장 화면이 바뀌는 배포이며, DB/RLS/자격 증명은 바꾸지 않는다. 배포 승인이 확인되면 동일 작업만 이어가고, 공개 HTTP 검증은 별도의 접근 제한으로 계속 구분한다. 이번 기록은 배포 완료나 공개 smoke 성공을 주장하지 않는다.
