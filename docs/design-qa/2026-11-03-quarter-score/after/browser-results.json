@@ -1,0 +1,417 @@
+{
+  "observedAt": "2026-11-03T01:20:35.957Z",
+  "mode": "acceptance",
+  "data": "Synthetic browser fixture; no production DB, real users or billing evidence",
+  "cases": [
+    {
+      "name": "repeated click and sequential quarter saves",
+      "status": "pass",
+      "total": "5:3",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 2,
+            "away_score": 1
+          },
+          "rowId": "40000000-0000-4000-8000-000000000099"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 5,
+            "away_score": 3
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "acknowledged quarter survives total failure, cancel and different quarter save",
+      "status": "pass",
+      "total": 5,
+      "quarterSum": 5,
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 2,
+            "away_score": 1
+          },
+          "rowId": "40000000-0000-4000-8000-000000000099"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 5,
+            "away_score": 3
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "quarters-error: retain, retry and reopen",
+      "status": "pass",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "matches-error: retain, retry and reopen",
+      "status": "pass",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "quarters-lost: retain, retry and reopen",
+      "status": "pass",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "matches-lost: retain, retry and reopen",
+      "status": "pass",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "mobile 320 ko: named inputs, keyboard, focus, targets, cancel",
+      "status": "pass",
+      "names": [
+        "우리팀 점수",
+        "상대팀 점수"
+      ],
+      "bounds": [
+        {
+          "name": "우리팀 점수",
+          "x": 37,
+          "right": 85,
+          "width": 48,
+          "height": 44
+        },
+        {
+          "name": "상대팀 점수",
+          "x": 105.703125,
+          "right": 153.703125,
+          "width": 48,
+          "height": 44
+        },
+        {
+          "name": "저장",
+          "x": 161.953125,
+          "right": 205.953125,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "name": "취소",
+          "x": 213.953125,
+          "right": 257.953125,
+          "width": 44,
+          "height": 44
+        }
+      ],
+      "viewport": {
+        "innerWidth": 320,
+        "scrollWidth": 320,
+        "dpr": 1
+      },
+      "focused": {
+        "tag": "BUTTON",
+        "text": "저장",
+        "outlineStyle": "solid",
+        "outlineWidth": "2px"
+      }
+    },
+    {
+      "name": "mobile 390 ko: named inputs, keyboard, focus, targets, cancel",
+      "status": "pass",
+      "names": [
+        "우리팀 점수",
+        "상대팀 점수"
+      ],
+      "bounds": [
+        {
+          "name": "우리팀 점수",
+          "x": 37,
+          "right": 85,
+          "width": 48,
+          "height": 44
+        },
+        {
+          "name": "상대팀 점수",
+          "x": 105.703125,
+          "right": 153.703125,
+          "width": 48,
+          "height": 44
+        },
+        {
+          "name": "저장",
+          "x": 161.953125,
+          "right": 205.953125,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "name": "취소",
+          "x": 213.953125,
+          "right": 257.953125,
+          "width": 44,
+          "height": 44
+        }
+      ],
+      "viewport": {
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "dpr": 1
+      },
+      "focused": {
+        "tag": "BUTTON",
+        "text": "저장",
+        "outlineStyle": "solid",
+        "outlineWidth": "2px"
+      }
+    },
+    {
+      "name": "mobile 390 de: named inputs, keyboard, focus, targets, cancel",
+      "status": "pass",
+      "names": [
+        "Unser Team Ergebnis",
+        "Gegner Ergebnis"
+      ],
+      "bounds": [
+        {
+          "name": "Unser Team Ergebnis",
+          "x": 40.5625,
+          "right": 88.5625,
+          "width": 48,
+          "height": 44
+        },
+        {
+          "name": "Gegner Ergebnis",
+          "x": 112.578125,
+          "right": 160.578125,
+          "width": 48,
+          "height": 44
+        },
+        {
+          "name": "Speichern",
+          "x": 168.578125,
+          "right": 244.328125,
+          "width": 75.75,
+          "height": 44
+        },
+        {
+          "name": "Abbrechen",
+          "x": 252.328125,
+          "right": 328.96875,
+          "width": 76.640625,
+          "height": 44
+        }
+      ],
+      "viewport": {
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "dpr": 1
+      },
+      "focused": {
+        "tag": "BUTTON",
+        "text": "Speichern",
+        "outlineStyle": "solid",
+        "outlineWidth": "2px"
+      }
+    },
+    {
+      "name": "browser Back during quarters response",
+      "status": "pass",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "limitation": "Already committed synthetic writes remain; navigation is not server rollback"
+    },
+    {
+      "name": "browser Back during matches response",
+      "status": "pass",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "limitation": "Already committed synthetic writes remain; navigation is not server rollback"
+    }
+  ],
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED"
+  ],
+  "cleanupWarnings": []
+}

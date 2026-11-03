@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient, getSessionUser } from '@/lib/supabase'
@@ -29,6 +29,8 @@ export default function MatchDetailPage() {
   const [editingQuarterScore, setEditingQuarterScore] = useState<number | null>(null)
   const [qHome, setQHome] = useState(0)
   const [qAway, setQAway] = useState(0)
+  const [savingQuarterScore, setSavingQuarterScore] = useState(false)
+  const quarterScoreRequest = useRef<AbortController | null>(null)
   const [attendees, setAttendees] = useState<MatchAttendee[]>([])
   const [allPlayers, setAllPlayers] = useState<Player[]>([])
   const [showAttendeePicker, setShowAttendeePicker] = useState(false)
@@ -52,7 +54,13 @@ export default function MatchDetailPage() {
   const supabase = createClient()
 
   useEffect(() => {
+    setSavingQuarterScore(false)
+    setEditingQuarterScore(null)
     loadMatch()
+    return () => {
+      quarterScoreRequest.current?.abort()
+      quarterScoreRequest.current = null
+    }
   }, [matchId])
 
   // Auto-open the attendee picker right after creating a match (?attendees=1)
@@ -216,6 +224,7 @@ export default function MatchDetailPage() {
   }
 
   const startEditQuarterScore = (quarterNum: number) => {
+    if (quarterScoreRequest.current) return
     const q = match?.quarters?.find(q => q.quarter_number === quarterNum)
     setQHome(q?.home_score || 0)
     setQAway(q?.away_score || 0)
@@ -223,12 +232,17 @@ export default function MatchDetailPage() {
   }
 
   const handleSaveQuarterScore = async () => {
-    if (editingQuarterScore === null || !match) return
+    if (quarterScoreRequest.current || editingQuarterScore === null || !match) return
     const q = match.quarters?.find(q => q.quarter_number === editingQuarterScore)
     if (!q) return
 
-    // Both writes must succeed before closing the editor. They are not atomic:
-    // keep the same draft available to retry if the total write fails.
+    // A synchronous lock also covers repeated clicks before React renders.
+    const request = new AbortController()
+    quarterScoreRequest.current = request
+    setSavingQuarterScore(true)
+    const isCurrent = () => quarterScoreRequest.current === request && !request.signal.aborted
+    // These writes are not atomic. Preserve acknowledged quarter values for
+    // later totals, but only confirm the whole save after both writes succeed.
     const newTotal = match.quarters?.reduce(
       (acc, q) => ({
         home: acc.home + (q.quarter_number === editingQuarterScore ? qHome : (q.home_score || 0)),
@@ -242,23 +256,36 @@ export default function MatchDetailPage() {
         .from('quarters')
         .update({ home_score: qHome, away_score: qAway })
         .eq('id', q.id)
+        .abortSignal(request.signal)
+      if (!isCurrent()) return
       if (quarterError) throw quarterError
+
+      setMatch(prev => prev?.id === matchId ? {
+        ...prev,
+        quarters: prev.quarters?.map(quarter => quarter.id === q.id
+          ? { ...quarter, home_score: qHome, away_score: qAway } : quarter),
+      } : prev)
 
       const { error: matchError } = await supabase
         .from('matches')
         .update({ home_score: newTotal.home, away_score: newTotal.away })
         .eq('id', matchId)
+        .abortSignal(request.signal)
+      if (!isCurrent()) return
       if (matchError) throw matchError
 
-      setMatch(prev => prev ? {
+      setMatch(prev => prev?.id === matchId ? {
         ...prev, home_score: newTotal.home, away_score: newTotal.away,
-        quarters: prev.quarters?.map(quarter => quarter.id === q.id
-          ? { ...quarter, home_score: qHome, away_score: qAway } : quarter),
-      } : null)
+      } : prev)
       setEditingQuarterScore(null)
       toast.success(t.scoreSaved)
     } catch {
-      toast.error(t.scoreSaveFailed)
+      if (isCurrent()) toast.error(t.scoreSaveFailed)
+    } finally {
+      if (quarterScoreRequest.current === request) {
+        quarterScoreRequest.current = null
+        setSavingQuarterScore(false)
+      }
     }
   }
 
@@ -697,6 +724,7 @@ export default function MatchDetailPage() {
             {[1, 2, 3, 4].map((q) => (
               <button
                 key={q}
+                disabled={savingQuarterScore}
                 onClick={() => setActiveQuarter(q)}
                 className="flex-1 py-3 rounded-lg font-bold text-sm transition"
                 style={{
@@ -713,16 +741,18 @@ export default function MatchDetailPage() {
           {/* Quarter Content */}
           {currentQuarter && (
             <div className="rounded-xl overflow-hidden" style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}>
-              <div className="p-4 flex justify-between items-center" style={{ borderBottom: '1px solid var(--line)' }}>
-                <div className="flex items-center gap-3">
+              <div className="p-4 flex flex-wrap gap-3 justify-between items-center" style={{ borderBottom: '1px solid var(--line)' }}>
+                <div className="flex min-w-0 flex-wrap items-center gap-3">
                   <h3 className="font-bold text-[color:var(--text)]">{t.quarterN.replace('{n}', String(activeQuarter))} {t.quarterRecord}</h3>
                   {canEditQuarters && editingQuarterScore === activeQuarter ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2" aria-busy={savingQuarterScore}>
                       <div className="flex flex-col items-center">
                         <span className="text-[10px] mb-0.5" style={{ color: 'var(--muted2)' }}>{t.homeTeam}</span>
                         <input
                           type="number"
                           min={0}
+                          aria-label={`${t.homeTeam} ${t.score}`}
+                          disabled={savingQuarterScore}
                           value={qHome}
                           onChange={(e) => setQHome(parseInt(e.target.value) || 0)}
                           className="w-12 text-center rounded py-1 text-sm text-[color:var(--text)] outline-none"
@@ -735,14 +765,16 @@ export default function MatchDetailPage() {
                         <input
                           type="number"
                           min={0}
+                          aria-label={`${t.awayTeam} ${t.score}`}
+                          disabled={savingQuarterScore}
                           value={qAway}
                           onChange={(e) => setQAway(parseInt(e.target.value) || 0)}
                           className="w-12 text-center rounded py-1 text-sm text-[color:var(--text)] outline-none"
                           style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}
                         />
                       </div>
-                      <button onClick={handleSaveQuarterScore} className="px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>{t.save}</button>
-                      <button onClick={() => setEditingQuarterScore(null)} className="px-2 py-1 rounded text-xs text-[color:var(--text)]/50" style={{ background: 'var(--card2)' }}>{t.cancel}</button>
+                      <button disabled={savingQuarterScore} onClick={handleSaveQuarterScore} className="min-w-[44px] px-2 py-1 rounded text-xs font-bold" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>{savingQuarterScore ? t.saving : t.save}</button>
+                      <button disabled={savingQuarterScore} onClick={() => setEditingQuarterScore(null)} className="min-w-[44px] px-2 py-1 rounded text-xs text-[color:var(--text)]/50" style={{ background: 'var(--card2)' }}>{t.cancel}</button>
                     </div>
                   ) : canEditQuarters ? (
                     <button
