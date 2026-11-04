@@ -1,0 +1,231 @@
+{
+  "observedAt": "2026-11-04T15:06:02.092Z",
+  "app": "http://127.0.0.1:3128",
+  "scope": "Production-build acceptance",
+  "fontSource": "CSS and 746 WOFF2 assets reused from the cached pre-feature build via /tmp/soccer-import-fonts/responses.cjs; build-only font responses, no product font/dependency change",
+  "data": "Synthetic in-memory fixtures; every API and auth request intercepted; no production DB access",
+  "cases": [
+    {
+      "name": "01 zero selection, recorded-player explanation and observed OUT/IN facts",
+      "status": "pass",
+      "durationMs": 3543
+    },
+    {
+      "name": "02 selected placement only, explicit Save all and immutable source",
+      "status": "pass",
+      "durationMs": 3672
+    },
+    {
+      "name": "03 persisted target records prohibit entry",
+      "status": "pass",
+      "durationMs": 5276
+    },
+    {
+      "name": "04 existing manual draft prohibits import without overwriting",
+      "status": "pass",
+      "durationMs": 6410
+    },
+    {
+      "name": "05 duplicate and conflicting player records are disabled with reasons",
+      "status": "pass",
+      "durationMs": 5604
+    },
+    {
+      "name": "06 invalid numeric values, missing roster and ineligible attendees disabled",
+      "status": "pass",
+      "durationMs": 5583
+    },
+    {
+      "name": "07 exact coordinate collision blocks selected pair without silent relocation",
+      "status": "pass",
+      "durationMs": 7413
+    },
+    {
+      "name": "08 editor-safe bounds preserved and 0/100 edge positions refused",
+      "status": "pass",
+      "durationMs": 9868
+    },
+    {
+      "name": "09 empty previous quarter and quarter one provide no import",
+      "status": "pass",
+      "durationMs": 4737
+    },
+    {
+      "name": "10 apply rechecks current persisted target occupancy",
+      "status": "pass",
+      "durationMs": 3316
+    },
+    {
+      "name": "11 target-check failure retains selection and retries without writes",
+      "status": "pass",
+      "durationMs": 4162
+    },
+    {
+      "name": "12 repeated same-tick apply performs one check and one draft insertion",
+      "status": "pass",
+      "durationMs": 4046
+    },
+    {
+      "name": "13 closing pending check and reopening cannot apply its stale response",
+      "status": "pass",
+      "durationMs": 3757
+    },
+    {
+      "name": "14 cancel and browser back preserve empty target and return focus",
+      "status": "pass",
+      "durationMs": 3883
+    },
+    {
+      "name": "15 pending apply cannot cross quarter or match route changes",
+      "status": "pass",
+      "durationMs": 9658
+    },
+    {
+      "name": "16 pending import cannot survive dashboard team switch",
+      "status": "pass",
+      "durationMs": 5776
+    },
+    {
+      "name": "17 account switch and logout invalidate pending import",
+      "status": "pass",
+      "durationMs": 8153
+    },
+    {
+      "name": "18 imported draft supports stay and confirmed discard without saving",
+      "status": "pass",
+      "durationMs": 3788
+    },
+    {
+      "name": "19 explicit save failure retains imported draft and retry persists once",
+      "status": "pass",
+      "durationMs": 3413
+    },
+    {
+      "name": "20 lost save acknowledgement retry keeps one row and stable server identity",
+      "status": "pass",
+      "durationMs": 3442
+    },
+    {
+      "name": "21 320px dialog keyboard, focus trap, touch targets and editable preview",
+      "status": "pass",
+      "durationMs": 3548
+    },
+    {
+      "name": "22 English labels and non-Korean fallback remain usable",
+      "status": "pass",
+      "durationMs": 12654
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "390-empty-quarter2.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-recorded-players-zero-selected.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-imported-unsaved-draft.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-invalid-source-records.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "320-keyboard-selected.png",
+      "width": 320,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "320-keyboard-adjusted-draft.png",
+      "width": 320,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-en_US-selected.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-fr-selected.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-unsupported-selected.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    }
+  ],
+  "cleanupWarnings": [],
+  "feature": "Selected previous-quarter records to unsaved draft",
+  "mode": "acceptance",
+  "sourceHEAD": "41a4958e8cb46319ed168534edaa999b7fce3cf4",
+  "workingTree": "M docs/AGENT_DISCUSSIONS.md\n M scripts/qa-quarter-import.mjs\n?? docs/design-qa/2026-11-04-quarter-import/after-first-run/\n?? docs/design-qa/2026-11-04-quarter-import/verification.json",
+  "buildId": "7-KgWrDkQQ1lvIHgToQO3",
+  "productBlobs": {
+    "src/app/match/[id]/quarter/[q]/page.tsx": "fa729c8eee869d99800d497380f934b84001cf52",
+    "src/lib/quarter-import.ts": "32f82f5d906435aaadc3c7f844b2f53c2996a200",
+    "src/lib/quarter-import-copy.ts": "f8c7007d58bba955ae9f873e99d2d14d873c6ab0",
+    "src/components/design/Sheet.tsx": "c17bdc42fd3aca6d8646b2ae9afbec8cd0da5b80"
+  },
+  "assertionTimeoutMs": 10000,
+  "navigationTimeoutMs": 30000,
+  "filter": null,
+  "expectedCaseCount": 22,
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "passed": true,
+  "selectedCasesPassed": true,
+  "metadataCorrections": [
+    {
+      "observedAt": "2026-11-04T15:11:35.165643+00:00",
+      "field": "fontSource",
+      "reason": "The shared fixture inherited a generic historical Fontsource label. Release owner confirmed cached pre-feature CSS/746 WOFF2 reuse for this build. Metadata only; test outcomes unchanged."
+    }
+  ]
+}

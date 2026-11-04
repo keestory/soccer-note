@@ -1,0 +1,476 @@
+{
+  "observedAt": "2026-11-04T15:14:49.354Z",
+  "app": "http://127.0.0.1:3127",
+  "data": "Synthetic in-memory fixtures only; all data APIs intercepted",
+  "cases": [
+    {
+      "name": "390px delayed full save: one request, edit lock, unchanged IDs, draft back confirmation",
+      "status": "pass",
+      "elapsedMs": 3877,
+      "evidence": {
+        "postCount": 1,
+        "deleteCount": 0,
+        "goal": 1,
+        "stableId": true,
+        "focusReturned": true
+      }
+    },
+    {
+      "name": "failed upsert: no delete, retained locked snapshot, successful identical retry",
+      "status": "pass",
+      "elapsedMs": 3982,
+      "evidence": {
+        "identicalRetry": true,
+        "noDeleteOnUpsertFailure": true,
+        "retainedDraft": true
+      }
+    },
+    {
+      "name": "partial save removal failure then retry: explicit baseline IDs, unseen concurrent row preserved",
+      "status": "pass",
+      "elapsedMs": 4531,
+      "evidence": {
+        "order": "upsert then explicit delete",
+        "unseenRowPreserved": true,
+        "retryConfirmed": true
+      }
+    },
+    {
+      "name": "empty lineup: delete only loaded rows and fail closed on missing acknowledgement",
+      "status": "pass",
+      "elapsedMs": 3433,
+      "evidence": {
+        "emptySavePermitted": true,
+        "zeroAckRejected": true,
+        "unseenRowPreserved": true
+      }
+    },
+    {
+      "name": "new player with lost upsert response: retry preserves one identity without duplicates",
+      "status": "pass",
+      "elapsedMs": 5311,
+      "evidence": {
+        "oneRow": true,
+        "stableIdAcrossLostResponse": true
+      }
+    },
+    {
+      "name": "upload in flight: full save and editing wait, uploaded URL included in next save",
+      "status": "pass",
+      "elapsedMs": 4157,
+      "evidence": {
+        "noSaveDuringUpload": true,
+        "uploadedUrlRetained": true
+      }
+    },
+    {
+      "name": "substitution in flight: full save waits and new player is included after acknowledgement",
+      "status": "pass",
+      "elapsedMs": 3461,
+      "evidence": {
+        "noSaveDuringSubstitution": true,
+        "acknowledgedSubstituteIncluded": true
+      }
+    },
+    {
+      "name": "320px long German copy: status wraps and primary controls remain at least 44px",
+      "status": "pass",
+      "elapsedMs": 2122,
+      "evidence": {
+        "width": 320,
+        "scrollWidth": 320,
+        "heights": [
+          44,
+          56
+        ],
+        "lang": "de",
+        "overflow": []
+      }
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "pending-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ],
+      "statusColor": "rgb(245, 245, 239)",
+      "statusBackground": "rgb(17, 16, 16)",
+      "saveOpacity": "0.5"
+    },
+    {
+      "file": "saved-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ],
+      "statusColor": "rgb(245, 245, 239)",
+      "statusBackground": "rgb(17, 16, 16)",
+      "saveOpacity": "0.5"
+    },
+    {
+      "file": "failed-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ],
+      "statusColor": "rgb(245, 245, 239)",
+      "statusBackground": "rgb(17, 16, 16)",
+      "saveOpacity": "1"
+    },
+    {
+      "file": "failed-de-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ],
+      "statusColor": "rgb(245, 245, 239)",
+      "statusBackground": "rgb(17, 16, 16)",
+      "saveOpacity": "1"
+    }
+  ],
+  "cleanupWarnings": [],
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "passed": true,
+  "responsiveMetrics": {
+    "width": 320,
+    "scrollWidth": 320,
+    "heights": [
+      44,
+      56
+    ],
+    "lang": "de",
+    "overflow": []
+  }
+}

@@ -57,6 +57,15 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 - The noindex /design-system route is an in-memory fictional review surface; its four review selectors do not change the four production navigation destinations.
 - No production data, authorization, native SDK or schema change is part of the visual refresh.
 
+## Selected previous-quarter placement draft (2026-11-04)
+
+- A quarter after the first may import selected recorded players from the immediately previous quarter of the same match only when saved records and draft players are empty. Recheck before applying.
+- Start with zero selected players. Describe actual recorded IN/OUT facts without inferring a final lineup. Explain unavailable roster entries, duplicate/conflicting records, invalid coordinates and positions outside the existing editable pitch area.
+- Copy player identity and placement into a new local draft only. Do not copy row IDs, statistics, feedback, media or substitution records. Block selected players at the same exact coordinates instead of silently moving them.
+- Cancel, Escape and context changes invalidate pending import responses. Pending application keeps keyboard focus on an enabled Cancel control; a successful application moves focus to the existing pitch heading.
+- The existing pitch is the editable preview. Existing explicit Save all and save-failure retry/discard flows own persistence. The read-before-apply check is not an atomic lock against another client's later write.
+- [Implementation, evidence and release boundaries](docs/QUARTER_IMPORT_2026-11-04.md) distinguish synthetic QA, production deployment and unverified real-user outcomes.
+
 ## Neon restoration (2026-10-31)
 
 - GOLDLINE dark surfaces and volt accents replace Line Matchday colors; the interaction requirements above still apply.

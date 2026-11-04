@@ -9,9 +9,16 @@ const before = process.argv.includes('--before')
 const filter = process.env.SOCCER_QA_CASE || ''
 const output = resolve(process.env.SOCCER_QA_OUTPUT || `docs/design-qa/2026-11-04-quarter-import/${before ? 'before' : 'after'}`)
 await mkdir(output, { recursive: true })
+// Set navigation timeout before the shared fixture creates its first page.
+const originalNewContext = browser.newContext.bind(browser)
+browser.newContext = async options => {
+  const context = await originalNewContext(options)
+  context.on('page', page => page.setDefaultNavigationTimeout(30000))
+  return context
+}
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
 const productPaths = ['src/app/match/[id]/quarter/[q]/page.tsx', 'src/lib/quarter-import.ts', 'src/lib/quarter-import-copy.ts', 'src/components/design/Sheet.tsx']
-Object.assign(report, { feature: 'Selected previous-quarter records to unsaved draft', mode: before ? 'baseline-capture' : 'acceptance', sourceHEAD: git('rev-parse', 'HEAD'), workingTree: git('status', '--short'), buildId: (await readFile('.next/BUILD_ID', 'utf8')).trim(), productBlobs: {}, assertionTimeoutMs: 10000, navigationTimeoutMs: 30000, filter: filter || null, cases: [], screenshots: [] })
+Object.assign(report, { feature: 'Selected previous-quarter records to unsaved draft', fontSource: 'CSS and 746 WOFF2 assets reused from the cached pre-feature build via /tmp/soccer-import-fonts/responses.cjs; build-only font responses, no product font/dependency change', mode: before ? 'baseline-capture' : 'acceptance', sourceHEAD: git('rev-parse', 'HEAD'), workingTree: git('status', '--short'), buildId: (await readFile('.next/BUILD_ID', 'utf8')).trim(), productBlobs: {}, assertionTimeoutMs: 10000, navigationTimeoutMs: 30000, filter: filter || null, cases: [], screenshots: [] })
 for (const path of productPaths) { try { report.productBlobs[path] = git('hash-object', path) } catch {} }
 const targetId = id(4, 102), sourceId = id(4, 1)
 const routeTo = (quarter = 2, match = matches[0].id) => `/match/${match}/quarter/${quarter}`
@@ -21,6 +28,9 @@ async function setup({ width = 390, locale = 'ko', browserLanguage, configure = 
   try {
     f = await fixture({ width, locale })
     f.page.setDefaultNavigationTimeout(30000)
+    // Fictional historical media may render on the existing match page after Back.
+    // Fulfill only this exact QA URL in memory; never contact its host.
+    await f.context.route('https://example.invalid/old-media', route => route.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=', 'base64') }))
     if (browserLanguage) await f.context.addInitScript(language => { Object.defineProperty(navigator, 'language', { get: () => language }); Object.defineProperty(navigator, 'languages', { get: () => [language] }) }, browserLanguage)
     const extra = [11, 12, 13, 14, 15, 16, 17, 18].map((n, i) => ({ ...players[0], id: id(5, n), name: `가상 가져오기 ${i + 1}`, number: n, default_position: i === 0 ? 'FW' : 'MF' }))
     f.state.players.push(...extra)
@@ -94,6 +104,7 @@ async function run(name, work) {
   const start = Date.now()
   try { await work(); report.cases.push({ name, status: 'pass', durationMs: Date.now() - start }) }
   catch (e) { report.cases.push({ name, status: 'fail', error: e.stack, durationMs: Date.now() - start }); process.exitCode = 1 }
+  console.log(JSON.stringify(report.cases.at(-1)))
 }
 async function withFixture(work, options) { const f = await setup(options); try { await work(f) } finally { await f.close() } }
 try {
@@ -131,7 +142,16 @@ async function imported(f, count) { await until(async () => await pitch(f.page).
 async function applyOne(f) { await openImport(f); await select(f, players[0].id); await apply(f.page).click(); await imported(f, 1) }
 async function saveConfirmed(f) { await save(f.page).click(); await until(async () => (await status(f.page).textContent()).includes('변경 사항이 모두 저장됐어요.'), 'save confirmation') }
 async function entryBlocked(f) { assert(await entry(f.page).count() === 0 || await entry(f.page).isDisabled(), 'Nonempty target must not allow import'); sourceUnchanged(f) }
-async function moveRoute(f, path) { await f.page.evaluate(path => window.history.pushState(null, '', path), path); await until(() => f.page.url().endsWith(path), `route ${path}`) }
+async function moveRoute(f, path) { await f.page.goto(`${base}${path}`, { waitUntil: 'networkidle', timeout: 30000 }); await until(() => f.page.url().endsWith(path), `route ${path}`) }
+async function openQuarterLink(f, number, matchId = matches[0].id) {
+  await f.page.getByRole('button', { name: `${number}쿼터`, exact: true }).click()
+  await f.page.locator(`a[href="/match/${matchId}/quarter/${number}"]`).click()
+  await f.page.locator('#quarter-save-status').waitFor()
+}
+async function prepareEditorHistory(f) {
+  await f.page.getByRole('button', { name: '경기로 돌아가기', exact: true }).click()
+  await openQuarterLink(f, 2)
+}
 async function releaseMode(mode) { mode.release(); await until(() => mode.released, 'held response released') }
 async function pending(f) { const mode = hold(); f.state.nextTargetRead = mode; await openImport(f); await select(f, players[0].id); await apply(f.page).click(); await until(() => mode.entered, 'fresh target read entered'); return mode }
 function verifyClean(row, source) {
@@ -248,14 +268,24 @@ async function acceptance() {
     noWrite(f); sourceUnchanged(f); assert.equal(f.target.quarter_records.length, 0)
   }))
   await run('15 pending apply cannot cross quarter or match route changes', async () => {
-    for (const path of [routeTo(3), routeTo(1, matches[2].id)]) await withFixture(async f => {
+    for (const destination of ['next-quarter', 'other-match']) await withFixture(async f => {
+      await prepareEditorHistory(f)
       const mode = await pending(f)
-      try { await moveRoute(f, path); await until(async () => await f.page.getByRole('dialog').count() === 0, 'context clears picker'); await releaseMode(mode); await pause(100); const names = await pitch(f.page).allTextContents(); assert(names.every(name => !name.includes(players[0].name))); assert.equal(f.target.quarter_records.length, 0); noWrite(f); sourceUnchanged(f) } finally { mode.release() }
+      try {
+        await f.page.goBack({ waitUntil: 'networkidle', timeout: 30000 })
+        if (destination === 'next-quarter') await openQuarterLink(f, 3)
+        else {
+          await f.page.locator('header a[href="/dashboard"]').click(); await f.page.locator('h1').filter({ hasText: teams[0].name }).waitFor()
+          await openPicker(f.page); await choose(f.page, 2, f.state); await f.page.locator('h1').filter({ hasText: teams[2].name }).waitFor()
+          await f.page.locator(`a[href="/match/${matches[2].id}"]`).first().click(); await openQuarterLink(f, 1, matches[2].id)
+        }
+        await until(async () => await f.page.getByRole('dialog').count() === 0, 'context clears picker'); await releaseMode(mode); await pause(100); const names = await pitch(f.page).allTextContents(); assert(names.every(name => !name.includes(players[0].name))); assert.equal(f.target.quarter_records.length, 0); noWrite(f); sourceUnchanged(f) } finally { mode.release() }
     })
   })
   await run('16 pending import cannot survive dashboard team switch', () => withFixture(async f => {
+    await prepareEditorHistory(f)
     const mode = await pending(f)
-    try { await moveRoute(f, '/dashboard'); await f.page.locator('h1').filter({ hasText: teams[0].name }).waitFor(); await openPicker(f.page); await choose(f.page, 2, f.state); await f.page.locator('h1').filter({ hasText: teams[2].name }).waitFor(); await releaseMode(mode); await pause(100); assert.equal(await f.page.getByRole('dialog').count(), 0); assert.equal(f.target.quarter_records.length, 0); noWrite(f); sourceUnchanged(f) } finally { mode.release() }
+    try { await f.page.goBack({ waitUntil: 'networkidle', timeout: 30000 }); await f.page.locator('header a[href="/dashboard"]').click(); await f.page.locator('h1').filter({ hasText: teams[0].name }).waitFor(); await openPicker(f.page); await choose(f.page, 2, f.state); await f.page.locator('h1').filter({ hasText: teams[2].name }).waitFor(); await releaseMode(mode); await pause(100); assert.equal(await f.page.getByRole('dialog').count(), 0); assert.equal(f.target.quarter_records.length, 0); noWrite(f); sourceUnchanged(f) } finally { mode.release() }
   }))
   await run('17 account switch and logout invalidate pending import', async () => {
     for (const next of [makeSession(otherUid), null]) await withFixture(async f => {
@@ -266,7 +296,7 @@ async function acceptance() {
   await run('18 imported draft supports stay and confirmed discard without saving', () => withFixture(async f => {
     await applyOne(f)
     await f.page.getByRole('button', { name: '경기로 돌아가기', exact: true }).click(); await f.page.getByRole('dialog').waitFor()
-    await f.page.getByRole('button', { name: '이 화면에 머무르기', exact: true }).click(); assert.equal(await pitch(f.page).count(), 1)
+    await f.page.getByRole('button', { name: '이 화면에 머무르기', exact: true }).filter({ hasText: '이 화면에 머무르기' }).click(); assert.equal(await pitch(f.page).count(), 1)
     await f.page.getByRole('button', { name: '경기로 돌아가기', exact: true }).click(); await f.page.getByRole('button', { name: '이 화면 나가기', exact: true }).click(); await until(() => f.page.url().endsWith(`/match/${matches[0].id}`), 'discard returns to match')
     assert.equal(f.target.quarter_records.length, 0); noWrite(f); sourceUnchanged(f)
   }))

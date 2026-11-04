@@ -1,0 +1,48 @@
+{
+  "sourceCommit": "41a4958e8cb46319ed168534edaa999b7fce3cf4",
+  "branch": "codex/quarter-save-reliability",
+  "projectId": "prj_8MtXlwcx0NzpWAZQjGUuFTL4HHAL",
+  "deployment": {
+    "id": "dpl_B2QxxnmFRfSsdsbBoSmfYzzVzdha",
+    "url": "https://soccer-note-9qxbfl09j-keestory91-6294s-projects.vercel.app",
+    "readyState": "READY",
+    "target": "production",
+    "commit": "41a4958e8cb46319ed168534edaa999b7fce3cf4",
+    "createdAt": "2026-11-04T15:17:16.172Z",
+    "readyAt": "2026-11-04T15:17:40.313Z"
+  },
+  "alias": {
+    "url": "https://soccer-note-hazel.vercel.app",
+    "deploymentId": "dpl_B2QxxnmFRfSsdsbBoSmfYzzVzdha",
+    "verified": true
+  },
+  "sourceCommitCI": {
+    "context": "Vercel",
+    "state": "success"
+  },
+  "plan": {
+    "tier": "hobby",
+    "monthlyRemaining": "unknown",
+    "totalBill": "unknown",
+    "newPaidOptions": false,
+    "evidence": "Existing team/project read and official Hobby/Functions included limits; successful standard deployment does not establish future quota.",
+    "policy": [
+      "https://vercel.com/docs/plans/hobby",
+      "https://vercel.com/docs/functions/usage-and-pricing"
+    ]
+  },
+  "recovery": {
+    "commit": "8ba405ef24d521fc186562dda6ad3d2455e6f489",
+    "deploymentId": "dpl_HB3DBN6eRT3ChptehiawDaR38GzU",
+    "method": "Normal existing-deployment redeploy, target production, withLatestCommit=false; verify resulting source SHA, READY and alias before declaring recovery.",
+    "executionTested": false,
+    "specialRollbackEndpointRetried": false
+  },
+  "observation": {
+    "runtimeQuery": "Deployment-scoped production error/fatal grouped by level, last 10m, returned no groups. Not proof of all traffic or zero errors.",
+    "publicUI": "Not reattempted after existing cloud proxy CONNECT 403. Public render/HTTP proof is not supplied by this executor.",
+    "actualProductionDBWrites": "not performed",
+    "syntheticBrowserCases": 61,
+    "nativeDeviceTested": false
+  }
+}
