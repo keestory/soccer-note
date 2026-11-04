@@ -1,0 +1,392 @@
+{
+  "observedAt": "2026-11-04T01:45:47.069Z",
+  "sourceCommit": "46d8a3df7700d06ac6cc5dd260f540402f6499b6",
+  "productBlob": "9eeacd7d32c641cee4de65b18b53ea5038d87598",
+  "copyBlob": "66247b27441e399f3c3ae1097338ebcabc6a9c13",
+  "productBlobs": {
+    "src/app/match/[id]/page.tsx": "9eeacd7d32c641cee4de65b18b53ea5038d87598",
+    "src/lib/match-note-copy.ts": "66247b27441e399f3c3ae1097338ebcabc6a9c13"
+  },
+  "uncommittedProductSource": true,
+  "changedProductPaths": [
+    "src/app/match/[id]/page.tsx",
+    "src/lib/match-note-copy.ts"
+  ],
+  "buildId": "sMT-dOg3oD3u2jcyhbPFq",
+  "scope": "Independent native QA; production build with synthetic API/auth. No real user, production DB, billing or native-device proof.",
+  "cases": [
+    {
+      "name": "normal save, trim and reload",
+      "status": "pass",
+      "stored": "A: submitted memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "blank memo saves null",
+      "status": "pass",
+      "stored": null,
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": null
+          }
+        }
+      ]
+    },
+    {
+      "name": "edit-b: serialize, retain, suppress stale success and save latest",
+      "status": "fail",
+      "error": "page.reload: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for navigation until \"networkidle\"\u001b[22m\n\n    at surface (/workspace/soccer-note/scripts/qa-notes-save.mjs:55:16)\n    at async collision (/workspace/soccer-note/scripts/qa-notes-save.mjs:97:13)\n    at async file:///workspace/soccer-note/scripts/qa-notes-save.mjs:273:58"
+    },
+    {
+      "name": "aba: serialize, retain, suppress stale success and save latest",
+      "status": "pass",
+      "pendingEditable": true,
+      "requestCountBeforeRetry": 1,
+      "editorAfterAcknowledgment": "A: submitted memo",
+      "storedAfterAcknowledgment": "A: submitted memo",
+      "staleSuccess": false,
+      "finalStored": "A: submitted memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "reopen-different: serialize, retain, suppress stale success and save latest",
+      "status": "pass",
+      "pendingEditable": true,
+      "requestCountBeforeRetry": 1,
+      "editorAfterAcknowledgment": "B: newer unsaved memo",
+      "storedAfterAcknowledgment": "A: submitted memo",
+      "staleSuccess": false,
+      "finalStored": "B: newer unsaved memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "B: newer unsaved memo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "reopen-identical: serialize, retain, suppress stale success and save latest",
+      "status": "pass",
+      "pendingEditable": true,
+      "requestCountBeforeRetry": 1,
+      "editorAfterAcknowledgment": "A: submitted memo",
+      "storedAfterAcknowledgment": "A: submitted memo",
+      "staleSuccess": false,
+      "finalStored": "A: submitted memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "close pending request does not undo acknowledged write",
+      "status": "pass",
+      "closedRemainedClosed": true,
+      "submittedWriteMayComplete": true,
+      "reopenedConfirmed": "A: submitted memo",
+      "staleSuccess": false
+    },
+    {
+      "name": "failure with newer draft and retry",
+      "status": "pass",
+      "failure": "500",
+      "newSession": false,
+      "retained": "B: newer unsaved memo",
+      "storedAfterFailure": "OLD: confirmed memo",
+      "staleSuccess": false,
+      "finalStored": "B: newer unsaved memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "B: newer unsaved memo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "lost response with newer draft and retry",
+      "status": "pass",
+      "failure": "lost",
+      "newSession": false,
+      "retained": "B: newer unsaved memo",
+      "storedAfterFailure": "A: submitted memo",
+      "staleSuccess": false,
+      "finalStored": "B: newer unsaved memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "B: newer unsaved memo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "failure from canceled session does not overwrite new status",
+      "status": "pass",
+      "failure": "500",
+      "newSession": true,
+      "retained": "B: newer unsaved memo",
+      "storedAfterFailure": "OLD: confirmed memo",
+      "staleSuccess": false,
+      "finalStored": "B: newer unsaved memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "B: newer unsaved memo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "mobile 320 ko accessibility and keyboard cancel",
+      "status": "pass",
+      "editInfo": {
+        "label": "경기 메모: 수정",
+        "width": 44,
+        "height": 44
+      },
+      "fontSize": 16,
+      "focus": {
+        "text": "저장",
+        "tag": "BUTTON",
+        "outline": "solid",
+        "width": "2px"
+      },
+      "controls": [
+        {
+          "tag": "TEXTAREA",
+          "x": 37,
+          "right": 283,
+          "width": 246,
+          "height": 118
+        },
+        {
+          "tag": "BUTTON",
+          "x": 37,
+          "right": 217.234375,
+          "width": 180.234375,
+          "height": 44
+        },
+        {
+          "tag": "BUTTON",
+          "x": 225.234375,
+          "right": 283,
+          "width": 57.765625,
+          "height": 44
+        }
+      ],
+      "viewport": {
+        "innerWidth": 320,
+        "scrollWidth": 320,
+        "dpr": 1
+      },
+      "keyboardCancel": true
+    },
+    {
+      "name": "mobile 390 de accessibility and keyboard cancel",
+      "status": "pass",
+      "editInfo": {
+        "label": "Spielnotizen: Bearbeiten",
+        "width": 44,
+        "height": 44
+      },
+      "fontSize": 16,
+      "focus": {
+        "text": "Speichern",
+        "tag": "BUTTON",
+        "outline": "solid",
+        "width": "2px"
+      },
+      "controls": [
+        {
+          "tag": "TEXTAREA",
+          "x": 37,
+          "right": 353,
+          "width": 316,
+          "height": 118
+        },
+        {
+          "tag": "BUTTON",
+          "x": 37,
+          "right": 238.53125,
+          "width": 201.53125,
+          "height": 44
+        },
+        {
+          "tag": "BUTTON",
+          "x": 246.53125,
+          "right": 353,
+          "width": 106.46875,
+          "height": 44
+        }
+      ],
+      "viewport": {
+        "innerWidth": 390,
+        "scrollWidth": 390,
+        "dpr": 1
+      },
+      "keyboardCancel": true
+    },
+    {
+      "name": "spa-back: stale response excluded",
+      "status": "pass",
+      "mode": "spa-back",
+      "staleSuccess": false,
+      "finalPath": "/dashboard",
+      "oldSyntheticWrite": "A: submitted memo",
+      "newMatchUnchanged": "OTHER: separate match memo"
+    },
+    {
+      "name": "full-navigation: stale response excluded",
+      "status": "fail",
+      "error": "page.reload: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for navigation until \"networkidle\"\u001b[22m\n\u001b[2m    - navigated to \"http://127.0.0.1:3128/match/30000000-0000-4000-8000-000000000001\"\u001b[22m\n\n    at surface (/workspace/soccer-note/scripts/qa-notes-save.mjs:55:16)\n    at async navigate (/workspace/soccer-note/scripts/qa-notes-save.mjs:192:13)\n    at async file:///workspace/soccer-note/scripts/qa-notes-save.mjs:273:58"
+    },
+    {
+      "name": "new-match: stale response excluded",
+      "status": "fail",
+      "error": "locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('a[href=\"/match/30000000-0000-4000-8000-000000000002\"]').first()\u001b[22m\n\n    at navigate (/workspace/soccer-note/scripts/qa-notes-save.mjs:204:73)\n    at async file:///workspace/soccer-note/scripts/qa-notes-save.mjs:273:58"
+    },
+    {
+      "name": "account switch invalidates old draft, write response and edit permission",
+      "status": "pass",
+      "logout": false,
+      "staleSuccess": false,
+      "oldDraftHidden": true,
+      "finalPath": "/match/30000000-0000-4000-8000-000000000001",
+      "oldSyntheticWrite": "A: submitted memo"
+    },
+    {
+      "name": "logout invalidates old draft and write response",
+      "status": "pass",
+      "logout": true,
+      "staleSuccess": false,
+      "oldDraftHidden": true,
+      "finalPath": "/login",
+      "oldSyntheticWrite": "A: submitted memo"
+    },
+    {
+      "name": "score and memo saves preserve each other",
+      "status": "pass",
+      "score": "3:2",
+      "memo": "B: newer unsaved memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        },
+        {
+          "table": "quarters",
+          "rowId": "40000000-0000-4000-8000-000000000001",
+          "body": {
+            "home_score": 3,
+            "away_score": 2
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "home_score": 3,
+            "away_score": 2
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "B: newer unsaved memo"
+          }
+        }
+      ]
+    }
+  ],
+  "expected": 18,
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "cleanupWarnings": [],
+  "passed": false
+}

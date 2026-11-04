@@ -1,0 +1,12 @@
+{
+  "observedAt": "2026-11-04T01:45:54.443Z",
+  "mode": "acceptance",
+  "data": "Synthetic browser fixture; no production DB, real users or billing evidence",
+  "cases": [],
+  "error": "page.reload: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for navigation until \"networkidle\"\u001b[22m\n\u001b[2m    - navigated to \"http://127.0.0.1:3128/match/30000000-0000-4000-8000-000000000001\"\u001b[22m\n\n    at concurrent (/workspace/soccer-note/scripts/qa-quarter-score-review.mjs:83:18)\n    at async file:///workspace/soccer-note/scripts/qa-quarter-score-review.mjs:182:25",
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "consoleErrors": [],
+  "cleanupWarnings": [],
+  "unexpectedConsoleErrors": []
+}

@@ -6,13 +6,16 @@ import { base, browser, fixture, matches, report, until, hold, pause, closeBound
 assert.equal(base, 'http://127.0.0.1:3128')
 const before = process.argv.includes('--expect-defect')
 const navigationOnly = process.argv.includes('--navigation-only')
-const output = `docs/design-qa/2026-11-03-quarter-score/${before ? 'before' : navigationOnly ? 'after-navigation' : 'after'}`
+const output = process.env.SOCCER_QA_OUTPUT || `docs/design-qa/2026-11-03-quarter-score/${before ? 'before' : navigationOnly ? 'after-navigation' : 'after'}`
 await mkdir(output, { recursive: true })
 const evidence = { observedAt: new Date().toISOString(), mode: before ? 'candidate regression reproduction' : 'acceptance',
   data: 'Synthetic browser fixture; no production DB, real users or billing evidence', cases: [] }
 
 async function surface(options = {}) {
   const s = await fixture({ route: `/match/${matches[0].id}`, width: options.width || 390, locale: options.locale || 'ko' })
+  // Cloud-local asset loads can exceed the 10s interaction timeout. Keep
+  // assertions bounded at 10s; allow document navigation a separate 30s bound.
+  s.page.setDefaultNavigationTimeout(30000)
   s.state.matches[0].quarters.push({ ...structuredClone(s.state.matches[0].quarters[0]),
     id: '40000000-0000-4000-8000-000000000099', quarter_number: 2, home_score: 0, away_score: 0, quarter_records: [] })
   await s.page.reload({ waitUntil: 'networkidle' })

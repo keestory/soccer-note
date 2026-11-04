@@ -14,6 +14,7 @@ import { MatchDetailSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { BottomNav } from '@/components/BottomNav'
 import { getStore } from '@/lib/dataStore'
+import { getMatchNoteCopy } from '@/lib/match-note-copy'
 
 const BEBAS = 'var(--font-sans), sans-serif'
 
@@ -45,6 +46,15 @@ export default function MatchDetailPage() {
   const [notes, setNotes] = useState('')
   const [editingNotes, setEditingNotes] = useState(false)
   const [savingNotes, setSavingNotes] = useState(false)
+  const [notesSaveFailed, setNotesSaveFailed] = useState(false)
+  const notesRequest = useRef<AbortController | null>(null)
+  // Every input change/open/close invalidates completion for that edit session.
+  const notesRevision = useRef(0)
+  const notesEditSession = useRef(0)
+  const matchLoadVersion = useRef(0)
+  const sessionUserRef = useRef<string | null | undefined>(undefined)
+  const [sessionUserId, setSessionUserId] = useState<string | null | undefined>(undefined)
+  const noteCopy = getMatchNoteCopy(locale)
   // MOM 투표
   const [momVotes, setMomVotes] = useState<Record<string, number>>({}) // playerId → voteCount
   const [myMomVote, setMyMomVote] = useState<string | null>(null) // voted playerId
@@ -54,14 +64,48 @@ export default function MatchDetailPage() {
   const supabase = createClient()
 
   useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      const nextUserId = session?.user.id ?? null
+      if (nextUserId === sessionUserRef.current) return
+      // Invalidate immediately, before React renders the new account.
+      sessionUserRef.current = nextUserId
+      matchLoadVersion.current += 1
+      notesRevision.current += 1
+      notesRequest.current?.abort()
+      notesRequest.current = null
+      quarterScoreRequest.current?.abort()
+      quarterScoreRequest.current = null
+      setSessionUserId(nextUserId)
+    })
+    return () => subscription.unsubscribe()
+  }, [supabase])
+
+  useEffect(() => {
+    if (sessionUserId === undefined) return
+    const version = ++matchLoadVersion.current
+    const isCurrent = () => matchLoadVersion.current === version && sessionUserRef.current === sessionUserId
+    setLoading(true)
+    setMatch(null)
+    setNotes('')
+    setEditingNotes(false)
+    setSavingNotes(false)
+    setNotesSaveFailed(false)
+    setCanEditMatches(false)
+    setCanEditQuarters(false)
+    setCurrentUserId(null)
     setSavingQuarterScore(false)
     setEditingQuarterScore(null)
-    loadMatch()
+    if (sessionUserId === null) router.replace('/login')
+    else void loadMatch(isCurrent)
     return () => {
+      matchLoadVersion.current += 1
+      notesRevision.current += 1
+      notesRequest.current?.abort()
+      notesRequest.current = null
       quarterScoreRequest.current?.abort()
       quarterScoreRequest.current = null
     }
-  }, [matchId])
+  }, [matchId, sessionUserId])
 
   // Auto-open the attendee picker right after creating a match (?attendees=1)
   useEffect(() => {
@@ -75,12 +119,12 @@ export default function MatchDetailPage() {
     }
   }, [loading, canEditMatches])
 
-  const loadMomVotes = async () => {
+  const loadMomVotes = async (isCurrent: () => boolean) => {
     const { data } = await supabase
       .from('match_mom_votes')
       .select('voted_player_id, voter_user_id')
       .eq('match_id', matchId)
-    if (!data) return
+    if (!isCurrent() || !data) return
     const counts: Record<string, number> = {}
     for (const v of data) counts[v.voted_player_id] = (counts[v.voted_player_id] || 0) + 1
     setMomVotes(counts)
@@ -111,8 +155,9 @@ export default function MatchDetailPage() {
     finally { setVotingMom(false) }
   }
 
-  const loadMatch = async () => {
+  const loadMatch = async (isCurrent: () => boolean) => {
     const user = await getSessionUser(supabase)
+    if (!isCurrent() || user?.id !== sessionUserRef.current) return
     if (user) setCurrentUserId(user.id)
 
     const { data, error } = await supabase
@@ -135,6 +180,7 @@ export default function MatchDetailPage() {
       .eq('id', matchId)
       .single()
 
+    if (!isCurrent()) return
     if (error || !data) {
       toast.error(t.matchLoadFailed)
       router.push('/dashboard')
@@ -156,6 +202,7 @@ export default function MatchDetailPage() {
         .eq('id', data.team_id)
         .single()
 
+      if (!isCurrent()) return
       if (team?.user_id === user.id) {
         setCanEditMatches(true)
         setCanEditQuarters(true)
@@ -168,6 +215,7 @@ export default function MatchDetailPage() {
           .eq('user_id', user.id)
           .single()
 
+        if (!isCurrent()) return
         if (membership) {
           const isCoach = membership.role === 'coach'
           setCanEditMatches(isCoach || membership.can_edit_matches)
@@ -182,6 +230,7 @@ export default function MatchDetailPage() {
       .select('*, player:players(*)')
       .eq('match_id', matchId)
 
+    if (!isCurrent()) return
     if (attendeesData) {
       setAttendees(attendeesData)
     }
@@ -193,12 +242,14 @@ export default function MatchDetailPage() {
       .eq('team_id', data.team_id)
       .order('name')
 
+    if (!isCurrent()) return
     if (playersData) {
       setAllPlayers(playersData)
     }
 
     // MOM 투표 로드
-    await loadMomVotes()
+    await loadMomVotes(isCurrent)
+    if (!isCurrent()) return
     if (user) {
       const { data: myVote } = await supabase
         .from('match_mom_votes')
@@ -206,7 +257,8 @@ export default function MatchDetailPage() {
         .eq('match_id', matchId)
         .eq('voter_user_id', user.id)
         .maybeSingle()
-      if (myVote) setMyMomVote(myVote.voted_player_id)
+      if (!isCurrent()) return
+      setMyMomVote(myVote?.voted_player_id ?? null)
     }
 
     setLoading(false)
@@ -419,18 +471,58 @@ export default function MatchDetailPage() {
     router.push('/dashboard')
   }
 
-  const handleSaveNotes = async () => {
-    if (!match) return
-    setSavingNotes(true)
-    const { error } = await supabase
-      .from('matches')
-      .update({ notes: notes.trim() || null })
-      .eq('id', matchId)
-    setSavingNotes(false)
-    if (error) { toast.error(t.saveFailed); return }
-    setMatch(prev => prev ? { ...prev, notes: notes.trim() || null } : null)
+  const startEditNotes = () => {
+    notesEditSession.current += 1
+    notesRevision.current += 1
+    setNotes(match?.notes || '')
+    setNotesSaveFailed(false)
+    setEditingNotes(true)
+  }
+
+  const closeNotes = () => {
+    notesEditSession.current += 1
+    notesRevision.current += 1
+    setNotes(match?.notes || '')
+    setNotesSaveFailed(false)
     setEditingNotes(false)
-    toast.success(t.matchNoteSaved)
+    // Closing the editor does not roll back an already submitted request.
+  }
+
+  const handleSaveNotes = async () => {
+    if (notesRequest.current || !match || match.id !== matchId || !canEditMatches ||
+        !currentUserId || sessionUserRef.current !== currentUserId) return
+    const request = new AbortController()
+    notesRequest.current = request
+    const submitted = notes.trim() || null
+    const revision = notesRevision.current
+    const editSession = notesEditSession.current
+    const contextVersion = matchLoadVersion.current
+    const isCurrent = () => notesRequest.current === request && !request.signal.aborted &&
+      matchLoadVersion.current === contextVersion && sessionUserRef.current === currentUserId
+    setSavingNotes(true)
+    setNotesSaveFailed(false)
+    try {
+      const { error } = await supabase
+        .from('matches')
+        .update({ notes: submitted })
+        .eq('id', matchId)
+        .abortSignal(request.signal)
+      if (!isCurrent()) return
+      if (error) throw error
+      setMatch(prev => prev?.id === matchId ? { ...prev, notes: submitted } : prev)
+      if (notesRevision.current === revision) {
+        setNotes(submitted || '')
+        setEditingNotes(false)
+        toast.success(t.matchNoteSaved)
+      }
+    } catch {
+      if (isCurrent() && notesEditSession.current === editSession) setNotesSaveFailed(true)
+    } finally {
+      if (isCurrent()) {
+        notesRequest.current = null
+        setSavingNotes(false)
+      }
+    }
   }
 
   if (loading || !match) {
@@ -1027,7 +1119,7 @@ export default function MatchDetailPage() {
                 {t.matchNotes}
               </h3>
               {canEditMatches && !editingNotes && (
-                <button onClick={() => setEditingNotes(true)} className="p-1.5 text-[color:var(--text)]/40 hover:text-[color:var(--text)] rounded-lg">
+                <button onClick={startEditNotes} aria-label={`${t.matchNotes}: ${t.edit}`} className="min-w-11 min-h-11 inline-flex items-center justify-center text-[color:var(--text)]/60 hover:text-[color:var(--text)] rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]">
                   <Edit2 className="w-4 h-4" />
                 </button>
               )}
@@ -1036,29 +1128,35 @@ export default function MatchDetailPage() {
               <div>
                 <textarea
                   value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
+                  onChange={(e) => { notesRevision.current += 1; setNotes(e.target.value); setNotesSaveFailed(false) }}
+                  aria-label={t.matchNotes}
+                  aria-describedby="match-note-status"
                   rows={4}
                   placeholder={t.matchNotePlaceholder}
-                  className="w-full px-3 py-2.5 rounded-xl text-sm outline-none resize-none text-[color:var(--text)]"
+                  className="w-full px-3 py-2.5 rounded-xl text-base resize-none text-[color:var(--text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]"
                   style={{ background: 'var(--card2)', border: '1px solid var(--line)' }}
                   autoFocus
                 />
-                <div className="flex gap-2 mt-2">
-                  <button onClick={handleSaveNotes} disabled={savingNotes} className="flex-1 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  <button onClick={handleSaveNotes} disabled={savingNotes} className="flex-1 min-h-11 min-w-11 px-3 py-2.5 rounded-xl font-bold text-sm disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
                     {savingNotes ? t.saving : t.save}
                   </button>
-                  <button onClick={() => { setNotes(match.notes || ''); setEditingNotes(false) }} className="px-4 py-2.5 rounded-xl font-bold text-sm text-[color:var(--text)]/60" style={{ background: 'var(--card2)' }}>
-                    {t.cancel}
+                  <button onClick={closeNotes} className="min-w-11 min-h-11 px-4 py-2.5 rounded-xl font-bold text-sm text-[color:var(--text)]/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]" style={{ background: 'var(--card2)' }}>
+                    {savingNotes ? t.close : t.cancel}
                   </button>
                 </div>
               </div>
             ) : match.notes ? (
               <p className="text-[13px] text-[color:var(--text)]/70 whitespace-pre-wrap">{match.notes}</p>
             ) : (
-              <button onClick={() => setEditingNotes(true)} className="w-full py-4 border-2 border-dashed rounded-xl text-[13px] transition" style={{ borderColor: 'var(--line)', color: 'var(--muted2)' }}>
+              <button onClick={startEditNotes} className="w-full min-h-11 py-4 border-2 border-dashed rounded-xl text-[13px] transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]" style={{ borderColor: 'var(--line)', color: 'var(--muted2)' }}>
                 {t.addNote}
               </button>
             )}
+            <p id="match-note-status" role="status" aria-live="polite" aria-atomic="true" className="mt-2 text-[13px] text-[color:var(--text)]/70">
+              {savingNotes ? noteCopy.pending : notesSaveFailed ? noteCopy.failed :
+                editingNotes && notes.trim() !== (match.notes || '') ? noteCopy.dirty : ''}
+            </p>
           </section>
         )}
 
