@@ -1,6 +1,6 @@
 # 새 경기의 현지 날짜 기본값
 
-상태: 2026-11-05 02:16 UTC 운영 배포 완료. 합성 QA와 운영 메타데이터 검증을 구분하며, 공개 UI는 기존 연결 제한으로 미검증이다. [작업 카드](https://app.notion.com/p/40f66b33db7a81698851ca52dc557c1f), [실제 다섯 역할 협의](AGENT_DISCUSSIONS.md#2026-11-05-실제-5역할-협의--날짜와-저장-안내), [수정 전 재현](design-qa/2026-11-05-match-date-reproduction/README.md).
+상태: 2026-11-05 02:16 UTC 운영 배포 완료. 합성 QA·운영 메타데이터·별도 클라우드의 공개 UI 관측을 구분한다. 공개 온보딩/로그인은 후속 검수됐으며, 인증 후 날짜 입력과 라이브 모바일은 미검증이다. [작업 카드](https://app.notion.com/p/40f66b33db7a81698851ca52dc557c1f), [실제 다섯 역할 협의](AGENT_DISCUSSIONS.md#2026-11-05-실제-5역할-협의--날짜와-저장-안내), [수정 전 재현](design-qa/2026-11-05-match-date-reproduction/README.md).
 
 ## 문제와 작은 수정
 
@@ -41,7 +41,19 @@ S1의 상대·장소 재사용은 기존 경기 상세에서 시작할 때 이�
 - 제품 커밋 **`90398f1822cddc665d3d18f26d7fc12cc46229c2`**을 기존 `codex/quarter-save-reliability` 원격에 push한 뒤, 연결된 GitHub 소스의 정확한 SHA를 기존 Vercel 프로젝트에 일반 production 배포했다. 로컬 합성 빌드나 테스트 환경변수를 업로드하지 않았다.
 - 배포 **`dpl_6rHZ5swbN8un8GuPp5nBsBYFRkSe`**, **2026-11-05 02:16:28 UTC READY/production**. [고유 배포](https://soccer-note-4xgcprxa3-keestory91-6294s-projects.vercel.app)와 [대표 서비스](https://soccer-note-hazel.vercel.app)의 alias가 동일 배포를 가리키며 Git metadata의 정확한 SHA와 GitHub Vercel success를 읽기 확인했다. [정제된 배포 근거](design-qa/2026-11-05-match-date/production-deployment.json).
 - [PR #62](https://github.com/keestory/soccer-note/pull/62)는 main 대상 open/draft, 승인·병합 없음이다. 기존 거절된 PR 본문 수정은 재시도하지 않았다. 후속 문서·QA 커밋은 제품 diff 없이 검증 기록만 추가하며 운영에 재배포하지 않는다.
-- 신규 배포의 production error/fatal 로그를 level로 묶어 최근10분 읽기 조회했을 때 반환된 그룹은 없었다. 트래픽 존재·모든 오류 부재·운영 저장 성공의 증거는 아니다. 공개 화면은 기존 CONNECT403 접근 제한에 새 근거가 없어 **미실행**이며 재시도·우회하지 않았다. 이번 운영 검증은 READY/SHA/alias/CI/그룹 로그 범위다.
+- 신규 배포의 production error/fatal 로그를 level로 묶어 최근10분 읽기 조회했을 때 반환된 그룹은 없었다. 트래픽 존재·모든 오류 부재·운영 저장 성공의 증거는 아니다. 최초 릴리스 담당 executor의 공개 화면 검증은 기존 CONNECT403으로 **미실행**이며 재시도·우회하지 않았다. 이 담당자의 운영 검증은 READY/SHA/alias/CI/그룹 로그 범위다. 이후 별도 허용된 클라우드의 공개 UI 관측은 아래에 출처를 구분해 추가한다.
 - 복귀 소스는 **`41a4958e8cb46319ed168534edaa999b7fce3cf4`**, 기존 READY 배포 **`dpl_B2QxxnmFRfSsdsbBoSmfYzzVzdha`**, [이전 고유 URL](https://soccer-note-9qxbfl09j-keestory91-6294s-projects.vercel.app)이다. 일반 [deployment API](https://vercel.com/docs/rest-api/sdk/deployments/create-a-new-deployment)에서 해당 `deploymentId`, `target=production`, `withLatestCommit=false`로 재배포하는 지원 경로를 확인했다. 실행 시 이전 SHA/READY/대표 alias를 다시 검증해야 한다. **실제 복귀 전환은 수행하지 않았고**, 특수 rollbackCandidate 접근 거절은 그대로 유지했다.
 
 현재 Hobby의 일반 배포/Functions 초과 사용 제한 정책 안에서 유료 옵션·업그레이드·새 계정이나 API 없이 배포했고 이번 실행에서 한도 오류는 없었다. 이는 월 잔량 충분·총비용0·향후 무제한 가용성의 증거가 아니다. 기존 저장소 모델 CLI, DB/RLS·보안·권한·스키마·운영 데이터·과거 경기 날짜는 변경하지 않았다. 신규 사용자 실험·대외 발신·실기기 검증은 미실행이다.
+
+## 후속 공개 UI 관측 — 별도 허용된 클라우드
+
+출처는 조정자가 전달한 별도 클라우드 CUA 작업자의 실제 관측 요약이다. 관측 구간은 **2026-11-05 02:20:38–02:21:44 UTC**, 공개 대표 도메인 `soccer-note-hazel.vercel.app`, 화면 크기는 **1180×757**이다. 이 executor가 재검수하거나 CONNECT403을 해소한 것으로 기록하지 않는다. 조정자는 별도로 대표 alias의 `90398f1822cddc665d3d18f26d7fc12cc46229c2` / `dpl_6rHZ5swbN8un8GuPp5nBsBYFRkSe` / READY를 직접 재조회해 확인했다.
+
+- 온보딩 1→2→3에서 한국어 안내와 예시 카드를 확인했다.
+- `/login`의 라벨, Google 로그인·가입·비밀번호 찾기 링크와 브라우저 뒤로가기를 확인했다. 로그인이나 링크 대상의 인증 처리를 완료했다는 뜻은 아니다.
+- 1180×757에서 심각한 겹침·잘림은 관측되지 않았다. 라이브 모바일 기능은 검수 도구에서 지원되지 않아 확인하지 않았다.
+- 샘플 로그에는 확장프로그램 오류만 관측됐고 앱 오류는 관측되지 않았다. 전체 오류 부재나 지속적인 정상 운영을 보장하는 근거는 아니다.
+- 입력·로그인·운영 데이터 쓰기는 **0회**다. 실제 인증 후 새 경기 날짜 입력은 확인하지 않았으며, 앞의 합성 브라우저 18개 검증과 구분한다.
+
+후속 반영은 문서만 변경한다. 제품 코드·운영 배포·PR 본문은 변경하지 않으며 기존 executor의 CONNECT403 경로를 반복하지 않는다. [정제된 배포 근거](design-qa/2026-11-05-match-date/production-deployment.json)의 기존 관측은 보존하고 별도 CUA 관측을 추가했다. 작업 카드·허브·Notion 논의 기록의 완료 갱신은 조정자가 담당했다.
