@@ -1,0 +1,62 @@
+{
+  "observedAt": "2026-11-05T02:12:39.288389+00:00",
+  "sourceCommit": "90398f1822cddc665d3d18f26d7fc12cc46229c2",
+  "buildId": "RhpQn8IX3tuCX7iF2qVF6",
+  "productFiles": {
+    "src/app/match/new/page.tsx": "9fcfe8634ec72e3a395503987379f810581c5c97",
+    "src/lib/match-date.ts": "cf1558fbcc83d496c4ced79d23b10fffd8314151",
+    "__tests__/unit/match-date.test.ts": "c51e600f49d9006b350ba2bfbf02fb0bbab87884"
+  },
+  "checks": {
+    "unit": {
+      "status": "pass",
+      "files": 20,
+      "tests": 163
+    },
+    "lint": {
+      "status": "pass",
+      "errors": 0,
+      "existingWarnings": 49
+    },
+    "types": {
+      "command": "npx --no-install tsc --noEmit",
+      "status": "pass"
+    },
+    "build": {
+      "command": "npm run build -- --webpack",
+      "status": "pass",
+      "fontSource": "Existing cached build CSS and 746 WOFF2 assets, test-only response file; no package or hosting config changes"
+    },
+    "diffCheck": "pass"
+  },
+  "independentReview": {
+    "role": "CQO 반다이크",
+    "sourceCommit": "90398f1822cddc665d3d18f26d7fc12cc46229c2",
+    "introducedBlockingFindings": 0,
+    "requestedBrowserCheck": "Direct-entry SSR/hydration with differing browser and server calendar days",
+    "actualModel": "unknown"
+  },
+  "browser": {
+    "status": "pass",
+    "passed": 18,
+    "total": 18,
+    "report": "after/browser-results.json",
+    "observedAt": "2026-11-05T02:11:25.730Z",
+    "runnerBlob": "0a12ad4a127f3055ca6de4b049d9d3e85caade14",
+    "syntheticPostAttempts": 5,
+    "syntheticCommittedRows": 4,
+    "deliberatePrecommitFailures": 1,
+    "pageErrors": 0,
+    "unexpectedRequests": 0,
+    "unexpectedConsoleErrors": 0,
+    "cleanupWarnings": 0,
+    "limitations": [
+      "Raw SSR first-paint input not captured; ready hydrated direct-entry inputs checked",
+      "Unknown-response retry idempotency not tested",
+      "Preexisting back link lacks accessible name and is 36x36px",
+      "No physical-device, screen-reader, production-DB or user-outcome validation"
+    ]
+  },
+  "productionWrites": "not performed",
+  "card": "https://app.notion.com/p/40f66b33db7a81698851ca52dc557c1f"
+}
