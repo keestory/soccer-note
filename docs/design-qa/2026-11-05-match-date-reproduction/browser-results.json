@@ -1,0 +1,179 @@
+{
+  "observedAt": "2026-11-05T01:58:40.545Z",
+  "scope": "Read-only product investigation; synthetic browser/auth/data only; no submit or production writes",
+  "sourceHEAD": "54e18d11571b7b0b77e32fee61061e546d90d443",
+  "productCommit": "41a4958e8cb46319ed168534edaa999b7fce3cf4",
+  "buildId": "7-KgWrDkQQ1lvIHgToQO3",
+  "newMatchBlob": "ee1be0e7fe215501bda60822776224532a374908",
+  "clock": "Playwright page.clock.setFixedTime before first navigation; browser context timezoneId per case. Server clock unchanged.",
+  "fontSource": "Existing cached production-build font assets; no new build, dependency or service",
+  "cases": [
+    {
+      "name": "kst-0030-boundary",
+      "timezoneId": "Asia/Seoul",
+      "instant": "2026-11-04T15:30:00Z",
+      "localDate": "2026-11-05",
+      "utcDate": "2026-11-04",
+      "expectedMismatch": true,
+      "browser": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-11-04T15:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 0,
+        "localMinute": 30,
+        "cssWidth": 390
+      },
+      "defaultDate": "2026-11-04",
+      "mismatch": true,
+      "manualAfterOtherFieldEdits": "2026-11-12",
+      "manualAfterClockAdvanceAndRerender": "2026-11-12",
+      "syntheticWrites": 0,
+      "dataMethods": [
+        "GET"
+      ],
+      "investigationStatus": "pass"
+    },
+    {
+      "name": "la-1730-boundary",
+      "timezoneId": "America/Los_Angeles",
+      "instant": "2026-11-05T01:30:00Z",
+      "localDate": "2026-11-04",
+      "utcDate": "2026-11-05",
+      "expectedMismatch": true,
+      "browser": {
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2026-11-05T01:30:00.000Z",
+        "localDate": "2026-11-04",
+        "localHour": 17,
+        "localMinute": 30,
+        "cssWidth": 390
+      },
+      "defaultDate": "2026-11-05",
+      "mismatch": true,
+      "manualAfterOtherFieldEdits": "2026-11-12",
+      "manualAfterClockAdvanceAndRerender": "2026-11-12",
+      "syntheticWrites": 0,
+      "dataMethods": [
+        "GET"
+      ],
+      "investigationStatus": "pass"
+    },
+    {
+      "name": "utc-0030-control",
+      "timezoneId": "UTC",
+      "instant": "2026-11-05T00:30:00Z",
+      "localDate": "2026-11-05",
+      "utcDate": "2026-11-05",
+      "expectedMismatch": false,
+      "browser": {
+        "timezoneId": "UTC",
+        "instant": "2026-11-05T00:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 0,
+        "localMinute": 30,
+        "cssWidth": 390
+      },
+      "defaultDate": "2026-11-05",
+      "mismatch": false,
+      "manualAfterOtherFieldEdits": "2026-11-12",
+      "manualAfterClockAdvanceAndRerender": "2026-11-12",
+      "syntheticWrites": 0,
+      "dataMethods": [
+        "GET"
+      ],
+      "investigationStatus": "pass"
+    },
+    {
+      "name": "kst-1230-control",
+      "timezoneId": "Asia/Seoul",
+      "instant": "2026-11-05T03:30:00Z",
+      "localDate": "2026-11-05",
+      "utcDate": "2026-11-05",
+      "expectedMismatch": false,
+      "browser": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-11-05T03:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 12,
+        "localMinute": 30,
+        "cssWidth": 390
+      },
+      "defaultDate": "2026-11-05",
+      "mismatch": false,
+      "manualAfterOtherFieldEdits": "2026-11-12",
+      "manualAfterClockAdvanceAndRerender": "2026-11-12",
+      "syntheticWrites": 0,
+      "dataMethods": [
+        "GET"
+      ],
+      "investigationStatus": "pass"
+    },
+    {
+      "name": "la-1030-control",
+      "timezoneId": "America/Los_Angeles",
+      "instant": "2026-11-04T18:30:00Z",
+      "localDate": "2026-11-04",
+      "utcDate": "2026-11-04",
+      "expectedMismatch": false,
+      "browser": {
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2026-11-04T18:30:00.000Z",
+        "localDate": "2026-11-04",
+        "localHour": 10,
+        "localMinute": 30,
+        "cssWidth": 390
+      },
+      "defaultDate": "2026-11-04",
+      "mismatch": false,
+      "manualAfterOtherFieldEdits": "2026-11-12",
+      "manualAfterClockAdvanceAndRerender": "2026-11-12",
+      "syntheticWrites": 0,
+      "dataMethods": [
+        "GET"
+      ],
+      "investigationStatus": "pass"
+    },
+    {
+      "name": "utc-1230-control",
+      "timezoneId": "UTC",
+      "instant": "2026-11-05T12:30:00Z",
+      "localDate": "2026-11-05",
+      "utcDate": "2026-11-05",
+      "expectedMismatch": false,
+      "browser": {
+        "timezoneId": "UTC",
+        "instant": "2026-11-05T12:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 12,
+        "localMinute": 30,
+        "cssWidth": 390
+      },
+      "defaultDate": "2026-11-05",
+      "mismatch": false,
+      "manualAfterOtherFieldEdits": "2026-11-12",
+      "manualAfterClockAdvanceAndRerender": "2026-11-12",
+      "syntheticWrites": 0,
+      "dataMethods": [
+        "GET"
+      ],
+      "investigationStatus": "pass"
+    }
+  ],
+  "screenshots": [
+    "kst-0030-boundary.png",
+    "kst-0030-boundary-manual-preserved.png",
+    "la-1730-boundary.png",
+    "la-1730-boundary-manual-preserved.png",
+    "utc-0030-control.png",
+    "kst-1230-control.png",
+    "la-1030-control.png",
+    "utc-1230-control.png"
+  ],
+  "errors": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "unexpectedRequests": [],
+  "cleanupWarnings": [],
+  "investigationPassed": true,
+  "productDefaultFailuresObserved": 2
+}
