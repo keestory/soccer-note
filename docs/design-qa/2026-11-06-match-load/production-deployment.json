@@ -1,0 +1,45 @@
+{
+  "sourceCommit": "e7b50d5043149cbecbdfedb2760ff49fc1ecedc4",
+  "deploymentId": "dpl_34sbWPaRDYuu3ex89SgSacFcf6xS",
+  "url": "https://soccer-note-9egx8inx9-keestory91-6294s-projects.vercel.app",
+  "target": "production",
+  "state": "READY",
+  "readyAt": "2026-11-06T01:56:54.579Z",
+  "createdAt": "2026-11-06T01:56:27.029Z",
+  "alias": "https://soccer-note-hazel.vercel.app",
+  "aliasDeploymentId": "dpl_34sbWPaRDYuu3ex89SgSacFcf6xS",
+  "aliasError": null,
+  "projectId": "prj_8MtXlwcx0NzpWAZQjGUuFTL4HHAL",
+  "plan": "hobby",
+  "runtimeErrorGroups": {
+    "window": "10m",
+    "filter": [
+      "error",
+      "fatal"
+    ],
+    "groupBy": "level",
+    "observedGroups": [],
+    "meaning": "No grouped rows returned in the queried window; not proof of traffic, zero incidents or complete error coverage"
+  },
+  "prior": {
+    "sourceCommit": "90398f1822cddc665d3d18f26d7fc12cc46229c2",
+    "deploymentId": "dpl_6rHZ5swbN8un8GuPp5nBsBYFRkSe",
+    "state": "READY",
+    "recoveryPlan": "Ordinary redeploy previous deployment withLatestCommit=false; then verify SHA, READY and alias",
+    "recoveryTransition": "not performed"
+  },
+  "limits": [
+    "Monthly quota remaining unknown",
+    "Total billing unknown",
+    "Host model/billing unknown",
+    "No production auth/database writes",
+    "No physical device or screen-reader audio",
+    "Public UI not retried due previous executor CONNECT403"
+  ],
+  "card": "https://app.notion.com/p/41066b33db7a8186a786eb5c683deddb",
+  "ci": {
+    "context": "Vercel",
+    "state": "success",
+    "targetUrl": "https://vercel.com/keestory91-6294s-projects/soccer-note/34sbWPaRDYuu3ex89SgSacFcf6xS"
+  }
+}

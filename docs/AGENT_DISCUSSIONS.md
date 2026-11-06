@@ -197,3 +197,19 @@ Hobby 일반 배포/함수의 초과 사용 제한과 월 잔량/총청구 미�
 - 같은 최종 제품 SHA의 lint/type/test/build·CQO/CDO·모바일/접근성·반복 클릭/실패 재시도/취소/뒤로가기/계정팀 전환과 배포 SHA/alias·이전 소스 복귀 근거를 구분한다. 추가 과금 경로·한도 거절·권한/DB 변경·보존 실패·범위 확대 시 해당 단계를 중단한다. 실제 인증 쓰기·복귀 전환·성장 효과는 미검증으로 유지한다.
 
 출처: [WET 운영 소스](https://github.com/keestory/wetheone/tree/916b6d075e470af914b57d7099e3189caed41c35), [Soccer 소스](https://github.com/keestory/soccer-note/tree/372faf95816879cc0e930102e08fd45c94c0c077), 두 클라우드의 Nov6 사전 점검·재현 보고 및 조정자가 관측한 역할별 출력이다. 역할 계약은 WET PR5의67e4cfe와 Soccer372faf9를 재확인한 결과다. 별도 Nov5 KST 지표의 WET 이벤트0/7일1은 테스트 미분류, Soccer는 접근 불가/null이다. 재집계하지 않았고 무활동·수요 부재·피해 빈도·성장/원인을 단정하지 않는다.
+
+### 후속 실제 CQO·CDO 검토
+
+CDO 네이마르는 초기 오류의0통계 숨김, 캐시의 이전 기록 설명, 재시도 중 카드 유지와48px 컨트롤을 제안했다. CQO 반다이크는 구현의 공유 loadPromise rejection 누락과 native disabled의 포커스 손실을 지적했다. 메인은 retry catch, aria-disabled와 동기 중복 실행 가드로 보완했다. CQO는 최종 `e7b50d5043149cbecbdfedb2760ff49fc1ecedc4`와 검토 blob 일치를 확인하고 추가 차단 finding이 없다고 보고했다.
+
+초기 성공 때 null→A 문맥이 교체되어 강제 포커스를 하지 않는 경계는 CQO와 CDO 모두 비차단으로 판단했다. 대신 같은 문맥 성공/실패, 새 문맥의 키보드 접근, 이탈·계정 전환 뒤 포커스 탈취 없음은 실제 QA에서 확인하도록 요구했다. CDO는 aria-busy 영역의 status 발화를 DOM만으로 보장하지 말라고 지적했다. 별도 CQO QA 작업자는 합성 시나리오를 준비했으며 모델·호스트 청구는 미확인이다. 검토와 실제 QA·운영 배포는 별도 결과로 기록한다.
+
+### 2026-11-06 최종 합성 QA·시각·운영 준비 검토 관측
+
+제품 `e7b50d5043149cbecbdfedb2760ff49fc1ecedc4`/빌드 `Dpvc3wJRetRWag672znXw`에서 별도 CQO QA 작업자가 01:50:04 UTC 시작한 첫 full run **21/21**을 통과했다. 쓰기 시도0, 예상 밖 오류/요청0이며 의도한HTTP500 27개를 분리했다. 자동 조회에 재시도가 합류하는 rejection 회귀도 검증했다. CDO는 최종6개 화면을 직접 확인해 새 오류 UI의 출시 차단 잘림/겹침을 발견하지 못했고, 캐시0건은 JSON만 확인했다. 기존 독일어320px 통계 라벨 밀집은 별도 후속으로 남겼다. ops는 동일 SHA·빌드·blob·QA 기록 간 모순이 없음을 확인하고, 이전 배포를 `withLatestCommit=false`로 정상 재배포하는 복귀 절차를 명시하라고 제안했다. 조정자가 문서에 반영했다.
+
+이 항목은 실제 전달된 업무 출력 요약이며 발언 축어록·내부 사고 과정이 아니다. 검토자들은 PR approval·운영 접근/변경을 수행하지 않았다. 모델·호스트 청구는 미확인이며 저장소 CLI 성공으로 보지 않는다. [작업 카드](https://app.notion.com/p/41066b33db7a8186a786eb5c683deddb), [QA](design-qa/2026-11-06-match-load/README.md), [릴리스](MATCH_LIST_LOAD_2026-11-06.md)에 후속 배포 결과를 분리 기록한다.
+
+### 2026-11-06 운영 후속
+
+조정자는 독립 QA·CDO·ops의 비차단 결과 후 제품 `e7b50d5043149cbecbdfedb2760ff49fc1ecedc4`를 기존 원격 브랜치에 반영하고 정상 Git 배포를 한 번 실행했다. 01:56:54 UTC `dpl_34sbWPaRDYuu3ex89SgSacFcf6xS`의 production/READY·정확한SHA·대표alias 일치를 확인했다. 원격 Vercel 상태는 success다. 이전 `90398f1` 배포를 정상 재배포하는 복귀 계획은 문서화했으나 실제 전환은 하지 않았다. 공개 UI CONNECT403·운영 인증/DB·실기기·성장효과 미검증, 월잔량/총청구/모델 청구 미확인은 유지한다. 운영 변경의 근거는 [릴리스 기록](MATCH_LIST_LOAD_2026-11-06.md)이며 실제 역할 발언이나 전원 합의로 만들어 표현하지 않는다.

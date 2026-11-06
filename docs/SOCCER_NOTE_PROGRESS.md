@@ -134,3 +134,13 @@ CQO 반다이크 [reviewer / independent_review]가 실제 읽기 전용 검토�
 [작업 카드](https://app.notion.com/p/40f66b33db7a81698851ca52dc557c1f), [실제 협의](AGENT_DISCUSSIONS.md#2026-11-05-실제-5역할-협의--날짜와-저장-안내), [릴리스/복귀 기록](MATCH_DATE_2026-11-05.md), [전후 화면과 QA](design-qa/2026-11-05-match-date/README.md)를 연결했다. PR62는 draft이며 승인·병합 없이 기존 브랜치에 누적한다.
 
 Hobby 일반 초과 사용 제한 정책과 월 잔량·총청구 미확인을 구분했고 유료 옵션은 켜지 않았다. 공개 UI는 기존 CONNECT403으로 미검증·재시도 없음이다. 운영 DB/RLS/실기기/성과는 검증하지 않았으며 합성 POST5회(가상 저장4/의도한 저장 전 실패1)를 실사용 기록으로 보지 않는다. 기존 이름 없는36px 뒤로가기 링크를 후속 접근성 과제로 남겼다. 응답 유실 재시도 멱등성은 미검증이다. 이전41a4958/dpl_B2Q…의 정상 재배포 복귀 계획을 보존했으나 실제 전환은 하지 않았다.
+
+## 2026-11-06 — 경기 조회 실패를 정상 빈 결과와 구분
+
+기존 실제 빌드의 합성5조건에서 초기 조회500이 0경기·기록 없음으로 보이고 캐시 조회실패에는 안내가 없는 문제를 확인했다. 실제 다섯 역할 협의 후 목록 화면과 번역 보조2파일만 수정했다. 초기 실패는 통계를 숨기고 오류/재시도를 제공하며, 캐시 실패는 이전 기록임을 명시하고 기존 기록을 유지한다. 전체 store·인증·DB/RLS·권한은 변경하지 않았다. 상대·장소 검색은 기록량/수요 미확인으로 보류했다.
+
+제품 **`e7b50d5043149cbecbdfedb2760ff49fc1ecedc4`**, 운영 **`dpl_34sbWPaRDYuu3ex89SgSacFcf6xS`**가 01:56:54 UTC production/READY이며 [대표 alias](https://soccer-note-hazel.vercel.app)와 정확한 SHA를 확인했다. 기존 draft [PR62](https://github.com/keestory/soccer-note/pull/62)에 누적하고 승인·병합·본문 변경은 하지 않았다. 같은 제품 SHA의 단위163개/20파일·type·build·lint(오류0/기존경고49), 독립 CQO 코드 리뷰, 합성 브라우저21/21, CDO6개 화면 검토·ops 근거 검토를 마쳤다. 검토 중 공유 promise rejection과 native disabled의 포커스 상실을 보완했다.
+
+[작업 카드](https://app.notion.com/p/41066b33db7a8186a786eb5c683deddb), [실제 역할 협의](AGENT_DISCUSSIONS.md#2026-11-06-실제-5역할-협의--직접-찬양-추가와-기록-신뢰), [릴리스/복귀](MATCH_LIST_LOAD_2026-11-06.md), [전후 화면·독립 QA](design-qa/2026-11-06-match-load/README.md), [배포 manifest](design-qa/2026-11-06-match-load/production-deployment.json)를 연결했다. Notion은 조정자가 갱신한다.
+
+합성 인증/API 쓰기 시도0이며 의도한 HTTP500 27건을 예상 밖 오류0과 구분했다. 운영 공개 UI는 기존 CONNECT403을 재시도하지 않아 미검증이다. 실기기·스크린리더 발화·실제 운영 인증/쓰기·성장효과도 미검증이다. 기존 독일어320px 통계 라벨 밀집을 새 오류카드와 구분해 후속으로 남겼다. Hobby 한도 정책과 월잔량·총청구 미확인을 구분하고 유료 옵션을 켜지 않았다. 이전 `90398f1`/`dpl_6rHZ5swbN8un8GuPp5nBsBYFRkSe` 소스·READY와 정상 redeploy 복귀 계획을 확인했으며 실제 복귀 전환/특수 rollback 조회는 하지 않았다.

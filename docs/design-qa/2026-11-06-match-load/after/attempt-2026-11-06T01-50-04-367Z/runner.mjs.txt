@@ -1,0 +1,242 @@
+/** Read-only synthetic acceptance of match-list load/error/retry states. */
+import assert from 'node:assert/strict'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { resolve } from 'node:path'
+import { base, browser, fixture, report, closeBounded, hold, until, pause, teams, matches, openPicker, choose, broadcastAuth, makeSession, otherUid } from './qa-team-fixture.mjs'
+
+assert.equal(base, 'http://127.0.0.1:3128', 'Only the authorized loopback origin is allowed')
+const expectedSource = process.env.SOCCER_QA_SOURCE_SHA
+assert(expectedSource, 'Release owner must provide the verified source SHA before acceptance runs')
+const git = (...args) => execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
+assert.equal(git('rev-parse', 'HEAD'), expectedSource)
+const output = resolve(process.env.SOCCER_QA_OUTPUT || 'docs/design-qa/2026-11-06-match-load/after')
+const attempt = `attempt-${new Date().toISOString().replaceAll(':', '-').replaceAll('.', '-')}`
+const runOutput = `${output}/${attempt}`
+await mkdir(runOutput, { recursive: true })
+const filter = process.env.SOCCER_QA_CASE || ''
+const status = page => page.getByTestId('matches-load-status')
+const retry = page => status(page).getByRole('button')
+const rows = page => page.locator('main a[href^="/match/"]')
+const emptyText = '아직 기록된 경기가 없습니다'
+const failureText = '경기 기록을 불러오지 못했어요. 다시 시도하세요.'
+const staleText = '이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.'
+
+let mode
+function freshMode(options = {}) {
+  return { failTeams: false, failMemberships: false, failMatches: false, empty: false, deniedWrites: [], reads: [], holds: [], nextTeams: null, timezoneId: 'Asia/Seoul', browserLocale: 'ko-KR', ...options }
+}
+const nativeContext = browser.newContext.bind(browser)
+browser.newContext = async options => {
+  const own = mode
+  const context = await nativeContext({ ...options, timezoneId: own.timezoneId, locale: own.browserLocale })
+  const nativePage = context.newPage.bind(context)
+  context.newPage = async () => {
+    await context.route('**/*', async route => {
+      const request = route.request(), url = new URL(request.url()), method = request.method()
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+        own.deniedWrites.push({ method, path: url.pathname })
+        return route.abort('blockedbyclient')
+      }
+      if (url.hostname !== 'soccer-note-test.supabase.co' || method !== 'GET' || !url.pathname.startsWith('/rest/v1/')) return route.fallback()
+      const table = url.pathname.split('/').at(-1)
+      const read = { table, teamId: url.searchParams.get('team_id'), userId: url.searchParams.get('user_id'), result: 'fixture' }
+      own.reads.push(read)
+      const respond = async (body, code = 200) => {
+        read.result = code
+        try { await route.fulfill({ status: code, contentType: 'application/json', body: JSON.stringify(body), headers: { 'access-control-allow-origin': '*' } }) }
+        catch (error) { if (!/closed|handled|Interception|Fetch domain/.test(error.message)) throw error }
+      }
+      if (table === 'teams' && own.nextTeams) {
+        const pending = own.nextTeams; own.nextTeams = null; own.holds.push(pending); pending.entered = true
+        await pending.wait; pending.released = true
+        if (pending.fail) return respond({ message: 'Synthetic held team-list failure', code: 'QA_FAIL' }, 500)
+      }
+      if ((table === 'teams' && own.failTeams) || (table === 'team_members' && own.failMemberships) || (table === 'matches' && own.failMatches)) return respond({ message: 'Synthetic lookup failure', code: 'QA_FAIL' }, 500)
+      if (table === 'matches' && own.empty) return respond([])
+      return route.fallback()
+    })
+    const page = await nativePage()
+    page.setDefaultNavigationTimeout(30000)
+    if (own.instant) await page.clock.setFixedTime(new Date(own.instant))
+    return page
+  }
+  return context
+}
+
+Object.assign(report, {
+  observedAt: new Date().toISOString(), scope: 'Local production-build acceptance; synthetic reads/auth only; all writes blocked',
+  sourceHEAD: expectedSource, buildId: (await readFile('.next/BUILD_ID', 'utf8')).trim(),
+  productBlobs: Object.fromEntries(['src/app/matches/page.tsx', 'src/lib/match-load-copy.ts'].map(path => [path, git('hash-object', path)])),
+  runnerBlob: git('hash-object', 'scripts/qa-match-load.mjs'),
+  fontSource: 'Existing cached-font test response file; no package installation or production font configuration change',
+  expectedCaseCount: 21, filter: filter || null, attempt, cases: [], screenshots: [],
+})
+
+async function shot(page, name) {
+  await page.evaluate(() => document.fonts.ready)
+  await page.screenshot({ path: `${runOutput}/${name}.png`, fullPage: false })
+  const view = await page.evaluate(() => ({ width: innerWidth, height: innerHeight, dpr: devicePixelRatio, scrollWidth: document.documentElement.scrollWidth, lang: document.documentElement.lang, fontStatus: document.fonts.status }))
+  report.screenshots.push({ file: `${attempt}/${name}.png`, ...view })
+  return view
+}
+async function inspect(page) {
+  return page.evaluate(() => ({ path: location.pathname, header: document.querySelector('header')?.innerText, main: document.querySelector('main')?.innerText, status: document.querySelector('[data-testid="matches-load-status"]')?.innerText ?? null, alerts: [...document.querySelectorAll('[role="alert"]')].map(x => x.textContent), matchRows: document.querySelectorAll('main a[href^="/match/"]').length, activeElement: document.activeElement?.tagName, activeText: document.activeElement?.textContent?.trim().slice(0, 120) }))
+}
+async function failed(page, cached = false) {
+  await status(page).getByRole('alert').waitFor()
+  assert.equal(await status(page).getByRole('alert').textContent(), failureText)
+  assert.equal(await retry(page).getAttribute('aria-disabled'), 'false')
+  if (cached) assert.match(await status(page).innerText(), /이전에 불러온 기록/)
+  else {
+    assert.equal(await page.getByText(emptyText, { exact: true }).count(), 0)
+    assert.equal(await page.locator('main section[aria-label="팀 전적"]').count(), 0)
+    assert.equal(await rows(page).count(), 0)
+  }
+}
+async function ready(page, teamIndex = 0) {
+  await page.getByText(matches[teamIndex].opponent, { exact: true }).waitFor()
+  await until(async () => await status(page).count() === 0, 'load notice removed')
+  assert((await page.locator('header').innerText()).includes(teams[teamIndex].name))
+  assert.equal(await rows(page).count(), 1)
+}
+async function makeFixture(options = {}) {
+  mode = freshMode(options.mode)
+  const f = await fixture({ route: '/matches', width: options.width || 390, locale: options.locale || 'ko' })
+  f.mode = mode
+  return f
+}
+async function closeFixture(f) {
+  for (const pending of f.mode.holds) pending.release()
+  f.mode.nextTeams?.release()
+  await f.close()
+}
+async function withFixture(work, options) {
+  let f
+  try {
+    f = await makeFixture(options)
+    const evidence = await work(f)
+    assert.equal(f.state.writes.length, 0)
+    assert.deepEqual(f.mode.deniedWrites, [])
+    return { ...evidence, syntheticWrites: 0, productionWrites: 0, reads: f.mode.reads }
+  } finally { if (f) await closeFixture(f) }
+}
+async function run(name, work) {
+  if (filter && !name.includes(filter)) return
+  const started = Date.now()
+  try { report.cases.push({ name, status: 'pass', ...(await work()), durationMs: Date.now() - started }) }
+  catch (error) { report.cases.push({ name, status: 'fail', error: error.stack, durationMs: Date.now() - started }) }
+  console.log(JSON.stringify({ name, status: report.cases.at(-1).status, error: report.cases.at(-1).error }))
+}
+const teamsReads = f => f.mode.reads.filter(x => x.table === 'teams').length
+async function reloadFailure(f, flags = { failTeams: true }) { Object.assign(f.mode, flags); await f.page.reload({ waitUntil: 'networkidle' }); await failed(f.page, true) }
+async function retrySuccess(f) { Object.assign(f.mode, { failTeams: false, failMemberships: false, failMatches: false }); await retry(f.page).click(); await ready(f.page); return inspect(f.page) }
+
+try {
+  await run('01 cold team-list failure hides zero totals and retries', () => withFixture(async f => {
+    await failed(f.page); const before = await inspect(f.page); await shot(f.page, '390-cold-error')
+    const after = await retrySuccess(f); return { before, after }
+  }, { mode: { failTeams: true } }))
+  await run('02 cold membership failure hides empty state and retries', () => withFixture(async f => { await failed(f.page); return { after: await retrySuccess(f) } }, { mode: { failMemberships: true } }))
+  await run('03 cold match-data failure remains retryable on Matches', () => withFixture(async f => { await failed(f.page); assert.equal(new URL(f.page.url()).pathname, '/matches'); return { after: await retrySuccess(f) } }, { mode: { failMatches: true } }))
+  await run('04 retry fails again then succeeds without false empty state', () => withFixture(async f => {
+    await failed(f.page); const beforeCalls = teamsReads(f); await retry(f.page).click(); await until(() => teamsReads(f) > beforeCalls, 'second failing lookup'); await failed(f.page)
+    assert.equal(await rows(f.page).count(), 0); return { after: await retrySuccess(f) }
+  }, { mode: { failTeams: true } }))
+  await run('05 cached record stays labeled during failure and recovery', () => withFixture(async f => {
+    await ready(f.page); await reloadFailure(f); assert.equal(await rows(f.page).count(), 1); await shot(f.page, '390-cached-error'); const before = await inspect(f.page)
+    const after = await retrySuccess(f); await until(() => f.page.locator('h1').evaluate(e => e === document.activeElement), 'same-context retry heading focus'); return { before, after: await inspect(f.page) }
+  }))
+  await run('06 cached empty result is labeled as previous data', () => withFixture(async f => {
+    await f.page.getByText(emptyText, { exact: true }).waitFor(); await reloadFailure(f); assert.equal(await rows(f.page).count(), 0); assert.match(await status(f.page).innerText(), /이전에 불러온 기록/)
+    const before = await inspect(f.page); f.mode.failTeams = false; await retry(f.page).click(); await until(async () => await status(f.page).count() === 0, 'empty retry success'); await f.page.getByText(emptyText, { exact: true }).waitFor()
+    return { before, after: await inspect(f.page) }
+  }, { mode: { empty: true } }))
+  await run('07 same-team match-data failure labels cached records', () => withFixture(async f => { await ready(f.page); await reloadFailure(f, { failMatches: true }); assert.equal(await rows(f.page).count(), 1); return { before: await inspect(f.page), after: await retrySuccess(f) } }))
+  await run('08 normal nonempty list retains statistics and detail links', () => withFixture(async f => { await ready(f.page); assert.match(await f.page.locator('main').innerText(), /1\n총 경기/); return { view: await inspect(f.page) } }))
+  await run('09 normal empty list retains authorized create action', () => withFixture(async f => { await f.page.getByText(emptyText, { exact: true }).waitFor(); assert.equal(await status(f.page).count(), 0); assert.equal(await f.page.locator('a[href="/match/new"]').count(), 1); await shot(f.page, '390-normal-empty'); return { view: await inspect(f.page) } }, { mode: { empty: true } }))
+  await run('10 browser mouse double-click makes one pending retry and keeps cache', () => withFixture(async f => {
+    await ready(f.page); await reloadFailure(f); f.mode.failTeams = false; const pending = hold(); f.mode.nextTeams = pending; const before = teamsReads(f)
+    try {
+      const box = await retry(f.page).boundingBox(); assert(box); await f.page.mouse.dblclick(box.x + box.width/2, box.y + box.height/2, { delay: 80 }); await until(() => pending.entered, 'held retry')
+      assert.equal(teamsReads(f) - before, 1); assert.equal(await retry(f.page).getAttribute('aria-disabled'), 'true'); assert.equal(await status(f.page).getAttribute('aria-busy'), 'true'); await status(f.page).getByRole('status').waitFor(); assert.equal(await rows(f.page).count(), 1); assert.match(await status(f.page).innerText(), /이전에 불러온 기록/)
+      await f.page.mouse.click(box.x + box.width/2, box.y + box.height/2); await f.page.keyboard.press('Enter'); await f.page.keyboard.press('Space'); await pause(100); assert.equal(teamsReads(f)-before, 1); await shot(f.page, '390-cached-retry-pending'); pending.release(); await ready(f.page)
+      return { retryRequests: teamsReads(f)-before, after: await inspect(f.page) }
+    } finally { pending.release() }
+  }))
+  await run('11 browser Back during pending retry ignores late UI completion', () => withFixture(async f => {
+    await ready(f.page); await f.page.locator('nav a[href="/dashboard"]').click(); await f.page.locator('h1 button').waitFor(); await f.page.locator('nav a[href="/matches"]').click(); await ready(f.page); await reloadFailure(f)
+    f.mode.failTeams = false; const pending = hold(); f.mode.nextTeams = pending
+    try { await retry(f.page).click(); await until(() => pending.entered, 'retry before Back'); await f.page.goBack({ waitUntil: 'domcontentloaded' }); await until(() => new URL(f.page.url()).pathname === '/dashboard', 'Back destination'); pending.release(); await f.page.locator('h1 button').waitFor(); await pause(100); assert.equal(await status(f.page).count(), 0); assert.equal(new URL(f.page.url()).pathname, '/dashboard'); return { path: new URL(f.page.url()).pathname, noMatchesNotice: true } } finally { pending.release() }
+  }))
+  await run('12 account handoff ignores late failed old-account retry', () => withFixture(async f => {
+    await ready(f.page); await reloadFailure(f); f.mode.failTeams = false; const pending = hold({ fail: true }); f.mode.nextTeams = pending
+    try { await retry(f.page).click(); await until(() => pending.entered, 'old-account retry'); await broadcastAuth(f.page, f.state, makeSession(otherUid)); await ready(f.page, 1); pending.release(); await pause(180); await ready(f.page, 1); assert(!(await f.page.locator('main').innerText()).includes(matches[0].opponent)); return { after: await inspect(f.page) } } finally { pending.release() }
+  }))
+  await run('13 logout during pending retry cannot restore old list', () => withFixture(async f => {
+    await ready(f.page); await reloadFailure(f); f.mode.failTeams = false; const pending = hold(); f.mode.nextTeams = pending
+    try { await retry(f.page).click(); await until(() => pending.entered, 'retry before logout'); await broadcastAuth(f.page, f.state, null); await until(() => ['/login','/'].includes(new URL(f.page.url()).pathname), 'signed-out destination'); pending.release(); await pause(180); assert(!(await f.page.locator('body').innerText()).includes(matches[0].opponent)); assert.equal(await status(f.page).count(), 0); return { path: new URL(f.page.url()).pathname } } finally { pending.release() }
+  }))
+  await run('14 successful team switch keeps title and rows consistent', () => withFixture(async f => {
+    await ready(f.page); await f.page.goto(`${base}/dashboard`, { waitUntil: 'networkidle' }); await openPicker(f.page); await choose(f.page, 1, f.state); await f.page.locator('h1').filter({ hasText: teams[1].name }).waitFor(); await f.page.locator('nav a[href="/matches"]').click(); await ready(f.page, 1); assert(!(await f.page.locator('main').innerText()).includes(matches[0].opponent)); return { after: await inspect(f.page) }
+  }))
+  await run('15 failed other-team selection keeps confirmed A list', () => withFixture(async f => {
+    await ready(f.page); await f.page.goto(`${base}/dashboard`, { waitUntil: 'networkidle' }); f.state.teamModes.set(teams[1].id, { fail: true }); await openPicker(f.page); await choose(f.page, 1, f.state); await f.page.locator('#team-selection-status').getByRole('alert').waitFor(); await f.page.keyboard.press('Escape'); await f.page.locator('nav a[href="/matches"]').click(); await ready(f.page); return { after: await inspect(f.page) }
+  }))
+  await run('16 canceled team switch and late response keep confirmed A', () => withFixture(async f => {
+    await ready(f.page); await f.page.goto(`${base}/dashboard`, { waitUntil: 'networkidle' }); const pending = hold(); f.state.teamModes.set(teams[1].id, pending)
+    try { await openPicker(f.page); await choose(f.page, 1, f.state); await until(() => pending.entered, 'held B selection'); await f.page.getByRole('button', { name: '전환 취소', exact: true }).click(); await f.page.locator('nav a[href="/matches"]').click(); pending.release(); await ready(f.page); return { after: await inspect(f.page) } } finally { pending.release() }
+  }))
+  await run('17 320px Korean keyboard retry, focus and touch target', () => withFixture(async f => {
+    await failed(f.page); await retry(f.page).focus(); await f.page.keyboard.press('Tab'); await f.page.keyboard.press('Shift+Tab'); assert.equal(await retry(f.page).evaluate(e => e === document.activeElement), true)
+    const metrics = await retry(f.page).evaluate(e => ({ name: e.textContent, width: e.getBoundingClientRect().width, height: e.getBoundingClientRect().height, outlineStyle: getComputedStyle(e).outlineStyle, outlineWidth: getComputedStyle(e).outlineWidth, fontSize: getComputedStyle(e).fontSize }))
+    assert(metrics.height >= 48); assert.notEqual(metrics.outlineStyle, 'none'); const view = await shot(f.page, '320-cold-error-keyboard'); assert(view.scrollWidth <= view.width)
+    const pending = hold({ fail: true }); f.mode.nextTeams = pending
+    try { await f.page.keyboard.press('Enter'); await until(() => pending.entered, 'keyboard retry'); assert.equal(await retry(f.page).getAttribute('aria-disabled'), 'true'); pending.release(); await failed(f.page); assert.equal(await retry(f.page).evaluate(e => e === document.activeElement), true); const afterFailure = await inspect(f.page); return { metrics, viewport: view, afterFailure, afterSuccess: await retrySuccess(f) } } finally { pending.release() }
+  }, { mode: { failTeams: true }, width: 320 }))
+  await run('18 320px German cached warning wraps without overflow', () => withFixture(async f => {
+    await f.page.getByText(matches[0].opponent, { exact: true }).waitFor(); f.mode.failTeams = true; await f.page.reload({ waitUntil: 'networkidle' }); await status(f.page).getByRole('alert').waitFor(); assert.match(await status(f.page).innerText(), /Zuvor geladene/)
+    const view = await shot(f.page, '320-de-cached-error'); assert(view.scrollWidth <= view.width); const rect = await retry(f.page).boundingBox(); assert(rect && rect.height >= 48 && rect.x >= 0 && rect.x + rect.width <= 320)
+    return { viewport: view, retryRect: rect, after: await inspect(f.page) }
+  }, { width: 320, locale: 'de' }))
+  await run('19 existing local-date default and manual selection regression', () => withFixture(async f => {
+    await ready(f.page); await f.page.locator('a[href="/match/new"]').click(); const date = f.page.locator('#match-field-1'); await date.waitFor(); assert.equal(await date.inputValue(), '2026-11-06'); await date.fill('2027-02-03'); await f.page.locator('#match-field-0').fill('가상 수동 날짜 상대'); assert.equal(await date.inputValue(), '2027-02-03'); await f.page.goBack(); await ready(f.page); return { defaultDate: '2026-11-06', manualDate: '2027-02-03', submitted: false }
+  }, { mode: { instant: '2026-11-05T15:30:00Z' } }))
+  await run('20 pull retry joins a failing automatic load without rejection leakage', () => withFixture(async f => {
+    await ready(f.page)
+    await f.page.locator('nav a[href="/dashboard"]').click(); await f.page.locator('h1 button').waitFor()
+    await f.page.clock.setFixedTime(new Date(Date.now() + 65000))
+    const pending = hold({ fail: true }); f.mode.nextTeams = pending; const before = teamsReads(f)
+    try {
+      await f.page.locator('nav a[href="/matches"]').click(); await until(() => pending.entered, 'automatic stale reload')
+      await f.page.evaluate(() => {
+        scrollTo(0, 0)
+        const target = document.querySelector('main')
+        const touch = y => new Touch({ identifier: 1, target, clientX: 40, clientY: y })
+        target.dispatchEvent(new TouchEvent('touchstart', { bubbles: true, touches: [touch(10)] }))
+        target.dispatchEvent(new TouchEvent('touchmove', { bubbles: true, touches: [touch(230)] }))
+      })
+      await pause(60)
+      await f.page.evaluate(() => document.querySelector('main').dispatchEvent(new TouchEvent('touchend', { bubbles: true, touches: [] })))
+      await status(f.page).getByRole('status').waitFor(); assert.equal(teamsReads(f) - before, 1)
+      pending.release(); await failed(f.page, true); assert.equal(await rows(f.page).count(), 1)
+      return { automaticLookupRequests: teamsReads(f) - before, input: 'Synthetic touch event sequence through the real PullToRefresh handlers', after: await inspect(f.page) }
+    } finally { pending.release() }
+  }))
+  await run('21 eight supported locales and unsupported-locale fallback', async () => {
+    const cases = []
+    for (const [locale, expected] of [['ko', /경기 기록/], ['en_US', /Could not load match records/], ['en_GB', /Could not load match records/], ['ja', /試合記録/], ['fr', /Impossible de charger/], ['de', /Spielaufzeichnungen/], ['it', /Impossibile caricare/], ['es', /No se pudieron cargar/], ['unsupported', /Could not load match records/]]) {
+      cases.push(await withFixture(async f => { await status(f.page).getByRole('alert').waitFor(); const text = await status(f.page).getByRole('alert').textContent(); assert.match(text, expected); assert((await retry(f.page).textContent()).trim()); return { locale, text, lang: await f.page.locator('html').getAttribute('lang') } }, { locale, mode: { failTeams: true, browserLocale: locale === 'unsupported' ? 'fi-FI' : 'ko-KR' } }))
+    }
+    return { localeChecks: cases }
+  })
+} finally {
+  await closeBounded(browser, 'browser')
+  report.expectedInjectedNetworkErrors = report.consoleErrors.filter(x => /Failed to load resource:.*500/.test(x))
+  report.unexpectedConsoleErrors = report.consoleErrors.filter(x => !report.expectedInjectedNetworkErrors.includes(x))
+  report.selectedCasesPassed = report.cases.every(x => x.status === 'pass') && !report.pageErrors.length && !report.unexpectedRequests.length && !report.unexpectedConsoleErrors.length && !report.cleanupWarnings.length
+  report.passed = !filter && report.cases.length === report.expectedCaseCount && report.selectedCasesPassed
+  await writeFile(`${runOutput}/browser-results.json`, JSON.stringify(report, null, 2)+'\n')
+  await writeFile(`${output}/browser-results.json`, JSON.stringify(report, null, 2)+'\n')
+  if (!report.selectedCasesPassed) process.exitCode = 1
+}
