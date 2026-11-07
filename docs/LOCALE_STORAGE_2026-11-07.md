@@ -51,4 +51,26 @@ CQO 반다이크가 제품 커밋, 실제 컴포넌트 경로와 runner·소스 
 
 01:26:01 UTC 재조회에서 대표 alias `soccer-note-hazel.vercel.app`는 계속 기존 `dpl_34sbWPaRDYuu3ex89SgSacFcf6xS`를 가리켰다. 제품 운영 SHA는 `e7b50d5043149cbecbdfedb2760ff49fc1ecedc4`로 유지된다. 이번 수정의 운영 공개 UI 검증은 미실행이며, 이전 CONNECT403 경로를 반복하지 않았다. 실제 iPhone/App Store 전달, 운영 인증 쓰기와 복귀 전환도 미검증이다.
 
-결론은 **구현·독립 리뷰·합성 QA·원격 반영 완료 / 운영 배포 승인 차단**이다. 운영 반영 후 확인해야 할 SHA·READY·alias·공개 화면은 아직 완료로 표시하지 않는다. WORK-26의 App Store 종료 원인 미확정 및 차단 상태와 별개다.
+이 시점의 결론은 **구현·독립 리뷰·합성 QA·원격 반영 완료 / 운영 배포 승인 차단**이었다. 다음 후속의 승인·실행 결과와 구분하며 이 최초 거절 이력을 보존한다. WORK-26의 App Store 종료 원인 미확정 및 차단 상태와 별개다.
+
+## 새로운 승인 근거에 따른 단일 후속 시도
+
+조정자가 기존 두 제품의 반복 개발·검증·배포와 무료 요금/할당량 조건을 명시한 사용자 자동화 원문을 추가 전달했다. 이전의 일반적인 승인 요약과 달리 배포 범위를 직접 확인할 수 있는 새 근거로 판단했다. 최초 요청의 명시적 거절·배포 ID 미발급 및 현재 alias의 이전 배포 유지를 확인한 다음, 같은 제품 SHA와 동일 프로젝트/production 요청을 한 번만 다시 제출했다. 승인 근거를 배포 요청 인자에 넣거나 다른 경로로 우회하지 않았다.
+
+직전 읽기 점검에서 Hobby, 이전 배포 READY, 깨끗한 작업 트리, 원격 문서 SHA `a641b8265f8704527bed72233f96e2a3a03271b9`, 검증 제품 이후 제품/실행기 무변경을 확인했다. 해당 문서 SHA의 Vercel 검사도 success였다. 제품 QA와 복귀 소스가 바뀌지 않아 동일 테스트를 불필요하게 반복하지 않았다.
+
+새 요청은 접수됐으며 ID는 `dpl_9fY9Rv4VNjhuD1seXTnbApE4x98k`, 제품 SHA는 `acffd57b509cacdffac4b200796a272d7537f44e`, target은 production이다. 아래 최종 상태에서 READY·대표 alias 확인과 공개 UI 직접 관측을 구분한다.
+
+### 최종 운영 확인
+
+- Production deployment: `dpl_9fY9Rv4VNjhuD1seXTnbApE4x98k`, **READY**, `aliasError=null`.
+- 정확한 Git SHA: `acffd57b509cacdffac4b200796a272d7537f44e`.
+- 대표 URL: https://soccer-note-hazel.vercel.app
+- 배포 URL: https://soccer-note-6p1qi9h0i-keestory91-6294s-projects.vercel.app
+- READY 시각: 2026-11-07 01:31:35.329 UTC. 01:32 UTC 지원된 조회에서 배포 SHA/READY와 대표 alias가 위 배포 ID를 가리키는 것을 각각 확인했다.
+
+추가 요청은 하지 않았다. 총 production 생성 요청 두 번 중 최초는 미실행 거절, 새 근거에 따른 단일 후속 요청만 실행됐다. 새 유료 옵션·환경 설정·권한·DB·네이티브 빌드 변경은 없다. 이전 운영 source/deployment를 통한 정상 재배포 복귀 계획은 위와 같다. 실제 복귀 전환은 실행하지 않았다.
+
+이 작업자의 운영 검증은 **배포 메타데이터와 alias 조회**까지다. 기존 executor 공개 UI CONNECT403을 재시도하거나 우회하지 않았다. 새 버전의 직접 공개 UI 관측은 별도 허용된 검수 경로에서 후속 확인할 수 있으며 아직 이 문서에 완료로 기록하지 않는다. 실제 인증 언어 선택/운영 쓰기·iPhone·App Store 전달은 합성 QA와 구분해 미검증으로 남긴다. WORK-26 종료 문제 해결·완화로 표현하지 않는다.
+
+현재 결론은 **국소 웹 수정·독립 검토·합성 QA·원격 반영 및 정확한 운영 SHA/READY/alias 확인 완료**, 직접 공개 UI와 실제 기기 검증은 위 한계가 남아 있다는 것이다.
