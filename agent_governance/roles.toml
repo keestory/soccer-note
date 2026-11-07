@@ -1,0 +1,85 @@
+version = 1
+execution_default = "blocked"
+model_selection = "inherit"
+paid_fallback = false
+max_concurrency = 3
+topics = ["strategy", "revenue", "acquisition", "growth", "ai"]
+
+[aliases]
+ceo = "CEO 메시"
+cpo = "CPO 모드리치"
+cto = "CTO 데브라이너"
+cdo = "CDO 네이마르"
+cdao = "CDAO 로드리"
+cqo = "CQO 반다이크"
+ciso = "CISO 말디니"
+
+[[roles]]
+id = "strategy"
+office = "CSO"
+alias = "CSO 크루이프"
+file = "strategy.toml"
+required_for = ["strategy", "revenue", "ai"]
+preferred_model = "gpt-6.1-sol"
+preferred_effort = "high"
+fallback_model = "gpt-6-luna"
+fallback_effort = "low"
+fallback_scope = "source_summary_only"
+reason = "사업모델 대안과 상충하는 근거를 비교하는 복합 판단; CEO 최종 결정과 분리"
+boundary = "CSO proposes business-model options and kill criteria; CEO decides within authorization, CPO owns roadmap."
+
+[[roles]]
+id = "finance"
+office = "CFO"
+alias = "CFO 크로스"
+file = "finance.toml"
+required_for = ["revenue", "acquisition", "growth", "ai"]
+preferred_model = "gpt-6.1-sol"
+preferred_effort = "high"
+fallback_model = "gpt-6-luna"
+fallback_effort = "low"
+fallback_scope = "source_summary_only"
+reason = "비용·단위경제의 가정과 증거를 분리; 산술은 코드/시트로 재계산"
+boundary = "CFO reviews unit economics and vetoes unknown or paid execution; CDAO verifies data, CEO cannot override free-only policy."
+
+[[roles]]
+id = "marketing"
+office = "CMO"
+alias = "CMO 사비"
+file = "marketing.toml"
+required_for = ["strategy", "acquisition"]
+preferred_model = "gpt-6.1-terra"
+preferred_effort = "medium"
+fallback_model = "gpt-6-luna"
+fallback_effort = "low"
+fallback_scope = "source_summary_only"
+reason = "메시지·시각 자료·문장과 유기적 채널 검토에 맞춘 설계 선호값"
+boundary = "CMO owns brand, claims and organic acquisition; CGO owns funnel experiments, gtm_lead integrates launch plans."
+
+[[roles]]
+id = "growth"
+office = "CGO"
+alias = "CGO 음바페"
+file = "growth.toml"
+required_for = ["revenue", "acquisition", "growth"]
+preferred_model = "gpt-6.1-sol"
+preferred_effort = "medium"
+fallback_model = "gpt-6-luna"
+fallback_effort = "low"
+fallback_scope = "source_summary_only"
+reason = "퍼널 실험·작은 표본·중단 기준의 연결 검토"
+boundary = "CGO designs activation and retention experiments; CDAO owns measurement quality, CPO prioritizes, CMO owns public claims."
+
+[[roles]]
+id = "ai_lead"
+office = "CAIO"
+alias = "CAIO 이니에스타"
+file = "ai-lead.toml"
+required_for = ["ai"]
+preferred_model = "gpt-6.1-sol"
+preferred_effort = "high"
+fallback_model = "gpt-6-luna"
+fallback_effort = "low"
+fallback_scope = "source_summary_only"
+reason = "모델·평가·라우팅·AI 실패 복구의 복합 검토; 품질 우월성 보장 아님"
+boundary = "CAIO owns AI evaluation and model routing; CTO implements, CISO owns security review, CFO owns cost veto."

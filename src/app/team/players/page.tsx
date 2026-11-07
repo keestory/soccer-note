@@ -9,7 +9,9 @@ import { PlayerFields } from '@/components/design/PlayerFields'
 import { getDesignCopy } from '@/lib/design-copy'
 import { Trash2, Edit2, X, UserCheck, UserPlus, Users } from 'lucide-react'
 import type { Player, PositionType } from '@/types/database'
-import { updateStore, type MemberWithProfile } from '@/lib/dataStore'
+import { applyPlayerWrite, beginTeamWrite, getDataContext, isDataContextCurrent, type MemberWithProfile } from '@/lib/dataStore'
+import { getMemberLinkErrorCopy, getTeamSelectionCopy } from '@/lib/team-selection-copy'
+import { MemberPlayerLinkError, saveMemberPlayer } from '@/lib/member-player-save'
 import toast from 'react-hot-toast'
 import { PlayersListSkeleton } from '@/components/Skeleton'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
@@ -28,6 +30,7 @@ export default function PlayersPage() {
   const { t, locale } = useI18n()
   const copy = getDesignCopy(locale)
   const cardCopy = getPlayerCardCopy(locale)
+  const selectionCopy = getTeamSelectionCopy(locale)
   const supabase = createClient()
 
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
@@ -35,13 +38,6 @@ export default function PlayersPage() {
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null)
   const [search, setSearch] = useState('')
   const [posFilter, setPosFilter] = useState<'ALL' | PositionType>('ALL')
-  const [localPlayers, setLocalPlayers] = useState<Player[] | null>(null)
-  const [localMemberLinks, setLocalMemberLinks] = useState<Record<string, string>>({}) // memberId → playerId
-
-  const updatePlayers = (players: Player[]) => {
-    setLocalPlayers(players)
-    updateStore({ players })
-  }
 
   // Add form state
   const [addMode, setAddMode] = useState<'member' | 'manual'>('manual')
@@ -58,6 +54,26 @@ export default function PlayersPage() {
   const [strengthTags, setStrengthTags] = useState('')
   const [saving, setSaving] = useState(false)
   const photoUpload = useRef<AbortController | null>(null)
+  const mutation = useRef<ReturnType<typeof beginTeamWrite> | null>(null)
+  const pendingMemberPlayers = useRef(new Map<string, Player>())
+  const [memberLinkFailed, setMemberLinkFailed] = useState(false)
+  const mounted = useRef(true)
+
+  const startMutation = () => {
+    if (mutation.current || uploading || !canEdit || !isDataContextCurrent({ userId: data.userId, teamId: data.selectedTeamId, version: data.contextVersion })) return null
+    const operation = beginTeamWrite()
+    mutation.current = operation
+    setSaving(true)
+    return operation
+  }
+  const currentMutation = (operation: ReturnType<typeof beginTeamWrite>) => mounted.current && mutation.current === operation && isDataContextCurrent(operation.context)
+  const finishMutation = (operation: ReturnType<typeof beginTeamWrite>) => {
+    operation.finish()
+    if (mutation.current === operation) {
+      mutation.current = null
+      if (mounted.current) setSaving(false)
+    }
+  }
 
   const cancelPhotoUpload = () => {
     photoUpload.current?.abort()
@@ -65,9 +81,26 @@ export default function PlayersPage() {
     setUploading(false)
   }
 
-  useEffect(() => () => { photoUpload.current?.abort(); photoUpload.current = null }, [])
+  useEffect(() => {
+    mounted.current = true
+    return () => { mounted.current = false; photoUpload.current?.abort(); photoUpload.current = null; mutation.current?.finish(); mutation.current = null }
+  }, [])
+  useEffect(() => {
+    mutation.current?.finish()
+    mutation.current = null
+    setSaving(false)
+    pendingMemberPlayers.current.clear()
+    resetForm()
+    setDeleteTarget(null)
+    setSearch('')
+    setPosFilter('ALL')
+  // Refreshing the same team must preserve the draft and pending save.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data.contextVersion])
 
   const handlePhotoUpload = async (file: File) => {
+    if (mutation.current) return
+    const context = getDataContext()
     if (!file.type.startsWith('image/')) { toast.error(t.uploadFailed); return }
     const request = new AbortController()
     photoUpload.current?.abort()
@@ -82,9 +115,9 @@ export default function PlayersPage() {
       const res = await fetch('/api/upload', { method: 'POST', headers: await authHeader(supabase), body: fd, signal: request.signal })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error)
-      if (photoUpload.current === request) setPhotoUrl(json.url)
+      if (photoUpload.current === request && isDataContextCurrent(context)) setPhotoUrl(json.url)
     } catch {
-      if (!request.signal.aborted && photoUpload.current === request) toast.error(t.uploadFailed)
+      if (!request.signal.aborted && photoUpload.current === request && isDataContextCurrent(context)) toast.error(t.uploadFailed)
     } finally {
       if (photoUpload.current === request) { photoUpload.current = null; setUploading(false) }
     }
@@ -102,64 +135,64 @@ export default function PlayersPage() {
   const availableMembers = useMemo<MemberWithProfile[]>(() => {
     const linkedIds = new Set([
       ...data.members.filter(m => m.linked_player_id).map(m => m.id),
-      ...Object.keys(localMemberLinks),
     ])
     return data.members.filter(m =>
       m.status === 'approved' &&
       !m.is_removed &&
       !linkedIds.has(m.id)
     )
-  }, [data.members, localMemberLinks])
+  }, [data.members])
 
-  const players = localPlayers ?? data.players
+  const players = data.players
 
   const handleAddFromMember = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!data.selectedTeamId || !selectedMember || !name.trim()) return
-    setSaving(true)
+    const operation = startMutation()
+    if (!operation) return
     try {
       const parsedAge = parsePlayerAge(age)
-      const { data: newPlayer, error: pe } = await supabase
-        .from('players')
-        .insert({ team_id: data.selectedTeamId, name: name.trim(), number: number ? parseInt(number) : null, default_position: position, attributes: withPlayerAge(null, parsedAge), photo_url: photoUrl })
-        .select().single()
-      if (pe) throw pe
+      const newPlayer = await saveMemberPlayer(supabase, operation.context.teamId!, selectedMember.id,
+        { name: name.trim(), number: number ? parseInt(number) : null, default_position: position, attributes: withPlayerAge(null, parsedAge), photo_url: photoUrl },
+        pendingMemberPlayers.current.get(selectedMember.id) ?? null,
+        inserted => { pendingMemberPlayers.current.set(selectedMember.id, inserted); applyPlayerWrite(operation.context, inserted) },
+        () => currentMutation(operation))
+      if (!newPlayer || !currentMutation(operation)) return
 
-      const { error: me } = await supabase
-        .from('team_members')
-        .update({ linked_player_id: newPlayer.id })
-        .eq('id', selectedMember.id)
-      if (me) throw me
-
-      updatePlayers([...(localPlayers ?? data.players), newPlayer])
-      setLocalMemberLinks(prev => ({ ...prev, [selectedMember.id]: newPlayer.id }))
+      applyPlayerWrite(operation.context, newPlayer, undefined, selectedMember.id)
+      pendingMemberPlayers.current.delete(selectedMember.id)
       toast.success(`${name.trim()} — ${t.playerAdded}`)
-      resetForm()
+      resetForm(true)
     } catch (error) {
-      toast.error(error instanceof Error && error.message === 'invalid_age' ? cardCopy.invalidAge : t.saveFailed)
+      if (currentMutation(operation)) {
+        if (error instanceof MemberPlayerLinkError) setMemberLinkFailed(true)
+        else toast.error(error instanceof Error && error.message === 'invalid_age' ? cardCopy.invalidAge : t.saveFailed)
+      }
     } finally {
-      setSaving(false)
+      finishMutation(operation)
     }
   }
 
   const handleAddManual = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!data.selectedTeamId || !name.trim()) return
-    setSaving(true)
+    const operation = startMutation()
+    if (!operation) return
     try {
       const parsedAge = parsePlayerAge(age)
       const { data: newPlayer, error } = await supabase
         .from('players')
-        .insert({ team_id: data.selectedTeamId, name: name.trim(), number: number ? parseInt(number) : null, default_position: position, attributes: withPlayerAge(null, parsedAge), photo_url: photoUrl })
+        .insert({ team_id: operation.context.teamId, name: name.trim(), number: number ? parseInt(number) : null, default_position: position, attributes: withPlayerAge(null, parsedAge), photo_url: photoUrl })
         .select().single()
+      if (!currentMutation(operation)) return
       if (error) throw error
-      updatePlayers([...(localPlayers ?? data.players), newPlayer])
+      applyPlayerWrite(operation.context, newPlayer)
       toast.success(t.playerAdded)
-      resetForm()
+      resetForm(true)
     } catch (error) {
-      toast.error(error instanceof Error && error.message === 'invalid_age' ? cardCopy.invalidAge : t.saveFailed)
+      if (currentMutation(operation)) toast.error(error instanceof Error && error.message === 'invalid_age' ? cardCopy.invalidAge : t.saveFailed)
     } finally {
-      setSaving(false)
+      finishMutation(operation)
     }
   }
 
@@ -168,7 +201,8 @@ export default function PlayersPage() {
     if (!editingPlayer || !name.trim()) return
     let parsedAge: number | null
     try { parsedAge = parsePlayerAge(age) } catch { toast.error(cardCopy.invalidAge); return }
-    setSaving(true)
+    const operation = startMutation()
+    if (!operation) return
     const posArr = preferredPositions.split(',').map(s => s.trim()).filter(Boolean)
     const patch = {
       name: name.trim(),
@@ -182,23 +216,30 @@ export default function PlayersPage() {
       strength_tags: strengthTags.split(',').map(s => s.trim()).filter(Boolean),
     }
     try {
-      const { data: savedPlayer, error } = await supabase.from('players').update(patch).eq('id', editingPlayer.id).select().single()
+      const { data: savedPlayer, error } = await supabase.from('players').update(patch).eq('id', editingPlayer.id).eq('team_id', operation.context.teamId!).select().single()
+      if (!currentMutation(operation)) return
       if (error || !savedPlayer) throw error
-      updatePlayers((localPlayers ?? data.players).map(player => player.id === editingPlayer.id ? savedPlayer : player))
+      applyPlayerWrite(operation.context, savedPlayer)
       toast.success(t.playerUpdated)
-      resetForm()
-    } catch { toast.error(t.saveFailed) } finally { setSaving(false) }
+      resetForm(true)
+    } catch { if (currentMutation(operation)) toast.error(t.saveFailed) } finally { finishMutation(operation) }
   }
 
   const handleDeletePlayer = async (playerId: string) => {
-    const supabase = createClient()
-    const { error } = await supabase.from('players').delete().eq('id', playerId)
-    if (error) { toast.error(t.deleteFailed); return }
-    toast.success(t.playerDeleted)
-    updatePlayers((localPlayers ?? data.players).filter(p => p.id !== playerId))
+    const operation = startMutation()
+    if (!operation) return
+    try {
+      const { error } = await supabase.from('players').delete().eq('id', playerId).eq('team_id', operation.context.teamId!)
+      if (!currentMutation(operation)) return
+      if (error) throw error
+      toast.success(t.playerDeleted)
+      applyPlayerWrite(operation.context, null, playerId)
+    } catch { if (currentMutation(operation)) toast.error(t.deleteFailed) }
+    finally { finishMutation(operation) }
   }
 
   const startEditing = (player: Player) => {
+    if (mutation.current) return
     cancelPhotoUpload()
     setEditingPlayer(player)
     setName(player.name)
@@ -220,8 +261,10 @@ export default function PlayersPage() {
     setStrengthTags('')
   }
 
-  const resetForm = () => {
+  const resetForm = (afterSave = false) => {
+    if (mutation.current && !afterSave) return
     clearDraft()
+    setMemberLinkFailed(false)
     setShowAddSheet(false); setEditingPlayer(null)
     setSelectedMember(null); setAddMode('manual')
   }
@@ -229,7 +272,15 @@ export default function PlayersPage() {
   const selectMember = (member: MemberWithProfile) => {
     clearDraft()
     setSelectedMember(member)
-    setName(member.profile?.display_name || '')
+    const acknowledged = pendingMemberPlayers.current.get(member.id)
+    setMemberLinkFailed(!!acknowledged)
+    setName(acknowledged?.name || member.profile?.display_name || '')
+    if (acknowledged) {
+      setNumber(acknowledged.number?.toString() ?? '')
+      setAge(getPlayerAge(acknowledged)?.toString() ?? '')
+      setPosition(acknowledged.default_position)
+      setPhotoUrl(acknowledged.photo_url ?? null)
+    }
   }
 
   if (data.loading) return <PlayersListSkeleton />
@@ -254,7 +305,7 @@ export default function PlayersPage() {
               <Users className="w-4 h-4" />
             </Link>
             {canEdit && (
-              <button aria-label={t.addPlayer} onClick={() => { resetForm(); setShowAddSheet(true) }}
+              <button aria-label={t.addPlayer} disabled={saving} onClick={() => { resetForm(); setShowAddSheet(true) }}
                 className="flex items-center justify-center active:scale-95 transition"
                 style={{ width: 44, height: 44, borderRadius: 11, background: 'var(--navy)', color: 'var(--accent)', fontSize: 20 }}>
                 +
@@ -264,8 +315,9 @@ export default function PlayersPage() {
         </div>
       </header>
 
-      <PullToRefresh onRefresh={async () => { setLocalPlayers(null); setLocalMemberLinks({}); await data.refresh() }}>
+      <PullToRefresh onRefresh={data.refresh}>
       <div className="max-w-md mx-auto px-4 py-4 space-y-4">
+        {saving && <p role="status" className="text-sm text-[color:var(--text)]">{selectionCopy.saving}</p>}
 
         {/* Search and position filter */}
         <input
@@ -293,9 +345,10 @@ export default function PlayersPage() {
         {canEdit && editingPlayer && (
           <form onSubmit={handleUpdatePlayer}
             className="rounded-2xl p-4" style={{ background: 'var(--card)', border: '1px solid var(--line)' }}>
+            <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
             <div className="flex justify-between items-center mb-4">
               <h3 className="font-black text-[color:var(--text)]">{t.editPlayerTitle}</h3>
-              <button type="button" aria-label={t.close} onClick={resetForm} className="focus-ring flex min-h-11 min-w-11 items-center justify-center rounded" style={{ color: 'var(--muted2)' }}><X className="w-5 h-5" /></button>
+              <button type="button" aria-label={t.close} onClick={() => resetForm()} className="focus-ring flex min-h-11 min-w-11 items-center justify-center rounded" style={{ color: 'var(--muted2)' }}><X className="w-5 h-5" /></button>
             </div>
             <PlayerPhotoField url={photoUrl} uploading={uploading} onUpload={handlePhotoUpload} onRemove={() => setPhotoUrl(null)} />
             <div className="mb-4"><PlayerFields name={name} number={number} age={age} position={position} onName={setName} onNumber={setNumber} onAge={setAge} onPosition={setPosition} labels={{ name: t.playerName, number: copy.number, position: cardCopy.position }} ageLabel={cardCopy.age} ageHint={cardCopy.ageHint} /></div>
@@ -320,8 +373,9 @@ export default function PlayersPage() {
 
             <button type="submit" disabled={saving || uploading} className="w-full py-3 rounded-xl font-black text-sm active:scale-[0.98] transition"
               style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
-              {t.editDone}
+              {saving ? t.loading : t.editDone}
             </button>
+            </fieldset>
           </form>
         )}
 
@@ -355,7 +409,9 @@ export default function PlayersPage() {
 
       {/* Add Player bottom sheet */}
       {showAddSheet && (
-        <Sheet title={t.addPlayer} closeLabel={t.close} onClose={resetForm}>
+        <Sheet title={t.addPlayer} closeLabel={t.close} onClose={() => resetForm()} closeDisabled={saving}>
+          {saving && <p role="status" className="mb-3 text-sm text-[color:var(--text)]">{selectionCopy.saving}</p>}
+          <fieldset disabled={saving} className="min-w-0 border-0 p-0 m-0">
             {/* Mode tabs */}
             <div className="flex-shrink-0 px-5 pb-3">
               <div className="flex gap-2 p-1 rounded-xl" style={{ background: 'var(--card2)' }}>
@@ -418,6 +474,8 @@ export default function PlayersPage() {
                     </div>
                   ) : (
                     <form onSubmit={handleAddFromMember}>
+                      {memberLinkFailed && <p role="alert" className="mb-3 text-sm [overflow-wrap:anywhere]">{getMemberLinkErrorCopy(locale)}</p>}
+                      <fieldset disabled={memberLinkFailed} className="min-w-0 border-0 p-0 m-0">
                       <PlayerPhotoField url={photoUrl} uploading={uploading} onUpload={handlePhotoUpload} onRemove={() => setPhotoUrl(null)} />
                       {/* Selected member chip */}
                       <div className="flex items-center gap-3 p-3 rounded-xl mb-4" style={{ background: 'rgba(163,230,53,0.1)', border: '1px solid rgba(163,230,53,0.2)' }}>
@@ -435,9 +493,10 @@ export default function PlayersPage() {
                       </div>
 
                       <div className="mb-4"><PlayerFields name={name} number={number} age={age} position={position} onName={setName} onNumber={setNumber} onAge={setAge} onPosition={setPosition} labels={{ name: t.playerName, number: copy.number, position: cardCopy.position }} ageLabel={cardCopy.age} ageHint={cardCopy.ageHint} /></div>
+                      </fieldset>
                       <button type="submit" disabled={saving || uploading} className="w-full py-3.5 rounded-xl font-black text-sm active:scale-[0.98] transition disabled:opacity-40"
                         style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
-                        {saving ? t.registering : t.registerAsPlayer}
+                        {saving ? t.registering : memberLinkFailed ? selectionCopy.retry : t.registerAsPlayer}
                       </button>
                     </form>
                   )}
@@ -460,6 +519,7 @@ export default function PlayersPage() {
                 </form>
               )}
             </div>
+          </fieldset>
         </Sheet>
       )}
 

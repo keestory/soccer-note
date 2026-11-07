@@ -1,0 +1,1613 @@
+{
+  "observedAt": "2026-11-02T04:37:11.092Z",
+  "app": "http://127.0.0.1:3127",
+  "scope": "Production-build acceptance",
+  "fontSource": "Local test-only Fontsource mirror of existing Noto Sans KR and Bebas Neue families; no product font/dependency changes",
+  "data": "Synthetic in-memory fixtures; every API and auth request intercepted; no production DB access",
+  "cases": [
+    {
+      "name": "01 atomic A to B: confirmed name, data, storage and permissions",
+      "status": "pass",
+      "elapsedMs": 3041,
+      "evidence": {
+        "pendingPreservesA": true,
+        "oneCommittedContext": true,
+        "viewerPermissions": true,
+        "noMixedFrames": true
+      }
+    },
+    {
+      "name": "02 slow B then fast C: late B cannot overwrite latest successful C",
+      "status": "pass",
+      "elapsedMs": 2470,
+      "evidence": {
+        "latestChoiceWins": true,
+        "lateSuccessIgnored": true
+      }
+    },
+    {
+      "name": "03 failed selection preserves A with retry and no permission change",
+      "status": "fail",
+      "error": "locator.waitFor: Error: strict mode violation: getByRole('alert') resolved to 2 elements:\n    1) <p role=\"alert\" class=\"text-sm text-[color:var(--text)]\">가상 A 팀을 불러오지 못했어요. 현재 팀은 그대로 유지돼요.</p> aka getByText('가상 A 팀을 불러오지 못했어요. 현재 팀은 그대로 유지돼요')\n    2) <div role=\"alert\" aria-live=\"assertive\" id=\"__next-route-announcer__\"></div> aka locator('[id=\"__next-route-announcer__\"]')\n\nCall log:\n\u001b[2m  - waiting for getByRole('alert') to be visible\u001b[22m\n\n    at fixture (/workspace/soccer-note/scripts/qa-team-fixture.mjs:179:79)\n    at async file:///workspace/soccer-note/scripts/qa-team-switch.mjs:90:23\n    at async caseRun (/workspace/soccer-note/scripts/qa-team-switch.mjs:8:26)\n    at async file:///workspace/soccer-note/scripts/qa-team-switch.mjs:80:5"
+    },
+    {
+      "name": "04 cancel, close, Escape and browser Back invalidate pending selection",
+      "status": "pass",
+      "elapsedMs": 3721,
+      "evidence": {
+        "cancel": true,
+        "close": true,
+        "escape": true,
+        "browserBack": true,
+        "focusRestored": true,
+        "lateResponsesIgnored": true
+      }
+    },
+    {
+      "name": "05 late failure from superseded B cannot change successful C or reopen error",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 0\n\n    at file:///workspace/soccer-note/scripts/qa-team-switch.mjs:133:45\n    at async caseRun (file:///workspace/soccer-note/scripts/qa-team-switch.mjs:8:26)\n    at async file:///workspace/soccer-note/scripts/qa-team-switch.mjs:126:5"
+    },
+    {
+      "name": "06 logout and account switch invalidate in-flight team requests",
+      "status": "pass",
+      "elapsedMs": 5546,
+      "evidence": {
+        "logoutClearsCache": true,
+        "newAccountCannotBeOverwritten": true
+      }
+    },
+    {
+      "name": "07 old team player save response cannot alter new team context",
+      "status": "pass",
+      "elapsedMs": 2500,
+      "evidence": {
+        "oldSaveCannotPatchB": true,
+        "serverWriteRemainsScopedToA": true
+      }
+    },
+    {
+      "name": "08 same-team refresh while saving preserves pending form and reconciles acknowledged player",
+      "status": "fail",
+      "error": "locator.dispatchEvent: TypeError: Failed to construct 'Touch': Failed to read the 'identifier' property from 'TouchInit': Required member is undefined.\n    at <anonymous>:7936:45\n    at Array.map (<anonymous>)\n    at InjectedScript.dispatchEvent (<anonymous>:7934:78)\n    at eval (eval at eval (:7098:24), <anonymous>:2:26)\n    at eval (eval at eval (:7098:24), <anonymous>:4:28)\n    at eval (eval at evaluate (:370:30), <anonymous>:15:22)\n    at UtilityScript.evaluate (<anonymous>:372:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)\nCall log:\n\u001b[2m  - waiting for locator('.light > div').filter({ has: locator('input[aria-label]') }).first()\u001b[22m\n\n    at pullRefresh (/workspace/soccer-note/scripts/qa-team-switch.mjs:27:16)\n    at async file:///workspace/soccer-note/scripts/qa-team-switch.mjs:183:9\n    at async caseRun (/workspace/soccer-note/scripts/qa-team-switch.mjs:8:26)\n    at async file:///workspace/soccer-note/scripts/qa-team-switch.mjs:176:5"
+    },
+    {
+      "name": "09 old quarter save after account switch cannot repopulate prior account cache",
+      "status": "fail",
+      "error": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#quarter-save-status') to be visible\u001b[22m\n\n    at fixture (/workspace/soccer-note/scripts/qa-team-fixture.mjs:182:84)\n    at async file:///workspace/soccer-note/scripts/qa-team-switch.mjs:210:17\n    at async caseRun (/workspace/soccer-note/scripts/qa-team-switch.mjs:8:26)\n    at async file:///workspace/soccer-note/scripts/qa-team-switch.mjs:209:5"
+    },
+    {
+      "name": "10 German 320px and Korean 390px picker accessibility, long names and error recovery",
+      "status": "pass",
+      "elapsedMs": 3990,
+      "evidence": [
+        {
+          "innerWidth": 320,
+          "innerHeight": 844,
+          "dpr": 1,
+          "scrollWidth": 320,
+          "lang": "de",
+          "fontStatus": "loaded",
+          "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+          "fontFaces": [
+            {
+              "family": "Noto Sans KR",
+              "weight": "400",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "400",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "500",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "500",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "600",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "600",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "700",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "700",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "800",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "800",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "900",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR Fallback",
+              "weight": "normal",
+              "status": "error"
+            },
+            {
+              "family": "Bebas Neue",
+              "weight": "400",
+              "status": "unloaded"
+            },
+            {
+              "family": "Bebas Neue",
+              "weight": "400",
+              "status": "loaded"
+            },
+            {
+              "family": "Bebas Neue Fallback",
+              "weight": "normal",
+              "status": "error"
+            }
+          ],
+          "dimensions": [
+            {
+              "text": "",
+              "width": 46,
+              "height": 46
+            },
+            {
+              "text": "가상 A 팀Aktuelles Team",
+              "width": 272,
+              "height": 76
+            },
+            {
+              "text": "가상 C 팀",
+              "width": 272,
+              "height": 56
+            },
+            {
+              "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International",
+              "width": 272,
+              "height": 104
+            },
+            {
+              "text": "Erneut versuchen",
+              "width": 272,
+              "height": 48
+            }
+          ],
+          "pendingText": [
+            {
+              "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International wird geladen…",
+              "clientWidth": 272,
+              "scrollWidth": 272,
+              "right": 296,
+              "rects": [
+                {
+                  "left": 21.918670654296875,
+                  "right": 42.081329345703125
+                },
+                {
+                  "left": 48,
+                  "right": 296
+                },
+                {
+                  "left": 48,
+                  "right": 293.78125
+                },
+                {
+                  "left": 48,
+                  "right": 295.3125
+                },
+                {
+                  "left": 48,
+                  "right": 147.203125
+                }
+              ]
+            }
+          ],
+          "errorText": [
+            {
+              "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International konnte nicht geladen werden. Dein aktuelles Team bleibt unverändert.",
+              "clientWidth": 272,
+              "scrollWidth": 272,
+              "right": 296,
+              "rects": [
+                {
+                  "left": 24,
+                  "right": 294.703125
+                },
+                {
+                  "left": 24,
+                  "right": 295.265625
+                },
+                {
+                  "left": 24,
+                  "right": 263.890625
+                },
+                {
+                  "left": 24,
+                  "right": 188.34375
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "innerWidth": 390,
+          "innerHeight": 844,
+          "dpr": 1,
+          "scrollWidth": 390,
+          "lang": "ko",
+          "fontStatus": "loaded",
+          "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+          "fontFaces": [
+            {
+              "family": "Noto Sans KR",
+              "weight": "400",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "400",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "500",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "500",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "600",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "600",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "700",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "700",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "800",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "800",
+              "status": "loaded"
+            },
+            {
+              "family": "Noto Sans KR",
+              "weight": "900",
+              "status": "unloaded"
+            },
+            {
+              "family": "Noto Sans KR Fallback",
+              "weight": "normal",
+              "status": "error"
+            },
+            {
+              "family": "Bebas Neue",
+              "weight": "400",
+              "status": "unloaded"
+            },
+            {
+              "family": "Bebas Neue",
+              "weight": "400",
+              "status": "loaded"
+            },
+            {
+              "family": "Bebas Neue Fallback",
+              "weight": "normal",
+              "status": "error"
+            }
+          ],
+          "dimensions": [
+            {
+              "text": "",
+              "width": 46,
+              "height": 46
+            },
+            {
+              "text": "가상 A 팀현재 팀",
+              "width": 342,
+              "height": 76
+            },
+            {
+              "text": "가상 C 팀",
+              "width": 342,
+              "height": 56
+            },
+            {
+              "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International",
+              "width": 342,
+              "height": 80
+            },
+            {
+              "text": "다시 시도",
+              "width": 342,
+              "height": 48
+            }
+          ],
+          "pendingText": [
+            {
+              "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International 불러오는 중…",
+              "clientWidth": 342,
+              "scrollWidth": 342,
+              "right": 366,
+              "rects": [
+                {
+                  "left": 21.43625831604004,
+                  "right": 42.563743591308594
+                },
+                {
+                  "left": 48,
+                  "right": 366
+                },
+                {
+                  "left": 48,
+                  "right": 359.671875
+                },
+                {
+                  "left": 48,
+                  "right": 316.4375
+                }
+              ]
+            }
+          ],
+          "errorText": [
+            {
+              "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International을 불러오지 못했어요. 현재 팀은 그대로 유지돼요.",
+              "clientWidth": 342,
+              "scrollWidth": 342,
+              "right": 366,
+              "rects": [
+                {
+                  "left": 24,
+                  "right": 364.484375
+                },
+                {
+                  "left": 24,
+                  "right": 364.421875
+                },
+                {
+                  "left": 24,
+                  "right": 122
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "11 member link failure retries acknowledged player without duplicate insert",
+      "status": "pass",
+      "elapsedMs": 1880,
+      "evidence": {
+        "playerInsertCount": 1,
+        "memberLinkAttempts": 2,
+        "acknowledgedPlayerReused": true
+      }
+    }
+  ],
+  "pageErrors": [
+    "Cannot read properties of undefined (reading 'name')"
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "pending-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "selected-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "failed-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "picker-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "pending-de-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "failed-de-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "selected-long-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "picker-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "pending-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "failed-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "selected-long-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    },
+    {
+      "file": "member-link-failed-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded",
+      "computedFontFamily": "\"Noto Sans KR\", \"Noto Sans KR Fallback\", system-ui, sans-serif",
+      "fontFaces": [
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "500",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "600",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "700",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "800",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "unloaded"
+        },
+        {
+          "family": "Noto Sans KR",
+          "weight": "900",
+          "status": "loaded"
+        },
+        {
+          "family": "Noto Sans KR Fallback",
+          "weight": "normal",
+          "status": "error"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "unloaded"
+        },
+        {
+          "family": "Bebas Neue",
+          "weight": "400",
+          "status": "loaded"
+        },
+        {
+          "family": "Bebas Neue Fallback",
+          "weight": "normal",
+          "status": "error"
+        }
+      ]
+    }
+  ],
+  "cleanupWarnings": [],
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "passed": false,
+  "responsiveMetrics": [
+    {
+      "width": 320,
+      "pendingText": [
+        {
+          "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International wird geladen…",
+          "clientWidth": 272,
+          "scrollWidth": 272,
+          "right": 296,
+          "rects": [
+            {
+              "left": 21.918670654296875,
+              "right": 42.081329345703125
+            },
+            {
+              "left": 48,
+              "right": 296
+            },
+            {
+              "left": 48,
+              "right": 293.78125
+            },
+            {
+              "left": 48,
+              "right": 295.3125
+            },
+            {
+              "left": 48,
+              "right": 147.203125
+            }
+          ]
+        }
+      ],
+      "errorText": [
+        {
+          "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International konnte nicht geladen werden. Dein aktuelles Team bleibt unverändert.",
+          "clientWidth": 272,
+          "scrollWidth": 272,
+          "right": 296,
+          "rects": [
+            {
+              "left": 24,
+              "right": 294.703125
+            },
+            {
+              "left": 24,
+              "right": 295.265625
+            },
+            {
+              "left": 24,
+              "right": 263.890625
+            },
+            {
+              "left": 24,
+              "right": 188.34375
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "pendingText": [
+        {
+          "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International 불러오는 중…",
+          "clientWidth": 342,
+          "scrollWidth": 342,
+          "right": 366,
+          "rects": [
+            {
+              "left": 21.43625831604004,
+              "right": 42.563743591308594
+            },
+            {
+              "left": 48,
+              "right": 366
+            },
+            {
+              "left": 48,
+              "right": 359.671875
+            },
+            {
+              "left": 48,
+              "right": 316.4375
+            }
+          ]
+        }
+      ],
+      "errorText": [
+        {
+          "text": "FiktiverFußballvereinDonaudampfschifffahrtsgesellschaft2026 International을 불러오지 못했어요. 현재 팀은 그대로 유지돼요.",
+          "clientWidth": 342,
+          "scrollWidth": 342,
+          "right": 366,
+          "rects": [
+            {
+              "left": 24,
+              "right": 364.484375
+            },
+            {
+              "left": 24,
+              "right": 364.421875
+            },
+            {
+              "left": 24,
+              "right": 122
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

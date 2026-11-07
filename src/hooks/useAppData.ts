@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useState, useSyncExternalStore } from 'react'
-import { getServerSnapshot, getStore, subscribe, loadAppData, selectTeam, refreshData, type TeamWithRole } from '@/lib/dataStore'
+import { useEffect, useSyncExternalStore } from 'react'
+import { getServerSnapshot, getStore, subscribe, loadAppData, selectTeam, cancelTeamSelection, refreshData, type TeamWithRole } from '@/lib/dataStore'
 import type { Match, Player, TeamVisibilitySettings, TrainingSession } from '@/types/database'
-import type { MemberWithProfile } from '@/lib/dataStore'
 
 /**
  * 앱 데이터를 사용하는 훅
@@ -12,18 +11,16 @@ import type { MemberWithProfile } from '@/lib/dataStore'
  */
 export function useAppData() {
   const store = useSyncExternalStore(subscribe, getStore, getServerSnapshot)
-  const [isInitializing, setIsInitializing] = useState(!store.isLoaded)
 
   useEffect(() => {
     // 항상 로드를 시도한다. loadAppData는 내부적으로 중복/신선도(60초)를 검사하므로
     // 캐시가 신선하면 즉시 반환하고, 하이드레이트된 오래된 캐시는 백그라운드에서 갱신한다.
-    loadAppData().finally(() => setIsInitializing(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    void loadAppData().catch(() => {})
   }, [])
 
   return {
     // 상태
-    loading: isInitializing && !store.isLoaded,
+    loading: !store.isLoaded && !store.appLoadError,
     isLoaded: store.isLoaded,
 
     // 사용자
@@ -33,6 +30,10 @@ export function useAppData() {
     // 팀
     teams: store.teams,
     selectedTeamId: store.selectedTeamId,
+    pendingTeamId: store.pendingTeamId,
+    teamLoadError: store.teamLoadError,
+    appLoadError: store.appLoadError,
+    contextVersion: store.contextVersion,
     selectedTeam: store.teams.find(t => t.id === store.selectedTeamId) || null,
 
     // 팀 데이터
@@ -44,6 +45,7 @@ export function useAppData() {
 
     // 액션
     selectTeam,
+    cancelTeamSelection,
     refresh: refreshData
   }
 }
@@ -60,7 +62,7 @@ export function useDashboardData(): {
   matches: Match[]
   trainings: TrainingSession[]
   visibilitySettings: TeamVisibilitySettings | null
-  selectTeam: (teamId: string) => Promise<void>
+  selectTeam: (teamId: string) => Promise<boolean>
   refresh: () => Promise<void>
 } {
   const data = useAppData()

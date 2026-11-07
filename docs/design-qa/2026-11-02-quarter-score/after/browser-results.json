@@ -1,0 +1,130 @@
+{
+  "observedAt": "2026-11-02T13:29:17.108Z",
+  "mode": "after-fix acceptance",
+  "data": "Synthetic browser fixture; no production DB, real activation or participant experiment",
+  "cases": [
+    {
+      "mode": "quarters-error",
+      "status": "pass",
+      "draftRetained": true,
+      "retryConfirmed": true,
+      "reopenedScore": "3:2",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "mode": "matches-error",
+      "status": "pass",
+      "draftRetained": true,
+      "retryConfirmed": true,
+      "reopenedScore": "3:2",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "mode": "matches-lost",
+      "status": "pass",
+      "draftRetained": true,
+      "retryConfirmed": true,
+      "reopenedScore": "3:2",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    }
+  ],
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED"
+  ],
+  "cleanupWarnings": []
+}

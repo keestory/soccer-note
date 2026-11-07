@@ -8,6 +8,7 @@ import { resolveTeam } from '@/lib/team-resolver'
 import { ArrowLeft, MapPin, Calendar, Swords } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useI18n } from '@/lib/i18n/context'
+import { localMatchDate } from '@/lib/match-date'
 
 const BEBAS = 'var(--font-sans), sans-serif'
 
@@ -19,7 +20,7 @@ export default function NewMatchPage() {
   const [teamName, setTeamName] = useState('')
 
   const [opponent, setOpponent] = useState('')
-  const [matchDate, setMatchDate] = useState(new Date().toISOString().split('T')[0])
+  const [matchDate, setMatchDate] = useState(() => localMatchDate())
   const [location, setLocation] = useState('')
 
   const supabase = createClient()

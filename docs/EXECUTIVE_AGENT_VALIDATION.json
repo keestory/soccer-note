@@ -1,0 +1,200 @@
+{
+  "observed_at": "2026-11-02T10:07:19Z",
+  "scope": "shared executive contract and native metadata preflight; no inference adapter connected",
+  "roles": [
+    "strategy",
+    "finance",
+    "marketing",
+    "growth",
+    "ai_lead"
+  ],
+  "aliases": [
+    "CSO 크루이프",
+    "CFO 크로스",
+    "CMO 사비",
+    "CGO 음바페",
+    "CAIO 이니에스타"
+  ],
+  "shared_files_compared": 16,
+  "shared_file_mismatches": [],
+  "validation": {
+    "kee_agent": {
+      "tests": 66,
+      "subtests": 17,
+      "lint_errors": 0,
+      "lint_warnings": 2
+    },
+    "soccer_note": {
+      "tests": 49,
+      "subtests": 17,
+      "lint_errors": 0,
+      "lint_warnings": 10
+    },
+    "wetheone": {
+      "tests": 34,
+      "lint_errors": 0,
+      "lint_warnings": 6
+    },
+    "diff_check": "passed",
+    "new_lint_warnings": "0 in recovery follow-up; two prior standard unittest override warnings remain in each repository"
+  },
+  "live_execution": {
+    "status": "blocked",
+    "reason": "native startup blocked by read-only installation_id; account reads not reached, billing enforcement unobserved, inference adapter unconnected",
+    "actual_model": "unknown",
+    "roles_invoked": [],
+    "events_generated": 0,
+    "scope": "repository CLI/inference adapter only; hosted parent review is recorded separately"
+  },
+  "native_cli": {
+    "version": "0.163.0",
+    "strict_config": "loaded",
+    "doctor": "provider HTTP/WebSocket reachability failed",
+    "account_rate_limit_read": "not reached: initialize response unavailable",
+    "project_config_application": "unverified: project-local config disabled because project is not trusted",
+    "startup_error": "EROFS opening /home/agent/.codex/installation_id with O_RDWR|O_CREAT",
+    "trust_or_credential_changes": false,
+    "diagnostic": "filesystem-only syscall trace; sqlite_home and log_dir temporary overrides do not relocate installation_id",
+    "metadata_adapter": "implemented and fixture-tested; real startup blocked",
+    "runtime_preflight_observed_at": "2026-11-02T09:24:48.151553+00:00",
+    "runtime_preflight_exit_code": 2,
+    "runtime_preflight_model_calls": 0
+  },
+  "independent_review": {
+    "model_policy": "parent supplied independent review summary incorporated",
+    "implementation": "pending: no newly invoked model reviewer because included-only execution is unverified; main-agent review and automated tests completed"
+  },
+  "product_changes": false,
+  "production_deployment_requested": false,
+  "db_or_permission_changes": false,
+  "note": "Synthetic host tests are not real dialogue or financial/user metrics.",
+  "publication": {
+    "branches_pushed": true,
+    "kee_agent_draft_pr": "https://github.com/keestory/kee_agent/pull/1",
+    "kee_agent_status": "open_draft",
+    "kee_agent_base": "main",
+    "kee_agent_verified_head": "de69db523afd3b6901bd77f2600d3b5d1c30e93c",
+    "existing_prs": [
+      "soccer-note#62",
+      "wetheone#5"
+    ],
+    "note": "PR #1 creation blocker resolved after exact confirmation; verification before this runtime follow-up commit. No approval or merge."
+  },
+  "ci_observations": [
+    {
+      "repository": "kee_agent",
+      "commit": "eeea2b96e345adace937563f99c308fa3a117428",
+      "statuses": [],
+      "pr_triggered_workflow_runs": 0
+    },
+    {
+      "repository": "soccer-note",
+      "commit": "5443e019d7079ef4418c51b131382da7317843d3",
+      "statuses": [
+        {
+          "context": "Vercel",
+          "state": "success"
+        }
+      ],
+      "pr_triggered_workflow_runs": 0
+    },
+    {
+      "repository": "wetheone",
+      "commit": "e7d7ba16b2ac77859ace646ec23864a4cd4bf17b",
+      "statuses": [
+        {
+          "context": "Vercel",
+          "state": "success"
+        }
+      ],
+      "pr_triggered_workflow_runs": 0
+    }
+  ],
+  "ci_query_limit": "Workflow tool filters to PR-triggered runs and first page; local test results remain separate.",
+  "publication_history": [
+    {
+      "branches_pushed": true,
+      "kee_agent_draft_pr": "denied_by_automatic_approval_review",
+      "reason": "Exact new PR authorization deemed insufficient for an external repository commitment",
+      "existing_prs": [
+        "soccer-note#62",
+        "wetheone#5"
+      ],
+      "approved_retry": "denied_by_automatic_approval_review",
+      "approved_retry_count": 1,
+      "pr_search_before_retry": "no_matching_pr",
+      "further_retry_or_bypass": false,
+      "unapproved_retry_or_bypass": false
+    }
+  ],
+  "source_bases": {
+    "kee_agent": "de69db523afd3b6901bd77f2600d3b5d1c30e93c",
+    "soccer-note": "66052453c2a20c3a2b86b75c20e16748b79505d9",
+    "wetheone": "f3cbe6151480b81c4f8a6da6c256f3b7d1eb98c4"
+  },
+  "recovery_investigation": {
+    "status": "blocked_pending_host_provisioning",
+    "filesystem_metadata": {
+      "/home/agent/.codex": "read_only",
+      "/workspace": "writable",
+      "/tmp": "writable"
+    },
+    "installation_id_only_override": "not found in supported reference or installed CLI help",
+    "default_daemon_control_socket_exists": false,
+    "daemon_version_read": {
+      "exit_code": 1,
+      "json_metadata_received": false
+    },
+    "existing_authorized_alternative_endpoint": "not supplied",
+    "credentials_copied": false,
+    "global_state_or_trust_changed": false,
+    "environment_rebuilt": false,
+    "failed_sqlite_log_startup_repeated": false,
+    "new_model_calls": 0,
+    "code_fixes": [
+      "preserve RPC failure despite PATH alias warning",
+      "enforce total deadline before send and buffered receive"
+    ],
+    "regression_tests_added": 3,
+    "next_owner": "coordinating cloud host: provision writable native state with existing approved authentication, or provide an authorized existing hosted runtime endpoint",
+    "same_readonly_layout_rebuild_is_sufficient": false
+  },
+  "hosted_native_assistant_review": {
+    "provenance": "hosted-native-assistant-review",
+    "status": "executed_reported_by_parent",
+    "window_utc": "2026-11-02T13:15:00Z/2026-11-02T13:18:00Z",
+    "recorded_at": "2026-11-02T13:19:49Z",
+    "participants": [
+      "CSO 크루이프",
+      "CFO 크로스",
+      "CMO 사비",
+      "CGO 음바페",
+      "CAIO 이니에스타"
+    ],
+    "distinct_workers": 5,
+    "actual_model": "unknown",
+    "evidence": "parent supplied observable proposals, rebuttals and revisions; no raw transcript or private IDs",
+    "external_api_or_new_paid_service_used": false,
+    "zero_billing_verified": false,
+    "cli_repaired": false,
+    "real_participant_experiment_started": false,
+    "product_defect_at_review_time": "unknown",
+    "independent_code_review_completed": false
+  },
+  "hosted_review_followup": {
+    "scope": "one evidenced existing core-flow defect",
+    "product": "soccer-note",
+    "baseline_commit": "1c9340e8ff40ffa61a6fb85f2d073a72a7a4239b",
+    "defect": "quarter score save ignored match-total write error and falsely closed editor",
+    "fix": "check both errors; preserve draft/editor on failure; publish UI after error-free writes",
+    "product_unit_tests": 138,
+    "browser_synthetic_cases_passed": 3,
+    "types_and_build": "passed",
+    "product_lint_errors": 0,
+    "product_lint_existing_warnings": 49,
+    "production_deployed": false,
+    "real_activation_evidence": false,
+    "production_db_or_rls_verified": false,
+    "further_product_inspection": "stopped after one evidenced fix"
+  }
+}

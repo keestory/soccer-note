@@ -1,0 +1,165 @@
+{
+  "observedAt": "2026-11-04T01:49:02.318Z",
+  "sourceCommit": "46d8a3df7700d06ac6cc5dd260f540402f6499b6",
+  "productBlob": "9eeacd7d32c641cee4de65b18b53ea5038d87598",
+  "copyBlob": "66247b27441e399f3c3ae1097338ebcabc6a9c13",
+  "productBlobs": {
+    "src/app/match/[id]/page.tsx": "9eeacd7d32c641cee4de65b18b53ea5038d87598",
+    "src/lib/match-note-copy.ts": "66247b27441e399f3c3ae1097338ebcabc6a9c13"
+  },
+  "uncommittedProductSource": true,
+  "changedProductPaths": [
+    "src/app/match/[id]/page.tsx",
+    "src/lib/match-note-copy.ts"
+  ],
+  "buildId": "sMT-dOg3oD3u2jcyhbPFq",
+  "scope": "Independent native QA; production build with synthetic API/auth. No real user, production DB, billing or native-device proof.",
+  "navigationDiagnostics": [
+    {
+      "operation": "surface reload",
+      "pending": [
+        {
+          "method": "GET",
+          "path": "/rest/v1/match_mom_votes",
+          "type": "fetch"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/css/66a8734b02340547.css",
+          "type": "stylesheet"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/css/de150bf03ee2ef11.css",
+          "type": "stylesheet"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/webpack-513d70fb41a0c07c.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/4bd1b696-e199e788e58acf79.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/3794-76809258438a3d8c.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/main-app-edbcce7398828664.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/44530001-255e99fab9394955.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/864-d605fae296548a0d.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/8555-361b0e53aecdcdf0.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/4108-9a7b934a155f9981.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/app/layout-12d6742b7d3c9dc6.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/8500-107859ed31978aa3.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/9759-e7ba093910400072.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/2119-12111735790e13e1.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/663-0c89588e9cb4aaa9.js",
+          "type": "script"
+        },
+        {
+          "method": "GET",
+          "path": "/_next/static/chunks/app/match/%5Bid%5D/page-2f99f50bc59f333b.js",
+          "type": "script"
+        }
+      ],
+      "page": {
+        "readyState": "loading",
+        "path": "/match/30000000-0000-4000-8000-000000000001",
+        "headings": [],
+        "memoPresent": false
+      }
+    }
+  ],
+  "cases": [
+    {
+      "name": "edit-b: serialize, retain, suppress stale success and save latest",
+      "status": "pass",
+      "pendingEditable": true,
+      "requestCountBeforeRetry": 1,
+      "editorAfterAcknowledgment": "B: newer unsaved memo",
+      "storedAfterAcknowledgment": "A: submitted memo",
+      "staleSuccess": false,
+      "finalStored": "B: newer unsaved memo",
+      "writes": [
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "A: submitted memo"
+          }
+        },
+        {
+          "table": "matches",
+          "rowId": "30000000-0000-4000-8000-000000000001",
+          "body": {
+            "notes": "B: newer unsaved memo"
+          }
+        }
+      ]
+    },
+    {
+      "name": "full-navigation: stale response excluded",
+      "status": "pass",
+      "mode": "full-navigation",
+      "staleSuccess": false,
+      "finalPath": "/dashboard",
+      "oldSyntheticWrite": "A: submitted memo",
+      "newMatchUnchanged": "OTHER: separate match memo"
+    },
+    {
+      "name": "new-match: stale response excluded",
+      "status": "fail",
+      "error": "page.reload: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for navigation until \"networkidle\"\u001b[22m\n\u001b[2m    - navigated to \"http://127.0.0.1:3128/match/30000000-0000-4000-8000-000000000001\"\u001b[22m\n\n    at surface (/workspace/soccer-note/scripts/qa-notes-save.mjs:60:22)\n    at async navigate (/workspace/soccer-note/scripts/qa-notes-save.mjs:203:13)\n    at async file:///workspace/soccer-note/scripts/qa-notes-save.mjs:288:58"
+    }
+  ],
+  "expected": 3,
+  "totalSuiteCases": 18,
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "expectedInjectedNetworkErrors": [],
+  "unexpectedConsoleErrors": [],
+  "cleanupWarnings": [],
+  "passed": false
+}

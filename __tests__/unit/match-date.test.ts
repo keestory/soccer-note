@@ -1,7 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { isUpcomingMatchDate, matchCalendarDay } from '@/lib/match-date'
+import { isUpcomingMatchDate, localMatchDate, matchCalendarDay } from '@/lib/match-date'
 import { formatDate } from '@/lib/utils'
 describe('local-calendar match scheduling', () => {
+  it.each([
+    [2026, 0, 1, '2026-01-01'],
+    [2026, 11, 31, '2026-12-31'],
+    [2026, 3, 30, '2026-04-30'],
+    [2028, 1, 29, '2028-02-29'],
+  ] as const)('uses a local date default consistent with scheduling at %s/%s/%s', (year, month, day, expected) => {
+    const now = new Date(year, month, day, 0, 30)
+    expect(localMatchDate(now)).toBe(expected)
+    expect(isUpcomingMatchDate(localMatchDate(now), now)).toBe(true)
+  })
   it('keeps date-only fixtures scheduled for the whole local day', () => {
     for (const hour of [0, 9, 23]) expect(isUpcomingMatchDate('2026-10-18', new Date(2026, 9, 18, hour, 59))).toBe(true)
     expect(isUpcomingMatchDate('2026-10-17', new Date(2026, 9, 18))).toBe(false)

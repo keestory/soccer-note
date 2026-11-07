@@ -1,0 +1,30 @@
+{
+  "observedAt": "2026-11-06T01:32:24.217Z",
+  "app": "http://127.0.0.1:3128",
+  "scope": "Read-only synthetic investigation, not acceptance of a fix; no product changes",
+  "fontSource": "Existing Nov5 cached-font production build reused without installation or rebuild",
+  "data": "Synthetic in-memory fixtures; every API and auth request intercepted; no production DB access",
+  "cases": [
+    {
+      "name": "cold initial team-list failure",
+      "status": "harness-or-observation-failed",
+      "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /아직 경기 기록이 없습니다/. Input:\n\n'0\\n총 경기\\n0\\n승\\n0\\n무\\n0\\n패\\n완료 경기\\n00\\n아직 기록된 경기가 없습니다'\n\n    at file:///tmp/soccer-nov6-matches-repro/runner.mjs:84:12\n    at async run (file:///tmp/soccer-nov6-matches-repro/runner.mjs:60:22)\n    at async file:///tmp/soccer-nov6-matches-repro/runner.mjs:79:3"
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedRequests": [],
+  "screenshots": [],
+  "cleanupWarnings": [],
+  "sourceHEAD": "372faf95816879cc0e930102e08fd45c94c0c077",
+  "productSourceCommit": "90398f1822cddc665d3d18f26d7fc12cc46229c2",
+  "buildId": "RhpQn8IX3tuCX7iF2qVF6",
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "investigationCompleted": false,
+  "acceptancePass": null
+}

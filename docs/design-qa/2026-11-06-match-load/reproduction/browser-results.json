@@ -1,0 +1,175 @@
+{
+  "observedAt": "2026-11-06T01:32:39.634Z",
+  "app": "http://127.0.0.1:3128",
+  "scope": "Read-only synthetic investigation, not acceptance of a fix; no product changes",
+  "fontSource": "Existing Nov5 cached-font production build reused without installation or rebuild",
+  "data": "Synthetic in-memory fixtures; every API and auth request intercepted; no production DB access",
+  "cases": [
+    {
+      "name": "cold initial team-list failure",
+      "status": "observed-as-expected",
+      "productFinding": "Reproduced: failed lookup appears as zero matches with no error/retry",
+      "view": {
+        "path": "/matches",
+        "title": "전체 경기",
+        "header": "팀 전적\n\n전체 경기",
+        "main": "0\n총 경기\n0\n승\n0\n무\n0\n패\n완료 경기\n00\n아직 기록된 경기가 없습니다",
+        "alerts": [],
+        "buttons": [],
+        "matchLinks": [],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "dpr": 1,
+          "scrollWidth": 390
+        }
+      },
+      "writes": 0,
+      "injectedTeamListFailures": 1
+    },
+    {
+      "name": "confirmed cache then initial team-list failure on reload",
+      "status": "observed-as-expected",
+      "productFinding": "Confirmed cached record is retained; no zero-record claim, but failed refresh is not explained here",
+      "before": {
+        "path": "/matches",
+        "title": "전체 경기",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "alerts": [],
+        "buttons": [],
+        "matchLinks": [
+          {
+            "href": "/match/30000000-0000-4000-8000-000000000001",
+            "text": "1:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수"
+          }
+        ],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "dpr": 1,
+          "scrollWidth": 390
+        }
+      },
+      "after": {
+        "path": "/matches",
+        "title": "전체 경기",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "alerts": [],
+        "buttons": [],
+        "matchLinks": [
+          {
+            "href": "/match/30000000-0000-4000-8000-000000000001",
+            "text": "1:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수"
+          }
+        ],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "dpr": 1,
+          "scrollWidth": 390
+        }
+      },
+      "writes": 0,
+      "injectedTeamListFailures": 1
+    },
+    {
+      "name": "successful genuinely empty match list",
+      "status": "observed-as-expected",
+      "productFinding": "Control: successful empty list legitimately renders zero/empty, with confirmed team name",
+      "view": {
+        "path": "/matches",
+        "title": "전체 경기",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "0\n총 경기\n0\n승\n0\n무\n0\n패\n완료 경기\n00\n아직 기록된 경기가 없습니다",
+        "alerts": [],
+        "buttons": [],
+        "matchLinks": [],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "dpr": 1,
+          "scrollWidth": 390
+        }
+      },
+      "writes": 0,
+      "injectedTeamListFailures": 0
+    },
+    {
+      "name": "successful team switch before opening matches",
+      "status": "observed-as-expected",
+      "productFinding": "Control: confirmed B team and B record render together",
+      "view": {
+        "path": "/matches",
+        "title": "전체 경기",
+        "header": "팀 전적\n\n전체 경기\n\n가상 B 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n2:0\n승\n가상 B 상대\n2026년 1월 1일\nMVP 가상 B 선수",
+        "alerts": [],
+        "buttons": [],
+        "matchLinks": [
+          {
+            "href": "/match/30000000-0000-4000-8000-000000000002",
+            "text": "2:0승가상 B 상대2026년 1월 1일MVP 가상 B 선수"
+          }
+        ],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "dpr": 1,
+          "scrollWidth": 390
+        }
+      },
+      "writes": 0,
+      "injectedTeamListFailures": 0
+    },
+    {
+      "name": "failed team switch preserves confirmed A matches",
+      "status": "observed-as-expected",
+      "productFinding": "Control: failed B selection is explained on dashboard and keeps confirmed A data",
+      "dashboardError": "가상 B 팀을 불러오지 못했어요. 현재 팀은 그대로 유지돼요.\n\n다시 시도",
+      "view": {
+        "path": "/matches",
+        "title": "전체 경기",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "alerts": [],
+        "buttons": [],
+        "matchLinks": [
+          {
+            "href": "/match/30000000-0000-4000-8000-000000000001",
+            "text": "1:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수"
+          }
+        ],
+        "viewport": {
+          "width": 390,
+          "height": 844,
+          "dpr": 1,
+          "scrollWidth": 390
+        }
+      },
+      "writes": 0,
+      "injectedTeamListFailures": 0
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedRequests": [],
+  "screenshots": [],
+  "cleanupWarnings": [],
+  "sourceHEAD": "372faf95816879cc0e930102e08fd45c94c0c077",
+  "productSourceCommit": "90398f1822cddc665d3d18f26d7fc12cc46229c2",
+  "buildId": "RhpQn8IX3tuCX7iF2qVF6",
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "investigationCompleted": true,
+  "acceptancePass": null
+}

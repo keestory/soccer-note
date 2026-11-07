@@ -1,0 +1,152 @@
+{
+  "observedAt": "2026-11-04T01:33:27.153Z",
+  "sourceCommit": "46d8a3df7700d06ac6cc5dd260f540402f6499b6",
+  "productBlob": "0c2f85c1c92c4eadb471ec8ecb9e9c09f926d179",
+  "buildId": "0-03DT8SnPuIJKIc24ROM",
+  "scope": "Cached verified production build with unchanged product source; synthetic in-memory API/auth; no production DB or deployment",
+  "cases": [
+    {
+      "name": "edit-during-save",
+      "status": "editor collision reproduced",
+      "beforeResponse": {
+        "editorOpen": true,
+        "input": "B: later unsaved memo",
+        "stored": "A: first submitted memo",
+        "successShown": false
+      },
+      "afterResponse": {
+        "editorOpen": false,
+        "visibleMemo": "A: first submitted memo",
+        "stored": "A: first submitted memo",
+        "successShown": true
+      },
+      "reopenedDraft": "B: later unsaved memo",
+      "reloadedDraft": "A: first submitted memo",
+      "writes": [
+        {
+          "notes": "A: first submitted memo"
+        }
+      ]
+    },
+    {
+      "name": "cancel-reopen",
+      "status": "editor collision reproduced",
+      "beforeResponse": {
+        "editorOpen": true,
+        "input": "B: later unsaved memo",
+        "stored": "A: first submitted memo",
+        "successShown": false
+      },
+      "afterResponse": {
+        "editorOpen": false,
+        "visibleMemo": "A: first submitted memo",
+        "stored": "A: first submitted memo",
+        "successShown": true
+      },
+      "reopenedDraft": "B: later unsaved memo",
+      "reloadedDraft": "A: first submitted memo",
+      "writes": [
+        {
+          "notes": "A: first submitted memo"
+        }
+      ]
+    },
+    {
+      "name": "failure-retry",
+      "status": "existing recovery works in fixture",
+      "failed": {
+        "editorOpen": true,
+        "input": "A: first submitted memo",
+        "stored": "OLD: saved match memo",
+        "successShown": false
+      },
+      "retryStored": "A: first submitted memo",
+      "reopenedStored": "A: first submitted memo",
+      "writes": [
+        {
+          "notes": "A: first submitted memo"
+        },
+        {
+          "notes": "A: first submitted memo"
+        }
+      ]
+    },
+    {
+      "name": "WORK-13 attendee partial save retry",
+      "fixtureConstraint": "repository UNIQUE(match_id, player_id) emulated",
+      "status": "retry blocked without duplicate accumulation",
+      "afterFailure": {
+        "storedA": 1,
+        "storedB": 1,
+        "editorOpen": true
+      },
+      "afterRetry": {
+        "storedA": 1,
+        "storedB": 1,
+        "editorOpen": true
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "duplicate": false,
+          "blocked": false
+        },
+        {
+          "method": "DELETE",
+          "failed": true
+        },
+        {
+          "method": "POST",
+          "duplicate": true,
+          "blocked": true
+        }
+      ],
+      "limitation": "Production constraint deployment/state unknown; neither scenario is a production finding"
+    },
+    {
+      "name": "WORK-13 attendee partial save retry",
+      "fixtureConstraint": "counterfactual: unique constraint absent",
+      "status": "counterfactual duplicate accumulation",
+      "afterFailure": {
+        "storedA": 1,
+        "storedB": 1,
+        "editorOpen": true
+      },
+      "afterRetry": {
+        "storedA": 0,
+        "storedB": 2,
+        "editorOpen": false
+      },
+      "writes": [
+        {
+          "method": "POST",
+          "duplicate": false,
+          "blocked": false
+        },
+        {
+          "method": "DELETE",
+          "failed": true
+        },
+        {
+          "method": "POST",
+          "duplicate": true,
+          "blocked": false
+        },
+        {
+          "method": "DELETE",
+          "failed": false
+        }
+      ],
+      "limitation": "Production constraint deployment/state unknown; neither scenario is a production finding"
+    }
+  ],
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 409 (Conflict)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "cleanupWarnings": []
+}

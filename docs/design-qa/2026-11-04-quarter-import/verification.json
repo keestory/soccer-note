@@ -1,0 +1,73 @@
+{
+  "observedAt": "2026-11-04T15:03:23.753164+00:00",
+  "sourceHEAD": "41a4958e8cb46319ed168534edaa999b7fce3cf4",
+  "buildId": "7-KgWrDkQQ1lvIHgToQO3",
+  "productFiles": {
+    "src/app/match/[id]/quarter/[q]/page.tsx": "fa729c8eee869d99800d497380f934b84001cf52",
+    "src/lib/quarter-import.ts": "32f82f5d906435aaadc3c7f844b2f53c2996a200",
+    "src/lib/quarter-import-copy.ts": "f8c7007d58bba955ae9f873e99d2d14d873c6ab0",
+    "__tests__/unit/quarter-import.test.ts": "9d6e9ef8782a604a8ce6eef749540cb983e72bae"
+  },
+  "unit": {
+    "command": "npm test",
+    "status": "pass",
+    "testFiles": 20,
+    "tests": 159
+  },
+  "lint": {
+    "command": "npm run lint",
+    "status": "pass",
+    "errors": 0,
+    "warnings": 49,
+    "warningScope": "Existing baseline warnings"
+  },
+  "types": {
+    "command": "npx --no-install tsc --noEmit",
+    "status": "pass"
+  },
+  "build": {
+    "command": "npm run build -- --webpack",
+    "status": "pass",
+    "localFontResponse": "Reused cached build Noto Sans KR and Bebas Neue font assets through Next test-only response hook",
+    "environment": "Synthetic Supabase fixture values only; not uploaded to hosting"
+  },
+  "independentReview": {
+    "role": "CQO 반다이크",
+    "scope": "Independent native worker code review; no PR approval",
+    "sourceHEAD": "41a4958e8cb46319ed168534edaa999b7fce3cf4",
+    "blockingFindings": 0,
+    "remediatedFinding": "Pending Apply disabled its focus target; explicit Cancel receives focus while read is pending",
+    "actualModel": "unknown"
+  },
+  "productionWrites": "not performed",
+  "browserAcceptance": {
+    "status": "pass",
+    "cases": 22,
+    "report": "after/browser-results.json",
+    "runnerExecutedBlob": "4e936ec7028141cea483564f3200a5d4c2dc4690"
+  },
+  "regressions": {
+    "notes": {
+      "status": "pass",
+      "cases": 18,
+      "report": "regressions/notes/browser-results.json"
+    },
+    "score": {
+      "status": "pass",
+      "cases": 11,
+      "report": "regressions/score/browser-results.json"
+    },
+    "score-navigation": {
+      "status": "pass",
+      "cases": 2,
+      "report": "regressions/score-navigation/browser-results.json"
+    },
+    "quarter-save": {
+      "status": "pass",
+      "cases": 8,
+      "report": "regressions/quarter-save/browser-results.json"
+    }
+  },
+  "totalFinalBrowserCases": 61,
+  "regressionProvenance": "All reports executed against unchanged product blobs and the same build/source HEAD in this file. The historical generic font label in reused regression fixtures is clarified by build.localFontResponse."
+}

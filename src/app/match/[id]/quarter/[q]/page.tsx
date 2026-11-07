@@ -1,8 +1,7 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useSyncExternalStore, type SetStateAction } from 'react'
 import { useRouter, useParams } from 'next/navigation'
-import Link from 'next/link'
 import { createClient, getSessionUser, authHeader } from '@/lib/supabase'
 import { ArrowLeft, Save, Plus, X, Check, Camera, ImageIcon, Loader2 as Spinner, Trash2, ArrowRightLeft } from 'lucide-react'
 import type { Player, Quarter, QuarterRecord, QuarterSubstitution, PositionType } from '@/types/database'
@@ -12,6 +11,13 @@ import { useI18n } from '@/lib/i18n/context'
 import { LinePitch } from '@/components/design/LinePitch'
 import { getDesignCopy } from '@/lib/design-copy'
 import { QuarterEditSkeleton } from '@/components/Skeleton'
+import { ConfirmSheet } from '@/components/ConfirmSheet'
+import { Sheet } from '@/components/design/Sheet'
+import { buildImportCandidates, collidingImportIds, createImportedPlayers } from '@/lib/quarter-import'
+import { getQuarterImportCopy } from '@/lib/quarter-import-copy'
+import { saveQuarterRecords, QuarterSaveError, type QuarterRecordInput, type SavedRecordIdentity } from '@/lib/quarter-save'
+import { getQuarterSaveCopy } from '@/lib/quarter-save-copy'
+import { applySavedQuarterRecords, beginTeamWrite, getDataContext, getServerSnapshot, getStore, isDataContextCurrent, observeDataAuth, subscribe, type DataContext } from '@/lib/dataStore'
 
 // Formation presets: positions as [x%, y%] for each role
 // Field is horizontal: left = our goal, right = opponent goal
@@ -108,16 +114,28 @@ interface FieldPlayer {
   mediaUrls: string[]
 }
 
-function getRatingStyle(rating: number | null): { textClass: string; accentClass: string } {
-  if (rating === null) return { textClass: 'text-gray-400', accentClass: 'accent-gray-400' }
-  if (rating <= 3) return { textClass: 'text-red-500', accentClass: 'accent-red-500' }
-  if (rating <= 6) return { textClass: 'text-amber-500', accentClass: 'accent-amber-500' }
-  return { textClass: 'text-primary-600', accentClass: 'accent-primary-600' }
+function toRecord(quarterId: string, fp: FieldPlayer): QuarterRecordInput {
+  return {
+    quarter_id: quarterId, player_id: fp.playerId,
+    position_type: fp.positionType, position_x: fp.positionX, position_y: fp.positionY,
+    rating: fp.rating, goals: fp.goals, assists: fp.assists,
+    clean_sheet: fp.cleanSheet, contribution: fp.contribution,
+    praise_text: fp.praiseText || null, improvement_text: fp.improvementText || null,
+    highlight_text: fp.highlightText || null, media_urls: fp.mediaUrls.length ? fp.mediaUrls : null,
+  }
+}
+
+function draftKey(players: FieldPlayer[]) {
+  return JSON.stringify(players.map(player => toRecord('', player)).sort((a, b) => a.player_id.localeCompare(b.player_id)))
 }
 
 export default function QuarterEditPage() {
   const { t, locale } = useI18n()
   const copy = getDesignCopy(locale)
+  const saveCopy = getQuarterSaveCopy(locale)
+  const importCopy = getQuarterImportCopy(locale)
+  const store = useSyncExternalStore(subscribe, getStore, getServerSnapshot)
+  const editorContext = useRef<DataContext>(getDataContext())
   const [positionPlayerId, setPositionPlayerId] = useState<string | null>(null)
   const router = useRouter()
   const params = useParams()
@@ -128,12 +146,21 @@ export default function QuarterEditPage() {
   const [saving, setSaving] = useState(false)
   const [quarter, setQuarter] = useState<Quarter | null>(null)
   const [availablePlayers, setAvailablePlayers] = useState<Player[]>([])
-  const [fieldPlayers, setFieldPlayers] = useState<FieldPlayer[]>([])
+  const [fieldPlayers, setFieldPlayersState] = useState<FieldPlayer[]>([])
+  const fieldPlayersRef = useRef<FieldPlayer[]>([])
+  // A synchronous snapshot also guards same-tick changes while import checks await.
+  const setFieldPlayers = (action: SetStateAction<FieldPlayer[]>) => {
+    const next = typeof action === 'function' ? action(fieldPlayersRef.current) : action
+    fieldPlayersRef.current = next
+    setFieldPlayersState(next)
+  }
   const [selectedPlayer, setSelectedPlayer] = useState<FieldPlayer | null>(null)
   const [showPlayerPicker, setShowPlayerPicker] = useState(false)
   const [selectedPickerPlayers, setSelectedPickerPlayers] = useState<Set<string>>(new Set())
   const [uploadingMedia, setUploadingMedia] = useState(false)
-  const [savingPlayer, setSavingPlayer] = useState(false)
+  const [savedDraft, setSavedDraft] = useState<string | null>(null)
+  const [saveFailed, setSaveFailed] = useState(false)
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false)
   const [substitutions, setSubstitutions] = useState<QuarterSubstitution[]>([])
   const [showSubModal, setShowSubModal] = useState(false)
   const [subMinute, setSubMinute] = useState(0)
@@ -142,11 +169,49 @@ export default function QuarterEditPage() {
   const [allTeamPlayers, setAllTeamPlayers] = useState<Player[]>([])
   const [savingSub, setSavingSub] = useState(false)
   const [subPickerMode, setSubPickerMode] = useState<'out' | 'in' | null>(null)
+  const [importSource, setImportSource] = useState<Quarter | null>(null)
+  const [importRosterReady, setImportRosterReady] = useState(false)
+  const [showImport, setShowImport] = useState(false)
+  const [importSelection, setImportSelection] = useState<Set<string>>(new Set())
+  const [importing, setImporting] = useState(false)
+  const [importError, setImportError] = useState('')
+  const [importNotice, setImportNotice] = useState(false)
+  const importAbortRef = useRef<AbortController | null>(null)
+  const importSequenceRef = useRef(0)
+  const importSessionRef = useRef<{ sequence: number; generation: number; quarterId: string; sourceId: string; matchId: string; quarterNumber: number; context: DataContext } | null>(null)
+  const routeRef = useRef({ matchId, quarterNumber })
+  routeRef.current = { matchId, quarterNumber }
+  const pitchHeadingRef = useRef<HTMLHeadingElement>(null)
+  const importCancelRef = useRef<HTMLButtonElement>(null)
 
   const mediaInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
   const recordRef = useRef<HTMLElement>(null)
+  const baselineRef = useRef<SavedRecordIdentity[]>([])
+  const teamIdRef = useRef<string | null>(null)
+  const generationRef = useRef(0)
+  const operationRef = useRef<{ kind: 'save' | 'upload' | 'substitution' | 'import'; generation: number } | null>(null)
+  const activeWriteRef = useRef<ReturnType<typeof beginTeamWrite> | null>(null)
+  const uploadAbortRef = useRef<AbortController | null>(null)
+  const failedSaveRef = useRef(false)
   const supabase = createClient()
+  const busy = saving || uploadingMedia || savingSub || importing
+  const dirty = savedDraft !== null && draftKey(fieldPlayers) !== savedDraft
+  useEffect(() => { observeDataAuth() }, [])
+  useEffect(() => {
+    // Keep keyboard focus inside the sheet when its selection/apply controls disable.
+    if (importing) importCancelRef.current?.focus()
+  }, [importing])
+
+  useEffect(() => {
+    if (!dirty && !busy && !saveFailed) return
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', beforeUnload)
+    return () => window.removeEventListener('beforeunload', beforeUnload)
+  }, [dirty, busy, saveFailed])
 
   useEffect(() => {
     if (selectedPlayer) {
@@ -156,13 +221,51 @@ export default function QuarterEditPage() {
   }, [selectedPlayer?.id])
 
   useEffect(() => {
-    loadData()
-  }, [matchId, quarterNumber])
+    const generation = ++generationRef.current
+    editorContext.current = getDataContext()
+    operationRef.current = null
+    setLoading(true)
+    setSaving(false)
+    setUploadingMedia(false)
+    setSavingSub(false)
+    setSavedDraft(null)
+    setSaveFailed(false)
+    failedSaveRef.current = false
+    setSelectedPlayer(null)
+    setShowLeaveConfirm(false)
+    setShowPlayerPicker(false)
+    setShowSubModal(false)
+    importAbortRef.current?.abort()
+    importSessionRef.current = null
+    setShowImport(false)
+    setImporting(false)
+    setImportSource(null)
+    setImportRosterReady(false)
+    setImportNotice(false)
+    setImportError('')
+    setAvailablePlayers([])
+    setAllTeamPlayers([])
+    baselineRef.current = []
+    teamIdRef.current = null
+    loadData(generation)
+    return () => {
+      generationRef.current = generation + 1
+      uploadAbortRef.current?.abort()
+      importAbortRef.current?.abort()
+      importSessionRef.current = null
+      activeWriteRef.current?.finish()
+      activeWriteRef.current = null
+      operationRef.current = null
+    }
+  }, [matchId, quarterNumber, store.contextVersion])
 
-  const loadData = async () => {
+  const loadData = async (generation: number) => {
+    const context = editorContext.current
+    const isCurrent = () => generationRef.current === generation && isDataContextCurrent(context)
     setPositionPlayerId(null)
     // Check permissions first
     const user = await getSessionUser(supabase)
+    if (!isCurrent()) return
     if (!user) {
       router.push('/login')
       return
@@ -178,11 +281,14 @@ export default function QuarterEditPage() {
           quarter_records (
             *,
             player:players (*)
-          )
+          ),
+          quarter_substitutions (*)
         )
       `)
       .eq('id', matchId)
       .single()
+
+    if (!isCurrent()) return
 
     if (!matchData) {
       toast.error(t.matchLoadFailed)
@@ -197,6 +303,8 @@ export default function QuarterEditPage() {
       .eq('id', matchData.team_id)
       .single()
 
+    if (!isCurrent()) return
+
     let hasPermission = team?.user_id === user.id
 
     if (!hasPermission) {
@@ -206,6 +314,8 @@ export default function QuarterEditPage() {
         .eq('team_id', matchData.team_id)
         .eq('user_id', user.id)
         .single()
+
+      if (!isCurrent()) return
 
       hasPermission = membership?.role === 'coach' || membership?.can_edit_quarters === true
     }
@@ -224,6 +334,9 @@ export default function QuarterEditPage() {
     }
 
     setQuarter(currentQuarter)
+    setImportSource(matchData.quarters?.find((q: Quarter) => q.quarter_number === quarterNumber - 1) ?? null)
+    teamIdRef.current = matchData.team_id
+    baselineRef.current = (currentQuarter.quarter_records ?? []).map((record: QuarterRecord) => ({ id: record.id, quarter_id: record.quarter_id, player_id: record.player_id }))
 
     // Convert existing records to field players
     const existingPlayers: FieldPlayer[] = currentQuarter.quarter_records?.map((r: QuarterRecord) => ({
@@ -245,6 +358,7 @@ export default function QuarterEditPage() {
     })) || []
 
     setFieldPlayers(existingPlayers)
+    setSavedDraft(draftKey(existingPlayers))
 
     // Load substitutions for this quarter
     const { data: subsData } = await supabase
@@ -253,26 +367,32 @@ export default function QuarterEditPage() {
       .eq('quarter_id', currentQuarter.id)
       .order('minute')
 
+    if (!isCurrent()) return
+
     if (subsData) {
       setSubstitutions(subsData)
     }
 
     // Load all team players (for substitution IN picker)
-    const { data: teamPlayers } = await supabase
+    const { data: teamPlayers, error: teamPlayersError } = await supabase
       .from('players')
       .select('*')
       .eq('team_id', matchData.team_id)
       .order('number')
+
+    if (!isCurrent()) return
 
     if (teamPlayers) {
       setAllTeamPlayers(teamPlayers)
     }
 
     // Load attendees for this match (prioritize attendees over all players)
-    const { data: attendeesData } = await supabase
+    const { data: attendeesData, error: attendeesError } = await supabase
       .from('match_attendees')
       .select('player_id, player:players(*)')
       .eq('match_id', matchId)
+
+    if (!isCurrent()) return
 
     const usedPlayerIds = new Set(existingPlayers.map(fp => fp.playerId))
 
@@ -291,15 +411,101 @@ export default function QuarterEditPage() {
         .eq('team_id', matchData.team_id)
         .order('number')
 
+      if (!isCurrent()) return
+
       if (players) {
         setAvailablePlayers(players.filter(p => !usedPlayerIds.has(p.id)))
       }
     }
 
     setLoading(false)
+    setImportRosterReady(!teamPlayersError && Array.isArray(teamPlayers) && !attendeesError && Array.isArray(attendeesData))
+  }
+
+  const importCandidates = importSource ? buildImportCandidates(importSource, allTeamPlayers, new Set(availablePlayers.map(player => player.id))) : []
+  const importDataRef = useRef({ sourceId: importSource?.id, candidates: importCandidates, ready: importRosterReady })
+  importDataRef.current = { sourceId: importSource?.id, candidates: importCandidates, ready: importRosterReady }
+  const importCollisions = collidingImportIds(importCandidates, importSelection)
+  const importTargetEmpty = baselineRef.current.length === 0 && fieldPlayers.length === 0 && savedDraft === draftKey([])
+  const canOpenImport = !!quarter && !!importSource?.quarter_records?.length && importRosterReady && importTargetEmpty && !busy && !saveFailed
+
+  const closeImport = () => {
+    importSessionRef.current = null
+    importAbortRef.current?.abort()
+    importAbortRef.current = null
+    if (operationRef.current?.kind === 'import') operationRef.current = null
+    setImporting(false)
+    setShowImport(false)
+    setImportSelection(new Set())
+    setImportError('')
+  }
+
+  const openImport = () => {
+    if (!canOpenImport || !quarter || !importSource || operationRef.current || fieldPlayersRef.current.length || baselineRef.current.length || !isDataContextCurrent(editorContext.current)) return
+    importSessionRef.current = { sequence: ++importSequenceRef.current, generation: generationRef.current, quarterId: quarter.id, sourceId: importSource.id, matchId, quarterNumber, context: editorContext.current }
+    setImportSelection(new Set())
+    setImportError('')
+    setShowImport(true)
+  }
+
+  const applyImport = async () => {
+    const session = importSessionRef.current
+    if (!session || operationRef.current || failedSaveRef.current || !quarter || !importSource || !importSelection.size) return
+    const isCurrent = () => importSessionRef.current === session && generationRef.current === session.generation && isDataContextCurrent(session.context) && routeRef.current.matchId === session.matchId && routeRef.current.quarterNumber === session.quarterNumber
+    if (!isCurrent()) return
+    if (quarter.id !== session.quarterId || importSource.id !== session.sourceId || baselineRef.current.length || fieldPlayersRef.current.length || savedDraft !== draftKey([])) {
+      setImportError(importCopy.targetChanged)
+      return
+    }
+    let placements: ReturnType<typeof createImportedPlayers>
+    const selectedIdsSnapshot = new Set(importSelection)
+    try { placements = createImportedPlayers(importCandidates, selectedIdsSnapshot) }
+    catch { return }
+    const controller = new AbortController()
+    importAbortRef.current = controller
+    operationRef.current = { kind: 'import', generation: session.generation }
+    setImporting(true)
+    setImportError('')
+    try {
+      // This confirms visible target rows at apply time; it is not a multi-client lock.
+      const { data, error } = await supabase.from('quarter_records').select('id').eq('quarter_id', session.quarterId).abortSignal(controller.signal)
+      if (!isCurrent()) return
+      if (error || !Array.isArray(data)) { setImportError(importCopy.readFailed); return }
+      if (data.length || baselineRef.current.length || fieldPlayersRef.current.length) { setImportError(importCopy.targetChanged); return }
+      // Revalidate the displayed source and eligible roster after the async read.
+      const latest = importDataRef.current
+      if (!latest.ready || latest.sourceId !== session.sourceId) { setImportError(importCopy.targetChanged); return }
+      try {
+        const currentPlacements = createImportedPlayers(latest.candidates, selectedIdsSnapshot)
+        if (JSON.stringify(currentPlacements) !== JSON.stringify(placements)) { setImportError(importCopy.targetChanged); return }
+        placements = currentPlacements
+      } catch { setImportError(importCopy.targetChanged); return }
+      const imported: FieldPlayer[] = placements.map((player, index) => ({ ...player, id: `new-import-${session.sequence}-${index}` }))
+      setFieldPlayers(imported)
+      const selectedIds = new Set(imported.map(player => player.playerId))
+      setAvailablePlayers(players => players.filter(player => !selectedIds.has(player.id)))
+      setShowPlayerPicker(false)
+      setSelectedPickerPlayers(new Set())
+      setImportNotice(true)
+      closeImport()
+      requestAnimationFrame(() => {
+        if (generationRef.current !== session.generation || !isDataContextCurrent(session.context) || routeRef.current.matchId !== session.matchId || routeRef.current.quarterNumber !== session.quarterNumber) return
+        pitchHeadingRef.current?.focus({ preventScroll: true })
+        pitchHeadingRef.current?.scrollIntoView({ block: 'start' })
+      })
+    } catch {
+      if (isCurrent()) setImportError(importCopy.readFailed)
+    } finally {
+      if (isCurrent()) {
+        operationRef.current = null
+        importAbortRef.current = null
+        setImporting(false)
+      }
+    }
   }
 
   const togglePickerPlayer = (playerId: string) => {
+    if (operationRef.current || failedSaveRef.current) return
     setSelectedPickerPlayers(prev => {
       const newSet = new Set(prev)
       if (newSet.has(playerId)) {
@@ -312,6 +518,7 @@ export default function QuarterEditPage() {
   }
 
   const addSelectedPlayersToField = () => {
+    if (operationRef.current || failedSaveRef.current) return
     const playersToAdd = availablePlayers.filter(p => selectedPickerPlayers.has(p.id))
 
     // Group players by position to calculate per-group index
@@ -370,6 +577,7 @@ export default function QuarterEditPage() {
   }
 
   const addPlayerToField = (player: Player, x: number = 50, y: number = 50) => {
+    if (operationRef.current || failedSaveRef.current) return
     const newFieldPlayer: FieldPlayer = {
       id: `new-${Date.now()}`,
       playerId: player.id,
@@ -394,6 +602,7 @@ export default function QuarterEditPage() {
   }
 
   const applyFormation = (formationKey: string) => {
+    if (operationRef.current || failedSaveRef.current) return
     if (fieldPlayers.length === 0) {
       toast.error(t.addPlayersFirst)
       return
@@ -462,78 +671,102 @@ export default function QuarterEditPage() {
   }
 
   const handleAddSubstitution = async () => {
-    if (!quarter || !subOutId || !subInId) return
+    if (!quarter || !subOutId || !subInId || operationRef.current || failedSaveRef.current || !isDataContextCurrent(editorContext.current)) return
     if (subOutId === subInId) {
       toast.error(t.samePlayerSubError)
       return
     }
 
+    const operation = { kind: 'substitution' as const, generation: generationRef.current }
+    operationRef.current = operation
+    const context = editorContext.current
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation && isDataContextCurrent(context)
     setSavingSub(true)
-    const { data, error } = await supabase
-      .from('quarter_substitutions')
-      .insert({
-        quarter_id: quarter.id,
-        player_out_id: subOutId,
-        player_in_id: subInId,
-        minute: subMinute,
-      })
-      .select('*, player_out:players!player_out_id(*), player_in:players!player_in_id(*)')
-      .single()
+    try {
+      const { data, error } = await supabase
+        .from('quarter_substitutions')
+        .insert({
+          quarter_id: quarter.id,
+          player_out_id: subOutId,
+          player_in_id: subInId,
+          minute: subMinute,
+        })
+        .select('*, player_out:players!player_out_id(*), player_in:players!player_in_id(*)')
+        .single()
 
-    if (error) {
-      toast.error(t.substitutionAddFailed)
-      setSavingSub(false)
-      return
-    }
+      if (!isCurrent()) return
+      if (error) throw error
 
-    setSubstitutions([...substitutions, data].sort((a, b) => a.minute - b.minute))
-    setShowSubModal(false)
-    setSavingSub(false)
+      setSubstitutions([...substitutions, data].sort((a, b) => a.minute - b.minute))
+      setShowSubModal(false)
 
-    // Auto-add the IN player to the field for recording stats
-    const inPlayer = allTeamPlayers.find(p => p.id === subInId)
-    const outFieldPlayer = fieldPlayers.find(fp => fp.playerId === subOutId)
-    if (inPlayer && !fieldPlayers.some(fp => fp.playerId === subInId)) {
-      const newFieldPlayer: FieldPlayer = {
-        id: `new-${Date.now()}`,
-        playerId: inPlayer.id,
-        player: inPlayer,
-        positionType: outFieldPlayer?.positionType || inPlayer.default_position,
-        positionX: outFieldPlayer ? Math.min(90, outFieldPlayer.positionX + 3) : 50,
-        positionY: outFieldPlayer ? Math.min(90, outFieldPlayer.positionY + 3) : 50,
-        rating: null,
-        goals: 0,
-        assists: 0,
-        cleanSheet: false,
-        contribution: 0,
-        praiseText: '',
-        improvementText: '',
-        highlightText: '',
-        mediaUrls: [],
+      // Auto-add the IN player to the field for recording stats
+      const inPlayer = allTeamPlayers.find(p => p.id === subInId)
+      const outFieldPlayer = fieldPlayers.find(fp => fp.playerId === subOutId)
+      if (inPlayer && !fieldPlayers.some(fp => fp.playerId === subInId)) {
+        const newFieldPlayer: FieldPlayer = {
+          id: `new-${Date.now()}`,
+          playerId: inPlayer.id,
+          player: inPlayer,
+          positionType: outFieldPlayer?.positionType || inPlayer.default_position,
+          positionX: outFieldPlayer ? Math.min(90, outFieldPlayer.positionX + 3) : 50,
+          positionY: outFieldPlayer ? Math.min(90, outFieldPlayer.positionY + 3) : 50,
+          rating: null,
+          goals: 0,
+          assists: 0,
+          cleanSheet: false,
+          contribution: 0,
+          praiseText: '',
+          improvementText: '',
+          highlightText: '',
+          mediaUrls: [],
+        }
+        setFieldPlayers(prev => [...prev, newFieldPlayer])
+        setAvailablePlayers(prev => prev.filter(p => p.id !== inPlayer.id))
       }
-      setFieldPlayers(prev => [...prev, newFieldPlayer])
-      setAvailablePlayers(prev => prev.filter(p => p.id !== inPlayer.id))
-    }
 
-    toast.success(t.substitutionAdded)
+      toast.success(t.substitutionAdded)
+    } catch {
+      if (isCurrent()) toast.error(t.substitutionAddFailed)
+    } finally {
+      if (isCurrent()) {
+        operationRef.current = null
+        setSavingSub(false)
+      }
+    }
   }
 
   const handleDeleteSubstitution = async (subId: string) => {
-    const { error } = await supabase
-      .from('quarter_substitutions')
-      .delete()
-      .eq('id', subId)
+    if (operationRef.current || failedSaveRef.current || !quarter || !isDataContextCurrent(editorContext.current)) return
+    const operation = { kind: 'substitution' as const, generation: generationRef.current }
+    operationRef.current = operation
+    const context = editorContext.current
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation && isDataContextCurrent(context)
+    setSavingSub(true)
+    try {
+      const { error } = await supabase
+        .from('quarter_substitutions')
+        .delete()
+        .eq('id', subId)
+        .eq('quarter_id', quarter.id)
 
-    if (error) {
-      toast.error(t.substitutionDeleteFailed)
-      return
+      if (!isCurrent()) return
+      if (error) throw error
+
+      setSubstitutions(substitutions.filter(s => s.id !== subId))
+      toast.success(t.substitutionDeleted)
+    } catch {
+      if (isCurrent()) toast.error(t.substitutionDeleteFailed)
+    } finally {
+      if (isCurrent()) {
+        operationRef.current = null
+        setSavingSub(false)
+      }
     }
-
-    setSubstitutions(substitutions.filter(s => s.id !== subId))
-    toast.success(t.substitutionDeleted)
   }
 
   const removePlayerFromField = (fieldPlayer: FieldPlayer) => {
+    if (operationRef.current || failedSaveRef.current) return
     setPositionPlayerId(null)
     setFieldPlayers(fieldPlayers.filter(fp => fp.id !== fieldPlayer.id))
     setAvailablePlayers([...availablePlayers, fieldPlayer.player])
@@ -541,6 +774,7 @@ export default function QuarterEditPage() {
   }
 
   const updateFieldPlayer = (id: string, updates: Partial<FieldPlayer>) => {
+    if (operationRef.current || failedSaveRef.current) return
     setFieldPlayers(prev =>
       prev.map(fp => (fp.id === id ? { ...fp, ...updates } : fp))
     )
@@ -550,42 +784,56 @@ export default function QuarterEditPage() {
   }
 
   const handleMediaUpload = async (files: FileList | null) => {
-    if (!files || files.length === 0 || !selectedPlayer) return
+    if (!files || files.length === 0 || !selectedPlayer || operationRef.current || failedSaveRef.current || !isDataContextCurrent(editorContext.current)) return
 
+    const operation = { kind: 'upload' as const, generation: generationRef.current }
+    operationRef.current = operation
+    const controller = new AbortController()
+    uploadAbortRef.current = controller
+    const player = selectedPlayer
+    const context = editorContext.current
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation && isDataContextCurrent(context)
     setUploadingMedia(true)
     const newUrls: string[] = []
 
     for (const file of Array.from(files)) {
+      if (!isCurrent()) break
       const fileExt = file.name.split('.').pop()
-      const filePath = `${matchId}/${quarter?.id}/${selectedPlayer.playerId}/${Date.now()}.${fileExt}`
+      const filePath = `${matchId}/${quarter?.id}/${player.playerId}/${Date.now()}.${fileExt}`
 
       const formData = new FormData()
       formData.append('file', file)
       formData.append('filePath', filePath)
 
       try {
-        const res = await fetch('/api/upload', { method: 'POST', headers: await authHeader(supabase), body: formData })
+        const res = await fetch('/api/upload', { method: 'POST', headers: await authHeader(supabase), body: formData, signal: controller.signal })
         const result = await res.json()
+        if (!isCurrent()) break
 
         if (!res.ok) {
-          console.error('Upload error:', result.error)
           toast.error(`${t.uploadFailed}: ${file.name} - ${result.error}`)
           continue
         }
 
         newUrls.push(result.url)
-      } catch (err) {
-        console.error('Upload error:', err)
+      } catch {
+        if (!isCurrent() || controller.signal.aborted) break
         toast.error(`${t.uploadFailed}: ${file.name}`)
       }
     }
 
+    if (!isCurrent()) return
     if (newUrls.length > 0) {
-      const updated = [...selectedPlayer.mediaUrls, ...newUrls]
-      updateFieldPlayer(selectedPlayer.id, { mediaUrls: updated })
+      const updated = [...player.mediaUrls, ...newUrls]
+      setFieldPlayers(previous => previous.map(item => item.playerId === player.playerId ? { ...item, mediaUrls: updated } : item))
+      setSelectedPlayer(previous => previous?.playerId === player.playerId ? { ...previous, mediaUrls: updated } : previous)
       toast.success(`${newUrls.length}${t.filesUploaded}`)
     }
 
+    operationRef.current = null
+    uploadAbortRef.current = null
+    if (mediaInputRef.current) mediaInputRef.current.value = ''
+    if (cameraInputRef.current) cameraInputRef.current.value = ''
     setUploadingMedia(false)
   }
 
@@ -596,111 +844,74 @@ export default function QuarterEditPage() {
   }
 
   const handleSave = async () => {
-    if (!quarter) return
-
+    if (!quarter || operationRef.current || loading || !isDataContextCurrent(editorContext.current)) return
+    const write = beginTeamWrite()
+    activeWriteRef.current = write
+    const operation = { kind: 'save' as const, generation: generationRef.current }
+    operationRef.current = operation
+    const isCurrent = () => operationRef.current === operation && generationRef.current === operation.generation && isDataContextCurrent(write.context)
+    const snapshot = fieldPlayers
+    const baseline = baselineRef.current
+    const teamId = teamIdRef.current
     setSaving(true)
+    setSaveFailed(false)
 
     try {
-      // Delete existing records
-      await supabase
-        .from('quarter_records')
-        .delete()
-        .eq('quarter_id', quarter.id)
-
-      // Insert new records
-      if (fieldPlayers.length > 0) {
-        const records = fieldPlayers.map(fp => ({
-          quarter_id: quarter.id,
-          player_id: fp.playerId,
-          position_type: fp.positionType,
-          position_x: fp.positionX,
-          position_y: fp.positionY,
-          rating: fp.rating,
-          goals: fp.goals,
-          assists: fp.assists,
-          clean_sheet: fp.cleanSheet,
-          contribution: fp.contribution,
-          praise_text: fp.praiseText || null,
-          improvement_text: fp.improvementText || null,
-          highlight_text: fp.highlightText || null,
-          media_urls: fp.mediaUrls.length > 0 ? fp.mediaUrls : null,
-        }))
-
-        const { error } = await supabase
-          .from('quarter_records')
-          .insert(records)
-
-        if (error) throw error
-      }
-
-      // Reload data to get server-generated IDs
-      await loadData()
+      const records = await saveQuarterRecords(supabase, quarter.id, snapshot.map(player => toRecord(quarter.id, player)), baseline, isCurrent)
+      if (!isCurrent()) return
+      const byPlayer = new Map(records.map(record => [record.player_id, record]))
+      const reconciled = snapshot.map(player => ({ ...player, id: byPlayer.get(player.playerId)!.id }))
+      setFieldPlayers(reconciled)
+      setSelectedPlayer(previous => previous ? reconciled.find(player => player.playerId === previous.playerId) ?? null : null)
+      setPositionPlayerId(previous => {
+        const player = snapshot.find(item => item.id === previous)
+        return player ? byPlayer.get(player.playerId)?.id ?? null : null
+      })
+      baselineRef.current = records.map(record => ({ id: record.id, quarter_id: record.quarter_id, player_id: record.player_id }))
+      setSavedDraft(draftKey(reconciled))
+      failedSaveRef.current = false
+      if (teamId) applySavedQuarterRecords(teamId, matchId, quarter.id, records, baseline.filter(record => !byPlayer.has(record.player_id)).map(record => record.id), write.context)
       toast.success(t.quarterAllSaved)
     } catch (error) {
-      toast.error(t.saveFailed)
+      if (isCurrent()) {
+        if (error instanceof QuarterSaveError) {
+          // Keep the draft/removal intent, but remember acknowledged new IDs so
+          // a later retry or removal never treats them as an unknown record.
+          const acknowledged = new Map(error.acknowledgedRecords.map(record => [record.player_id, record]))
+          const removed = new Set(error.acknowledgedRemovedIds)
+          baselineRef.current = [
+            ...baseline.filter(record => !removed.has(record.id) && !acknowledged.has(record.player_id)),
+            ...error.acknowledgedRecords.map(record => ({ id: record.id, quarter_id: record.quarter_id, player_id: record.player_id })),
+          ]
+          const reconcileId = (player: FieldPlayer) => ({ ...player, id: acknowledged.get(player.playerId)?.id ?? player.id })
+          setFieldPlayers(previous => previous.map(reconcileId))
+          setSelectedPlayer(previous => previous ? reconcileId(previous) : null)
+          setPositionPlayerId(previous => {
+            const player = snapshot.find(item => item.id === previous)
+            return player ? acknowledged.get(player.playerId)?.id ?? previous : previous
+          })
+          if (teamId) applySavedQuarterRecords(teamId, matchId, quarter.id, error.acknowledgedRecords, error.acknowledgedRemovedIds, write.context)
+        }
+        failedSaveRef.current = true
+        setSaveFailed(true)
+      }
     } finally {
-      setSaving(false)
+      write.finish()
+      if (activeWriteRef.current === write) activeWriteRef.current = null
+      if (isCurrent()) {
+        operationRef.current = null
+        setSaving(false)
+      }
     }
   }
 
-  const handleSavePlayer = async (fp: FieldPlayer) => {
-    if (!quarter) return
-
-    setSavingPlayer(true)
-
-    try {
-      const record = {
-        quarter_id: quarter.id,
-        player_id: fp.playerId,
-        position_type: fp.positionType,
-        position_x: fp.positionX,
-        position_y: fp.positionY,
-        rating: fp.rating,
-        goals: fp.goals,
-        assists: fp.assists,
-        clean_sheet: fp.cleanSheet,
-        contribution: fp.contribution,
-        praise_text: fp.praiseText || null,
-        improvement_text: fp.improvementText || null,
-        highlight_text: fp.highlightText || null,
-        media_urls: fp.mediaUrls.length > 0 ? fp.mediaUrls : null,
-      }
-
-      const isNew = fp.id.startsWith('new-')
-
-      if (isNew) {
-        const { data, error } = await supabase
-          .from('quarter_records')
-          .insert(record)
-          .select()
-          .single()
-
-        if (error) throw error
-
-        // Update local state with real ID
-        setFieldPlayers(prev =>
-          prev.map(p => p.id === fp.id ? { ...p, id: data.id } : p)
-        )
-        setSelectedPlayer(prev => prev?.id === fp.id ? { ...prev, id: data.id } : prev)
-        setPositionPlayerId(prev => prev === fp.id ? data.id : prev)
-      } else {
-        const { error } = await supabase
-          .from('quarter_records')
-          .update(record)
-          .eq('id', fp.id)
-
-        if (error) throw error
-      }
-
-      toast.success(`${fp.player.name} — ${t.savedShort}`)
-    } catch (error) {
-      toast.error(t.playerSaveFailed)
-    } finally {
-      setSavingPlayer(false)
-    }
+  const handleBack = () => {
+    if (operationRef.current) return
+    if (dirty || saveFailed) setShowLeaveConfirm(true)
+    else router.push(`/match/${matchId}`)
   }
 
-  if (loading) {
+  if (loading || !isDataContextCurrent(editorContext.current)) {
     return <QuarterEditSkeleton />
   }
 
@@ -712,31 +923,43 @@ export default function QuarterEditPage() {
     <div className="light min-h-screen pb-32" style={{ background: 'var(--bg)' }}>
       {/* Header */}
       <header className="sticky top-0 z-10 safe-top" style={{ background: 'var(--nav)', borderBottom: '1px solid var(--line)' }}>
-        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <Link href={`/match/${matchId}`} className="p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)]">
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
+        <div className="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-3">
+          <div className="flex min-w-0 items-center gap-2">
+            <button type="button" onClick={handleBack} disabled={busy} aria-label={saveCopy.back} className="min-w-11 min-h-11 p-2 -ml-2 rounded-xl text-[color:var(--text)]/50 hover:text-[color:var(--text)] disabled:opacity-40">
+              <ArrowLeft aria-hidden className="w-5 h-5" />
+            </button>
             <h1 className="text-base font-black text-[color:var(--text)]">{t.quarterEditTitle.replace('{n}', String(quarterNumber))}</h1>
           </div>
           <button
             onClick={handleSave}
-            disabled={saving}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50"
+            disabled={busy || loading || (!dirty && !saveFailed)}
+            aria-describedby="quarter-save-status"
+            className="flex min-h-11 max-w-[55%] items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-black active:scale-95 transition disabled:opacity-50"
             style={{ background: 'var(--navy)', color: 'var(--accent)' }}
           >
-            <Save className="w-4 h-4" />
-            {saving ? t.saving : t.save}
+            <Save aria-hidden className="w-4 h-4 flex-shrink-0" />
+            {saving ? t.saving : saveFailed ? saveCopy.retry : saveCopy.saveAll}
           </button>
         </div>
       </header>
 
       <main className="max-w-lg mx-auto px-4 py-6 space-y-6">
+        <p id="quarter-save-status" role={saveFailed ? 'alert' : 'status'} aria-live={saveFailed ? 'assertive' : 'polite'} aria-atomic="true" className="rounded-xl border px-4 py-3 text-sm leading-relaxed" style={{ background: 'var(--card)', borderColor: saveFailed ? 'var(--danger)' : 'var(--line)', color: 'var(--text)' }}>
+          {saving ? saveCopy.saving : busy ? saveCopy.waiting : saveFailed ? saveCopy.failed : dirty ? saveCopy.dirty : saveCopy.ready}
+        </p>
+        {quarterNumber > 1 && <div className="space-y-2">
+          <button type="button" data-testid="quarter-import-open" onClick={openImport} disabled={!canOpenImport} aria-describedby="quarter-import-hint" className="w-full min-h-11 rounded-xl border px-4 py-3 text-left text-sm font-bold disabled:opacity-50" style={{ background: 'var(--card)', color: 'var(--text)', borderColor: 'var(--line)' }}>
+            {importCopy.open}
+          </button>
+          <p id="quarter-import-hint" className="text-xs leading-relaxed text-[color:var(--text)]/70">{!importTargetEmpty ? importCopy.emptyOnly : !importSource?.quarter_records?.length ? importCopy.noSource : !importRosterReady ? importCopy.readFailed : importCopy.description}</p>
+        </div>}
+        {importNotice && dirty && <p data-testid="quarter-import-status" role="status" className="text-sm leading-relaxed text-[color:var(--text)]">{importCopy.applied}</p>}
+        <fieldset disabled={busy || saveFailed} aria-busy={busy} className="min-w-0 space-y-6 border-0 p-0 m-0">
         {/* Soccer Field */}
         <section>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="font-bold text-[color:var(--text)] text-sm">{t.formationPlacement}</h2>
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap justify-between items-center gap-3 mb-3">
+            <h2 ref={pitchHeadingRef} tabIndex={-1} className="font-bold text-[color:var(--text)] text-sm scroll-mt-24">{t.formationPlacement}</h2>
+            <div className="flex min-w-0 max-w-full flex-wrap items-center gap-2">
               <select
                 onChange={(e) => {
                   if (e.target.value) {
@@ -757,7 +980,7 @@ export default function QuarterEditPage() {
               {availablePlayers.length > 0 && (
                 <button
                   onClick={() => setShowPlayerPicker(!showPlayerPicker)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
+                  className="flex min-h-11 max-w-full items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
                   style={{ background: 'var(--chip)', color: 'var(--text)' }}
                 >
                   <Plus className="w-4 h-4" />
@@ -849,7 +1072,7 @@ export default function QuarterEditPage() {
               return { id: fp.id, name: fp.player.name, number: fp.player.number, x: fp.positionX, y: fp.positionY, substitutedOut: !!outgoing, substitution: [incoming ? `IN ${incoming.minute}′` : '', outgoing ? `OUT ${outgoing.minute}′` : ''].filter(Boolean).join(' · ') }
             })}
             selectedId={positionPlayerId}
-            onSelect={id => setPositionPlayerId(id)}
+            onSelect={id => { if (!operationRef.current && !failedSaveRef.current) setPositionPlayerId(id) }}
             onMove={(id, x, y) => updateFieldPlayer(id, { positionX: x, positionY: y })}
             label={t.formationPlacement} moveLabel={copy.moveTarget}
           />
@@ -859,14 +1082,14 @@ export default function QuarterEditPage() {
 
         {/* Substitutions Section */}
         <section style={cardStyle} className="p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-bold text-[color:var(--text)] text-sm flex items-center gap-2">
-              <ArrowRightLeft className="w-4 h-4 text-[color:var(--text)]/40" />
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <h2 className="min-w-0 font-bold text-[color:var(--text)] text-sm flex items-center gap-2">
+              <ArrowRightLeft className="w-4 h-4 flex-shrink-0 text-[color:var(--text)]/40" />
               {t.substitutionRecords} ({substitutions.length})
             </h2>
             <button
               onClick={openSubModal}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
+              className="flex min-h-11 max-w-full items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium"
               style={{ background: 'var(--warning-bg)', color: 'var(--warning-text)' }}
             >
               <Plus className="w-4 h-4" />
@@ -1322,7 +1545,50 @@ export default function QuarterEditPage() {
             </div>
           </section>
         )}
+        </fieldset>
       </main>
+      {showImport && importSource && <Sheet title={importCopy.title} closeLabel={t.close} onClose={closeImport}>
+        <div className="space-y-4">
+          <p className="text-sm leading-relaxed text-[color:var(--text)]/80">{importCopy.description}</p>
+          <h3 className="font-bold text-sm">{importCopy.source.replace('{n}', String(importSource.quarter_number))}</h3>
+          <div className="space-y-2">
+            {importCandidates.map((candidate, index) => {
+              const detailId = `quarter-import-detail-${index}`
+              const collision = importCollisions.has(candidate.playerId)
+              return <label key={candidate.playerId} className="flex min-h-11 items-start gap-3 rounded-xl border p-3" style={{ background: 'var(--card)', borderColor: collision ? 'var(--danger)' : 'var(--line)' }}>
+                <input type="checkbox" data-testid={`quarter-import-choice-${candidate.playerId}`} aria-label={candidate.name || importCopy.unknownPlayer} aria-describedby={detailId} checked={importSelection.has(candidate.playerId)} disabled={importing || candidate.issues.length > 0} className="mt-1 h-5 w-5 shrink-0 accent-[color:var(--navy)]" onChange={() => {
+                  if (operationRef.current) return
+                  setImportSelection(previous => {
+                    const next = new Set(previous)
+                    if (next.has(candidate.playerId)) next.delete(candidate.playerId)
+                    else next.add(candidate.playerId)
+                    return next
+                  })
+                  setImportError('')
+                }} />
+                <span className="min-w-0 flex-1 break-words">
+                  <span className="block font-bold text-sm">{candidate.name || importCopy.unknownPlayer}</span>
+                  <span id={detailId} className="block space-y-1 text-xs leading-relaxed text-[color:var(--text)]/80">
+                    {candidate.position && <span className="block">{candidate.position.type} · x {candidate.position.x} / y {candidate.position.y}</span>}
+                    <span className="block">{candidate.events.length ? candidate.events.map(event => `${event.direction}${event.minute === null ? '' : ` ${event.minute}′`}`).join(' · ') : importCopy.noEvents}</span>
+                    {candidate.issues.map(issue => <span key={issue} className="block">{importCopy[issue]}</span>)}
+                    {collision && <span className="block" role="status">{importCopy.collision}</span>}
+                  </span>
+                </span>
+              </label>
+            })}
+          </div>
+          {importError && <p role="alert" className="text-sm leading-relaxed" style={{ color: 'var(--danger)' }}>{importError}</p>}
+          <div className="sticky bottom-0 space-y-2 py-3" style={{ background: 'var(--card)' }}>
+            <p aria-live="polite" className="text-sm">{importing ? importCopy.checking : importCopy.selected.replace('{n}', String(importSelection.size))}</p>
+            <button type="button" data-testid="quarter-import-apply" disabled={importing || !importSelection.size || importCollisions.size > 0 || importCandidates.some(candidate => importSelection.has(candidate.playerId) && candidate.issues.length > 0)} onClick={applyImport} className="w-full min-h-11 rounded-xl px-4 py-3 text-sm font-bold disabled:opacity-50" style={{ background: 'var(--navy)', color: 'var(--accent)' }}>
+              {importing ? importCopy.checking : importCopy.apply.replace('{n}', String(importSelection.size))}
+            </button>
+            <button ref={importCancelRef} type="button" onClick={closeImport} className="w-full min-h-11 rounded-xl border px-4 py-3 text-sm font-bold" style={{ borderColor: 'var(--line)', color: 'var(--text)' }}>{t.cancel}</button>
+          </div>
+        </div>
+      </Sheet>}
+      <ConfirmSheet open={showLeaveConfirm} title={saveCopy.leaveTitle} description={saveCopy.leaveDescription} confirmLabel={saveCopy.leave} cancelLabel={saveCopy.stay} onCancel={() => setShowLeaveConfirm(false)} onConfirm={() => { if (!operationRef.current) router.push(`/match/${matchId}`) }} />
     </div>
   )
 }

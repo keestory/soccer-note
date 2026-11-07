@@ -19,7 +19,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem(STORAGE_KEY) as Locale | null
+    let saved: Locale | null = null
+    try { saved = localStorage.getItem(STORAGE_KEY) as Locale | null } catch { /* Use browser language when storage is unavailable. */ }
     if (saved && ['ko', 'en_US', 'en_GB', 'ja', 'fr', 'de', 'it', 'es'].includes(saved)) {
       setLocaleState(saved)
     } else {
@@ -45,7 +46,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale)
-    localStorage.setItem(STORAGE_KEY, newLocale)
+    try { localStorage.setItem(STORAGE_KEY, newLocale) } catch { /* Keep the selected language for this session. */ }
   }
 
   useEffect(() => { document.documentElement.lang = locale.replace('_', '-') }, [locale])

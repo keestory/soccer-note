@@ -1,0 +1,2714 @@
+{
+  "observedAt": "2026-11-06T01:50:04.368Z",
+  "app": "http://127.0.0.1:3128",
+  "scope": "Local production-build acceptance; synthetic reads/auth only; all writes blocked",
+  "fontSource": "Existing cached-font test response file; no package installation or production font configuration change",
+  "data": "Synthetic in-memory fixtures; every API and auth request intercepted; no production DB access",
+  "cases": [
+    {
+      "name": "01 cold team-list failure hides zero totals and retries",
+      "status": "pass",
+      "before": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기",
+        "main": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n다시 시도",
+        "status": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n다시 시도",
+        "alerts": [
+          "경기 기록을 불러오지 못했어요. 다시 시도하세요."
+        ],
+        "matchRows": 0,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기경기 기록을 불러오지 못했어요. 다시 시도하세요.다시 시도홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self.__next_f.push([1,\"1:\\\"$Sr"
+      },
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1987
+    },
+    {
+      "name": "02 cold membership failure hides empty state and retries",
+      "status": "pass",
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1712
+    },
+    {
+      "name": "03 cold match-data failure remains retryable on Matches",
+      "status": "pass",
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": 500
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1600
+    },
+    {
+      "name": "04 retry fails again then succeeds without false empty state",
+      "status": "pass",
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1627
+    },
+    {
+      "name": "05 cached record stays labeled during failure and recovery",
+      "status": "pass",
+      "before": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.\n\n다시 시도\n1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.\n\n다시 시도",
+        "alerts": [
+          "경기 기록을 불러오지 못했어요. 다시 시도하세요."
+        ],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀경기 기록을 불러오지 못했어요. 다시 시도하세요.이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.다시 시도1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년"
+      },
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "H1",
+        "activeText": "전체 경기"
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2851
+    },
+    {
+      "name": "06 cached empty result is labeled as previous data",
+      "status": "pass",
+      "before": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.\n\n다시 시도\n0\n총 경기\n0\n승\n0\n무\n0\n패\n완료 경기\n00\n아직 기록된 경기가 없습니다",
+        "status": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.\n\n다시 시도",
+        "alerts": [
+          "경기 기록을 불러오지 못했어요. 다시 시도하세요."
+        ],
+        "matchRows": 0,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀경기 기록을 불러오지 못했어요. 다시 시도하세요.이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.다시 시도0총 경기0승0무0패완료 경기00아직 기록된 경기가 없습니다홈"
+      },
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "0\n총 경기\n0\n승\n0\n무\n0\n패\n완료 경기\n00\n아직 기록된 경기가 없습니다",
+        "status": null,
+        "alerts": [],
+        "matchRows": 0,
+        "activeElement": "H1",
+        "activeText": "전체 경기"
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": 200
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": 200
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2676
+    },
+    {
+      "name": "07 same-team match-data failure labels cached records",
+      "status": "pass",
+      "before": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.\n\n다시 시도\n1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.\n\n다시 시도",
+        "alerts": [
+          "경기 기록을 불러오지 못했어요. 다시 시도하세요."
+        ],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀경기 기록을 불러오지 못했어요. 다시 시도하세요.이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.다시 시도1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년"
+      },
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "H1",
+        "activeText": "전체 경기"
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": 500
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2711
+    },
+    {
+      "name": "08 normal nonempty list retains statistics and detail links",
+      "status": "pass",
+      "view": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1494
+    },
+    {
+      "name": "09 normal empty list retains authorized create action",
+      "status": "pass",
+      "view": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "0\n총 경기\n0\n승\n0\n무\n0\n패\n완료 경기\n00\n아직 기록된 경기가 없습니다",
+        "status": null,
+        "alerts": [],
+        "matchRows": 0,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀0총 경기0승0무0패완료 경기00아직 기록된 경기가 없습니다홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self.__next_f.push([1,\""
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": 200
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1470
+    },
+    {
+      "name": "10 browser mouse double-click makes one pending retry and keeps cache",
+      "status": "pass",
+      "retryRequests": 1,
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "H1",
+        "activeText": "전체 경기"
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 3018
+    },
+    {
+      "name": "11 browser Back during pending retry ignores late UI completion",
+      "status": "pass",
+      "path": "/dashboard",
+      "noMatchesNotice": true,
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 3071
+    },
+    {
+      "name": "12 account handoff ignores late failed old-account retry",
+      "status": "pass",
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 B 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n2:0\n승\n가상 B 상대\n2026년 1월 1일\nMVP 가상 B 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 B 팀1총 경기1승0무0패완료 경기012:0승가상 B 상대2026년 1월 1일MVP 가상 B 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000002",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000002",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2900
+    },
+    {
+      "name": "13 logout during pending retry cannot restore old list",
+      "status": "pass",
+      "path": "/login",
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2934
+    },
+    {
+      "name": "14 successful team switch keeps title and rows consistent",
+      "status": "pass",
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 B 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n2:0\n승\n가상 B 상대\n2026년 1월 1일\nMVP 가상 B 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 B 팀1총 경기1승0무0패완료 경기012:0승가상 B 상대2026년 1월 1일MVP 가상 B 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2870
+    },
+    {
+      "name": "15 failed other-team selection keeps confirmed A list",
+      "status": "pass",
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2654
+    },
+    {
+      "name": "16 canceled team switch and late response keep confirmed A",
+      "status": "pass",
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000002",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2713
+    },
+    {
+      "name": "17 320px Korean keyboard retry, focus and touch target",
+      "status": "pass",
+      "metrics": {
+        "name": "다시 시도",
+        "width": 238,
+        "height": 48,
+        "outlineStyle": "solid",
+        "outlineWidth": "2px",
+        "fontSize": "14px"
+      },
+      "viewport": {
+        "width": 320,
+        "height": 844,
+        "dpr": 1,
+        "scrollWidth": 320,
+        "lang": "ko",
+        "fontStatus": "loaded"
+      },
+      "afterFailure": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기",
+        "main": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n다시 시도",
+        "status": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n다시 시도",
+        "alerts": [
+          "경기 기록을 불러오지 못했어요. 다시 시도하세요."
+        ],
+        "matchRows": 0,
+        "activeElement": "BUTTON",
+        "activeText": "다시 시도"
+      },
+      "afterSuccess": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": null,
+        "alerts": [],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년 1월 1일MVP 가상 A 선수홈경기랭킹팀(self.__next_f=self.__next_f||[]).push([0])self."
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1904
+    },
+    {
+      "name": "18 320px German cached warning wraps without overflow",
+      "status": "pass",
+      "viewport": {
+        "width": 320,
+        "height": 844,
+        "dpr": 1,
+        "scrollWidth": 320,
+        "lang": "de",
+        "fontStatus": "loaded"
+      },
+      "retryRect": {
+        "x": 41,
+        "y": 311,
+        "width": 238,
+        "height": 48
+      },
+      "after": {
+        "path": "/matches",
+        "header": "Teamstatistik\n\nAlle Spiele\n\n가상 A 팀",
+        "main": "Die Spielaufzeichnungen konnten nicht geladen werden. Bitte versuche es erneut.\n\nZuvor geladene Aufzeichnungen werden angezeigt. Die neuesten Daten sind nicht bestätigt.\n\nErneut versuchen\n1\nSpiele gesamt\n1\nSieg\n0\nUnentschieden\n0\nNiederlage\nAbgeschlossene Spiele\n01\n1:0\nSieg\n가상 A 상대\n1. Januar 2026\nMVP 가상 A 선수",
+        "status": "Die Spielaufzeichnungen konnten nicht geladen werden. Bitte versuche es erneut.\n\nZuvor geladene Aufzeichnungen werden angezeigt. Die neuesten Daten sind nicht bestätigt.\n\nErneut versuchen",
+        "alerts": [
+          "Die Spielaufzeichnungen konnten nicht geladen werden. Bitte versuche es erneut."
+        ],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "TeamstatistikAlle Spiele가상 A 팀Die Spielaufzeichnungen konnten nicht geladen werden. Bitte versuche es erneut.Zuvor gelad"
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 2421
+    },
+    {
+      "name": "19 existing local-date default and manual selection regression",
+      "status": "pass",
+      "defaultDate": "2026-11-06",
+      "manualDate": "2027-02-03",
+      "submitted": false,
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1826
+    },
+    {
+      "name": "20 pull retry joins a failing automatic load without rejection leakage",
+      "status": "pass",
+      "automaticLookupRequests": 1,
+      "input": "Synthetic touch event sequence through the real PullToRefresh handlers",
+      "after": {
+        "path": "/matches",
+        "header": "팀 전적\n\n전체 경기\n\n가상 A 팀",
+        "main": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.\n\n다시 시도\n1\n총 경기\n1\n승\n0\n무\n0\n패\n완료 경기\n01\n1:0\n승\n가상 A 상대\n2026년 1월 1일\nMVP 가상 A 선수",
+        "status": "경기 기록을 불러오지 못했어요. 다시 시도하세요.\n\n이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.\n\n다시 시도",
+        "alerts": [
+          "경기 기록을 불러오지 못했어요. 다시 시도하세요."
+        ],
+        "matchRows": 1,
+        "activeElement": "BODY",
+        "activeText": "팀 전적전체 경기가상 A 팀경기 기록을 불러오지 못했어요. 다시 시도하세요.이전에 불러온 기록을 표시하고 있어요. 최신 기록은 확인하지 못했어요.다시 시도1총 경기1승0무0패완료 경기011:0승가상 A 상대2026년"
+      },
+      "syntheticWrites": 0,
+      "productionWrites": 0,
+      "reads": [
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        },
+        {
+          "table": "matches",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "training_sessions",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "players",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_visibility_settings",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "team_members",
+          "teamId": "eq.20000000-0000-4000-8000-000000000001",
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "profiles",
+          "teamId": null,
+          "userId": null,
+          "result": "fixture"
+        },
+        {
+          "table": "teams",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": 500
+        },
+        {
+          "table": "team_members",
+          "teamId": null,
+          "userId": "eq.10000000-0000-4000-8000-000000000001",
+          "result": "fixture"
+        }
+      ],
+      "durationMs": 1918
+    },
+    {
+      "name": "21 eight supported locales and unsupported-locale fallback",
+      "status": "pass",
+      "localeChecks": [
+        {
+          "locale": "ko",
+          "text": "경기 기록을 불러오지 못했어요. 다시 시도하세요.",
+          "lang": "ko",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        },
+        {
+          "locale": "en_US",
+          "text": "Could not load match records. Try again.",
+          "lang": "en-US",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        },
+        {
+          "locale": "en_GB",
+          "text": "Could not load match records. Try again.",
+          "lang": "en-GB",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        },
+        {
+          "locale": "ja",
+          "text": "試合記録を読み込めませんでした。もう一度お試しください。",
+          "lang": "ja",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        },
+        {
+          "locale": "fr",
+          "text": "Impossible de charger les matchs. Réessayez.",
+          "lang": "fr",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        },
+        {
+          "locale": "de",
+          "text": "Die Spielaufzeichnungen konnten nicht geladen werden. Bitte versuche es erneut.",
+          "lang": "de",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        },
+        {
+          "locale": "it",
+          "text": "Impossibile caricare le partite. Riprova.",
+          "lang": "it",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        },
+        {
+          "locale": "es",
+          "text": "No se pudieron cargar los partidos. Inténtalo de nuevo.",
+          "lang": "es",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        },
+        {
+          "locale": "unsupported",
+          "text": "Could not load match records. Try again.",
+          "lang": "en-US",
+          "syntheticWrites": 0,
+          "productionWrites": 0,
+          "reads": [
+            {
+              "table": "profiles",
+              "teamId": null,
+              "userId": null,
+              "result": "fixture"
+            },
+            {
+              "table": "teams",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": 500
+            },
+            {
+              "table": "team_members",
+              "teamId": null,
+              "userId": "eq.10000000-0000-4000-8000-000000000001",
+              "result": "fixture"
+            }
+          ]
+        }
+      ],
+      "durationMs": 12465
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "attempt-2026-11-06T01-50-04-367Z/390-cold-error.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "attempt-2026-11-06T01-50-04-367Z/390-cached-error.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "attempt-2026-11-06T01-50-04-367Z/390-normal-empty.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "attempt-2026-11-06T01-50-04-367Z/390-cached-retry-pending.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko",
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "attempt-2026-11-06T01-50-04-367Z/320-cold-error-keyboard.png",
+      "width": 320,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "ko",
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "attempt-2026-11-06T01-50-04-367Z/320-de-cached-error.png",
+      "width": 320,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de",
+      "fontStatus": "loaded"
+    }
+  ],
+  "cleanupWarnings": [],
+  "sourceHEAD": "e7b50d5043149cbecbdfedb2760ff49fc1ecedc4",
+  "buildId": "Dpvc3wJRetRWag672znXw",
+  "productBlobs": {
+    "src/app/matches/page.tsx": "4415b75b3bfc73d7350c7f0ccb0bbec66cc1487b",
+    "src/lib/match-load-copy.ts": "b51bf7454c7f0451002e1660aa59848b0549c061"
+  },
+  "runnerBlob": "d4a690a058a0dd626d3576a759fecce5eabfb750",
+  "expectedCaseCount": 21,
+  "filter": null,
+  "attempt": "attempt-2026-11-06T01-50-04-367Z",
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "selectedCasesPassed": true,
+  "passed": true
+}

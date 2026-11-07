@@ -1,0 +1,87 @@
+{
+  "observedAt": "2026-11-06T01:48:22.596130+00:00",
+  "sourceCommit": "e7b50d5043149cbecbdfedb2760ff49fc1ecedc4",
+  "buildId": "Dpvc3wJRetRWag672znXw",
+  "productFiles": {
+    "src/app/matches/page.tsx": "4415b75b3bfc73d7350c7f0ccb0bbec66cc1487b",
+    "src/lib/match-load-copy.ts": "b51bf7454c7f0451002e1660aa59848b0549c061"
+  },
+  "checks": {
+    "unit": {
+      "status": "pass",
+      "files": 20,
+      "tests": 163
+    },
+    "lint": {
+      "status": "pass",
+      "errors": 0,
+      "existingWarnings": 49
+    },
+    "types": {
+      "status": "pass",
+      "command": "npx --no-install tsc --noEmit"
+    },
+    "build": {
+      "status": "pass",
+      "command": "npm run build -- --webpack",
+      "fontSource": "Existing cached CSS and 746 WOFF2 assets via temporary test-only response file; no installation or hosting config change"
+    },
+    "diffCheck": "pass"
+  },
+  "independentCodeReview": {
+    "role": "CQO 반다이크",
+    "sourceCommit": "e7b50d5043149cbecbdfedb2760ff49fc1ecedc4",
+    "remainingBlockingFindings": 0,
+    "fixedFindings": [
+      "Joined raw loadPromise rejection caught by local retry handler",
+      "Native disabled focus loss avoided with aria-disabled and synchronous in-flight guard"
+    ],
+    "actualModel": "unknown"
+  },
+  "designReview": {
+    "role": "CDO 네이마르",
+    "codeReview": "no new blocker",
+    "screenshots": {
+      "status": "no new blocker",
+      "viewedCount": 6,
+      "scope": "390px cold/cached/pending/normal empty and 320px keyboard/German",
+      "cachedZero": "QA JSON reviewed; no separate screenshot",
+      "unchangedFollowup": "German four-column statistics labels touch at 320px",
+      "limits": [
+        "No physical device",
+        "No screen-reader audio",
+        "No production UI",
+        "No independent browser rerun"
+      ]
+    },
+    "focusBoundary": "No forced focus on initial null-to-confirmed-team context change; same-context retry may restore focus only when user remained on the retry control",
+    "actualModel": "unknown"
+  },
+  "browser": {
+    "status": "pass",
+    "cases": 21,
+    "report": "after/browser-results.json",
+    "observedAt": "2026-11-06T01:50:04.368Z",
+    "attempt": "attempt-2026-11-06T01-50-04-367Z",
+    "expectedInjectedNetworkErrors": 27,
+    "pageErrors": 0,
+    "unexpectedRequests": 0,
+    "unexpectedConsoleErrors": 0,
+    "cleanupWarnings": 0,
+    "writes": 0,
+    "scope": "Synthetic reads/auth only; all API writes blocked; no production database access",
+    "viewports": [
+      320,
+      390
+    ],
+    "locales": "8 supported locales plus fallback in one grouped case"
+  },
+  "productionWrites": "not performed",
+  "card": "https://app.notion.com/p/41066b33db7a8186a786eb5c683deddb",
+  "opsReview": {
+    "status": "no release-blocking contradiction in source and evidence records",
+    "deploymentExecution": "release owner only",
+    "rollback": "Documented ordinary previous deployment redeploy withLatestCommit=false; no real rollback transition",
+    "actualModel": "unknown"
+  }
+}

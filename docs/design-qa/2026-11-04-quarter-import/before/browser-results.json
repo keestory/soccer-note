@@ -1,0 +1,51 @@
+{
+  "observedAt": "2026-11-04T14:51:09.919Z",
+  "app": "http://127.0.0.1:3128",
+  "scope": "Production-build acceptance",
+  "fontSource": "Local test-only Fontsource mirror of existing Noto Sans KR and Bebas Neue families; no product font/dependency changes",
+  "data": "Synthetic in-memory fixtures; every API and auth request intercepted; no production DB access",
+  "cases": [
+    {
+      "name": "before: empty second quarter and existing manual workflow",
+      "status": "pass",
+      "durationMs": 3938
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "390-empty-quarter2.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-existing-manual-player-selection.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    }
+  ],
+  "cleanupWarnings": [],
+  "feature": "Selected previous-quarter records to unsaved draft",
+  "mode": "baseline-capture",
+  "sourceHEAD": "46e4b1419a439147d5821adb8a38058ed863516d",
+  "workingTree": "?? __tests__/unit/quarter-import.test.ts\n?? scripts/qa-quarter-import.mjs\n?? src/lib/quarter-import.ts",
+  "buildId": "sMT-dOg3oD3u2jcyhbPFq",
+  "productBlobs": {
+    "src/app/match/[id]/quarter/[q]/page.tsx": "0e3986b0b2456d7883cf284d2d9e97d8b34b62f7",
+    "src/lib/quarter-import.ts": "32f82f5d906435aaadc3c7f844b2f53c2996a200",
+    "src/components/design/Sheet.tsx": "c17bdc42fd3aca6d8646b2ae9afbec8cd0da5b80"
+  },
+  "assertionTimeoutMs": 10000,
+  "navigationTimeoutMs": 30000,
+  "filter": null,
+  "expectedCaseCount": 1,
+  "expectedInjectedNetworkErrors": [],
+  "unexpectedConsoleErrors": [],
+  "passed": true
+}

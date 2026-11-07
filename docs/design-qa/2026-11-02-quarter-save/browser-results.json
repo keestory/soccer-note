@@ -1,0 +1,159 @@
+{
+  "observedAt": "2026-11-02T03:20:10.267Z",
+  "app": "http://127.0.0.1:3127",
+  "data": "Synthetic in-memory fixtures only; all data APIs intercepted",
+  "cases": [
+    {
+      "name": "390px delayed full save: one request, edit lock, unchanged IDs, draft back confirmation",
+      "status": "pass",
+      "elapsedMs": 2259,
+      "evidence": {
+        "postCount": 1,
+        "deleteCount": 0,
+        "goal": 1,
+        "stableId": true,
+        "focusReturned": true
+      }
+    },
+    {
+      "name": "failed upsert: no delete, retained locked snapshot, successful identical retry",
+      "status": "pass",
+      "elapsedMs": 1479,
+      "evidence": {
+        "identicalRetry": true,
+        "noDeleteOnUpsertFailure": true,
+        "retainedDraft": true
+      }
+    },
+    {
+      "name": "partial save removal failure then retry: explicit baseline IDs, unseen concurrent row preserved",
+      "status": "pass",
+      "elapsedMs": 1348,
+      "evidence": {
+        "order": "upsert then explicit delete",
+        "unseenRowPreserved": true,
+        "retryConfirmed": true
+      }
+    },
+    {
+      "name": "empty lineup: delete only loaded rows and fail closed on missing acknowledgement",
+      "status": "pass",
+      "elapsedMs": 1236,
+      "evidence": {
+        "emptySavePermitted": true,
+        "zeroAckRejected": true,
+        "unseenRowPreserved": true
+      }
+    },
+    {
+      "name": "new player with lost upsert response: retry preserves one identity without duplicates",
+      "status": "pass",
+      "elapsedMs": 1312,
+      "evidence": {
+        "oneRow": true,
+        "stableIdAcrossLostResponse": true
+      }
+    },
+    {
+      "name": "upload in flight: full save and editing wait, uploaded URL included in next save",
+      "status": "pass",
+      "elapsedMs": 1312,
+      "evidence": {
+        "noSaveDuringUpload": true,
+        "uploadedUrlRetained": true
+      }
+    },
+    {
+      "name": "substitution in flight: full save waits and new player is included after acknowledgement",
+      "status": "pass",
+      "elapsedMs": 1381,
+      "evidence": {
+        "noSaveDuringSubstitution": true,
+        "acknowledgedSubstituteIncluded": true
+      }
+    },
+    {
+      "name": "320px long German copy: status wraps and primary controls remain at least 44px",
+      "status": "pass",
+      "elapsedMs": 1334,
+      "evidence": {
+        "width": 320,
+        "scrollWidth": 320,
+        "heights": [
+          44,
+          56
+        ],
+        "lang": "de",
+        "overflow": []
+      }
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "pending-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "statusColor": "rgb(245, 245, 239)",
+      "statusBackground": "rgb(17, 16, 16)",
+      "saveOpacity": "0.5"
+    },
+    {
+      "file": "saved-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "statusColor": "rgb(245, 245, 239)",
+      "statusBackground": "rgb(17, 16, 16)",
+      "saveOpacity": "0.5"
+    },
+    {
+      "file": "failed-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "statusColor": "rgb(245, 245, 239)",
+      "statusBackground": "rgb(17, 16, 16)",
+      "saveOpacity": "1"
+    },
+    {
+      "file": "failed-de-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "statusColor": "rgb(245, 245, 239)",
+      "statusBackground": "rgb(17, 16, 16)",
+      "saveOpacity": "1"
+    }
+  ],
+  "responsiveMetrics": {
+    "width": 320,
+    "scrollWidth": 320,
+    "heights": [
+      44,
+      56
+    ],
+    "lang": "de",
+    "overflow": []
+  },
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "passed": true
+}

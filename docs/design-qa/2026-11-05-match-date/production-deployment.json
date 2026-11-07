@@ -1,0 +1,107 @@
+{
+  "observedAt": "2026-11-05T02:17:43.219Z",
+  "sourceCommit": "90398f1822cddc665d3d18f26d7fc12cc46229c2",
+  "deployment": {
+    "id": "dpl_6rHZ5swbN8un8GuPp5nBsBYFRkSe",
+    "url": "https://soccer-note-4xgcprxa3-keestory91-6294s-projects.vercel.app",
+    "state": "READY",
+    "target": "production",
+    "createdAt": "2026-11-05T02:16:00.646Z",
+    "readyAt": "2026-11-05T02:16:28.462Z"
+  },
+  "alias": {
+    "url": "https://soccer-note-hazel.vercel.app",
+    "deploymentId": "dpl_6rHZ5swbN8un8GuPp5nBsBYFRkSe"
+  },
+  "gitHub": {
+    "pullRequest": "https://github.com/keestory/soccer-note/pull/62",
+    "base": "main",
+    "head": "codex/quarter-save-reliability",
+    "draft": true,
+    "merged": false,
+    "productCommitVercelStatus": "success"
+  },
+  "cost": {
+    "plan": "hobby",
+    "verifiedAt": "2026-11-05T02:09:00Z",
+    "scope": "Existing general Git deployment and included Functions; no paid option enabled",
+    "policy": [
+      "https://vercel.com/docs/plans/hobby",
+      "https://vercel.com/docs/functions/usage-and-pricing"
+    ],
+    "monthlyRemaining": "unknown",
+    "totalBill": "unknown",
+    "nativeAgentBilling": "unknown",
+    "limitErrorObserved": false
+  },
+  "recovery": {
+    "sourceCommit": "41a4958e8cb46319ed168534edaa999b7fce3cf4",
+    "deploymentId": "dpl_B2QxxnmFRfSsdsbBoSmfYzzVzdha",
+    "url": "https://soccer-note-9qxbfl09j-keestory91-6294s-projects.vercel.app",
+    "method": "Normal create-deployment redeploy of previous deploymentId, target production, withLatestCommit false; verify returned SHA/READY/alias before declaring restored",
+    "supportedApi": "https://vercel.com/docs/rest-api/sdk/deployments/create-a-new-deployment",
+    "transitionPerformed": false,
+    "specialRollbackEndpointRetried": false
+  },
+  "productionReadOnly": {
+    "verified": [
+      "Hosted deployment READY and exact Git SHA",
+      "Alias points to same production deployment",
+      "GitHub Vercel success"
+    ],
+    "runtimeLogCounts": {
+      "lookback": "10m",
+      "levels": [
+        "error",
+        "fatal"
+      ],
+      "groupBy": "level",
+      "result": "Empty group table; no returned error/fatal groups, not evidence of traffic or complete error absence"
+    },
+    "publicUi": {
+      "status": "not executed",
+      "reason": "Prior cloud CONNECT403 remains a known access limitation; not retried or bypassed",
+      "scope": "Original release executor only; separate authorized cloud observation follows"
+    },
+    "databaseWrites": "not performed",
+    "separateCloudPublicUi": {
+      "provenance": "Coordinator-supplied summary of a separate authorized cloud CUA worker; not re-observed by this executor",
+      "observedStart": "2026-11-05T02:20:38Z",
+      "observedEnd": "2026-11-05T02:21:44Z",
+      "url": "https://soccer-note-hazel.vercel.app",
+      "viewport": {
+        "width": 1180,
+        "height": 757
+      },
+      "observed": [
+        "Onboarding steps 1 to 2 to 3: Korean guidance and example cards",
+        "Login labels and Google login, signup and password-recovery links",
+        "Browser Back navigation worked",
+        "No severe overlap or clipping observed at the stated viewport"
+      ],
+      "sampleLogs": "Only extension errors observed; no app errors observed in the sampled logs; not proof of complete error absence",
+      "inputActions": 0,
+      "loginActions": 0,
+      "productionDataWrites": 0,
+      "limitations": [
+        "Live mobile inspection unavailable in the CUA tool",
+        "Authenticated new-match date input not verified live",
+        "Synthetic browser acceptance remains separate"
+      ],
+      "originalExecutorConnect403Retried": false,
+      "coordinatorAliasRecheck": {
+        "sourceCommit": "90398f1822cddc665d3d18f26d7fc12cc46229c2",
+        "deploymentId": "dpl_6rHZ5swbN8un8GuPp5nBsBYFRkSe",
+        "state": "READY",
+        "timestamp": "not separately provided"
+      }
+    }
+  },
+  "limitations": [
+    "Browser saves are synthetic local QA only",
+    "No physical device, native build or screen-reader validation",
+    "Unknown-response retry idempotency not tested",
+    "Existing unnamed 36x36px back link remains"
+  ],
+  "card": "https://app.notion.com/p/40f66b33db7a81698851ca52dc557c1f"
+}
