@@ -1,0 +1,112 @@
+{
+  "observedAt": "2026-11-07T01:21:03.420Z",
+  "phase": "before",
+  "sourceHEAD": "576f6b6c9dfc5d7ac6b7d60407a077cd8a4ac9f9",
+  "workingTree": "?? scripts/qa-locale-storage.mjs",
+  "buildId": "Dpvc3wJRetRWag672znXw",
+  "componentBlob": "9c5b9dd5fda0c9801c8564798048d8309c0b96a7",
+  "runnerBlob": "4118a8e2de37b2e35de53a9573a27a830704ffa5",
+  "scope": "Actual I18nProvider, onboarding and profile language picker in local Chromium; no native/App Store or production storage verification",
+  "cases": [
+    {
+      "name": "initial-getter",
+      "status": "pass",
+      "events": {
+        "errors": [
+          "Synthetic getter denied"
+        ],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "initial-getItem",
+      "status": "pass",
+      "events": {
+        "errors": [
+          "Synthetic getItem denied"
+        ],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "selection-getter",
+      "status": "pass",
+      "events": {
+        "errors": [
+          "Synthetic getter denied"
+        ],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [
+          "getter"
+        ],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "selection-setItem",
+      "status": "pass",
+      "events": {
+        "errors": [
+          "Synthetic setItem denied"
+        ],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [
+          "setItem"
+        ],
+        "stored": "ko"
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "initial-getter.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "lang": ""
+    },
+    {
+      "file": "initial-getItem.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "lang": ""
+    },
+    {
+      "file": "selection-getter.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "lang": "fr"
+    },
+    {
+      "file": "selection-setItem.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "lang": "fr"
+    }
+  ],
+  "completedAt": "2026-11-07T01:21:10.413Z",
+  "passed": true
+}
