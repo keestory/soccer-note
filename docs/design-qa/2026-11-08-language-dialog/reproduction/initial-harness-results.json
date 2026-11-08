@@ -1,0 +1,176 @@
+{
+  "observedAt": "2026-11-08T01:16:53.342Z",
+  "sourceHEAD": "8a0fcccc18cd354049065c843ad04e9f0b7c7855",
+  "productCommit": "acffd57b509cacdffac4b200796a272d7537f44e",
+  "buildId": "UmXl9FMQnF3RfRtRo9BCp",
+  "componentBlobs": {
+    "src/app/profile/page.tsx": "4bf246ce5919e976af1578733a8197154b3a6b49",
+    "src/components/design/Sheet.tsx": "c17bdc42fd3aca6d8646b2ae9afbec8cd0da5b80",
+    "src/components/ConfirmSheet.tsx": "bac21d76e4632cfd20f4fff9d0ef25bac3fcb0c3"
+  },
+  "scope": "Real profile component in existing production build; synthetic auth/reads; all API writes and external requests blocked; no live/iOS/App Store claim",
+  "cases": [
+    {
+      "name": "keyboard-open-and-escape",
+      "expected": "reproduce missing initial focus and Escape close",
+      "status": "observed-as-expected",
+      "observations": {
+        "opened": {
+          "tag": "BUTTON",
+          "name": "언어🇰🇷 한국어",
+          "inLanguageSheet": false,
+          "languageOpen": true,
+          "isLanguageTrigger": true,
+          "hasDialogSemantics": false,
+          "lang": "ko",
+          "savedLocale": "ko"
+        },
+        "afterEscape": {
+          "tag": "BUTTON",
+          "name": "언어🇰🇷 한국어",
+          "inLanguageSheet": false,
+          "languageOpen": true,
+          "isLanguageTrigger": true,
+          "hasDialogSemantics": false,
+          "lang": "ko",
+          "savedLocale": "ko"
+        }
+      }
+    },
+    {
+      "name": "tab-boundaries",
+      "expected": "reproduce focus leaving both language option boundaries",
+      "status": "observed-as-expected",
+      "observations": {
+        "firstTab": {
+          "tag": "BUTTON",
+          "name": "로그아웃",
+          "inLanguageSheet": false,
+          "languageOpen": true,
+          "isLanguageTrigger": false,
+          "hasDialogSemantics": false,
+          "lang": "ko",
+          "savedLocale": "ko"
+        },
+        "fromLast": {
+          "tag": "A",
+          "name": "홈",
+          "inLanguageSheet": false,
+          "languageOpen": true,
+          "isLanguageTrigger": false,
+          "hasDialogSemantics": false,
+          "lang": "ko",
+          "savedLocale": "ko"
+        },
+        "fromFirst": {
+          "tag": "BUTTON",
+          "name": "계정 삭제",
+          "inLanguageSheet": false,
+          "languageOpen": true,
+          "isLanguageTrigger": false,
+          "hasDialogSemantics": false,
+          "lang": "ko",
+          "savedLocale": "ko"
+        }
+      }
+    },
+    {
+      "name": "outside-cancel",
+      "expected": "pointer cancellation preserves language; inspect focus return",
+      "status": "observed-as-expected",
+      "observations": {
+        "tag": "BODY",
+        "name": "내 프로필가가상 코치fixture@example.invalid이름/닉네임이메일저장언어🇰🇷 한국어로그아웃계정 삭제홈경기랭킹팀(self.__next_f=self.",
+        "inLanguageSheet": false,
+        "languageOpen": false,
+        "isLanguageTrigger": true,
+        "hasDialogSemantics": false,
+        "lang": "ko",
+        "savedLocale": "ko"
+      }
+    },
+    {
+      "name": "keyboard-selection-focus-return",
+      "expected": "selection succeeds but focus does not return to trigger",
+      "status": "unexpected",
+      "error": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "repeat-selection-cancel-reload-control",
+      "expected": "normal selection and persistence remain usable",
+      "status": "observed-as-expected",
+      "observations": [
+        {
+          "tag": "BODY",
+          "name": "マイプロフィール가가상 코치fixture@example.invalid名前/ニックネームメールアドレス保存言語🇯🇵 日本語ログアウトアカウント削除ホーム試合ランキングチーム",
+          "inLanguageSheet": false,
+          "languageOpen": false,
+          "isLanguageTrigger": true,
+          "hasDialogSemantics": false,
+          "lang": "ja",
+          "savedLocale": "ja"
+        },
+        {
+          "tag": "BODY",
+          "name": "Mein Profil가가상 코치fixture@example.invalidName/AnzeigenameE-MailSpeichernSprache🇩🇪 Deutsch",
+          "inLanguageSheet": false,
+          "languageOpen": false,
+          "isLanguageTrigger": true,
+          "hasDialogSemantics": false,
+          "lang": "de",
+          "savedLocale": "de"
+        },
+        {
+          "tag": "BODY",
+          "name": "내 프로필가가상 코치fixture@example.invalid이름/닉네임이메일저장언어🇰🇷 한국어로그아웃계정 삭제홈경기랭킹팀(self.__next_f=self.",
+          "inLanguageSheet": false,
+          "languageOpen": false,
+          "isLanguageTrigger": true,
+          "hasDialogSemantics": false,
+          "lang": "ko",
+          "savedLocale": "ko"
+        }
+      ]
+    },
+    {
+      "name": "existing-shared-sheet-control",
+      "expected": "shared Sheet moves/traps/restores focus and closes on Escape",
+      "status": "observed-as-expected",
+      "observations": {
+        "focusMovedInside": true,
+        "tabWrapped": true,
+        "shiftTabWrapped": true,
+        "escapeClosed": true,
+        "restoredToTrigger": true,
+        "confirmAction": "never activated; no auth write"
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "keyboard-open-escape-390.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "file": "tab-escaped-to-background-390.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "file": "normal-profile-320.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320
+    }
+  ],
+  "writesBlocked": [],
+  "completedAt": "2026-11-08T01:17:01.639Z",
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "consoleErrors": [],
+  "cleanupWarnings": [],
+  "completed": false
+}
