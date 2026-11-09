@@ -55,7 +55,19 @@
     "aliasVerifiedAt": "2026-11-09T06:57:08Z",
     "url": "soccer-note-5k1xhj67v-keestory91-6294s-projects.vercel.app",
     "retryAfterNewExplicitApproval": 1,
-    "publicUi": "not observed by this executor"
+    "publicUi": {
+      "source": "coordinator-provided observation; separate authorized cloud Chrome",
+      "timeLabel": "2026-11-09 07:04:17 UTC 이전, 조정자 확인 시각",
+      "observedBefore": "2026-11-09T07:04:17Z",
+      "observed": [
+        "public onboarding next step",
+        "login route entry"
+      ],
+      "coordinatorAlsoVerified": "production commit and READY via Vercel get_deployment",
+      "authenticated": false,
+      "profileLanguageInteraction": "not live verified; synthetic QA evidence only",
+      "userDataWrites": false
+    }
   },
   "previousProduction": {
     "commit": "acffd57b509cacdffac4b200796a272d7537f44e",
@@ -74,5 +86,6 @@
     "Quota, total billing and hosted model billing unknown"
   ],
   "initialProductionAttempt": "not executed: automatic approval review denied creation",
-  "deploymentRecordUpdatedAt": "2026-11-09T06:58:21.072082+00:00"
+  "deploymentRecordUpdatedAt": "2026-11-09T06:58:21.072082+00:00",
+  "work30Status": "Done within scoped web acceptance; not App Store/physical device/live authenticated verification"
 }
