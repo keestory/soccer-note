@@ -146,7 +146,7 @@ export default function ProfilePage() {
         {/* Settings list */}
         <div style={cardStyle} className="overflow-hidden">
           <button
-            onClick={() => setShowLanguageSheet(true)}
+            onClick={event => { if (event.detail < 2) setShowLanguageSheet(true) }}
             aria-haspopup="dialog"
             aria-expanded={showLanguageSheet}
             className="w-full flex items-center justify-between px-5 py-4 transition"
@@ -204,7 +204,12 @@ export default function ProfilePage() {
                 key={l.code}
                 type="button"
                 aria-pressed={locale === l.code}
-                onClick={() => { setLocale(l.code); setShowLanguageSheet(false) }}
+                onClick={event => {
+                  // The sheet can cover its opener before the second click of a double-click.
+                  if (event.detail > 1) return
+                  setLocale(l.code)
+                  setShowLanguageSheet(false)
+                }}
                 className="focus-ring w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition active:opacity-70"
                 style={locale === l.code
                   ? { background: 'var(--chip)', border: '1px solid var(--accent)' }

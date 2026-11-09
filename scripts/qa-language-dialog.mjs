@@ -87,13 +87,17 @@ try {
   })
   await run('rapid-repeat-choice-and-cancel', async p => {
     for (const [code, label] of [['fr', 'Français'], ['ja', '日本語'], ['de', 'Deutsch']]) {
+      const previous = await p.evaluate(() => localStorage.getItem('soccernote-locale'))
       await trigger(p).dblclick(); await dialog(p).waitFor(); assert.equal(await dialog(p).count(), 1)
+      assert.equal(await p.evaluate(() => localStorage.getItem('soccernote-locale')), previous, 'Opening double-click must not select a language')
       await dialog(p).getByRole('button', { name: label, exact: true }).click(); await closed(p, code)
     }
     await open(p); await p.keyboard.press('Escape'); await closed(p, 'de')
   })
   for (const width of [320, 390]) await run(`short-mobile-${width}-scroll-and-focus`, async p => {
-    await p.setViewportSize({ width, height: 568 }); await open(p)
+    await p.setViewportSize({ width, height: 568 }); await trigger(p).dblclick(); await dialog(p).waitFor()
+    assert.equal(await p.evaluate(() => localStorage.getItem('soccernote-locale')), 'ko')
+    await p.keyboard.press('Escape'); await closed(p, 'ko'); await open(p)
     assert(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
     assert.equal(await p.evaluate(() => document.body.style.overflow), 'hidden')
     const buttons = dialog(p).getByRole('button')
@@ -106,6 +110,16 @@ try {
     await capture(p, `language-short-${width}`)
     await p.keyboard.press('Escape'); await closed(p, 'ko')
     assert.notEqual(await p.evaluate(() => document.body.style.overflow), 'hidden')
+  }, width)
+  for (const width of [320, 390]) for (const height of [568, 844]) await run(`touch-repeat-open-${width}-${height}`, async p => {
+    await p.setViewportSize({ width, height })
+    await trigger(p).scrollIntoViewIfNeeded()
+    const b = await trigger(p).boundingBox(), x = b.x + b.width / 2, y = b.y + b.height / 2
+    await p.touchscreen.tap(x, y); await p.touchscreen.tap(x, y)
+    assert.equal(await p.evaluate(() => localStorage.getItem('soccernote-locale')), 'ko', 'Repeated opening taps must not select a language')
+    if (await dialog(p).count() === 0) await open(p)
+    await dialog(p).getByRole('button', { name: 'Español', exact: true }).tap(); await closed(p, 'es')
+    return { physicalTouch: true, width, height, deliberateChoice: 'es' }
   }, width)
   await run('shared-confirm-sheet-unchanged-3-rounds', async p => {
     const logout = p.locator('main button').filter({ has: p.locator('svg.lucide-log-out') })
@@ -128,7 +142,7 @@ try {
 } finally {
   await browser.close()
   Object.assign(result, { completedAt: new Date().toISOString(), pageErrors: network.pageErrors, consoleErrors: network.consoleErrors, unexpectedRequests: network.unexpectedRequests, cleanupWarnings: network.cleanupWarnings })
-  result.passed = result.cases.length === 16 && result.cases.every(c => c.status === 'pass') && [result.pageErrors, result.consoleErrors, result.unexpectedRequests, result.cleanupWarnings, result.writesBlocked].every(a => a.length === 0)
+  result.passed = result.cases.length === 20 && result.cases.every(c => c.status === 'pass') && [result.pageErrors, result.consoleErrors, result.unexpectedRequests, result.cleanupWarnings, result.writesBlocked].every(a => a.length === 0)
   if (!result.passed) process.exitCode = 1
   await writeFile(`${output}/browser-results.json`, JSON.stringify(result, null, 2) + '\n')
   console.log(JSON.stringify({ passed: result.passed, cases: result.cases, errors: result.pageErrors, unexpected: result.unexpectedRequests }, null, 2))
