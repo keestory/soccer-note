@@ -11,6 +11,7 @@ import toast from 'react-hot-toast'
 import { Skeleton } from '@/components/Skeleton'
 import { BottomNav } from '@/components/BottomNav'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
+import { Sheet } from '@/components/design/Sheet'
 
 export default function ProfilePage() {
   const router = useRouter()
@@ -146,6 +147,8 @@ export default function ProfilePage() {
         <div style={cardStyle} className="overflow-hidden">
           <button
             onClick={() => setShowLanguageSheet(true)}
+            aria-haspopup="dialog"
+            aria-expanded={showLanguageSheet}
             className="w-full flex items-center justify-between px-5 py-4 transition"
             style={{ borderBottom: '1px solid var(--line)' }}
           >
@@ -194,38 +197,30 @@ export default function ProfilePage() {
 
       {/* Language picker bottom sheet */}
       {showLanguageSheet && (
-        <div className="fixed inset-0 bg-black/70 z-50 flex items-end" onClick={() => setShowLanguageSheet(false)}>
-          <div
-            className="w-full rounded-t-3xl safe-bottom"
-            style={{ background: 'var(--card2)', border: '1px solid var(--line)', maxHeight: '75dvh', display: 'flex', flexDirection: 'column' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className="flex-shrink-0 pt-3 pb-2">
-              <div className="w-10 h-1 rounded-full mx-auto" style={{ background: 'var(--line)' }} />
-            </div>
-            <h3 className="flex-shrink-0 text-lg font-bold text-center text-[color:var(--text)] pb-3">{t.selectLanguage}</h3>
-            <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-1.5">
-              {LOCALES.map(l => (
-                <button
-                  key={l.code}
-                  onClick={() => { setLocale(l.code); setShowLanguageSheet(false) }}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition active:opacity-70"
-                  style={locale === l.code
-                    ? { background: 'var(--chip)', border: '1px solid var(--accent)' }
-                    : { background: 'var(--card2)', border: '1px solid transparent' }}
-                >
-                  <span className="text-xl">{l.flag}</span>
-                  <span className="font-medium text-[15px]" style={{ color: locale === l.code ? 'var(--brand)' : 'var(--text)' }}>
-                    {l.label}
-                  </span>
-                  {locale === l.code && (
-                    <span className="ml-auto w-2 h-2 rounded-full" style={{ background: 'var(--brand)' }} />
-                  )}
-                </button>
-              ))}
-            </div>
+        <Sheet title={t.selectLanguage} closeLabel={t.close} onClose={() => setShowLanguageSheet(false)}>
+          <div className="space-y-1.5">
+            {LOCALES.map(l => (
+              <button
+                key={l.code}
+                type="button"
+                aria-pressed={locale === l.code}
+                onClick={() => { setLocale(l.code); setShowLanguageSheet(false) }}
+                className="focus-ring w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition active:opacity-70"
+                style={locale === l.code
+                  ? { background: 'var(--chip)', border: '1px solid var(--accent)' }
+                  : { background: 'var(--card2)', border: '1px solid transparent' }}
+              >
+                <span aria-hidden="true" className="text-xl">{l.flag}</span>
+                <span className="font-medium text-[15px]" style={{ color: locale === l.code ? 'var(--brand)' : 'var(--text)' }}>
+                  {l.label}
+                </span>
+                {locale === l.code && (
+                  <span aria-hidden="true" className="ml-auto w-2 h-2 rounded-full" style={{ background: 'var(--brand)' }} />
+                )}
+              </button>
+            ))}
           </div>
-        </div>
+        </Sheet>
       )}
 
       {/* Delete confirm bottom sheet */}
