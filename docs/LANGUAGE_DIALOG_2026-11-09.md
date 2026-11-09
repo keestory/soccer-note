@@ -4,7 +4,7 @@
 
 ## 현재 결론
 
-제품 `0b04a960c616f19317759dd7c8e54da0509f4abd`의 국소 수정·독립 CQO/CDO 검토·최종 합성 검증과 원격 push 완료. **운영 production 생성은 자동 승인 검토가 실행 전에 거절하여 미배포**다. 반복 요청이나 다른 경로로 우회하지 않았다. 브랜치 자동 preview READY와 운영 배포는 구분한다.
+제품 `0b04a960c616f19317759dd7c8e54da0509f4abd`의 국소 수정·독립 CQO/CDO 검토·최종 합성 검증과 운영 배포 완료. 최초 production 생성 거절 뒤 사용자의 정확한 웹 운영 배포 승인이 전달되어, 미실행 상태를 확인하고 같은 작업을 한 번 재시도했다. **Nov9 06:56:45.158 UTC production READY**, 06:57 UTC 대표 alias 일치를 확인했다. 초기 거절과 preview 및 후속 운영 배포를 아래에 구분한다.
 
 이것은 웹 언어 선택창 변경이다. App Store 시작 종료 [WORK-26](https://app.notion.com/p/41066b33db7a817699aaf41c684ed5e2)은 새 crash/출시 바이너리 대응 근거 없이 별도 P0 Blocked이며 해결·완화로 주장하지 않는다.
 
@@ -38,7 +38,7 @@ Enter로 열어도 배경 트리거에 포커스가 남고 Escape가 닫지 못�
 
 로컬 build는 기존 설치 도구와 기존 빌드에 있던 폰트 바이트를 임시 경로에서 재사용했고 합성 Supabase 설정을 썼다. 새 패키지·API 키·환경 권한은 만들지 않았다. Firebase 설정 없음 경고는 로컬 합성 환경의 한계이며 실제 푸시를 검증하지 않았다. QA 서버 재시작의 포트 충돌은 해당 실행에서 시작한 서버를 확인·종료한 뒤 정상 재시작했다. 새 외부 실행기는 사용하지 않았다.
 
-## 무료 경로·원격 상태·복귀
+## 무료 경로·최초 원격 상태·복귀
 
 현재 연결된 프로젝트 팀의 plan=hobby를 읽었고 [공식 Hobby 정책](https://vercel.com/docs/plans/hobby)의 무료 포함량 및 일반적인 초과 시 사용 제한을 확인했다. 저장소 build/lint/test는 기존 로컬 도구이며 `.github` workflow, `vercel.json`, 새 유료 빌드 override는 없다. 생성 요청도 기존 프로젝트/Git SHA/production만 지정했으며 turbo·유료 옵션·요금제·외부 추론 API·유료 CI를 추가하지 않았다. 월 잔량·총청구·호스트 모델 청구는 미확인이다. 포함 한도에서만 진행하며 한도 거절 또는 추가 과금 경로가 생기면 중단한다. 이번 배포 거절 사유는 비용이 아니라 승인 해석이다.
 
@@ -52,6 +52,26 @@ Nov9 02:11 UTC 조회에서 대표 alias는 여전히 이전 READY production `d
 
 ## 검증 경계와 다음 단계
 
-새 배포는 미실행이다. 따라서 새 버전 공개 UI의 live 검증도 미실행이며 기존 executor 공개 도메인 CONNECT403은 반복하지 않았다. 현재 도구에 별도 허용된 원격 브라우저는 없다. 승인 해소 뒤에는 동일 검증 SHA의 배포/READY/alias 확인과 가능한 별도 공개 읽기 검수를 해야 한다.
+최초 시도에서는 배포가 미실행이었으나 아래 사용자 승인 후 운영 배포가 완료됐다. 새 버전 공개 UI의 live 검증은 아직 미실행이며 기존 executor 공개 도메인 CONNECT403은 반복하지 않았다. 현재 도구에 별도 허용된 원격 브라우저는 없다. 배포/READY/alias 확인과 별도 공개 읽기 검수를 혼동하지 않는다.
 
 Chromium 합성 touchscreen 결과의 `physicalTouch` 필드는 touchscreen 프로토콜 사용을 뜻하며 물리 기기 증거가 아니다. 실제 iPhone/Safari·스크린리더·운영 인증/언어 변경·App Store 바이너리 전달·사용자 효과는 미검증이다. 공통 Sheet는 배경 inert를 새로 적용하지 않았으므로 완전한 접근성 해결을 주장하지 않는다. 저장소 결과의 fault hit 배열은 새로고침 때 초기화될 수 있어 마지막 빈 배열을 예외 미발생으로 해석하지 않는다. 실패 중 이전 저장값 보존과 복구 후 저장값 assertion이 근거다.
+
+
+## 정확한 웹 배포 승인 후 재개 · 06:55–06:57 UTC
+
+사용자가 언어 선택창 키보드·닫기·빠른 재클릭 수정의 기존 웹 운영 반영 질문에 진행을 승인했고, 조정자가 그 원문 근거를 전달했다. 원문이나 사용자 식별자는 저장소에 복사하지 않았다. 이 승인에는 App Store 바이너리·DB/RLS·보안·새 계정/결제·실제 사용자 기록 변경을 포함하지 않는다.
+
+06:55 UTC 원격/로컬 문서 HEAD dc71267 및 clean 상태, 최종 제품과의 src/scripts/package 차이 없음, 해당 제품 SHA의 production 배포 0개, 이전 대표 alias, 현재 plan=hobby를 재확인했다. 기존 일반 포함 경로만 사용했고 유료 machine/옵션/새 API/CI/환경변수/권한을 추가하지 않았다. 무료 한도 거절이나 추가 과금 경로가 있으면 중단하는 조건을 유지했다. 월 잔량·총청구·호스트 모델 청구는 미확인이다.
+
+알려진 미실행 거절을 새로운 명시 승인 근거로 **단 한 번** 재시도했다. 추가 force/retry/우회 없이 INITIALIZING → BUILDING → READY 상태를 조회했다.
+
+- 운영 제품 SHA: `0b04a960c616f19317759dd7c8e54da0509f4abd`.
+- Production ID: `dpl_5NxFUMTXVanGxGp3qbWHCT79Y22i`, target=production, READY, aliasError=null.
+- READY 시각: 2026-11-09 06:56:45.158 UTC.
+- 대표 URL: https://soccer-note-hazel.vercel.app
+- 배포 URL: https://soccer-note-5k1xhj67v-keestory91-6294s-projects.vercel.app
+- 06:57 UTC 별도 alias 조회에서 대표 도메인이 위 새 deployment ID를 가리킴을 확인했다.
+
+이전 source `acffd57b509cacdffac4b200796a272d7537f44e`와 `dpl_9fY9Rv4VNjhuD1seXTnbApE4x98k`의 READY도 재확인했다. 정상 지원되는 이전 소스 재배포 계획을 보존했으나 실제 복귀 전환은 하지 않았다. 특수 rollbackCandidate 조회를 사용하거나 거절을 우회하지 않았다. 생성 경로 성공이 이전 버전 복귀 실행까지 시험했다는 뜻은 아니다.
+
+코드/QA는 변경하지 않아 최종 제품 SHA의 기존 검증(UI20·저장소17·unit163·lint/type/build·독립 CQO)을 유지했다. 이 후속은 승인·배포 메타데이터 기록이다. 새 공개 UI·실제 인증 계정·언어 저장·iPhone/Safari·스크린리더·App Store 전달 검수는 아직 미실행이다. 조정자가 별도 허용된 클라우드 브라우저에서 공개 진입 화면을 읽기 검수할 수 있으며 인증/기록 쓰기는 필요하지 않다. WORK-26 P0와 그 증거 대기는 유지된다.

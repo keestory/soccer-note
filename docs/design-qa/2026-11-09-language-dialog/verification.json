@@ -45,7 +45,18 @@
     "actualModel": "unknown",
     "prApproval": false
   },
-  "production": "not executed: automatic approval review denied creation",
+  "production": {
+    "commit": "0b04a960c616f19317759dd7c8e54da0509f4abd",
+    "id": "dpl_5NxFUMTXVanGxGp3qbWHCT79Y22i",
+    "state": "READY",
+    "target": "production",
+    "readyAt": "2026-11-09T06:56:45.158Z",
+    "alias": "soccer-note-hazel.vercel.app",
+    "aliasVerifiedAt": "2026-11-09T06:57:08Z",
+    "url": "soccer-note-5k1xhj67v-keestory91-6294s-projects.vercel.app",
+    "retryAfterNewExplicitApproval": 1,
+    "publicUi": "not observed by this executor"
+  },
   "previousProduction": {
     "commit": "acffd57b509cacdffac4b200796a272d7537f44e",
     "deployment": "dpl_9fY9Rv4VNjhuD1seXTnbApE4x98k"
@@ -61,5 +72,7 @@
     "No App Store artifact or crash resolution",
     "No actual rollback",
     "Quota, total billing and hosted model billing unknown"
-  ]
+  ],
+  "initialProductionAttempt": "not executed: automatic approval review denied creation",
+  "deploymentRecordUpdatedAt": "2026-11-09T06:58:21.072082+00:00"
 }
