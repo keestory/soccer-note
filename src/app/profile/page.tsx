@@ -293,14 +293,14 @@ export default function ProfilePage() {
               </div>
             )}
             {attempt && (unresolved || outcome === 'storage-blocked' || outcome === 'unverified') && <div className="mb-3 flex flex-col gap-2">
-              <button id="profile-name-check" type="button" disabled={saving} className="focus-ring min-h-12 rounded-xl px-4 py-3 font-bold disabled:opacity-50" style={{ background: 'var(--chip)', color: 'var(--text)' }} onClick={() => void runSave('check')}>{nameCopy.check}</button>
-              {unresolved && !nameAttemptUnknown(attempt) && <button id="profile-name-retry" type="button" disabled={saving} className="focus-ring min-h-12 rounded-xl px-4 py-3 font-bold disabled:opacity-50" style={{ background: 'var(--navy)', color: 'var(--accent)' }} onClick={() => void runSave('retry')}>{nameCopy.retry}</button>}
+              <button id="profile-name-check" type="button" disabled={saving} className="focus-ring min-h-12 rounded-xl px-4 py-3 font-bold disabled:opacity-50" style={{ background: 'var(--chip)', color: 'var(--text)', scrollMarginBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))' }} onClick={() => void runSave('check')}>{nameCopy.check}</button>
+              {unresolved && !nameAttemptUnknown(attempt) && <button id="profile-name-retry" type="button" disabled={saving} className="focus-ring min-h-12 rounded-xl px-4 py-3 font-bold disabled:opacity-50" style={{ background: 'var(--navy)', color: 'var(--accent)', scrollMarginBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))' }} onClick={() => void runSave('retry')}>{nameCopy.retry}</button>}
             </div>}
             <button
               type="submit"
               disabled={saving || unresolved}
               className="w-full py-3.5 rounded-xl font-bold text-[15px] disabled:opacity-50 transition active:scale-[0.98]"
-              style={{ background: 'var(--navy)', color: 'var(--accent)' }}
+              style={{ background: 'var(--navy)', color: 'var(--accent)', scrollMarginBottom: 'calc(var(--bottom-nav-h) + env(safe-area-inset-bottom))' }}
             >
               {saving ? (checking ? nameCopy.checking : t.saving) : t.save}
             </button>
