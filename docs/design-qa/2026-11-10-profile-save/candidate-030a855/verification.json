@@ -1,0 +1,32 @@
+{
+  "productSHA": "030a855be8b2de7d1d2b32bbdd986a1274ea4bf1",
+  "buildId": "pBxpyzW8KDzorhpVdSIhj",
+  "checks": {
+    "lint": {
+      "exitCode": 0,
+      "log": "lint.log"
+    },
+    "test": {
+      "exitCode": 0,
+      "log": "test.log"
+    },
+    "type": {
+      "exitCode": 0,
+      "log": "type.log"
+    },
+    "build": {
+      "exitCode": 0,
+      "log": "build.log"
+    }
+  },
+  "unit": {
+    "files": 21,
+    "passed": 187
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 48,
+    "note": "Existing warnings outside changed product; old profile hook warning removed."
+  },
+  "scope": "Cloud existing local tools. Synthetic Supabase config and copied existing build font assets; no real credentials or DB writes. Browser and release results pending."
+}

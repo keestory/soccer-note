@@ -1,0 +1,1064 @@
+{
+  "observedAt": "2026-11-10T01:34:21.017Z",
+  "sourceHEAD": "19a0b74fd2bb9df526cab9e0e2ca2b13ede8e70d",
+  "buildId": "co-HJrpDBE3AJvW_dcFn2",
+  "componentBlobs": {
+    "src/app/profile/page.tsx": "8154a631feffc782abc4a3b22428afbcf62956fa",
+    "src/lib/profile-name-save.ts": "a5ae30cd62720f188379f7bedf9c61eef7a434c6"
+  },
+  "scope": "Actual local production component; synthetic auth/profile data, all external calls intercepted. No live user/DB writes, physical iOS, screen reader, or rollback execution.",
+  "intake": {
+    "discoverability": "not-applicable: authenticated local QA only",
+    "store_compliance": "not-applicable: no binary/permission/submission change or claim",
+    "competitive_benchmark": "not-applicable: reproduced local correctness repair"
+  },
+  "cases": [
+    {
+      "name": "normal-keyboard-save-and-refresh",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:21.026Z",
+      "completedAt": "2026-11-10T01:34:23.050Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "observations": {
+        "refreshName": "가상 변경 이름"
+      }
+    },
+    {
+      "name": "completed-name-repeat-no-write-new-name-still-saves",
+      "status": "fail",
+      "startedAt": "2026-11-10T01:34:23.060Z",
+      "completedAt": "2026-11-10T01:34:34.187Z",
+      "error": "Timed out: operation settled",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "text": "가\n\n가상 변경 이름\n\nfixture@example.invalid\n\n이름/닉네임\n이메일\n\n이번 저장 요청 이름: 가상 변경 이름\n\n요청한 이름의 두 저장 단계가 완료됐어요.\n\n계정 이름: 완료 확인\n프로필 이름: 완료 확인\n저장\n언어\n🇰🇷 한국어\n로그아웃\n계정 삭제"
+    },
+    {
+      "name": "empty-name-rejected-before-network",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:34.219Z",
+      "completedAt": "2026-11-10T01:34:35.469Z",
+      "writes": [],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "profile-403-retry-only-unfinished-profile",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:35.475Z",
+      "completedAt": "2026-11-10T01:34:36.734Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "auth-403-explicit-retry-after-read",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:36.746Z",
+      "completedAt": "2026-11-10T01:34:37.967Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "auth-500-uncommitted-stays-unknown-after-check",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:37.979Z",
+      "completedAt": "2026-11-10T01:34:39.572Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "auth-abort-uncommitted-stays-unknown-after-check",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:39.580Z",
+      "completedAt": "2026-11-10T01:34:41.122Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "profile-500-uncommitted-stays-unknown-after-check",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:41.130Z",
+      "completedAt": "2026-11-10T01:34:42.677Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "profile-abort-uncommitted-stays-unknown-after-check",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:42.684Z",
+      "completedAt": "2026-11-10T01:34:44.290Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "auth-lost-response-after-commit-read-reconciles-without-resend",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:44.296Z",
+      "completedAt": "2026-11-10T01:34:45.919Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "profile-lost-response-after-commit-read-reconciles-without-resend",
+      "status": "fail",
+      "startedAt": "2026-11-10T01:34:45.926Z",
+      "completedAt": "2026-11-10T01:34:57.258Z",
+      "error": "Timed out: operation settled",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "text": "가\n\n가상 변경 이름\n\nfixture@example.invalid\n\n이름/닉네임\n이메일\n\n이번 저장 요청 이름: 가상 변경 이름\n\n요청한 이름의 두 저장 단계가 완료됐어요.\n\n계정 이름: 완료 확인\n프로필 이름: 완료 확인\n저장\n언어\n🇰🇷 한국어\n로그아웃\n계정 삭제"
+    },
+    {
+      "name": "unknown-failed-state-check-is-not-missing-or-retry",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:57.306Z",
+      "completedAt": "2026-11-10T01:34:59.119Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "rejected-retry-check-failure-does-not-write",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:34:59.127Z",
+      "completedAt": "2026-11-10T01:35:00.521Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "duplicate-submit-one-request-pair",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:00.532Z",
+      "completedAt": "2026-11-10T01:35:01.661Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "late-A-response-keeps-new-B-input-unsaved",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:01.673Z",
+      "completedAt": "2026-11-10T01:35:02.864Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "rejected-A-retry-keeps-B-draft",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:02.871Z",
+      "completedAt": "2026-11-10T01:35:04.155Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "unknown-reload-retains-attempt-no-automatic-write",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:04.162Z",
+      "completedAt": "2026-11-10T01:35:06.417Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "leave-back-remount-retains-unknown-no-write",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:06.423Z",
+      "completedAt": "2026-11-10T01:35:08.025Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "account-during-auth-write-isolates-old-response",
+      "status": "fail",
+      "startedAt": "2026-11-10T01:35:08.034Z",
+      "completedAt": "2026-11-10T01:35:09.119Z",
+      "error": "page.evaluate: InvalidCharacterError: Failed to execute 'btoa' on 'Window': The string to be encoded contains characters outside of the Latin1 range.\n    at eval (eval at evaluate (:311:30), <anonymous>:2:62)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "text": "가\n\n가상 변경 이름\n\nfixture@example.invalid\n\n이름/닉네임\n이메일\n\n이번 저장 요청 이름: 가상 변경 이름\n\n이 이름을 저장하고 있어요. 새 입력은 이 요청에 포함되지 않아요.\n\n계정 이름: 결과 미확인\n프로필 이름: 전송 전\n저장 상태 확인\n저장 중...\n언어\n🇰🇷 한국어\n로그아웃\n계정 삭제"
+    },
+    {
+      "name": "logout-during-auth-write-isolates-old-response",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:09.162Z",
+      "completedAt": "2026-11-10T01:35:10.542Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "observations": {
+        "currentAccount": null,
+        "oldAttemptRetained": true
+      }
+    },
+    {
+      "name": "account-during-profile-write-isolates-old-response",
+      "status": "fail",
+      "startedAt": "2026-11-10T01:35:10.552Z",
+      "completedAt": "2026-11-10T01:35:11.699Z",
+      "error": "page.evaluate: InvalidCharacterError: Failed to execute 'btoa' on 'Window': The string to be encoded contains characters outside of the Latin1 range.\n    at eval (eval at evaluate (:311:30), <anonymous>:2:62)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "text": "가\n\n가상 변경 이름\n\nfixture@example.invalid\n\n이름/닉네임\n이메일\n\n이번 저장 요청 이름: 가상 변경 이름\n\n이 이름을 저장하고 있어요. 새 입력은 이 요청에 포함되지 않아요.\n\n계정 이름: 완료 확인\n프로필 이름: 결과 미확인\n저장 상태 확인\n저장 중...\n언어\n🇰🇷 한국어\n로그아웃\n계정 삭제"
+    },
+    {
+      "name": "logout-during-profile-write-isolates-old-response",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:11.734Z",
+      "completedAt": "2026-11-10T01:35:13.142Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "observations": {
+        "currentAccount": null,
+        "oldAttemptRetained": true
+      }
+    },
+    {
+      "name": "leave-during-auth-write-no-next-stage-after-remount",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:13.151Z",
+      "completedAt": "2026-11-10T01:35:14.749Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "journal-get-denied-stops-before-write",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:14.757Z",
+      "completedAt": "2026-11-10T01:35:16.105Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "journal-set-denied-stops-before-write",
+      "status": "fail",
+      "startedAt": "2026-11-10T01:35:16.111Z",
+      "completedAt": "2026-11-10T01:35:27.382Z",
+      "error": "locator.click: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('form button[type=submit]')\u001b[22m\n\u001b[2m    - locator resolved to <button disabled type=\"submit\" class=\"w-full py-3.5 rounded-xl font-bold text-[15px] disabled:opacity-50 transition active:scale-[0.98]\">저장</button>\u001b[22m\n\u001b[2m  - attempting click action\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m    - waiting 20ms\u001b[22m\n\u001b[2m    2 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m      - element is not enabled\u001b[22m\n\u001b[2m    - retrying click action\u001b[22m\n\u001b[2m      - waiting 100ms\u001b[22m\n\u001b[2m    19 × waiting for element to be visible, enabled and stable\u001b[22m\n\u001b[2m       - element is not enabled\u001b[22m\n\u001b[2m     - retrying click action\u001b[22m\n\u001b[2m       - waiting 500ms\u001b[22m\n",
+      "writes": [],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "text": "가\n\n가상 변경 이름\n\nfixture@example.invalid\n\n이름/닉네임\n이메일\n\n이번 저장 요청 이름: 가상 변경 이름\n\n이 브라우저에서 저장 상태를 보관하지 못해 추가 저장을 중단했어요. 입력은 유지됐어요.\n\n계정 이름: 전송 전\n프로필 이름: 전송 전\n저장 상태 확인\n미완료 단계 다시 저장\n저장\n언어\n🇰🇷 한국어\n로그아웃\n계정 삭제"
+    },
+    {
+      "name": "journal-property-denied-stops-before-write",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:27.426Z",
+      "completedAt": "2026-11-10T01:35:28.888Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "account-switch-during-initial-profile-load-discards-old-read",
+      "status": "fail",
+      "startedAt": "2026-11-10T01:35:28.895Z",
+      "completedAt": "2026-11-10T01:35:30.209Z",
+      "error": "page.evaluate: InvalidCharacterError: Failed to execute 'btoa' on 'Window': The string to be encoded contains characters outside of the Latin1 range.\n    at eval (eval at evaluate (:311:30), <anonymous>:2:62)\n    at UtilityScript.evaluate (<anonymous>:313:16)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)",
+      "writes": [],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "text": "가\n\n가상 코치\n\nfixture@example.invalid\n\n이름/닉네임\n이메일\n저장\n언어\n🇰🇷 한국어\n로그아웃\n계정 삭제"
+    },
+    {
+      "name": "status-ko-long-name-320",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:30.336Z",
+      "completedAt": "2026-11-10T01:35:31.597Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "status-en_US-long-name-320",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:31.606Z",
+      "completedAt": "2026-11-10T01:35:32.953Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "status-de-long-name-320",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:32.962Z",
+      "completedAt": "2026-11-10T01:35:34.260Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "mobile-320-keyboard-status-controls",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:34.269Z",
+      "completedAt": "2026-11-10T01:35:35.668Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "mobile-390-keyboard-status-controls",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:35:35.679Z",
+      "completedAt": "2026-11-10T01:35:37.199Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "profile-rejected-390.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "profile-unknown-390.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "new-draft-after-A-390.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "status-ko-long-320.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "status-en_US-long-320.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "status-de-long-320.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "rejected-320-short.png",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "rejected-390-short.png",
+      "width": 390,
+      "height": 568,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    }
+  ],
+  "blockedWrites": [],
+  "routeErrors": [],
+  "completedAt": "2026-11-10T01:35:37.312Z",
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "unexpectedRequests": [],
+  "cleanupWarnings": [],
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "passed": false
+}

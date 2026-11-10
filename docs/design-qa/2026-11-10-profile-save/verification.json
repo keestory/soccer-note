@@ -1,0 +1,89 @@
+{
+  "productSHA": "45bb1e6ca3d049f7c4cafc31409901a5635e422d",
+  "buildId": "l2Cv7chKDS6whg53DDLAz",
+  "checks": {
+    "lint": {
+      "exitCode": 0,
+      "log": "lint.log"
+    },
+    "test": {
+      "exitCode": 0,
+      "log": "test.log"
+    },
+    "type": {
+      "exitCode": 0,
+      "log": "type.log"
+    },
+    "build": {
+      "exitCode": null,
+      "log": "build.log",
+      "completionEvidence": "Complete webpack output, compiled+type success,47/47pages,BUILD_ID and production serverREADY. Process exit receipt lost during recoveredexec transportdisconnect."
+    }
+  },
+  "unit": {
+    "files": 21,
+    "passed": 187
+  },
+  "lint": {
+    "errors": 0,
+    "warnings": 48
+  },
+  "scope": "Synthetic existing cloud tools; no live account/DB writes. Product source is final45bb1e6; release metadata is separate.",
+  "browser": {
+    "profile": {
+      "passed": 33,
+      "total": 33,
+      "receipt": "after/browser-results.json"
+    },
+    "languageUI": {
+      "passed": 20,
+      "total": 20,
+      "receipt": "after/language-ui/browser-results.json"
+    },
+    "languageStorage": {
+      "passed": 17,
+      "total": 17,
+      "receipt": "after/language-storage/browser-results.json"
+    },
+    "independentAccountSheets": {
+      "passed": 3,
+      "total": 3,
+      "receipt": "after/independent-sheets/results.json"
+    }
+  },
+  "preview": {
+    "id": "dpl_CPh1Qt7Vwnhyy2UFpyXKfHL2g1GL",
+    "state": "READY",
+    "sha": "45bb1e6ca3d049f7c4cafc31409901a5635e422d",
+    "url": "https://soccer-note-4sfz9n6kq-keestory91-6294s-projects.vercel.app"
+  },
+  "independentReview": {
+    "role": "CQO 반다이크 / scoped security review",
+    "source": "Actual independent hosted worker outputs, final receipts re-read",
+    "verdict": "No remaining scoped code/review blocker",
+    "reviewedSHA": "45bb1e6ca3d049f7c4cafc31409901a5635e422d"
+  },
+  "release": {
+    "outcome": "denied-before-execution",
+    "attempts": 1,
+    "observedAt": "2026-11-10T02:04:54Z",
+    "action": "Vercel create production deployment",
+    "project": "soccer-note",
+    "requestedSHA": "45bb1e6ca3d049f7c4cafc31409901a5635e422d",
+    "reason": "Automatic approval review required explicit authorization for this commit production deployment; recurring development/deployment authorization was not accepted.",
+    "deploymentId": null,
+    "postCheck": "Exact SHA has only READY preview; production alias unchanged. No retry or alternative route."
+  },
+  "productionUnchanged": {
+    "sha": "0b04a960c616f19317759dd7c8e54da0509f4abd",
+    "deploymentId": "dpl_5NxFUMTXVanGxGp3qbWHCT79Y22i",
+    "alias": "https://soccer-note-hazel.vercel.app",
+    "state": "READY"
+  },
+  "rollback": {
+    "sourceSHA": "0b04a960c616f19317759dd7c8e54da0509f4abd",
+    "method": "Standard existing Git source redeployment plan, previous source and READY deployment retained",
+    "executed": false,
+    "limitation": "Production action approval remains required; special denied rollback endpoint not retried"
+  }
+}

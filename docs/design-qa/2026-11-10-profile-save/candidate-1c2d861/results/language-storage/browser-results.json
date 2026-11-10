@@ -1,0 +1,289 @@
+{
+  "observedAt": "2026-11-10T01:45:35.217Z",
+  "phase": "after",
+  "sourceHEAD": "1c2d861dd35a56f78770adf689c61c1a42ffbc32",
+  "workingTree": "M docs/AGENT_DISCUSSIONS.md\n?? docs/PROFILE_SAVE_2026-11-10.md\n?? docs/design-qa/2026-11-10-profile-save/",
+  "buildId": "ev3fhrJ6TtUxinu5E_6YB",
+  "componentBlob": "ac4c7dc448e2bc83e26767814ea97697e69aebcc",
+  "runnerBlob": "de028c92685da631ae8adb7f645e9edfb6689f08",
+  "scope": "Actual I18nProvider, onboarding and profile language picker in local Chromium; no native/App Store or production storage verification",
+  "cases": [
+    {
+      "name": "initial-getter",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "initial-getItem",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "selection-getter",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "en_US"
+      }
+    },
+    {
+      "name": "selection-setItem",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "en_US"
+      }
+    },
+    {
+      "name": "valid-ko",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "valid-en_US",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "en_US"
+      }
+    },
+    {
+      "name": "valid-en_GB",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "en_GB"
+      }
+    },
+    {
+      "name": "valid-ja",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ja"
+      }
+    },
+    {
+      "name": "valid-fr",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "fr"
+      }
+    },
+    {
+      "name": "valid-de",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "de"
+      }
+    },
+    {
+      "name": "valid-it",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "it"
+      }
+    },
+    {
+      "name": "valid-es",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "es"
+      }
+    },
+    {
+      "name": "missing",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": null
+      }
+    },
+    {
+      "name": "invalid",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "unknown"
+      }
+    },
+    {
+      "name": "fallback",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": null
+      }
+    },
+    {
+      "name": "normal-save-cancel-navigation-reload",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ja"
+      }
+    },
+    {
+      "name": "initial-setItem-failure",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "initial-getter.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "lang": "fr"
+    },
+    {
+      "file": "initial-getItem.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "lang": "fr"
+    },
+    {
+      "file": "selection-getter.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "lang": "de"
+    },
+    {
+      "file": "selection-setItem.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "lang": "de"
+    },
+    {
+      "file": "normal-profile-320.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "lang": "ja"
+    }
+  ],
+  "completedAt": "2026-11-10T01:46:08.882Z",
+  "passed": true
+}

@@ -1,0 +1,114 @@
+
+> soccer-note@0.1.0 lint
+> eslint src
+
+
+/workspace/soccer-note/src/app/admin/page.tsx
+  54:6  warning  React Hook useEffect has a missing dependency: 'checkAuth'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/api/admin/data/route.ts
+  8:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/soccer-note/src/app/api/notifications/inbox/route.ts
+  39:37  warning  'countError' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/workspace/soccer-note/src/app/api/notifications/unread-count/route.ts
+  10:27  warning  'request' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/soccer-note/src/app/community/[id]/applications/page.tsx
+  28:31  warning  React Hook useEffect has a missing dependency: 'init'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/community/[id]/page.tsx
+  50:31  warning  React Hook useEffect has a missing dependency: 'init'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/community/page.tsx
+  51:31  warning  React Hook useEffect has a missing dependency: 'init'. Either include it or remove the dependency array       react-hooks/exhaustive-deps
+  52:48  warning  React Hook useEffect has a missing dependency: 'loadPosts'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/inbox/page.tsx
+  38:11  warning  't' is assigned a value but never used                                                                                                            @typescript-eslint/no-unused-vars
+  65:6   warning  React Hook useEffect has missing dependencies: 'loadNotifications', 'router', and 'supabase'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/match/[id]/page.tsx
+   108:6    warning  React Hook useEffect has missing dependencies: 'loadMatch' and 'router'. Either include them or remove the dependency array                                                                                                                                                              react-hooks/exhaustive-deps
+   120:6    warning  React Hook useEffect has a missing dependency: 'attendees.length'. Either include it or remove the dependency array                                                                                                                                                                      react-hooks/exhaustive-deps
+   623:17   warning  'isDraw' is assigned a value but never used                                                                                                                                                                                                                                              @typescript-eslint/no-unused-vars
+   653:37   warning  'i' is defined but never used                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  1080:139  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/workspace/soccer-note/src/app/match/[id]/quarter/[q]/page.tsx
+   221:6   warning  React Hook useEffect has a missing dependency: 'selectedPlayer'. Either include it or remove the dependency array                                                                                                                                                                        react-hooks/exhaustive-deps
+   260:6   warning  React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array                                                                                                                                                                              react-hooks/exhaustive-deps
+   579:9   warning  'addPlayerToField' is assigned a value but never used                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  1454:27  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/workspace/soccer-note/src/app/match/new/page.tsx
+  28:35  warning  React Hook useEffect has a missing dependency: 'loadTeam'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/team/join/page.tsx
+  31:36  warning  React Hook useEffect has a missing dependency: 'checkAuth'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  35:6   warning  React Hook useEffect has a missing dependency: 'findTeam'. Either include it or remove the dependency array   react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/team/members/page.tsx
+   9:10   warning  'Copy' is defined but never used                                                                             @typescript-eslint/no-unused-vars
+   9:23   warning  'UserCog' is defined but never used                                                                          @typescript-eslint/no-unused-vars
+   9:40   warning  'Crown' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+   9:118  warning  'Users' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+  47:35   warning  React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/team/notifications/page.tsx
+   48:10  warning  'isCoach' is assigned a value but never used                                                                 @typescript-eslint/no-unused-vars
+  126:6   warning  React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  222:14  warning  'e' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+
+/workspace/soccer-note/src/app/team/public-profile/page.tsx
+  26:31  warning  React Hook useEffect has a missing dependency: 'init'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/training/[id]/page.tsx
+   7:36  warning  'Users' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+  72:6   warning  React Hook useEffect has a missing dependency: 'loadTraining'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/app/training/new/page.tsx
+  39:35  warning  React Hook useEffect has a missing dependency: 'loadTeam'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  82:9   warning  'selectedTypeColor' is assigned a value but never used                                                       @typescript-eslint/no-unused-vars
+  83:9   warning  'selectedTypeLabel' is assigned a value but never used                                                       @typescript-eslint/no-unused-vars
+
+/workspace/soccer-note/src/app/training/page.tsx
+  29:6  warning  React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/components/NotificationBadge.tsx
+  23:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+/workspace/soccer-note/src/components/PushNotificationInit.tsx
+  9:10  warning  'isAuthenticated' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/workspace/soccer-note/src/components/players/PlayerCard.tsx
+  16:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/workspace/soccer-note/src/components/players/PlayerPhotoField.tsx
+  12:14  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+/workspace/soccer-note/src/components/players/PlayerStatsPage.tsx
+  174:41  warning  React Hook useEffect has a missing dependency: 'loadPlayerData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/hooks/useAuth.ts
+  55:6  warning  React Hook useEffect has a missing dependency: 'supabase.auth'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/hooks/useCache.ts
+   64:16  warning  'e' is defined but never used                                                                                                       @typescript-eslint/no-unused-vars
+   83:16  warning  'e' is defined but never used                                                                                                       @typescript-eslint/no-unused-vars
+  121:6   warning  React Hook useEffect has missing dependencies: 'fetchData' and 'getCachedData'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/hooks/usePushNotifications.ts
+  105:6  warning  React Hook useCallback has a missing dependency: 'options'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/workspace/soccer-note/src/lib/utils.ts
+  3:35  warning  'QuarterRecord' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 48 problems (0 errors, 48 warnings)
+
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

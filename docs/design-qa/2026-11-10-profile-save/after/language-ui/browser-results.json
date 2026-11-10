@@ -1,0 +1,153 @@
+{
+  "observedAt": "2026-11-10T02:03:00.360Z",
+  "sourceHEAD": "45bb1e6ca3d049f7c4cafc31409901a5635e422d",
+  "buildId": "l2Cv7chKDS6whg53DDLAz",
+  "componentBlobs": {
+    "src/app/profile/page.tsx": "f5cd372e9c03b87903defcf9ea6b022b8b7aaea1",
+    "src/components/design/Sheet.tsx": "c17bdc42fd3aca6d8646b2ae9afbec8cd0da5b80",
+    "src/components/ConfirmSheet.tsx": "bac21d76e4632cfd20f4fff9d0ef25bac3fcb0c3"
+  },
+  "scope": "Local Chromium production build, synthetic auth/reads; API writes and external requests blocked. No iOS/App Store/live auth claim.",
+  "cases": [
+    {
+      "name": "keyboard-modal-focus-tab-escape-3-rounds",
+      "status": "pass",
+      "observations": {
+        "repetitions": 3,
+        "modal": true,
+        "focusTrap": true,
+        "restored": true
+      }
+    },
+    {
+      "name": "pointer-outside-cancel-3-rounds",
+      "status": "pass"
+    },
+    {
+      "name": "explicit-close-3-rounds",
+      "status": "pass"
+    },
+    {
+      "name": "language-ko-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-en_US-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-en_GB-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-ja-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-fr-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-de-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-it-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-es-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "rapid-repeat-choice-and-cancel",
+      "status": "pass"
+    },
+    {
+      "name": "short-mobile-320-scroll-and-focus",
+      "status": "pass"
+    },
+    {
+      "name": "short-mobile-390-scroll-and-focus",
+      "status": "pass"
+    },
+    {
+      "name": "touch-repeat-open-320-568",
+      "status": "pass",
+      "observations": {
+        "physicalTouch": true,
+        "width": 320,
+        "height": 568,
+        "deliberateChoice": "es"
+      }
+    },
+    {
+      "name": "touch-repeat-open-320-844",
+      "status": "pass",
+      "observations": {
+        "physicalTouch": true,
+        "width": 320,
+        "height": 844,
+        "deliberateChoice": "es"
+      }
+    },
+    {
+      "name": "touch-repeat-open-390-568",
+      "status": "pass",
+      "observations": {
+        "physicalTouch": true,
+        "width": 390,
+        "height": 568,
+        "deliberateChoice": "es"
+      }
+    },
+    {
+      "name": "touch-repeat-open-390-844",
+      "status": "pass",
+      "observations": {
+        "physicalTouch": true,
+        "width": 390,
+        "height": 844,
+        "deliberateChoice": "es"
+      }
+    },
+    {
+      "name": "shared-confirm-sheet-unchanged-3-rounds",
+      "status": "pass",
+      "observations": {
+        "confirmAction": "never activated"
+      }
+    },
+    {
+      "name": "browser-back-unmount-and-return",
+      "status": "pass"
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "language-de-390.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "file": "language-short-320.png",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320
+    },
+    {
+      "file": "language-short-390.png",
+      "width": 390,
+      "height": 568,
+      "scrollWidth": 390
+    }
+  ],
+  "writesBlocked": [],
+  "completedAt": "2026-11-10T02:03:34.825Z",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "unexpectedRequests": [],
+  "cleanupWarnings": [],
+  "passed": true
+}

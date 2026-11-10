@@ -1,0 +1,145 @@
+/** WORK-33: actual profile component, synthetic in-memory backend only. */
+import assert from 'node:assert/strict'
+import { mkdir, readFile, writeFile, copyFile } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { resolve } from 'node:path'
+import { base, browser, fixture, report as network, host, authKey, uid, otherUid, makeSession, until, hold, pause } from '/workspace/soccer-note/scripts/qa-team-fixture.mjs'
+
+assert.equal(base, 'http://127.0.0.1:3128', 'Only the existing local synthetic server is allowed')
+const output = resolve(process.env.SOCCER_PROFILE_QA_OUTPUT || 'docs/design-qa/2026-11-10-profile-save/after')
+await mkdir(output, { recursive: true })
+const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim()
+const expectedCases = 1
+const result = { expectedCases, observedAt: new Date().toISOString(), sourceHEAD: git('rev-parse', 'HEAD'), buildId: (await readFile('.next/BUILD_ID', 'utf8')).trim(), componentBlobs: Object.fromEntries(['src/app/profile/page.tsx', 'src/lib/profile-name-save.ts', 'src/lib/profile-name-copy.ts'].map(p => [p, git('hash-object', p)])), scope: 'Actual local production component; synthetic auth/profile data, all external calls intercepted. No live user/DB writes, physical iOS, screen reader, or rollback execution.', intake: { discoverability: 'not-applicable: authenticated local QA only', store_compliance: 'not-applicable: no binary/permission/submission change or claim', competitive_benchmark: 'not-applicable: reproduced local correctness repair' }, cases: [], screenshots: [], blockedWrites: [], routeErrors: [] }
+const ORIGINAL = '가상 코치', NAME = '가상 변경 이름', SECOND = '가상 새 입력', OTHER = '가상 다른 계정'
+const journalPrefix = 'soccernote-profile-name-v1:'
+const field = p => p.locator('form input[type=text]')
+const save = p => p.locator('form button[type=submit]')
+const status = p => p.locator('#profile-name-status')
+const check = p => p.locator('#profile-name-check')
+const retry = p => p.locator('#profile-name-retry')
+const inputReady = async p => { await field(p).waitFor(); await until(async () => await save(p).count() > 0, 'profile input ready') }
+const stageCount = (s, stage, user = uid) => s.writes.filter(w => w.stage === stage && w.user === user).length
+const counts = s => ({ auth: stageCount(s, 'auth'), profile: stageCount(s, 'profile') })
+const noMoreWrites = async (s, expected) => { await pause(180); assert.deepEqual(counts(s), expected) }
+
+let activeScenario
+const originalContext = browser.newContext.bind(browser)
+browser.newContext = async options => {
+  const context = await originalContext(options)
+  const originalPage = context.newPage.bind(context)
+  context.newPage = async () => {
+    const s = activeScenario
+    await context.route('**/*', async route => {
+      const request = route.request(), url = new URL(request.url()), method = request.method()
+      const reply = async (data, code = 200) => {
+        try { await route.fulfill({ status: code, contentType: 'application/json', body: JSON.stringify(data), headers: { 'access-control-allow-origin': '*' } }) }
+        catch (e) { if (!/Target.*closed|Route is already handled|Invalid InterceptionId|Fetch domain is not enabled|already been handled/i.test(e.message)) result.routeErrors.push(e.message) }
+      }
+      const token = request.headers().authorization?.replace(/^Bearer /, '')
+      let owner
+      try { owner = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString()).sub } catch {}
+      const row = owner && s.accounts.get(owner)
+      const user = () => ({ ...makeSession(owner).user, user_metadata: { display_name: row.auth } })
+      const handle = async (stage, write) => {
+        const queue = write ? s.modes[stage] : s.readModes[stage]
+        const mode = queue.shift() || {}
+        if (mode.gate) { mode.gate.entered = true; await mode.gate.wait; mode.gate.released = true }
+        return mode
+      }
+      if (url.hostname === host && url.pathname === '/auth/v1/user') {
+        if (!row) return reply({ code: 'bad_jwt', message: 'Synthetic unauthenticated' }, 401)
+        if (method === 'GET') {
+          s.reads.push({ stage: 'auth', user: owner }); const mode = await handle('auth', false)
+          if (mode.abort) return route.abort('connectionfailed')
+          if (mode.status) return reply({ code: 'QA_READ_FAIL', message: 'Synthetic failed read' }, mode.status)
+          return reply(mode.value === undefined ? user() : { ...user(), user_metadata: { display_name: mode.value } })
+        }
+        if (method === 'PUT') {
+          const name = request.postDataJSON().data.display_name
+          s.writes.push({ stage: 'auth', user: owner, name })
+          const mode = await handle('auth', true)
+          if (mode.commit || (!mode.status && !mode.abort)) row.auth = name
+          if (mode.abort) return route.abort('connectionfailed')
+          return reply(mode.status ? { code: mode.status === 403 ? 'not_authorized' : 'unexpected_failure', message: 'Synthetic write response' } : user(), mode.status || 200)
+        }
+      }
+      if (url.hostname === host && url.pathname === '/rest/v1/profiles') {
+        if (!row) return reply({ code: '42501', message: 'Synthetic unauthenticated' }, 403)
+        if (method === 'GET') {
+          s.reads.push({ stage: 'profile', user: owner }); const mode = await handle('profile', false)
+          if (mode.abort) return route.abort('connectionfailed')
+          if (mode.status) return reply({ code: 'QA_READ_FAIL', message: 'Synthetic failed read' }, mode.status)
+          const requested = url.searchParams.get('id')?.replace(/^eq\./, '')
+          assert(!requested || requested === owner, 'Read must remain scoped to token owner')
+          const value = mode.value === undefined ? row.profile : mode.value
+          const data = value === null ? null : { id: owner, display_name: value }
+          return reply(request.headers().accept?.includes('object+json') ? data : data ? [data] : [])
+        }
+        if (method === 'POST') {
+          const body = request.postDataJSON(); assert.equal(body.id, owner, 'Write ID must match captured token owner')
+          s.writes.push({ stage: 'profile', user: owner, name: body.display_name })
+          const mode = await handle('profile', true)
+          if (mode.commit || (!mode.status && !mode.abort)) row.profile = body.display_name
+          if (mode.abort) return route.abort('connectionfailed')
+          const data = { id: owner, display_name: row.profile }
+          return reply(mode.status ? { code: mode.status === 403 ? '42501' : 'QA_WRITE_FAIL', message: 'Synthetic write response' } : request.headers().accept?.includes('object+json') ? data : [data], mode.status || 201)
+        }
+      }
+      if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) { result.blockedWrites.push({ method, path: url.pathname }); return route.abort('blockedbyclient') }
+      return route.fallback()
+    })
+    return originalPage()
+  }
+  return context
+}
+
+async function run(name, fn, width = 390, locale = 'ko') {
+  let f
+  const s = { accounts: new Map([[uid, { auth: ORIGINAL, profile: ORIGINAL }], [otherUid, { auth: OTHER, profile: OTHER }]]), modes: { auth: [], profile: [] }, readModes: { auth: [], profile: [] }, writes: [], reads: [], gates: [] }
+  activeScenario = s
+  const startedAt = new Date().toISOString()
+  try {
+    f = await fixture({ route: '/profile', width, locale }); await inputReady(f.page)
+    const observations = await fn(f, s)
+    result.cases.push({ name, status: 'pass', startedAt, completedAt: new Date().toISOString(), writes: s.writes, reads: s.reads, observations })
+  } catch (e) {
+    result.cases.push({ name, status: 'fail', startedAt, completedAt: new Date().toISOString(), error: e.message, writes: s.writes, reads: s.reads, text: f ? (await f.page.locator('main').innerText().catch(() => '')).slice(0,1600) : '' })
+    if (f) await f.page.screenshot({ path: `${output}/failure-${result.cases.length}.png` }).catch(() => {})
+    process.exitCode = 1
+  } finally { for (const gate of s.gates) gate.release(); await f?.close() }
+}
+function gate(s) { const g = hold(); s.gates.push(g); return g }
+async function submit(p, value = NAME) { await field(p).fill(value); await save(p).click() }
+async function settled(p) { const busyLabels=['저장 중...','Saving...','Wird gespeichert...','保存中...','Enregistrement...','Guardando...','Salvataggio...'];await until(async()=>!busyLabels.includes((await save(p).innerText()).trim()),'operation settled') }
+async function attempt(p, user = uid) { return p.evaluate(key => JSON.parse(sessionStorage.getItem(key) || 'null'), journalPrefix + user) }
+async function broadcastAuth(p,state,nextSession) {
+  state.session=nextSession
+  const encoded=nextSession?'base64-'+Buffer.from(JSON.stringify(nextSession),'utf8').toString('base64url'):null
+  await p.evaluate(({authKey,nextSession,encoded})=>{if(encoded)localStorage.setItem(authKey,encoded);else localStorage.removeItem(authKey);const channel=new BroadcastChannel(authKey);channel.postMessage({event:nextSession?'SIGNED_IN':'SIGNED_OUT',session:nextSession});setTimeout(()=>channel.close(),100)},{authKey,nextSession,encoded})
+}
+async function authIdentity(p) { return p.evaluate(key => { const raw=localStorage.getItem(key); if (!raw) return null; const s=JSON.parse(atob(raw.slice(7).replaceAll('-','+').replaceAll('_','/'))); return s.user.id }, authKey) }
+async function expectUnknown(p, s, expected) {
+  await check(p).waitFor(); await until(async()=>await check(p).isEnabled(),'check enabled'); assert.equal(await retry(p).count(), 0); assert(await save(p).isDisabled())
+  assert((await status(p).innerText()).includes('결과 미확인'),'Unknown stage must be visible'); const a=await attempt(p); assert(a.auth === 'unknown' || a.profile === 'unknown'); await noMoreWrites(s,expected)
+}
+async function capture(p, file) {
+  await p.evaluate(() => document.fonts.ready); await p.screenshot({ path: `${output}/${file}.png` })
+  result.screenshots.push({ file: `${file}.png`, ...await p.evaluate(() => ({ width: innerWidth, height: innerHeight, scrollWidth: document.documentElement.scrollWidth, fontStatus: document.fonts.status })) })
+}
+
+try {
+  await run('targeted-keyboard-visibility-long-de',async({page:p},s)=>{
+    await p.setViewportSize({width:320,height:568});s.modes.profile.push({status:403});await submit(p,NAME+'L'.repeat(70));await retry(p).waitFor();await until(async()=>await retry(p).isEnabled(),'retryenabled');await p.evaluate(()=>document.fonts.ready)
+    const measurements=[]
+    const measure=async label=>measurements.push({label,...await p.evaluate(()=>{const e=document.activeElement,r=e.getBoundingClientRect();return {active:e.textContent,top:r.top,bottom:r.bottom,viewport:innerHeight,scrollY,mainScroll:document.querySelector('main').scrollTop,navTop:document.querySelector('nav').getBoundingClientRect().top,centerHit:e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}})})
+    await check(p).focus();await measure('check focus');await retry(p).focus();await measure('retry focus');await capture(p,'direct-focus')
+    await field(p).focus();await p.keyboard.press('Tab');await measure('Tab to check');await p.keyboard.press('Tab');await measure('Tab to retry');await capture(p,'keyboard-tab');result.baselineGeometry=measurements.slice();await p.addStyleTag({content:'#profile-name-check,#profile-name-retry,form button[type=submit]{scroll-margin-bottom:100px}'});await field(p).focus();await p.keyboard.press('Tab');await measure('margin Tab to check');await p.keyboard.press('Tab');await measure('margin Tab to retry');await capture(p,'margin-keyboard-tab');result.prototypeGeometry=measurements.slice(-2);for(const value of result.prototypeGeometry){assert(value.bottom<=value.navTop,'Focused button must clear the fixed nav');assert(value.centerHit,'Focused control center must be exposed')}return measurements
+  },320,'de')
+}finally{
+  await browser.close();result.completedAt=new Date().toISOString();result.pageErrors=network.pageErrors;result.consoleErrors=network.consoleErrors;result.unexpectedRequests=network.unexpectedRequests;result.cleanupWarnings=network.cleanupWarnings
+  result.expectedInjectedNetworkErrors=network.consoleErrors.filter(t=>/Failed to load resource:.*(403|500|ERR_CONNECTION_FAILED|ERR_ABORTED)/.test(t));result.unexpectedConsoleErrors=network.consoleErrors.filter(t=>!result.expectedInjectedNetworkErrors.includes(t))
+  result.passed=result.cases.length===expectedCases&&result.cases.every(c=>c.status==='pass')&&!result.pageErrors.length&&!result.unexpectedRequests.length&&!result.blockedWrites.length&&!result.routeErrors.length&&!result.unexpectedConsoleErrors.length&&!result.cleanupWarnings.length
+  await writeFile(`${output}/browser-results.json`,JSON.stringify(result,null,2)+'\n');await copyFile(new URL(import.meta.url),`${output}/runner.mjs.txt`)
+  console.log(JSON.stringify({output,passed:result.passed,cases:result.cases.map(({name,status,error})=>({name,status,error})),pageErrors:result.pageErrors,unexpectedRequests:result.unexpectedRequests,blockedWrites:result.blockedWrites,routeErrors:result.routeErrors,unexpectedConsoleErrors:result.unexpectedConsoleErrors},null,2));if(!result.passed)process.exitCode=1
+}

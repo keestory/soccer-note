@@ -1,0 +1,111 @@
+{
+  "expectedCases": 1,
+  "observedAt": "2026-11-10T01:48:25.152Z",
+  "sourceHEAD": "1c2d861dd35a56f78770adf689c61c1a42ffbc32",
+  "buildId": "ev3fhrJ6TtUxinu5E_6YB",
+  "componentBlobs": {
+    "src/app/profile/page.tsx": "04076d86bad1d02f5a85fc02640a12ea4e7b4c0a",
+    "src/lib/profile-name-save.ts": "5427359497f5967a69a4a1576a7edb9d8cce9366",
+    "src/lib/profile-name-copy.ts": "c629d36be4bb939e02b032d05612ef82185b6f94"
+  },
+  "scope": "Actual local production component; synthetic auth/profile data, all external calls intercepted. No live user/DB writes, physical iOS, screen reader, or rollback execution.",
+  "intake": {
+    "discoverability": "not-applicable: authenticated local QA only",
+    "store_compliance": "not-applicable: no binary/permission/submission change or claim",
+    "competitive_benchmark": "not-applicable: reproduced local correctness repair"
+  },
+  "cases": [
+    {
+      "name": "targeted-keyboard-visibility-long-de",
+      "status": "pass",
+      "startedAt": "2026-11-10T01:48:25.165Z",
+      "completedAt": "2026-11-10T01:48:26.576Z",
+      "writes": [
+        {
+          "stage": "auth",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        },
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001",
+          "name": "가상 변경 이름LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL"
+        }
+      ],
+      "reads": [
+        {
+          "stage": "profile",
+          "user": "10000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "observations": [
+        {
+          "label": "check focus",
+          "active": "Speicherstatus prüfen",
+          "top": 504.5,
+          "bottom": 552.5,
+          "viewport": 568,
+          "scrollY": 236,
+          "mainScroll": 0
+        },
+        {
+          "label": "retry focus",
+          "active": "Offene Schritte erneut speichern",
+          "top": 495.5,
+          "bottom": 567.5,
+          "viewport": 568,
+          "scrollY": 301,
+          "mainScroll": 0
+        },
+        {
+          "label": "Tab to check",
+          "active": "Speicherstatus prüfen",
+          "top": 439.5,
+          "bottom": 487.5,
+          "viewport": 568,
+          "scrollY": 301,
+          "mainScroll": 0
+        },
+        {
+          "label": "Tab to retry",
+          "active": "Offene Schritte erneut speichern",
+          "top": 495.5,
+          "bottom": 567.5,
+          "viewport": 568,
+          "scrollY": 301,
+          "mainScroll": 0
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "direct-focus.png",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "keyboard-tab.png",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    }
+  ],
+  "blockedWrites": [],
+  "routeErrors": [],
+  "completedAt": "2026-11-10T01:48:26.639Z",
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "unexpectedRequests": [],
+  "cleanupWarnings": [],
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "passed": true
+}

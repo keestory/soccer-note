@@ -1,0 +1,29 @@
+{
+  "expectedCases": 3,
+  "buildId": "l2Cv7chKDS6whg53DDLAz",
+  "source": "45bb1e6ca3d049f7c4cafc31409901a5635e422d",
+  "observedAt": "2026-11-10T01:57:39.344Z",
+  "scope": "Synthetic local profile, open/switch/cancel only. No destructive submission; all non-GET requests blocked.",
+  "cases": [
+    {
+      "sheet": "delete",
+      "newProfileName": "Synthetic B",
+      "oldSheetStillVisible": false
+    },
+    {
+      "sheet": "logout",
+      "newProfileName": "Synthetic B",
+      "oldSheetStillVisible": false
+    },
+    {
+      "sheet": "language",
+      "newProfileName": "Synthetic B",
+      "oldSheetStillVisible": false
+    }
+  ],
+  "blockedWrites": [],
+  "completedAt": "2026-11-10T01:57:43.490Z",
+  "passed": true,
+  "pageErrors": [],
+  "unexpectedRequests": []
+}
