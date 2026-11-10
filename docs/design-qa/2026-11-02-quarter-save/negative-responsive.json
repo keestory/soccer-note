@@ -1,0 +1,118 @@
+{
+  "observedAt": "2026-11-02T03:14:21.840Z",
+  "app": "http://127.0.0.1:3127",
+  "data": "Synthetic in-memory fixtures only; all data APIs intercepted",
+  "cases": [
+    {
+      "name": "390px delayed full save: one request, edit lock, unchanged IDs, draft back confirmation",
+      "status": "pass",
+      "elapsedMs": 2091,
+      "evidence": {
+        "postCount": 1,
+        "deleteCount": 0,
+        "goal": 1,
+        "stableId": true,
+        "focusReturned": true
+      }
+    },
+    {
+      "name": "failed upsert: no delete, retained locked snapshot, successful identical retry",
+      "status": "pass",
+      "elapsedMs": 1349,
+      "evidence": {
+        "identicalRetry": true,
+        "noDeleteOnUpsertFailure": true,
+        "retainedDraft": true
+      }
+    },
+    {
+      "name": "partial save removal failure then retry: explicit baseline IDs, unseen concurrent row preserved",
+      "status": "pass",
+      "elapsedMs": 1398,
+      "evidence": {
+        "order": "upsert then explicit delete",
+        "unseenRowPreserved": true,
+        "retryConfirmed": true
+      }
+    },
+    {
+      "name": "empty lineup: delete only loaded rows and fail closed on missing acknowledgement",
+      "status": "pass",
+      "elapsedMs": 1204,
+      "evidence": {
+        "emptySavePermitted": true,
+        "zeroAckRejected": true,
+        "unseenRowPreserved": true
+      }
+    },
+    {
+      "name": "new player with lost upsert response: retry preserves one identity without duplicates",
+      "status": "pass",
+      "elapsedMs": 1326,
+      "evidence": {
+        "oneRow": true,
+        "stableIdAcrossLostResponse": true
+      }
+    },
+    {
+      "name": "upload in flight: full save and editing wait, uploaded URL included in next save",
+      "status": "pass",
+      "elapsedMs": 1866,
+      "evidence": {
+        "noSaveDuringUpload": true,
+        "uploadedUrlRetained": true
+      }
+    },
+    {
+      "name": "320px long German copy: status wraps and primary controls remain at least 44px",
+      "status": "fail",
+      "error": "AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:\n\n  assert(metrics.scrollWidth <= metrics.width)\n\n    at file:///Users/mac_al03256458/Documents/Codex/2026-11-02/task-2/soccer-note/scripts/qa-quarter-save.mjs:222:7\n    at async caseRun (file:///Users/mac_al03256458/Documents/Codex/2026-11-02/task-2/soccer-note/scripts/qa-quarter-save.mjs:108:89)\n    at async file:///Users/mac_al03256458/Documents/Codex/2026-11-02/task-2/soccer-note/scripts/qa-quarter-save.mjs:214:3"
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "pending-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390
+    },
+    {
+      "file": "saved-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390
+    },
+    {
+      "file": "failed-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390
+    },
+    {
+      "file": "failed-de-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 412
+    }
+  ],
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: net::ERR_CONNECTION_FAILED",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "passed": false
+}

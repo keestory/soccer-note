@@ -1,0 +1,73 @@
+{
+  "observedAt": "2026-11-10T01:13:40.567Z",
+  "sourceHEAD": "19a0b74fd2bb9df526cab9e0e2ca2b13ede8e70d",
+  "buildId": "Neev93urkk1AiksttepRq",
+  "scope": "Actual profile production component; only synthetic in-memory auth/profile responses; external API writes intercepted, no live data",
+  "cases": [
+    {
+      "mode": "success",
+      "before": "가상 코치",
+      "authName": "가상 변경 이름",
+      "storedProfile": "가상 변경 이름",
+      "shownAfter": "가상 변경 이름",
+      "shownReload": "가상 변경 이름",
+      "toast": "이름이 변경되었습니다",
+      "enabled": true,
+      "syntheticWrites": [
+        "auth",
+        "profiles"
+      ],
+      "backLink": {
+        "accessibility": "- link:\n  - /url: /dashboard\n  - img",
+        "width": 36,
+        "height": 36
+      }
+    },
+    {
+      "mode": "profile-failure",
+      "before": "가상 코치",
+      "authName": "가상 변경 이름",
+      "storedProfile": "가상 코치",
+      "shownAfter": "가상 변경 이름",
+      "shownReload": "가상 코치",
+      "toast": "이름이 변경되었습니다",
+      "enabled": true,
+      "syntheticWrites": [
+        "auth",
+        "profiles"
+      ],
+      "backLink": {
+        "accessibility": "- link:\n  - /url: /dashboard\n  - img",
+        "width": 36,
+        "height": 36
+      }
+    },
+    {
+      "mode": "auth-failure",
+      "before": "가상 코치",
+      "authName": "가상 코치",
+      "storedProfile": "가상 코치",
+      "shownAfter": "가상 변경 이름",
+      "shownReload": "가상 코치",
+      "toast": "이름 변경에 실패했습니다",
+      "enabled": true,
+      "syntheticWrites": [
+        "auth"
+      ],
+      "backLink": {
+        "accessibility": "- link:\n  - /url: /dashboard\n  - img",
+        "width": 36,
+        "height": 36
+      }
+    }
+  ],
+  "blocked": [],
+  "completedAt": "2026-11-10T01:13:46.673Z",
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedRequests": [],
+  "cleanupWarnings": []
+}

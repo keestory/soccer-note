@@ -1,0 +1,91 @@
+{
+  "recordedAt": "2026-11-09T02:13:35.072451+00:00",
+  "productCommit": "0b04a960c616f19317759dd7c8e54da0509f4abd",
+  "buildId": "Neev93urkk1AiksttepRq",
+  "componentBlobs": {
+    "src/app/profile/page.tsx": "de8b385d229de03c9885f2ac0fe92f9737682937",
+    "src/components/design/Sheet.tsx": "c17bdc42fd3aca6d8646b2ae9afbec8cd0da5b80",
+    "src/components/ConfirmSheet.tsx": "bac21d76e4632cfd20f4fff9d0ef25bac3fcb0c3"
+  },
+  "checks": {
+    "lint": {
+      "exit": 0,
+      "errors": 0,
+      "existingWarnings": 49
+    },
+    "types": {
+      "exit": 0,
+      "logNote": "npm update notice only"
+    },
+    "unit": {
+      "exit": 0,
+      "files": 20,
+      "tests": 163
+    },
+    "build": {
+      "exit": 0,
+      "command": "npm run build -- --webpack",
+      "localFontMirror": true,
+      "syntheticConfig": true
+    }
+  },
+  "ui": {
+    "pass": 20,
+    "observedAt": "2026-11-09T02:07:59.277Z",
+    "completedAt": "2026-11-09T02:08:38.813Z"
+  },
+  "storage": {
+    "pass": 17,
+    "observedAt": "2026-11-09T02:07:59.338Z",
+    "completedAt": "2026-11-09T02:08:29.257Z"
+  },
+  "independentReview": {
+    "role": "CQO 반다이크 / CDO 관점",
+    "result": "No remaining scoped web blocker",
+    "actualModel": "unknown",
+    "prApproval": false
+  },
+  "production": {
+    "commit": "0b04a960c616f19317759dd7c8e54da0509f4abd",
+    "id": "dpl_5NxFUMTXVanGxGp3qbWHCT79Y22i",
+    "state": "READY",
+    "target": "production",
+    "readyAt": "2026-11-09T06:56:45.158Z",
+    "alias": "soccer-note-hazel.vercel.app",
+    "aliasVerifiedAt": "2026-11-09T06:57:08Z",
+    "url": "soccer-note-5k1xhj67v-keestory91-6294s-projects.vercel.app",
+    "retryAfterNewExplicitApproval": 1,
+    "publicUi": {
+      "source": "coordinator-provided observation; separate authorized cloud Chrome",
+      "timeLabel": "2026-11-09 07:04:17 UTC 이전, 조정자 확인 시각",
+      "observedBefore": "2026-11-09T07:04:17Z",
+      "observed": [
+        "public onboarding next step",
+        "login route entry"
+      ],
+      "coordinatorAlsoVerified": "production commit and READY via Vercel get_deployment",
+      "authenticated": false,
+      "profileLanguageInteraction": "not live verified; synthetic QA evidence only",
+      "userDataWrites": false
+    }
+  },
+  "previousProduction": {
+    "commit": "acffd57b509cacdffac4b200796a272d7537f44e",
+    "deployment": "dpl_9fY9Rv4VNjhuD1seXTnbApE4x98k"
+  },
+  "preview": {
+    "id": "dpl_9gLAaeGaxek6xXPHSvGtfAR2EvUd",
+    "state": "READY",
+    "target": null
+  },
+  "limits": [
+    "No live authenticated writes",
+    "No physical iPhone/Safari or screen reader",
+    "No App Store artifact or crash resolution",
+    "No actual rollback",
+    "Quota, total billing and hosted model billing unknown"
+  ],
+  "initialProductionAttempt": "not executed: automatic approval review denied creation",
+  "deploymentRecordUpdatedAt": "2026-11-09T06:58:21.072082+00:00",
+  "work30Status": "Done within scoped web acceptance; not App Store/physical device/live authenticated verification"
+}

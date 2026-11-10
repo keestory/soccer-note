@@ -1,0 +1,159 @@
+{
+  "cache": {
+    "selected": "20000000-0000-4000-8000-000000000001",
+    "snapshot": {
+      "userId": "10000000-0000-4000-8000-000000000001",
+      "displayName": "가상 코치",
+      "teams": [
+        {
+          "id": "20000000-0000-4000-8000-000000000001",
+          "name": "가상 A 팀",
+          "user_id": "10000000-0000-4000-8000-000000000001",
+          "created_at": "2026-01-01T00:00:00Z",
+          "updated_at": "2026-01-01T00:00:00Z",
+          "role": "coach",
+          "membership": {
+            "id": "owner",
+            "team_id": "20000000-0000-4000-8000-000000000001",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "role": "coach",
+            "can_edit_players": true,
+            "can_edit_matches": true,
+            "can_edit_quarters": true,
+            "joined_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+          }
+        },
+        {
+          "id": "20000000-0000-4000-8000-000000000003",
+          "name": "가상 C 팀",
+          "user_id": "10000000-0000-4000-8000-000000000001",
+          "created_at": "2026-01-01T00:00:00Z",
+          "updated_at": "2026-01-01T00:00:00Z",
+          "role": "coach",
+          "membership": {
+            "id": "owner",
+            "team_id": "20000000-0000-4000-8000-000000000003",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "role": "coach",
+            "can_edit_players": true,
+            "can_edit_matches": true,
+            "can_edit_quarters": true,
+            "joined_at": "2026-01-01T00:00:00Z",
+            "updated_at": "2026-01-01T00:00:00Z"
+          }
+        },
+        {
+          "id": "20000000-0000-4000-8000-000000000002",
+          "name": "가상 B 팀",
+          "user_id": "10000000-0000-4000-8000-000000000002",
+          "created_at": "2026-01-01T00:00:00Z",
+          "updated_at": "2026-01-01T00:00:00Z",
+          "role": "member",
+          "membership": {
+            "id": "70000000-0000-4000-8000-000000000002",
+            "team_id": "20000000-0000-4000-8000-000000000002",
+            "user_id": "10000000-0000-4000-8000-000000000001",
+            "role": "member",
+            "status": "approved",
+            "can_edit_players": false,
+            "can_edit_matches": false,
+            "can_edit_quarters": false,
+            "joined_at": "2026-01-01T00:00:00Z",
+            "team": {
+              "id": "20000000-0000-4000-8000-000000000002",
+              "name": "가상 B 팀",
+              "user_id": "10000000-0000-4000-8000-000000000002",
+              "created_at": "2026-01-01T00:00:00Z",
+              "updated_at": "2026-01-01T00:00:00Z"
+            }
+          }
+        }
+      ],
+      "selectedTeamId": "20000000-0000-4000-8000-000000000001",
+      "matches": [
+        {
+          "id": "30000000-0000-4000-8000-000000000001",
+          "team_id": "20000000-0000-4000-8000-000000000001",
+          "opponent": "가상 A 상대",
+          "match_date": "2026-01-01",
+          "home_score": 1,
+          "away_score": 0,
+          "location": null,
+          "status": "completed",
+          "quarters": [
+            {
+              "id": "40000000-0000-4000-8000-000000000001",
+              "match_id": "30000000-0000-4000-8000-000000000001",
+              "quarter_number": 1,
+              "home_score": 1,
+              "away_score": 0,
+              "duration_minutes": 25,
+              "quarter_records": [
+                {
+                  "id": "60000000-0000-4000-8000-000000000001",
+                  "quarter_id": "40000000-0000-4000-8000-000000000001",
+                  "player_id": "50000000-0000-4000-8000-000000000001",
+                  "position_type": "MF",
+                  "position_x": 50,
+                  "position_y": 50,
+                  "rating": 7,
+                  "goals": 1,
+                  "assists": 0,
+                  "clean_sheet": false,
+                  "contribution": 0,
+                  "created_at": "2026-01-01T00:00:00Z",
+                  "updated_at": "2026-01-01T00:00:00Z",
+                  "player": {
+                    "id": "50000000-0000-4000-8000-000000000001",
+                    "team_id": "20000000-0000-4000-8000-000000000001",
+                    "name": "가상 A 선수",
+                    "number": 7,
+                    "default_position": "MF",
+                    "attributes": null,
+                    "photo_url": null,
+                    "created_at": "2026-01-01T00:00:00Z",
+                    "updated_at": "2026-01-01T00:00:00Z"
+                  }
+                }
+              ]
+            }
+          ],
+          "match_attendees": []
+        }
+      ],
+      "trainings": [],
+      "players": [
+        {
+          "id": "50000000-0000-4000-8000-000000000001",
+          "team_id": "20000000-0000-4000-8000-000000000001",
+          "name": "가상 A 선수",
+          "number": 7,
+          "default_position": "MF",
+          "attributes": null,
+          "photo_url": null,
+          "created_at": "2026-01-01T00:00:00Z",
+          "updated_at": "2026-01-01T00:00:00Z"
+        }
+      ],
+      "members": [],
+      "visibilitySettings": {
+        "id": "80000000-0000-4000-8000-000000000001",
+        "team_id": "20000000-0000-4000-8000-000000000001",
+        "show_goals": true,
+        "show_assists": true
+      }
+    },
+    "permission": {
+      "teamId": "20000000-0000-4000-8000-000000000001",
+      "role": "coach",
+      "isOwner": true,
+      "canEditPlayers": true,
+      "canEditMatches": true,
+      "canEditQuarters": true,
+      "ts": 1793593795530
+    }
+  },
+  "title": "가상 A 팀",
+  "text": "예정된 경기가 없어요총 1경기 · 승률 100%지난 경기전체 보기2026년 1월 1일승상대가상 A 상대1 : 01Q1 : 0새 경기 기록하기팀 관리선수 명단 · 훈련 · 팀원 관리"
+}

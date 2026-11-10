@@ -57,6 +57,15 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 - The noindex /design-system route is an in-memory fictional review surface; its four review selectors do not change the four production navigation destinations.
 - No production data, authorization, native SDK or schema change is part of the visual refresh.
 
+## Selected previous-quarter placement draft (2026-11-04)
+
+- A quarter after the first may import selected recorded players from the immediately previous quarter of the same match only when saved records and draft players are empty. Recheck before applying.
+- Start with zero selected players. Describe actual recorded IN/OUT facts without inferring a final lineup. Explain unavailable roster entries, duplicate/conflicting records, invalid coordinates and positions outside the existing editable pitch area.
+- Copy player identity and placement into a new local draft only. Do not copy row IDs, statistics, feedback, media or substitution records. Block selected players at the same exact coordinates instead of silently moving them.
+- Cancel, Escape and context changes invalidate pending import responses. Pending application keeps keyboard focus on an enabled Cancel control; a successful application moves focus to the existing pitch heading.
+- The existing pitch is the editable preview. Existing explicit Save all and save-failure retry/discard flows own persistence. The read-before-apply check is not an atomic lock against another client's later write.
+- [Implementation, evidence and release boundaries](docs/QUARTER_IMPORT_2026-11-04.md) distinguish synthetic QA, production deployment and unverified real-user outcomes.
+
 ## Neon restoration (2026-10-31)
 
 - GOLDLINE dark surfaces and volt accents replace Line Matchday colors; the interaction requirements above still apply.
@@ -97,3 +106,22 @@ The deployed Capacitor shell displays this web navigation. The separate Expo sou
 - Users without a team see equally prominent create/join choices. Create opens the existing form; cancel returns focus to its choice. Names are trimmed, duplicate submission is blocked and failure keeps the draft. Existing team selection and approval-pending membership behavior remain intact.
 - Authentication accepts only `/dashboard`, `/team/join` or the latter with one valid eight-character invite code as a return path. Invalid/external targets fall back to Home. OAuth return storage expires after 30 minutes and is consumed once.
 - Login handoffs clear anonymous/previous-account data before navigating. Web PKCE code exchange remains owned by the Supabase client; native callbacks retain the existing custom-scheme exchange.
+
+## Quarter save reliability (2026-11-02)
+
+- One explicit Save all action covers formation, player statistics, reviews and media references. Substitution records retain their separate immediate persistence.
+- Preserve existing record IDs through the `(quarter_id, player_id)` unique key. A failed upsert must never trigger deletion. Delete only loaded IDs explicitly removed by this editor, within the current quarter, and require acknowledged IDs before claiming success.
+- Save, media upload and substitution mutations share one synchronous operation lock. The editor cannot change a pending save snapshot. Old route responses cannot reset the next editor.
+- Persistent status distinguishes unsaved, saving, saved and unconfirmed failure. Failed drafts stay on screen and are locked until the same save succeeds or the user confirms leaving. This avoids forgetting an unacknowledged newly committed row while editing the failed snapshot.
+- Multiple requests are not an atomic transaction. Some changes may have saved before an error. A lost deletion acknowledgment may require returning to the match and reopening to reconcile actual records; the UI does not claim the database stayed unchanged.
+- The explicit Back action confirms leaving a dirty/failed draft with the shared accessible Sheet. Browser unload warns where supported. Browser history, native back, forced termination and cross-reload draft recovery are not guaranteed.
+- Success reconciles IDs and the matching team's cached quarter without reloading the entire editor or changing other teams' cached data. All eight locales expose status and recovery. No new data collection, schema, RLS or native permission is added.
+
+## Confirmed team context (2026-11-02, cloud reconstruction)
+
+- Team name, records, roster, visibility and client permission cache change together after the latest selection completes. Until then the previous confirmed team remains visible. A failed request keeps it intact.
+- The team Sheet shows the current team, names the pending/failed target, and offers retry. Escape, backdrop, Close, cancel and leaving Home invalidate pending selection; late responses cannot switch teams after dismissal. Another target can supersede a pending target without an extra confirmation tap.
+- Account changes immediately clear old account context and invalidate old loads. A stale permission resolver cannot replace a newly committed team's cache. Actual database authorization remains owned by unchanged RLS.
+- Same-team refresh does not reset an open player draft or pending mutation. A refresh snapshot overlapping a write cannot erase its acknowledged result. Old player and quarter acknowledgements cannot update another account/team or a later visit to the original team.
+- Player forms freeze while saving and announce progress. A failed member link retains the acknowledged inserted player for a link-only retry within the current roster visit; the UI explicitly distinguishes saved player from unconfirmed link. Full reload/route-exit recovery and a lost insertion acknowledgement are not guaranteed.
+- The quarter saver rechecks editor/account context before its subsequent delete stage. Requests already sent to the server are not undone by switching account or leaving.

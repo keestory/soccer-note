@@ -1,0 +1,289 @@
+{
+  "observedAt": "2026-11-07T01:22:52.547Z",
+  "phase": "after",
+  "sourceHEAD": "acffd57b509cacdffac4b200796a272d7537f44e",
+  "workingTree": "?? docs/design-qa/2026-11-07-locale-storage/",
+  "buildId": "UmXl9FMQnF3RfRtRo9BCp",
+  "componentBlob": "ac4c7dc448e2bc83e26767814ea97697e69aebcc",
+  "runnerBlob": "4118a8e2de37b2e35de53a9573a27a830704ffa5",
+  "scope": "Actual I18nProvider, onboarding and profile language picker in local Chromium; no native/App Store or production storage verification",
+  "cases": [
+    {
+      "name": "initial-getter",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "initial-getItem",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "selection-getter",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "en_US"
+      }
+    },
+    {
+      "name": "selection-setItem",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "en_US"
+      }
+    },
+    {
+      "name": "valid-ko",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    },
+    {
+      "name": "valid-en_US",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "en_US"
+      }
+    },
+    {
+      "name": "valid-en_GB",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "en_GB"
+      }
+    },
+    {
+      "name": "valid-ja",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ja"
+      }
+    },
+    {
+      "name": "valid-fr",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "fr"
+      }
+    },
+    {
+      "name": "valid-de",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "de"
+      }
+    },
+    {
+      "name": "valid-it",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "it"
+      }
+    },
+    {
+      "name": "valid-es",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "es"
+      }
+    },
+    {
+      "name": "missing",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": null
+      }
+    },
+    {
+      "name": "invalid",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "unknown"
+      }
+    },
+    {
+      "name": "fallback",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": null
+      }
+    },
+    {
+      "name": "normal-save-cancel-navigation-reload",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ja"
+      }
+    },
+    {
+      "name": "initial-setItem-failure",
+      "status": "pass",
+      "events": {
+        "errors": [],
+        "writesBlocked": [],
+        "unexpected": [],
+        "injected": []
+      },
+      "storage": {
+        "hits": [],
+        "stored": "ko"
+      }
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "initial-getter.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "lang": "fr"
+    },
+    {
+      "file": "initial-getItem.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "lang": "fr"
+    },
+    {
+      "file": "selection-getter.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "lang": "de"
+    },
+    {
+      "file": "selection-setItem.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "lang": "de"
+    },
+    {
+      "file": "normal-profile-320.png",
+      "width": 320,
+      "height": 844,
+      "scrollWidth": 320,
+      "lang": "ja"
+    }
+  ],
+  "completedAt": "2026-11-07T01:23:18.119Z",
+  "passed": true
+}

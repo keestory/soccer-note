@@ -1,0 +1,37 @@
+
+> soccer-note@0.1.0 build
+> next build --webpack
+
+▲ Next.js 16.4.3 (webpack)
+⚠ React 18 support is deprecated in Next.js 16 and will be removed in Next.js 17. Please upgrade to React 19. Learn more: https://nextjs.org/docs/messages/react-version
+✓ Running next.config.js took 19ms
+
+  Creating an optimized production build ...
+(node:1852) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///workspace/soccer-note/tailwind.config.ts?id=1794274380278 is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /workspace/soccer-note/package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Compiled successfully in 5.4s
+  Running TypeScript ...
+  Finished TypeScript in 2.5s ...
+  Collecting page data using 4 workers ...
+Error: Failed to collect configuration for /api/notifications/stats
+    at ignore-listed frames {
+  [cause]: Error: supabaseKey is required.
+      at new dk (.next/server/chunks/7681.js:46:61052)
+      at dl (.next/server/chunks/7681.js:46:66196)
+      at 31692 (.next/server/app/api/notifications/stats/route.js:1:751)
+      at k (.next/server/webpack-runtime.js:1:143)
+      at userland (.next/server/app/api/notifications/stats/route.js:1:3106)
+}
+
+> Build error occurred
+Error: Failed to collect page data for /api/notifications/stats
+    at ignore-listed frames {
+  type: 'Error'
+}
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

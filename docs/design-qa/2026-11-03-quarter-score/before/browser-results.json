@@ -1,0 +1,119 @@
+{
+  "observedAt": "2026-11-03T01:16:32.588Z",
+  "mode": "candidate regression reproduction",
+  "data": "Synthetic browser fixture; no production DB, real users or billing evidence",
+  "cases": [
+    {
+      "name": "cross-quarter stale total",
+      "defectReproduced": true,
+      "total": 3,
+      "quarterSum": 5,
+      "controls": [
+        {
+          "text": "",
+          "name": null,
+          "width": 48,
+          "height": 44
+        },
+        {
+          "text": "",
+          "name": null,
+          "width": 48,
+          "height": 44
+        },
+        {
+          "text": "저장",
+          "name": null,
+          "width": 27.046875,
+          "height": 44
+        },
+        {
+          "text": "취소",
+          "name": null,
+          "width": 27.046875,
+          "height": 44
+        }
+      ],
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 2,
+            "away_score": 1
+          },
+          "rowId": "40000000-0000-4000-8000-000000000099"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 1
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "name": "acknowledged quarter survives total failure, cancel and different quarter save",
+      "status": "defect reproduced",
+      "total": 3,
+      "quarterSum": 5,
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 2,
+            "away_score": 1
+          },
+          "rowId": "40000000-0000-4000-8000-000000000099"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 1
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ]
+    }
+  ],
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "cleanupWarnings": []
+}

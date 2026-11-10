@@ -1,0 +1,75 @@
+{
+  "sourceCommit": "acffd57b509cacdffac4b200796a272d7537f44e",
+  "buildId": "UmXl9FMQnF3RfRtRo9BCp",
+  "componentBlob": "ac4c7dc448e2bc83e26767814ea97697e69aebcc",
+  "runnerBlob": "4118a8e2de37b2e35de53a9573a27a830704ffa5",
+  "checks": {
+    "lint": {
+      "errors": 0,
+      "existingWarnings": 49
+    },
+    "types": "pass",
+    "unit": {
+      "files": 20,
+      "tests": 163,
+      "status": "pass"
+    },
+    "build": {
+      "status": "pass",
+      "initialFailure": "Missing synthetic server key; corrected with fixture-only key, no real credential read",
+      "fontSource": "746 cached WOFF2 assets and existing CSS, temporary test-only response file"
+    },
+    "browser": {
+      "beforeReproduced": 4,
+      "afterPassed": 17,
+      "pageErrors": 0,
+      "unexpectedRequests": 0,
+      "apiWriteAttempts": 0
+    }
+  },
+  "independentReview": {
+    "role": "CQO 반다이크",
+    "status": "no blocking findings",
+    "actualModel": "unknown",
+    "reranTests": false,
+    "screenshotsViewed": 3,
+    "nonblockingNotes": [
+      "hit counters reset on reload",
+      "limited keyboard/touch/viewport accessibility scope"
+    ]
+  },
+  "card": "https://app.notion.com/p/41166b33db7a815ea9caf1100b497e5c",
+  "nativeAppStore": "not verified; WORK-26 remains Blocked",
+  "productionWrites": "not performed",
+  "rollbackTransition": "not performed",
+  "deploymentHistory": [
+    {
+      "status": "denied-not-executed",
+      "reason": "Automatic approval review did not recognize explicit user approval for this production release",
+      "attempts": 1,
+      "newDeploymentId": null,
+      "unchangedProductionCommit": "e7b50d5043149cbecbdfedb2760ff49fc1ecedc4",
+      "unchangedDeploymentId": "dpl_34sbWPaRDYuu3ex89SgSacFcf6xS",
+      "alias": "soccer-note-hazel.vercel.app",
+      "aliasCheckedAt": "2026-11-07T01:26:01Z"
+    }
+  ],
+  "deployment": {
+    "status": "READY",
+    "target": "production",
+    "sourceCommit": "acffd57b509cacdffac4b200796a272d7537f44e",
+    "id": "dpl_9fY9Rv4VNjhuD1seXTnbApE4x98k",
+    "url": "https://soccer-note-6p1qi9h0i-keestory91-6294s-projects.vercel.app",
+    "alias": "soccer-note-hazel.vercel.app",
+    "readyAt": "2026-11-07T01:31:35.329Z",
+    "metadataAndAliasObservedAt": "2026-11-07T01:32:00Z",
+    "observedAtPrecision": "minute",
+    "retryCountWithNewRelevantEvidence": 1,
+    "productionRequestsTotal": 2,
+    "executedDeployments": 1,
+    "directPublicUI": "not observed; prior executor CONNECT403 not retried",
+    "rollbackSourceCommit": "e7b50d5043149cbecbdfedb2760ff49fc1ecedc4",
+    "rollbackDeploymentId": "dpl_34sbWPaRDYuu3ex89SgSacFcf6xS",
+    "rollbackMethod": "ordinary redeploy with deploymentId, production, withLatestCommit=false; not executed"
+  }
+}

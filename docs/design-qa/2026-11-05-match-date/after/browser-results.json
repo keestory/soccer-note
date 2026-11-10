@@ -1,0 +1,742 @@
+{
+  "observedAt": "2026-11-05T02:11:25.730Z",
+  "app": "http://127.0.0.1:3128",
+  "scope": "Local production-build browser acceptance with synthetic auth, reads and creates; no production DB verification",
+  "fontSource": "Cached pre-feature build CSS and 746 WOFF2 assets reused through /tmp/soccer-date-fonts/responses.cjs; no font or product dependency installation",
+  "data": "Synthetic in-memory fixtures; every API and auth request intercepted; no production DB access",
+  "cases": [
+    {
+      "name": "01 kst-0030-boundary: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 2564,
+      "scenario": {
+        "name": "kst-0030-boundary",
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-11-04T15:30:00Z",
+        "localDate": "2026-11-05"
+      },
+      "initial": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-11-04T15:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 0,
+        "localMinute": 30,
+        "defaultDate": "2026-11-05"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "02 la-1730-boundary: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 2025,
+      "scenario": {
+        "name": "la-1730-boundary",
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2026-11-05T01:30:00Z",
+        "localDate": "2026-11-04"
+      },
+      "initial": {
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2026-11-05T01:30:00.000Z",
+        "localDate": "2026-11-04",
+        "localHour": 17,
+        "localMinute": 30,
+        "defaultDate": "2026-11-04"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "03 utc-0030-control: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 2025,
+      "scenario": {
+        "name": "utc-0030-control",
+        "timezoneId": "UTC",
+        "instant": "2026-11-05T00:30:00Z",
+        "localDate": "2026-11-05"
+      },
+      "initial": {
+        "timezoneId": "UTC",
+        "instant": "2026-11-05T00:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 0,
+        "localMinute": 30,
+        "defaultDate": "2026-11-05"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "04 kst-1230-control: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 3149,
+      "scenario": {
+        "name": "kst-1230-control",
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-11-05T03:30:00Z",
+        "localDate": "2026-11-05"
+      },
+      "initial": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-11-05T03:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 12,
+        "localMinute": 30,
+        "defaultDate": "2026-11-05"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "05 la-1030-control: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 3408,
+      "scenario": {
+        "name": "la-1030-control",
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2026-11-04T18:30:00Z",
+        "localDate": "2026-11-04"
+      },
+      "initial": {
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2026-11-04T18:30:00.000Z",
+        "localDate": "2026-11-04",
+        "localHour": 10,
+        "localMinute": 30,
+        "defaultDate": "2026-11-04"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "06 utc-1230-control: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 8416,
+      "scenario": {
+        "name": "utc-1230-control",
+        "timezoneId": "UTC",
+        "instant": "2026-11-05T12:30:00Z",
+        "localDate": "2026-11-05"
+      },
+      "initial": {
+        "timezoneId": "UTC",
+        "instant": "2026-11-05T12:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 12,
+        "localMinute": 30,
+        "defaultDate": "2026-11-05"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "07 kst-month-start: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 4826,
+      "scenario": {
+        "name": "kst-month-start",
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-03-31T15:30:00Z",
+        "localDate": "2026-04-01"
+      },
+      "initial": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-03-31T15:30:00.000Z",
+        "localDate": "2026-04-01",
+        "localHour": 0,
+        "localMinute": 30,
+        "defaultDate": "2026-04-01"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "08 la-month-end: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 3700,
+      "scenario": {
+        "name": "la-month-end",
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2026-04-01T00:30:00Z",
+        "localDate": "2026-03-31"
+      },
+      "initial": {
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2026-04-01T00:30:00.000Z",
+        "localDate": "2026-03-31",
+        "localHour": 17,
+        "localMinute": 30,
+        "defaultDate": "2026-03-31"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "09 kst-year-start: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 2841,
+      "scenario": {
+        "name": "kst-year-start",
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-12-31T15:30:00Z",
+        "localDate": "2027-01-01"
+      },
+      "initial": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-12-31T15:30:00.000Z",
+        "localDate": "2027-01-01",
+        "localHour": 0,
+        "localMinute": 30,
+        "defaultDate": "2027-01-01"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "10 la-year-end: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 2177,
+      "scenario": {
+        "name": "la-year-end",
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2027-01-01T01:30:00Z",
+        "localDate": "2026-12-31"
+      },
+      "initial": {
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2027-01-01T01:30:00.000Z",
+        "localDate": "2026-12-31",
+        "localHour": 17,
+        "localMinute": 30,
+        "defaultDate": "2026-12-31"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "11 kst-leap-day: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 2356,
+      "scenario": {
+        "name": "kst-leap-day",
+        "timezoneId": "Asia/Seoul",
+        "instant": "2028-02-28T15:30:00Z",
+        "localDate": "2028-02-29"
+      },
+      "initial": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2028-02-28T15:30:00.000Z",
+        "localDate": "2028-02-29",
+        "localHour": 0,
+        "localMinute": 30,
+        "defaultDate": "2028-02-29"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "12 la-leap-day: default and manual date preservation",
+      "status": "pass",
+      "durationMs": 2149,
+      "scenario": {
+        "name": "la-leap-day",
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2028-03-01T01:30:00Z",
+        "localDate": "2028-02-29"
+      },
+      "initial": {
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2028-03-01T01:30:00.000Z",
+        "localDate": "2028-02-29",
+        "localHour": 17,
+        "localMinute": 30,
+        "defaultDate": "2028-02-29"
+      },
+      "manualDate": "2028-03-02",
+      "afterFieldEditsAndClockAdvance": "2028-03-02",
+      "writes": 0
+    },
+    {
+      "name": "13 direct KST year-boundary hydration and default-date create",
+      "status": "pass",
+      "durationMs": 1802,
+      "navigation": "direct document load, hydrated browser date then explicit submit",
+      "initial": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-12-31T15:30:00.000Z",
+        "localDate": "2027-01-01",
+        "localHour": 0,
+        "localMinute": 30,
+        "defaultDate": "2027-01-01"
+      },
+      "attempts": [
+        {
+          "method": "POST",
+          "path": "/rest/v1/matches",
+          "body": {
+            "team_id": "20000000-0000-4000-8000-000000000001",
+            "opponent": "가상 기본 날짜 상대",
+            "match_date": "2027-01-01",
+            "location": "가상 새해 연습장"
+          },
+          "outcome": "synthetic-committed",
+          "syntheticId": "30000000-0000-4000-8000-000000000901"
+        }
+      ],
+      "syntheticCreated": [
+        {
+          "id": "30000000-0000-4000-8000-000000000901",
+          "match_date": "2027-01-01",
+          "opponent": "가상 기본 날짜 상대",
+          "location": "가상 새해 연습장"
+        }
+      ]
+    },
+    {
+      "name": "14 direct LA leap-day hydration and explicit-date create",
+      "status": "pass",
+      "durationMs": 1708,
+      "navigation": "direct document load, hydrated browser default then manual date and explicit submit",
+      "initial": {
+        "timezoneId": "America/Los_Angeles",
+        "instant": "2028-03-01T01:30:00.000Z",
+        "localDate": "2028-02-29",
+        "localHour": 17,
+        "localMinute": 30,
+        "defaultDate": "2028-02-29"
+      },
+      "attempts": [
+        {
+          "method": "POST",
+          "path": "/rest/v1/matches",
+          "body": {
+            "team_id": "20000000-0000-4000-8000-000000000001",
+            "opponent": "가상 명시 날짜 상대",
+            "match_date": "2028-03-02",
+            "location": null
+          },
+          "outcome": "synthetic-committed",
+          "syntheticId": "30000000-0000-4000-8000-000000000901"
+        }
+      ],
+      "syntheticCreated": [
+        {
+          "id": "30000000-0000-4000-8000-000000000901",
+          "match_date": "2028-03-02",
+          "opponent": "가상 명시 날짜 상대",
+          "location": null
+        }
+      ]
+    },
+    {
+      "name": "15 physical double-click sends one request while create is pending",
+      "status": "pass",
+      "durationMs": 2511,
+      "gesture": "physical mouse double-click plus one click while visibly disabled",
+      "initial": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-11-04T15:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 0,
+        "localMinute": 30,
+        "defaultDate": "2026-11-05"
+      },
+      "attempts": [
+        {
+          "method": "POST",
+          "path": "/rest/v1/matches",
+          "body": {
+            "team_id": "20000000-0000-4000-8000-000000000001",
+            "opponent": "가상 더블클릭 상대",
+            "match_date": "2026-11-05",
+            "location": null
+          },
+          "outcome": "synthetic-committed",
+          "syntheticId": "30000000-0000-4000-8000-000000000901"
+        }
+      ],
+      "syntheticCreated": [
+        {
+          "id": "30000000-0000-4000-8000-000000000901",
+          "match_date": "2026-11-05",
+          "opponent": "가상 더블클릭 상대",
+          "location": null
+        }
+      ]
+    },
+    {
+      "name": "16 failure before commit preserves fields and retry succeeds once",
+      "status": "pass",
+      "durationMs": 2264,
+      "failureBoundary": "before synthetic commit; no lost-response or idempotency claim",
+      "initial": {
+        "timezoneId": "Asia/Seoul",
+        "instant": "2026-11-04T15:30:00.000Z",
+        "localDate": "2026-11-05",
+        "localHour": 0,
+        "localMinute": 30,
+        "defaultDate": "2026-11-05"
+      },
+      "attempts": [
+        {
+          "method": "POST",
+          "path": "/rest/v1/matches",
+          "body": {
+            "team_id": "20000000-0000-4000-8000-000000000001",
+            "opponent": "가상 실패 재시도 상대",
+            "match_date": "2028-03-03",
+            "location": "가상 재시도 연습장"
+          },
+          "outcome": "failure-before-commit"
+        },
+        {
+          "method": "POST",
+          "path": "/rest/v1/matches",
+          "body": {
+            "team_id": "20000000-0000-4000-8000-000000000001",
+            "opponent": "가상 실패 재시도 상대",
+            "match_date": "2028-03-03",
+            "location": "가상 재시도 연습장"
+          },
+          "outcome": "synthetic-committed",
+          "syntheticId": "30000000-0000-4000-8000-000000000902"
+        }
+      ],
+      "syntheticCreated": [
+        {
+          "id": "30000000-0000-4000-8000-000000000902",
+          "match_date": "2028-03-03",
+          "opponent": "가상 실패 재시도 상대",
+          "location": "가상 재시도 연습장"
+        }
+      ]
+    },
+    {
+      "name": "17 cancel through header and browser Back before submit writes nothing",
+      "status": "pass",
+      "durationMs": 2192,
+      "attempts": [],
+      "syntheticWrites": 0,
+      "headerBack": true,
+      "browserBack": true,
+      "dateAfterReentry": "2026-11-05"
+    },
+    {
+      "name": "18 320px and 390px labels, keyboard order and layout",
+      "status": "pass",
+      "durationMs": 4440,
+      "viewports": [
+        {
+          "width": 320,
+          "scrollWidth": 320,
+          "fields": [
+            {
+              "id": "match-field-0",
+              "labels": [
+                "상대팀 이름 *"
+              ],
+              "x": 85,
+              "right": 283,
+              "width": 198,
+              "height": 44,
+              "fontSize": "16px"
+            },
+            {
+              "id": "match-field-1",
+              "labels": [
+                "경기 날짜 *"
+              ],
+              "x": 85,
+              "right": 283,
+              "width": 198,
+              "height": 44,
+              "fontSize": "16px"
+            },
+            {
+              "id": "match-field-2",
+              "labels": [
+                "경기장"
+              ],
+              "x": 85,
+              "right": 283,
+              "width": 198,
+              "height": 44,
+              "fontSize": "16px"
+            }
+          ],
+          "submit": {
+            "width": 246,
+            "height": 54.5,
+            "outline": "solid"
+          },
+          "backLink": {
+            "label": "",
+            "width": 36,
+            "height": 36
+          }
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "fields": [
+            {
+              "id": "match-field-0",
+              "labels": [
+                "상대팀 이름 *"
+              ],
+              "x": 85,
+              "right": 353,
+              "width": 268,
+              "height": 44,
+              "fontSize": "16px"
+            },
+            {
+              "id": "match-field-1",
+              "labels": [
+                "경기 날짜 *"
+              ],
+              "x": 85,
+              "right": 353,
+              "width": 268,
+              "height": 44,
+              "fontSize": "16px"
+            },
+            {
+              "id": "match-field-2",
+              "labels": [
+                "경기장"
+              ],
+              "x": 85,
+              "right": 353,
+              "width": 268,
+              "height": 44,
+              "fontSize": "16px"
+            }
+          ],
+          "submit": {
+            "width": 316,
+            "height": 54.5,
+            "outline": "solid"
+          },
+          "backLink": {
+            "label": "",
+            "width": 36,
+            "height": 36
+          }
+        }
+      ],
+      "syntheticWrites": 0
+    }
+  ],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "kst-0030-boundary.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "la-1730-boundary.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "kst-year-start.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "la-year-end.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "kst-leap-day.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "la-leap-day.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-pending-create-disabled.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-create-failed-input-preserved.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "320-labels-keyboard-manual-date.png",
+      "width": 320,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "fontStatus": "loaded"
+    },
+    {
+      "file": "390-labels-keyboard-manual-date.png",
+      "width": 390,
+      "height": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "fontStatus": "loaded"
+    }
+  ],
+  "cleanupWarnings": [],
+  "feature": "New match default uses browser local calendar date",
+  "sourceHEAD": "90398f1822cddc665d3d18f26d7fc12cc46229c2",
+  "workingTree": "?? scripts/qa-match-date.mjs",
+  "buildId": "RhpQn8IX3tuCX7iF2qVF6",
+  "productBlobs": {
+    "src/app/match/new/page.tsx": "9fcfe8634ec72e3a395503987379f810581c5c97",
+    "src/lib/match-date.ts": "cf1558fbcc83d496c4ced79d23b10fffd8314151"
+  },
+  "runnerBlob": "0a12ad4a127f3055ca6de4b049d9d3e85caade14",
+  "clock": "Playwright fixed browser time before first navigation; per-context IANA timezone; server clock unchanged",
+  "expectedCaseCount": 18,
+  "filter": null,
+  "navigationTimeoutMs": 30000,
+  "assertionTimeoutMs": 10000,
+  "observedLimitations": [
+    {
+      "scope": "Preexisting new-match form controls unchanged by date fix; no full accessibility-compliance claim",
+      "width": 320,
+      "backLink": {
+        "label": "",
+        "width": 36,
+        "height": 36
+      },
+      "fields": [
+        {
+          "id": "match-field-0",
+          "labels": [
+            "상대팀 이름 *"
+          ],
+          "x": 85,
+          "right": 283,
+          "width": 198,
+          "height": 44,
+          "fontSize": "16px"
+        },
+        {
+          "id": "match-field-1",
+          "labels": [
+            "경기 날짜 *"
+          ],
+          "x": 85,
+          "right": 283,
+          "width": 198,
+          "height": 44,
+          "fontSize": "16px"
+        },
+        {
+          "id": "match-field-2",
+          "labels": [
+            "경기장"
+          ],
+          "x": 85,
+          "right": 283,
+          "width": 198,
+          "height": 44,
+          "fontSize": "16px"
+        }
+      ]
+    },
+    {
+      "scope": "Preexisting new-match form controls unchanged by date fix; no full accessibility-compliance claim",
+      "width": 390,
+      "backLink": {
+        "label": "",
+        "width": 36,
+        "height": 36
+      },
+      "fields": [
+        {
+          "id": "match-field-0",
+          "labels": [
+            "상대팀 이름 *"
+          ],
+          "x": 85,
+          "right": 353,
+          "width": 268,
+          "height": 44,
+          "fontSize": "16px"
+        },
+        {
+          "id": "match-field-1",
+          "labels": [
+            "경기 날짜 *"
+          ],
+          "x": 85,
+          "right": 353,
+          "width": 268,
+          "height": 44,
+          "fontSize": "16px"
+        },
+        {
+          "id": "match-field-2",
+          "labels": [
+            "경기장"
+          ],
+          "x": 85,
+          "right": 353,
+          "width": 268,
+          "height": 44,
+          "fontSize": "16px"
+        }
+      ]
+    }
+  ],
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "selectedCasesPassed": true,
+  "passed": true
+}

@@ -1,0 +1,50 @@
+{
+  "observedAt": "2026-11-03T01:22:36.749Z",
+  "mode": "acceptance",
+  "data": "Synthetic browser fixture; no production DB, real users or billing evidence",
+  "cases": [
+    {
+      "name": "SPA history Back during quarters response",
+      "status": "pass",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "limitation": "Already committed synthetic writes remain; navigation is not server rollback"
+    },
+    {
+      "name": "SPA history Back during matches response",
+      "status": "pass",
+      "writes": [
+        {
+          "table": "quarters",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "40000000-0000-4000-8000-000000000001"
+        },
+        {
+          "table": "matches",
+          "patch": {
+            "home_score": 3,
+            "away_score": 2
+          },
+          "rowId": "30000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "limitation": "Already committed synthetic writes remain; navigation is not server rollback"
+    }
+  ],
+  "pageErrors": [],
+  "unexpectedRequests": [],
+  "consoleErrors": [],
+  "cleanupWarnings": [],
+  "unexpectedConsoleErrors": []
+}

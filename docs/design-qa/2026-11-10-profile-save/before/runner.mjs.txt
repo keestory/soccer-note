@@ -1,0 +1,48 @@
+import assert from 'node:assert/strict'
+import { writeFile, readFile } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { browser, fixture, report as network, host } from '/workspace/soccer-note/scripts/qa-team-fixture.mjs'
+const report={observedAt:new Date().toISOString(),sourceHEAD:execFileSync('git',['rev-parse','HEAD'],{cwd:'/workspace/soccer-note',encoding:'utf8'}).trim(),buildId:(await readFile('/workspace/soccer-note/.next/BUILD_ID','utf8')).trim(),scope:'Actual profile production component; only synthetic in-memory auth/profile responses; external API writes intercepted, no live data',cases:[],blocked:[]}
+try {
+for(const mode of ['success','profile-failure','auth-failure']){
+ const f=await fixture({route:'/profile'});const p=f.page
+ const input=p.locator('input[type=text]');await input.waitFor()
+ let storedProfile='가상 코치',authName='가상 코치';const writes=[]
+ await f.context.route('**/*',async route=>{
+  const q=route.request(),u=new URL(q.url()),method=q.method()
+  const fulfill=(data,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(data),headers:{'access-control-allow-origin':'*'}})
+  if(u.hostname===host && u.pathname==='/auth/v1/user' && method==='PUT'){
+   writes.push('auth');if(mode==='auth-failure')return fulfill({message:'Synthetic auth rejected',code:'unexpected_failure'},500)
+   authName=q.postDataJSON().data.display_name
+   f.state.session.user.user_metadata.display_name=authName
+   return fulfill(f.state.session.user)
+  }
+  if(u.hostname===host && u.pathname==='/rest/v1/profiles'){
+   if(method==='POST'){
+    writes.push('profiles');if(mode==='profile-failure')return fulfill({message:'Synthetic profile rejected',code:'QA_PROFILE_FAIL'},500)
+    storedProfile=q.postDataJSON().display_name;return fulfill(null,201)
+   }
+   if(method==='GET'){
+    const row={id:f.state.session.user.id,display_name:storedProfile}
+    return fulfill(q.headers().accept?.includes('object+json')?row:[row])
+   }
+  }
+  if(!['GET','HEAD','OPTIONS'].includes(method)){report.blocked.push({method,path:u.pathname});return route.abort('blockedbyclient')}
+  return route.fallback()
+ })
+ const before=await input.inputValue();await input.fill('가상 변경 이름');await p.locator('form button[type=submit]').click()
+ const expectedToast=mode==='auth-failure'?'이름 변경에 실패했습니다':'이름이 변경되었습니다'
+ await p.getByText(expectedToast,{exact:true}).waitFor()
+ const shownAfter=await input.inputValue();const enabled=await p.locator('form button[type=submit]').isEnabled()
+ const back=p.locator('header a').first();const accessibility=await back.ariaSnapshot();const bounds=await back.boundingBox()
+ if(mode==='profile-failure')await p.screenshot({path:'/tmp/nov10-profile-partial-save.png'})
+ await p.reload({waitUntil:'networkidle'});await input.waitFor();const shownReload=await input.inputValue()
+ assert.equal(shownReload,mode==='success'?'가상 변경 이름':'가상 코치')
+ assert.equal(enabled,true)
+ report.cases.push({mode,before,authName,storedProfile,shownAfter,shownReload,toast:expectedToast,enabled,syntheticWrites:writes,backLink:{accessibility,width:bounds.width,height:bounds.height}})
+ await f.close()
+}
+}finally{
+await browser.close();report.completedAt=new Date().toISOString();report.pageErrors=network.pageErrors;report.consoleErrors=network.consoleErrors;report.unexpectedRequests=network.unexpectedRequests;report.cleanupWarnings=network.cleanupWarnings
+await writeFile('/tmp/nov10-profile-investigation.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2))
+}

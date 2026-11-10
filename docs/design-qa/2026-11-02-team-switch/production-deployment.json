@@ -1,0 +1,66 @@
+{
+  "observed_at": "2026-11-02T05:07:47Z",
+  "repository": "keestory/soccer-note",
+  "product_commit": "b3b96fd29f778ef5b44084cb96e2130c93a8a30c",
+  "project_id": "prj_8MtXlwcx0NzpWAZQjGUuFTL4HHAL",
+  "team_id": "team_jr2EoWExoCNDX3AFRs9fZxKh",
+  "free_plan_preflight": {
+    "plan": "hobby",
+    "plan_source": "get_git_deployment_context",
+    "checked_at": "2026-11-02T05:05:56Z",
+    "team_deployments_previous_24_hours": 17,
+    "deployment_list_has_next_page": false,
+    "documented_daily_deployment_limit": 100,
+    "limits_source": "https://vercel.com/docs/limits",
+    "plan_source_documentation": "https://vercel.com/docs/plans/hobby",
+    "monthly_remaining_usage": null,
+    "billing_charge_query": "404 costs_not_found; not evidence of a zero bill",
+    "plan_change_or_paid_option_used": false
+  },
+  "deployment": {
+    "id": "dpl_yxx1LCzPEhBeJep6sFd9R2KzgEYJ",
+    "target": "production",
+    "ready_state": "READY",
+    "ready_at": "2026-11-02T05:07:16.129Z",
+    "alias_error": null,
+    "url": "https://soccer-note-2xifea14a-keestory91-6294s-projects.vercel.app",
+    "public_alias": "https://soccer-note-hazel.vercel.app",
+    "alias_points_to_this_deployment": true,
+    "hosting_build": "Build Completed in /vercel/output [20s]; Deployment completed"
+  },
+  "runtime_log_check": {
+    "since": "2026-11-02T05:06:49Z",
+    "levels": ["error", "fatal"],
+    "group_by": "level",
+    "groups_returned": 0,
+    "interpretation": "No matching groups in a short post-deployment window; traffic and error rate unknown"
+  },
+  "public_browser_verification": {
+    "status": "blocked",
+    "reason": "Cloud proxy CONNECT tunnel failed with HTTP 403 from envoy",
+    "next_owner": "Parent thread separate cloud browser; never Mac"
+  },
+  "rollback": {
+    "previous_deployment_id": "dpl_HkBWcMRogdKBvCHYiZ9AkirvHLXC",
+    "previous_commit": "8ea82a495c0846bc36fccca2607eab88048911b1",
+    "previous_deployment_ready_verified_before_release": true,
+    "candidate_query_status": "denied",
+    "candidate_query_error": "403 forbidden: You don't have permission to list the resource.",
+    "denied_resource": "deploymentRollback",
+    "query_retried_or_bypassed": false,
+    "execution_permission_verified": false,
+    "rollback_executed": false
+  },
+  "verification_before_release": {
+    "unit_functional_tests_passed": 138,
+    "browser_team_groups_passed": 12,
+    "browser_quarter_groups_passed": 8,
+    "typecheck_passed": true,
+    "lint_errors": 0,
+    "lint_warnings": 49,
+    "local_build": "webpack production with test-only local font mirror",
+    "real_database_writes_or_rls_verified": false,
+    "real_oauth_or_physical_devices_verified": false,
+    "business_metrics": null
+  }
+}

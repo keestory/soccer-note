@@ -1,0 +1,38 @@
+{
+  "observedAt": "2026-11-10T01:25:55.732Z",
+  "scope": "Actual installed Supabase SDK with all HTTP mocked in memory, no real credentials or API calls",
+  "beforeOldReply": "B",
+  "afterOldReply": "A",
+  "events": [
+    {
+      "event": "INITIAL_SESSION",
+      "user": null
+    },
+    {
+      "event": "SIGNED_IN",
+      "user": "A"
+    },
+    {
+      "event": "SIGNED_IN",
+      "user": "B"
+    },
+    {
+      "event": "USER_UPDATED",
+      "user": "A"
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "PUT",
+      "path": "/auth/v1/user"
+    },
+    {
+      "method": "GET",
+      "path": "/auth/v1/user"
+    }
+  ]
+}

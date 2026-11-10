@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { isUpcomingMatchDate, matchCalendarDay } from '@/lib/match-date'
 import { useRouter } from 'next/navigation'
@@ -11,18 +11,61 @@ import { PlayersListSkeleton } from '@/components/Skeleton'
 import { useAppData } from '@/hooks/useAppData'
 import { useI18n } from '@/lib/i18n/context'
 import { calculateMVP, formatDate } from '@/lib/utils'
+import { getMatchLoadCopy } from '@/lib/match-load-copy'
+import { getTeamSelectionCopy } from '@/lib/team-selection-copy'
 
 export default function MatchesPage() {
   const router = useRouter()
   const data = useAppData()
-  const { t } = useI18n()
+  // A failed switch to another team does not invalidate the confirmed team's records.
+  const loadError = data.appLoadError || (!!data.teamLoadError && (!data.selectedTeamId || data.teamLoadError === data.selectedTeamId))
 
   useEffect(() => {
     if (data.isLoaded && !data.userId) router.push('/login')
-    if (data.isLoaded && !data.selectedTeam) router.push('/dashboard')
-  }, [data.isLoaded, data.userId, data.selectedTeam, router])
+    if (data.isLoaded && !data.selectedTeam && !loadError) router.push('/dashboard')
+  }, [data.isLoaded, data.userId, data.selectedTeam, loadError, router])
 
-  if (data.loading) return <PlayersListSkeleton />
+  return <MatchesContent key={`${data.userId}:${data.selectedTeamId}`} data={data} loadError={loadError} />
+}
+
+function MatchesContent({ data, loadError }: { data: ReturnType<typeof useAppData>; loadError: boolean }) {
+  const { t, locale } = useI18n()
+  const [retrying, setRetrying] = useState(false)
+  const retryRequest = useRef<object | null>(null)
+  const retryButton = useRef<HTMLButtonElement>(null)
+  const heading = useRef<HTMLHeadingElement>(null)
+  const restoreRetryFocus = useRef(false)
+  const copy = getMatchLoadCopy(locale)
+
+  useEffect(() => () => { retryRequest.current = null }, [])
+  useEffect(() => {
+    if (!retrying && restoreRetryFocus.current) {
+      restoreRetryFocus.current = false
+      if (!loadError) heading.current?.focus()
+    }
+  }, [retrying, loadError])
+
+  const retry = async () => {
+    if (retryRequest.current) return
+    const request = {}
+    retryRequest.current = request
+    setRetrying(true)
+    try {
+      await data.refresh()
+    } catch {
+      // A refresh may join an existing load's rejecting promise. Its owner
+      // records the store error; keep this retry control usable as well.
+    } finally {
+      // An old request must not move focus or update a new account/team screen.
+      if (retryRequest.current === request) {
+        restoreRetryFocus.current = document.activeElement === retryButton.current
+        retryRequest.current = null
+        setRetrying(false)
+      }
+    }
+  }
+
+  if (data.loading && !retrying) return <PlayersListSkeleton />
   const canEdit = data.selectedTeam?.role === 'coach' || !!data.selectedTeam?.membership?.can_edit_matches
   const upcoming = data.matches.filter(match => isUpcomingMatchDate(match.match_date)).sort((a, b) => +new Date(a.match_date) - +new Date(b.match_date))
   const completed = data.matches.filter(match => !isUpcomingMatchDate(match.match_date)).sort((a, b) => +new Date(b.match_date) - +new Date(a.match_date))
@@ -32,8 +75,14 @@ export default function MatchesPage() {
 
   return (
     <div className="light app-shell pb-nav">
-      <header className="safe-top sticky top-0 z-10 bg-[color:var(--bg)]/92 backdrop-blur-xl"><div className="mx-auto flex max-w-md items-end justify-between gap-3 px-5 pb-4 pt-4"><div className="min-w-0"><p className="section-label">{t.teamRecord}</p><h1 className="mt-1 sn-page-title">{t.allMatches}</h1><p className="mt-1 text-xs font-medium leading-[18px] text-[color:var(--text3)] [overflow-wrap:anywhere]">{data.selectedTeam?.name}</p></div>{canEdit && <Link href="/match/new" aria-label={t.newMatchRecord} className="focus-ring flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[color:var(--brand)] text-[color:var(--on-brand)]"><Plus aria-hidden="true" size={20} strokeWidth={1.7} /></Link>}</div></header>
-      <PullToRefresh onRefresh={data.refresh}><main className="mx-auto flex max-w-md flex-col gap-6 px-5 pb-8 pt-1">
+      <header className="safe-top sticky top-0 z-10 bg-[color:var(--bg)]/92 backdrop-blur-xl"><div className="mx-auto flex max-w-md items-end justify-between gap-3 px-5 pb-4 pt-4"><div className="min-w-0"><p className="section-label">{t.teamRecord}</p><h1 ref={heading} tabIndex={-1} className="mt-1 sn-page-title focus-ring">{t.allMatches}</h1><p className="mt-1 text-xs font-medium leading-[18px] text-[color:var(--text3)] [overflow-wrap:anywhere]">{data.selectedTeam?.name}</p></div>{canEdit && <Link href="/match/new" aria-label={t.newMatchRecord} className="focus-ring flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[color:var(--brand)] text-[color:var(--on-brand)]"><Plus aria-hidden="true" size={20} strokeWidth={1.7} /></Link>}</div></header>
+      <PullToRefresh onRefresh={retry}><main className="mx-auto flex max-w-md flex-col gap-6 px-5 pb-8 pt-1">
+        {(loadError || retrying) && <section data-testid="matches-load-status" className="surface space-y-4 p-5 [overflow-wrap:anywhere]" aria-busy={retrying}>
+          <p role={retrying ? 'status' : 'alert'} className="text-sm leading-6 text-[color:var(--text)]">{retrying ? t.loading : copy.failed}</p>
+          {data.selectedTeam && <p className="text-sm leading-6 text-[color:var(--text2)]">{copy.cached}</p>}
+          <button ref={retryButton} type="button" onClick={() => void retry()} aria-disabled={retrying} className="sn-button focus-ring w-full aria-disabled:cursor-wait aria-disabled:opacity-50" data-primary="true">{retrying ? t.loading : getTeamSelectionCopy(locale).retry}</button>
+        </section>}
+        {data.selectedTeam && <>
         <section aria-label={t.teamRecord} className="surface content-enter grid grid-cols-4 divide-x divide-[color:var(--line)] overflow-hidden">
           {[
             { label: t.totalGames, value: completed.length },
@@ -44,6 +93,7 @@ export default function MatchesPage() {
         </section>
         {upcoming.length > 0 && <MatchSection title={t.upcomingMatches} matches={upcoming} />}
         <MatchSection title={t.completedMatches} matches={completed} empty={t.noMatches} resultLabels={{ win: t.win, draw: t.draw, loss: t.loss }} />
+        </>}
       </main></PullToRefresh>
       <BottomNav />
     </div>

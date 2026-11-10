@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {writeFile,readFile} from 'node:fs/promises';
+import {execFileSync} from 'node:child_process';
+import {browser,fixture,host,authKey,makeSession,otherUid,until,report as network} from '/workspace/soccer-note/scripts/qa-team-fixture.mjs';
+const report={expectedCases:3,buildId:(await readFile('/workspace/soccer-note/.next/BUILD_ID','utf8')).trim(),source:execFileSync('git',['rev-parse','HEAD'],{cwd:'/workspace/soccer-note',encoding:'utf8'}).trim(),observedAt:new Date().toISOString(),scope:'Synthetic local profile, open/switch/cancel only. No destructive submission; all non-GET requests blocked.',cases:[],blockedWrites:[]};
+try {for(const sheet of ['delete','logout','language']){
+ const f=await fixture({route:'/profile'}),p=f.page;await p.locator('#profile-display-name').waitFor();
+ await f.context.route('**/*',async route=>{const r=route.request(),u=new URL(r.url());if(!['GET','HEAD','OPTIONS'].includes(r.method())){report.blockedWrites.push({method:r.method(),path:u.pathname});return route.abort('blockedbyclient')};if(u.hostname===host&&u.pathname==='/rest/v1/profiles'){const data={id:f.state.session.user.id,display_name:f.state.session.user.id===otherUid?'Synthetic B':'Synthetic A'};return route.fulfill({status:200,contentType:'application/json',body:JSON.stringify(r.headers().accept?.includes('object+json')?data:[data])})}return route.fallback()});
+ if(sheet==='delete')await p.getByRole('button',{name:'계정 삭제',exact:true}).click();else if(sheet==='logout')await p.getByRole('button',{name:'로그아웃',exact:true}).click();else await p.locator('button[aria-haspopup=dialog]').click();
+ const marker=sheet==='delete'?p.getByRole('heading',{name:'정말로 계정을 삭제하시겠습니까?',exact:true}):p.getByRole('dialog');await marker.waitFor();
+ const next=makeSession(otherUid);f.state.session=next;const encoded='base64-'+Buffer.from(JSON.stringify(next)).toString('base64url');await p.evaluate(({authKey,next,encoded})=>{localStorage.setItem(authKey,encoded);const ch=new BroadcastChannel(authKey);ch.postMessage({event:'SIGNED_IN',session:next});setTimeout(()=>ch.close(),100)},{authKey,next,encoded});
+ await until(async()=>await p.locator('#profile-display-name').count()&&await p.locator('#profile-display-name').inputValue()==='Synthetic B','B profile loaded');
+ const visible=await marker.isVisible();report.cases.push({sheet,newProfileName:await p.locator('#profile-display-name').inputValue(),oldSheetStillVisible:visible});assert.equal(visible,false,`${sheet} from A must close before B is usable`);
+ await p.screenshot({path:`/tmp/nov10-profile-${sheet}-account-45bb1e6.png`});
+ if(visible){if(sheet==='delete')await p.getByRole('button',{name:'취소',exact:true}).click();else await p.keyboard.press('Escape')}
+ await f.close();
+}}
+finally{await browser.close();report.completedAt=new Date().toISOString();report.passed=report.cases.length===3&&report.cases.every(c=>!c.oldSheetStillVisible)&&!report.blockedWrites.length;report.pageErrors=network.pageErrors;report.unexpectedRequests=network.unexpectedRequests;await writeFile('/tmp/nov10-profile-sheet-account-45bb1e6.json',JSON.stringify(report,null,2));console.log(JSON.stringify(report,null,2))}

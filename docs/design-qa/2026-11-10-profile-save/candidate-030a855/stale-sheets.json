@@ -1,0 +1,26 @@
+{
+  "source": "030a855be8b2de7d1d2b32bbdd986a1274ea4bf1",
+  "observedAt": "2026-11-10T01:42:28.794Z",
+  "scope": "Synthetic local profile, open/switch/cancel only. No destructive submission; all non-GET requests blocked.",
+  "cases": [
+    {
+      "sheet": "delete",
+      "newProfileName": "Synthetic B",
+      "oldSheetStillVisible": true
+    },
+    {
+      "sheet": "logout",
+      "newProfileName": "Synthetic B",
+      "oldSheetStillVisible": true
+    },
+    {
+      "sheet": "language",
+      "newProfileName": "Synthetic B",
+      "oldSheetStillVisible": true
+    }
+  ],
+  "blockedWrites": [],
+  "completedAt": "2026-11-10T01:42:32.461Z",
+  "pageErrors": [],
+  "unexpectedRequests": []
+}

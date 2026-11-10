@@ -1,0 +1,114 @@
+{
+  "observedAt": "2026-11-09T02:04:08.809Z",
+  "sourceHEAD": "53ca120847dcb508729f1fff1c89bba054456de0",
+  "buildId": "l8KXIhFfxKFdi_yP40Wh4",
+  "componentBlobs": {
+    "src/app/profile/page.tsx": "f7c2273d36ef50179e25ced64f92bfb781729b56",
+    "src/components/design/Sheet.tsx": "c17bdc42fd3aca6d8646b2ae9afbec8cd0da5b80",
+    "src/components/ConfirmSheet.tsx": "bac21d76e4632cfd20f4fff9d0ef25bac3fcb0c3"
+  },
+  "scope": "Local Chromium production build, synthetic auth/reads; API writes and external requests blocked. No iOS/App Store/live auth claim.",
+  "cases": [
+    {
+      "name": "keyboard-modal-focus-tab-escape-3-rounds",
+      "status": "pass",
+      "observations": {
+        "repetitions": 3,
+        "modal": true,
+        "focusTrap": true,
+        "restored": true
+      }
+    },
+    {
+      "name": "pointer-outside-cancel-3-rounds",
+      "status": "pass"
+    },
+    {
+      "name": "explicit-close-3-rounds",
+      "status": "pass"
+    },
+    {
+      "name": "language-ko-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-en_US-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-en_GB-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-ja-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-fr-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-de-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-it-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "language-es-select-reopen-reload",
+      "status": "pass"
+    },
+    {
+      "name": "rapid-repeat-choice-and-cancel",
+      "status": "fail",
+      "error": "locator.waitFor: Timeout 10000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('dialog') to be visible\u001b[22m\n"
+    },
+    {
+      "name": "short-mobile-320-scroll-and-focus",
+      "status": "pass"
+    },
+    {
+      "name": "short-mobile-390-scroll-and-focus",
+      "status": "pass"
+    },
+    {
+      "name": "shared-confirm-sheet-unchanged-3-rounds",
+      "status": "pass",
+      "observations": {
+        "confirmAction": "never activated"
+      }
+    },
+    {
+      "name": "browser-back-unmount-and-return",
+      "status": "pass"
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "language-de-390.png",
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390
+    },
+    {
+      "file": "language-short-320.png",
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320
+    },
+    {
+      "file": "language-short-390.png",
+      "width": 390,
+      "height": 568,
+      "scrollWidth": 390
+    }
+  ],
+  "writesBlocked": [],
+  "completedAt": "2026-11-09T02:04:54.018Z",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "unexpectedRequests": [],
+  "cleanupWarnings": [],
+  "passed": false
+}

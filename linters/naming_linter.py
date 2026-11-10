@@ -36,7 +36,7 @@ def check_file_names(project_root: Path) -> list[LintViolation]:
         if "__pycache__" in str(py_file) or "venv" in str(py_file) or ".vercel" in str(py_file):
             continue
 
-        if not RULES["file"].match(py_file.name) and py_file.name != "__init__.py":
+        if not RULES["file"].match(py_file.name) and py_file.name not in {"__init__.py", "__main__.py"}:
             rel_path = str(py_file.relative_to(project_root))
             violations.append(LintViolation(
                 file=rel_path,

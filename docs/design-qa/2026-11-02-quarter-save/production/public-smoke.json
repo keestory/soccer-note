@@ -1,0 +1,40 @@
+{
+  "observedAt": "2026-11-02T03:23:59.604Z",
+  "base": "https://soccer-note-hazel.vercel.app",
+  "commit": "8ea82a495c0846bc36fccca2607eab88048911b1",
+  "readOnly": true,
+  "routes": [
+    {
+      "path": "/",
+      "status": 200,
+      "title": "Football Note - 축구팀 경기 기록",
+      "headings": [
+        "우리 팀의 축구를\n기록하세요"
+      ],
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "title": "Football Note - 축구팀 경기 기록",
+      "headings": [
+        "다시,\n우리 팀으로"
+      ],
+      "innerWidth": 390,
+      "scrollWidth": 390
+    },
+    {
+      "path": "/privacy",
+      "status": 200,
+      "title": "개인정보 처리방침 - Football Note",
+      "headings": [
+        "개인정보 처리방침"
+      ],
+      "innerWidth": 390,
+      "scrollWidth": 390
+    }
+  ],
+  "pageErrors": [],
+  "passed": true
+}

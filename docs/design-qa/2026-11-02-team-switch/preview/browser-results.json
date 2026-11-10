@@ -1,0 +1,103 @@
+{
+  "observedAt": "2026-11-02T04:29:53.154Z",
+  "app": "http://127.0.0.1:3126",
+  "scope": "Development screenshots only; not final acceptance",
+  "data": "Synthetic in-memory fixtures; every API and auth request intercepted; no production DB access",
+  "cases": [],
+  "pageErrors": [],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedRequests": [],
+  "screenshots": [
+    {
+      "file": "home-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko"
+    },
+    {
+      "file": "picker-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko"
+    },
+    {
+      "file": "pending-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko"
+    },
+    {
+      "file": "selected-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko"
+    },
+    {
+      "file": "failed-390.png",
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 390,
+      "lang": "ko"
+    },
+    {
+      "file": "home-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de"
+    },
+    {
+      "file": "picker-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de"
+    },
+    {
+      "file": "pending-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de"
+    },
+    {
+      "file": "selected-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de"
+    },
+    {
+      "file": "failed-320.png",
+      "innerWidth": 320,
+      "innerHeight": 844,
+      "dpr": 1,
+      "scrollWidth": 320,
+      "lang": "de"
+    }
+  ],
+  "cleanupWarnings": [],
+  "expectedInjectedNetworkErrors": [
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)",
+    "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "unexpectedConsoleErrors": [],
+  "passed": null,
+  "captureCompleted": true
+}
