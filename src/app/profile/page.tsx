@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { createClient, getSessionUser } from '@/lib/supabase'
+import { createClient } from '@/lib/supabase'
 import { ArrowLeft, LogOut, Trash2, ChevronRight, Globe } from 'lucide-react'
 import { useI18n } from '@/lib/i18n/context'
 import { LOCALES } from '@/lib/i18n'
@@ -12,13 +12,25 @@ import { Skeleton } from '@/components/Skeleton'
 import { BottomNav } from '@/components/BottomNav'
 import { ConfirmSheet } from '@/components/ConfirmSheet'
 import { Sheet } from '@/components/design/Sheet'
+import { createNameGateway, createNameJournal, nameAttemptComplete, nameAttemptUnknown, newNameAttempt, runNameAttempt, type NameAttempt, type NameOutcome } from '@/lib/profile-name-save'
+import { getProfileNameCopy } from '@/lib/profile-name-copy'
 
 export default function ProfilePage() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [checking, setChecking] = useState(false)
   const [displayName, setDisplayName] = useState('')
   const [email, setEmail] = useState('')
+  const [attempt, setAttempt] = useState<NameAttempt | null>(null)
+  const [outcome, setOutcome] = useState<NameOutcome | null>(null)
+  const [loadFailed, setLoadFailed] = useState(false)
+  const [reload, setReload] = useState(0)
+  const attemptRef = useRef<NameAttempt | null>(null)
+  const ownerRef = useRef<string | null>(null)
+  const generationRef = useRef(0)
+  const busyRef = useRef(false)
+  const controllerRef = useRef<AbortController | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
   const [showLanguageSheet, setShowLanguageSheet] = useState(false)
@@ -26,31 +38,156 @@ export default function ProfilePage() {
   const currentLocale = LOCALES.find(l => l.code === locale)
   const supabase = createClient()
 
-  useEffect(() => { loadProfile() }, [])
+  const nameCopy = getProfileNameCopy(locale)
 
-  const loadProfile = async () => {
-    const user = await getSessionUser(supabase)
-    if (!user) { router.push('/login'); return }
-    setEmail(user.email || '')
-    const { data: profile } = await supabase.from('profiles').select('display_name').eq('id', user.id).single()
-    if (profile?.display_name) setDisplayName(profile.display_name)
-    else if (user.user_metadata?.display_name) setDisplayName(user.user_metadata.display_name)
-    setLoading(false)
-  }
+  useEffect(() => {
+    const generation = ++generationRef.current
+    let active = true
+    const loadController = new AbortController()
+    const gateway = createNameGateway(supabase, loadController.signal)
+    let knowsAccount = false
+    let observedOwner: string | null | undefined
+    let reloadTimer: ReturnType<typeof setTimeout> | undefined
+    const current = () => active && generationRef.current === generation
+    const invalidate = () => { ++generationRef.current }
+    setLoading(true)
+    setLoadFailed(false)
+    setAttempt(null)
+    attemptRef.current = null
+    setOutcome(null)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      observedOwner = session?.user.id ?? null
+      if (!current() || !knowsAccount || observedOwner === ownerRef.current) return
+      invalidate()
+      controllerRef.current?.abort()
+      loadController.abort()
+      ownerRef.current = null
+      attemptRef.current = null
+      busyRef.current = false
+      setSaving(false)
+      setChecking(false)
+      setAttempt(null)
+      setOutcome(null)
+      setDisplayName('')
+      setEmail('')
+      setLoading(true)
+      // Never await a Supabase method inside its auth callback.
+      reloadTimer = setTimeout(() => setReload(value => value + 1), 0)
+    })
+    void (async () => {
+      try {
+        const user = await gateway.account()
+        if (!current()) return
+        if (observedOwner !== undefined && observedOwner !== (user?.id ?? null)) {
+          setReload(value => value + 1)
+          return
+        }
+        ownerRef.current = user?.id ?? null
+        knowsAccount = true
+        if (!user) { router.push('/login'); return }
+        const profileName = await gateway.readProfile(user)
+        if (!current()) return
+        // Missing is distinct from a failed read. Never fall back to stale SDK metadata.
+        const name = profileName ?? await gateway.readAuth(user)
+        if (!current()) return
+        const confirmedUser = await gateway.account()
+        if (!current()) return
+        if (confirmedUser?.id !== user.id || (observedOwner !== undefined && observedOwner !== user.id)) {
+          setReload(value => value + 1)
+          return
+        }
+        setEmail(user.email || '')
+        let pending: NameAttempt | null = null
+        let journalBlocked = false
+        try {
+          const journal = createNameJournal(sessionStorage)
+          pending = journal.read(user.id)
+          if (pending && nameAttemptComplete(pending)) { journal.clear(user.id); pending = null }
+        } catch { journalBlocked = true }
+        attemptRef.current = pending
+        setAttempt(pending)
+        if (journalBlocked) setOutcome('storage-blocked')
+        else if (pending) setOutcome('incomplete')
+        setDisplayName(pending?.name ?? name ?? '')
+        setLoading(false)
+      } catch {
+        if (current()) { setLoadFailed(true); setLoading(false) }
+      }
+    })()
+    return () => {
+      active = false
+      invalidate()
+      subscription.unsubscribe()
+      clearTimeout(reloadTimer)
+      loadController.abort()
+      controllerRef.current?.abort()
+      busyRef.current = false
+    }
+  }, [supabase, router, reload])
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!displayName.trim()) { toast.error(t.nameRequired); return }
+  const runSave = async (action: 'save' | 'retry' | 'check') => {
+    if (busyRef.current || !ownerRef.current) return
+    const name = displayName.trim()
+    if (action === 'save' && !name) { toast.error(t.nameRequired); return }
+    if (action === 'save' && attemptRef.current && !nameAttemptComplete(attemptRef.current)) return
+    if (action === 'save' && attemptRef.current && nameAttemptComplete(attemptRef.current) && attemptRef.current.name === name) return
+    const owner = ownerRef.current
+    const generation = generationRef.current
+    const current = () => generationRef.current === generation && ownerRef.current === owner
+    busyRef.current = true
     setSaving(true)
-    const user = await getSessionUser(supabase)
-    if (!user) { router.push('/login'); return }
-    const trimmedName = displayName.trim()
-    const { error } = await supabase.auth.updateUser({ data: { display_name: trimmedName } })
-    if (error) { toast.error(t.nameChangeFailed); setSaving(false); return }
-    await supabase.from('profiles').upsert({ id: user.id, display_name: trimmedName, email: user.email || '', updated_at: new Date().toISOString() })
-    toast.success(t.nameChangeSuccess)
-    setSaving(false)
+    setChecking(action === 'check')
+    const controller = new AbortController()
+    controllerRef.current = controller
+    try {
+      const journal = createNameJournal(sessionStorage)
+      // A previous screen's unresolved request cannot be discarded by a new form.
+      let pending = journal.read(owner)
+      if (pending && nameAttemptComplete(pending)) {
+        // A previous successful save may have been unable to clear its marker.
+        // Never substitute that old name for the user's new save request.
+        journal.clear(owner)
+        pending = null
+      }
+      const next = action === 'save' ? (pending ?? newNameAttempt(owner, name)) : attemptRef.current
+      if (!next) return
+      attemptRef.current = next
+      setAttempt(next)
+      if (action === 'save' && pending && !nameAttemptComplete(pending)) {
+        setOutcome('incomplete')
+        return
+      }
+      const result = await runNameAttempt(next, action, createNameGateway(supabase, controller.signal), journal, current, value => {
+        attemptRef.current = value
+        setAttempt(value)
+      })
+      if (!current()) return
+      attemptRef.current = result.attempt
+      setAttempt(result.attempt)
+      setOutcome(result.outcome)
+    } catch {
+      if (current()) setOutcome('storage-blocked')
+    } finally {
+      if (current()) {
+        busyRef.current = false
+        setSaving(false)
+        setChecking(false)
+        controllerRef.current = null
+      }
+    }
   }
+
+  const handleSave = (e: React.FormEvent) => {
+    e.preventDefault()
+    void runSave('save')
+  }
+  const unresolved = attempt !== null && !nameAttemptComplete(attempt)
+  const statusText = saving ? (checking ? nameCopy.checking : nameCopy.saving)
+    : outcome === 'storage-blocked' ? nameCopy.storage
+    : outcome === 'unverified' ? nameCopy.unverified
+    : attempt && nameAttemptComplete(attempt) ? nameCopy.saved
+    : attempt && nameAttemptUnknown(attempt) ? nameCopy.unknown : nameCopy.incomplete
+  const stageText = (stage: NameAttempt['auth']) => stage === 'unknown' ? nameCopy.uncertain : nameCopy[stage]
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -61,6 +198,13 @@ export default function ProfilePage() {
 
   const cardStyle = { background: 'var(--card2)', border: '1px solid var(--line)', borderRadius: 16 }
   const inputStyle = { background: 'var(--card2)', border: '1px solid var(--line)', color: 'var(--text)', borderRadius: 12 }
+
+  if (loadFailed) {
+    return <main className="min-h-screen safe-top p-6">
+      <p role="alert">{nameCopy.loadFailed}</p>
+      <button type="button" className="focus-ring mt-4 min-h-12 px-4" onClick={() => setReload(value => value + 1)}>{nameCopy.reload}</button>
+    </main>
+  }
 
   if (loading) {
     return (
@@ -110,9 +254,11 @@ export default function ProfilePage() {
         <form onSubmit={handleSave} style={cardStyle} className="overflow-hidden">
           <div className="px-5 pt-5 pb-4 space-y-4">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.nameLabel}</label>
+              <label htmlFor="profile-display-name" className="block text-[11px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'var(--muted2)' }}>{t.nameLabel}</label>
               <input
+                id="profile-display-name"
                 type="text"
+                aria-describedby={attempt || outcome === 'storage-blocked' ? 'profile-name-status' : undefined}
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
                 className="w-full px-4 py-3.5 outline-none transition text-[15px]"
@@ -132,13 +278,28 @@ export default function ProfilePage() {
             </div>
           </div>
           <div className="px-5 pb-5">
+            {(attempt || outcome === 'storage-blocked') && (
+              <div id="profile-name-status" role="status" aria-live="polite" aria-atomic="true" className="mb-4 space-y-2 text-sm break-words" style={{ color: 'var(--text)' }}>
+                {attempt && <p className="font-bold">{nameCopy.target.replace('{name}', attempt.name)}</p>}
+                <p>{statusText}</p>
+                {attempt && <ul className="space-y-1">
+                  <li>{nameCopy.auth}: {stageText(attempt.auth)}</li>
+                  <li>{nameCopy.profile}: {stageText(attempt.profile)}</li>
+                </ul>}
+                {attempt && displayName.trim() !== attempt.name && <p>{nameCopy.different}</p>}
+              </div>
+            )}
+            {attempt && (unresolved || outcome === 'storage-blocked' || outcome === 'unverified') && <div className="mb-3 flex flex-col gap-2">
+              <button id="profile-name-check" type="button" disabled={saving} className="focus-ring min-h-12 rounded-xl px-4 py-3 font-bold disabled:opacity-50" style={{ background: 'var(--chip)', color: 'var(--text)' }} onClick={() => void runSave('check')}>{nameCopy.check}</button>
+              {unresolved && !nameAttemptUnknown(attempt) && <button id="profile-name-retry" type="button" disabled={saving} className="focus-ring min-h-12 rounded-xl px-4 py-3 font-bold disabled:opacity-50" style={{ background: 'var(--navy)', color: 'var(--accent)' }} onClick={() => void runSave('retry')}>{nameCopy.retry}</button>}
+            </div>}
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || unresolved}
               className="w-full py-3.5 rounded-xl font-bold text-[15px] disabled:opacity-50 transition active:scale-[0.98]"
               style={{ background: 'var(--navy)', color: 'var(--accent)' }}
             >
-              {saving ? t.saving : t.save}
+              {saving ? (checking ? nameCopy.checking : t.saving) : t.save}
             </button>
           </div>
         </form>
