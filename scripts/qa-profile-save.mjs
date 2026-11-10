@@ -9,7 +9,8 @@ assert.equal(base, 'http://127.0.0.1:3128', 'Only the existing local synthetic s
 const output = resolve(process.env.SOCCER_PROFILE_QA_OUTPUT || 'docs/design-qa/2026-11-10-profile-save/after')
 await mkdir(output, { recursive: true })
 const git = (...args) => execFileSync('git', args, { encoding: 'utf8' }).trim()
-const result = { observedAt: new Date().toISOString(), sourceHEAD: git('rev-parse', 'HEAD'), buildId: (await readFile('.next/BUILD_ID', 'utf8')).trim(), componentBlobs: Object.fromEntries(['src/app/profile/page.tsx', 'src/lib/profile-name-save.ts'].map(p => [p, git('hash-object', p)])), scope: 'Actual local production component; synthetic auth/profile data, all external calls intercepted. No live user/DB writes, physical iOS, screen reader, or rollback execution.', intake: { discoverability: 'not-applicable: authenticated local QA only', store_compliance: 'not-applicable: no binary/permission/submission change or claim', competitive_benchmark: 'not-applicable: reproduced local correctness repair' }, cases: [], screenshots: [], blockedWrites: [], routeErrors: [] }
+const expectedCases = 33
+const result = { expectedCases, observedAt: new Date().toISOString(), sourceHEAD: git('rev-parse', 'HEAD'), buildId: (await readFile('.next/BUILD_ID', 'utf8')).trim(), componentBlobs: Object.fromEntries(['src/app/profile/page.tsx', 'src/lib/profile-name-save.ts', 'src/lib/profile-name-copy.ts'].map(p => [p, git('hash-object', p)])), scope: 'Actual local production component; synthetic auth/profile data, all external calls intercepted. No live user/DB writes, physical iOS, screen reader, or rollback execution.', intake: { discoverability: 'not-applicable: authenticated local QA only', store_compliance: 'not-applicable: no binary/permission/submission change or claim', competitive_benchmark: 'not-applicable: reproduced local correctness repair' }, cases: [], screenshots: [], blockedWrites: [], routeErrors: [] }
 const ORIGINAL = '가상 코치', NAME = '가상 변경 이름', SECOND = '가상 새 입력', OTHER = '가상 다른 계정'
 const journalPrefix = 'soccernote-profile-name-v1:'
 const field = p => p.locator('form input[type=text]')
@@ -135,7 +136,7 @@ try {
     assert.deepEqual(s.accounts.get(uid),{auth:NAME,profile:NAME});return {refreshName:await field(p).inputValue()}
   })
   await run('completed-name-repeat-no-write-new-name-still-saves',async({page:p},s)=>{
-    await submit(p);await until(()=>s.accounts.get(uid).profile===NAME,'first save');await settled(p);assert(await save(p).isDisabled(),'Completed same-name save should remain a no-op');await p.locator('form').evaluate(form=>form.requestSubmit());await noMoreWrites(s,{auth:1,profile:1});await submit(p,SECOND);await until(()=>s.accounts.get(uid).profile===SECOND,'different name save');await settled(p);assert.deepEqual(counts(s),{auth:2,profile:2})
+    await submit(p);await until(()=>s.accounts.get(uid).profile===NAME,'first save');await settled(p);if(await save(p).isEnabled())await save(p).click();await p.locator('form').evaluate(form=>form.requestSubmit());await noMoreWrites(s,{auth:1,profile:1});await submit(p,SECOND);await until(()=>s.accounts.get(uid).profile===SECOND,'different name save');await settled(p);assert.deepEqual(counts(s),{auth:2,profile:2})
   })
   await run('empty-name-rejected-before-network', async ({page:p},s) => {await submit(p,'   ');await noMoreWrites(s,{auth:0,profile:0});assert.equal(await attempt(p),null)})
   await run('profile-403-retry-only-unfinished-profile', async ({page:p},s) => {
@@ -183,11 +184,11 @@ try {
   })
   for (const stage of ['auth','profile']) for (const change of ['account','logout']) await run(`${change}-during-${stage}-write-isolates-old-response`,async(f,s)=>{
     const p=f.page,g=gate(s);s.modes[stage].push({gate:g,commit:true});await submit(p);await until(()=>g.entered,'held write entered')
-    const next=change==='account'?makeSession(otherUid):null;if(next)next.user.user_metadata.display_name=OTHER
+    const next=change==='account'?makeSession(otherUid):null;if(next){next.user.user_metadata.display_name=OTHER;next.user.email='other-fixture@example.invalid'}
     await broadcastAuth(p,f.state,next);await until(async()=>await authIdentity(p)===(next?.user.id||null),'new session observed');await pause(100);g.release();await pause(180)
     assert.equal(await authIdentity(p),next?.user.id||null,'Old response must not restore A session');assert.equal(stageCount(s,'auth',otherUid),0);assert.equal(stageCount(s,'profile',otherUid),0)
     if(stage==='auth')assert.equal(stageCount(s,'profile'),0,'Do not start old account next stage')
-    if(change==='account'){await inputReady(p);await until(async()=>await field(p).inputValue()===OTHER,'new account profile');assert.equal(await field(p).inputValue(),OTHER);assert(!await p.locator('main').innerText().then(t=>t.includes(NAME)))}else await p.waitForURL('**/login')
+    if(change==='account'){await inputReady(p);await until(async()=>await field(p).inputValue()===OTHER,'new account profile');assert.equal(await field(p).inputValue(),OTHER);assert.equal(await p.locator('form input[type=email]').inputValue(),'other-fixture@example.invalid');assert(!await p.locator('main').innerText().then(t=>t.includes(NAME)))}else await p.waitForURL('**/login')
     return {currentAccount:await authIdentity(p),oldAttemptRetained:!!await attempt(p)}
   })
   await run('leave-during-auth-write-no-next-stage-after-remount',async({page:p},s)=>{
@@ -205,9 +206,9 @@ try {
     await submit(p);await noMoreWrites(s,{auth:0,profile:0});assert.equal(await field(p).inputValue(),NAME);await status(p).waitFor();await p.evaluate(()=>window.__restoreJournal());if(await retry(p).isVisible().catch(()=>false))await retry(p).click();else await save(p).click();await until(()=>s.accounts.get(uid).profile===NAME,'save after storage recovery');await settled(p);assert.deepEqual(counts(s),{auth:1,profile:1})
   })
   await run('account-switch-during-initial-profile-load-discards-old-read',async(f,s)=>{
-    const p=f.page;await p.locator('header a').click();await p.waitForURL('**/dashboard');const g=gate(s);s.readModes.profile.push({gate:g})
-    await p.goto(`${base}/profile`,{waitUntil:'domcontentloaded'});await until(()=>g.entered,'initial A read held')
-    const next=makeSession(otherUid);next.user.user_metadata.display_name=OTHER;await broadcastAuth(p,f.state,next);await until(async()=>await authIdentity(p)===otherUid,'B session');g.release();await inputReady(p);await until(async()=>await field(p).inputValue()===OTHER,'B profile after A read');assert.equal(await field(p).inputValue(),OTHER);assert.equal(await authIdentity(p),otherUid);assert(!await p.locator('main').innerText().then(t=>t.includes(ORIGINAL)));await noMoreWrites(s,{auth:0,profile:0})
+    const p=f.page,g=gate(s);s.readModes.profile.push({gate:g})
+    await p.reload({waitUntil:'domcontentloaded'});await until(()=>g.entered,'initial A read held')
+    const next=makeSession(otherUid);next.user.user_metadata.display_name=OTHER;next.user.email='other-fixture@example.invalid';await broadcastAuth(p,f.state,next);await until(async()=>await authIdentity(p)===otherUid,'B session');g.release();await inputReady(p);await until(async()=>await field(p).inputValue()===OTHER,'B profile after A read');assert.equal(await field(p).inputValue(),OTHER);assert.equal(await authIdentity(p),otherUid);assert.equal(await p.locator('form input[type=email]').inputValue(),'other-fixture@example.invalid');assert(!await p.locator('main').innerText().then(t=>t.includes(ORIGINAL)));await noMoreWrites(s,{auth:0,profile:0})
   })
   for(const locale of ['ko','en_US','de'])await run(`status-${locale}-long-name-320`,async({page:p},s)=>{
     const longName=NAME+'L'.repeat(70);s.modes.profile.push({status:403});await submit(p,longName);await retry(p).waitFor();await until(async()=>await retry(p).isEnabled(),'retry enabled');assert(await status(p).innerText());assert((await status(p).innerText()).includes(longName));for(const b of [check(p),retry(p)]){assert(await b.innerText());await b.focus();assert(await b.evaluate(e=>e===document.activeElement));const rect=await b.boundingBox();assert(rect.width>=44&&rect.height>=44)}assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));await capture(p,`status-${locale}-long-320`);await retry(p).press('Enter');await until(()=>s.accounts.get(uid).profile===longName,'localized keyboard retry');await settled(p);assert.deepEqual(counts(s),{auth:1,profile:2})
@@ -219,7 +220,7 @@ try {
 }finally{
   await browser.close();result.completedAt=new Date().toISOString();result.pageErrors=network.pageErrors;result.consoleErrors=network.consoleErrors;result.unexpectedRequests=network.unexpectedRequests;result.cleanupWarnings=network.cleanupWarnings
   result.expectedInjectedNetworkErrors=network.consoleErrors.filter(t=>/Failed to load resource:.*(403|500|ERR_CONNECTION_FAILED|ERR_ABORTED)/.test(t));result.unexpectedConsoleErrors=network.consoleErrors.filter(t=>!result.expectedInjectedNetworkErrors.includes(t))
-  result.passed=result.cases.length>0&&result.cases.every(c=>c.status==='pass')&&!result.pageErrors.length&&!result.unexpectedRequests.length&&!result.blockedWrites.length&&!result.routeErrors.length&&!result.unexpectedConsoleErrors.length&&!result.cleanupWarnings.length
+  result.passed=result.cases.length===expectedCases&&result.cases.every(c=>c.status==='pass')&&!result.pageErrors.length&&!result.unexpectedRequests.length&&!result.blockedWrites.length&&!result.routeErrors.length&&!result.unexpectedConsoleErrors.length&&!result.cleanupWarnings.length
   await writeFile(`${output}/browser-results.json`,JSON.stringify(result,null,2)+'\n');await copyFile(new URL(import.meta.url),`${output}/runner.mjs.txt`)
   console.log(JSON.stringify({output,passed:result.passed,cases:result.cases.map(({name,status,error})=>({name,status,error})),pageErrors:result.pageErrors,unexpectedRequests:result.unexpectedRequests,blockedWrites:result.blockedWrites,routeErrors:result.routeErrors,unexpectedConsoleErrors:result.unexpectedConsoleErrors},null,2));if(!result.passed)process.exitCode=1
 }

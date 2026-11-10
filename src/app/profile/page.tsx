@@ -70,6 +70,9 @@ export default function ProfilePage() {
       setOutcome(null)
       setDisplayName('')
       setEmail('')
+      setShowDeleteConfirm(false)
+      setShowLogoutConfirm(false)
+      setShowLanguageSheet(false)
       setLoading(true)
       // Never await a Supabase method inside its auth callback.
       reloadTimer = setTimeout(() => setReload(value => value + 1), 0)
