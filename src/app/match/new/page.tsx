@@ -119,11 +119,11 @@ export default function NewMatchPage() {
           <div className="px-5 py-4">
             <button
               type="submit"
-              disabled={loading || !opponent.trim()}
+              disabled={loading || !teamId || !opponent.trim()}
               className="w-full py-4 rounded-xl font-black text-[15px] active:scale-[0.99] disabled:opacity-40 transition"
               style={{ background: 'var(--navy)', color: 'var(--accent)' }}
             >
-              {loading ? t.creating : t.createMatch}
+              {loading ? t.creating : !teamId ? t.loading : t.createMatch}
             </button>
             <p className="text-center text-[11px] mt-3" style={{ color: 'var(--muted2)' }}>
               {t.createMatchDescription}
